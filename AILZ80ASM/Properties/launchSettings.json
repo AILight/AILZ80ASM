@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AILZ80ASM": {
+      "commandName": "Project",
+      "commandLineArgs": "-i Sample.Z80 -o Samble.obj"
+    }
+  }
+}

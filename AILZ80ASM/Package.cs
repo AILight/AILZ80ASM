@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace AILZ80ASM
+{
+    public class Package
+    {
+        private List<FileItem> FileItems { get; set; } = new List<FileItem>();
+
+        public Package(FileInfo[] Files)
+        {
+            foreach (var fileInfo in Files)
+            {
+                FileItems.Add(new FileItem(fileInfo));
+            }
+        }
+
+        public void Assemble()
+        {
+            var labelList = new List<Lable>();
+            labelList.Add(new Lable { LabelName = "$", DataLength = Lable.DataLengthEnum.DW, Value = 0 });
+            var address = default(UInt16);
+
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.SetLabel(ref address, labelList);
+            }
+
+            address = 0;
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.Assemble(ref address, labelList.ToArray());
+            }
+        }
+
+        public void Save(FileInfo output)
+        {
+            var fileStream = output.OpenWrite();
+
+            foreach (var item in FileItems)
+            {
+                var bin = item.Bin;
+                fileStream.Write(bin, 0, bin.Length);
+            }
+
+            fileStream.Close();
+        }
+
+    }
+}
