@@ -48,6 +48,7 @@ namespace AILZ80ASM
                         address = opCodeItem.Address;
                         break;
                     case OPCodeResult.OPCodeStatusEnum.OP:
+                    case OPCodeResult.OPCodeStatusEnum.DATA:
                         address += (byte)opCodeItem.OPCode.Length;
                         break;
                     case OPCodeResult.OPCodeStatusEnum.ERROR:
@@ -70,6 +71,7 @@ namespace AILZ80ASM
                         address = opCodeItem.Address;
                         break;
                     case OPCodeResult.OPCodeStatusEnum.OP:
+                    case OPCodeResult.OPCodeStatusEnum.DATA:
                         address += (byte)opCodeItem.OPCode.Length;
                         Bin = opCodeItem.ToBin();
                         break;

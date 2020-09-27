@@ -9,6 +9,7 @@ namespace AILZ80ASM
         public enum OPCodeStatusEnum
         {
             ORG,
+            DATA,
             OP,
             ERROR,
         }
@@ -30,6 +31,12 @@ namespace AILZ80ASM
             OPCode = opCode;
             M = m;
             T = t;
+        }
+
+        public OPCodeResult(string[] opCode)
+        {
+            OPCodeStatus = OPCodeStatusEnum.DATA;
+            OPCode = opCode;
         }
 
         public OPCodeResult(UInt16 address)

@@ -1,3 +1,37 @@
 ﻿	org	$8000
+	db	$00, $00, $00, $00, $00, $00	; DBテスト
 	ld	a, 123
 	ld	c, a
+	ld  a, (ix+1)
+	ld  a, (hl)
+	ld  (hl), a
+	ld  (ix+1), a
+	ld  (iy+2), a
+	ld  (hl), 123
+	ld  (ix+1), 123
+	ld  (iy+2), 123
+	ld  a, (bc)
+	ld  a, (de)
+	ld  a, ($8000)
+	ld  (bc), a
+	ld  (de), a
+	ld  ($8000), a
+	ld  a, i
+	ld  i, a
+	ld  a, r
+	ld  r, a
+	ld  hl, 0
+	ld  bc, 1
+	ld  de, 2
+	ld  ix, 1
+	ld  iy, 2
+	ld  hl, ($8000)
+	ld  bc, ($8000)
+	ld  de, ($8000)
+	ld  ix, ($8000)
+	ld  iy, ($8000)
+	ld  ($8000), hl
+	ld  ($8000), bc
+	ld  ($8000), de
+	ld  ($8000), ix
+	ld  ($8000), iy
