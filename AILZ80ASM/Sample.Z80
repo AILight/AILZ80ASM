@@ -35,3 +35,25 @@
 	ld  ($8000), de
 	ld  ($8000), ix
 	ld  ($8000), iy
+	ldi
+	ldir
+	ldd
+	lddr
+	ex de,hl
+	ex af,af'
+	exx
+	ex (sp),hl
+	ex (sp),ix
+	ex (sp),iy
+	push hl
+	push bc
+	push de
+	push af
+	push ix
+	push iy
+	pop hl
+	pop bc
+	pop de
+	pop af
+	pop ix
+	pop iy
