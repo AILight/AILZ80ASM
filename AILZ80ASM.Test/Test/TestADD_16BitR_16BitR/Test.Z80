@@ -1,0 +1,4 @@
+﻿	add hl,bc
+	add hl,de
+	add hl,hl
+	add hl,sp

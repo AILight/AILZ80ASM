@@ -10,6 +10,6 @@ namespace AILZ80ASM
         public string[] OPCode { get; set; }
         public int M { get; set; }
         public int T { get; set; }
-
+        public bool AccumulatorExtra { get; set; }
     }
 }

@@ -9,11 +9,22 @@ namespace AILZ80ASM
     {
         private List<LineItem> Items { get; set; } = new List<LineItem>();
 
-        public FileItem(FileInfo fileinfo)
+        public FileItem(FileInfo fileInfo)
         {
-            var fileStream = fileinfo.OpenText();
+            using var streamReader = fileInfo.OpenText();
+            Read(streamReader, fileInfo.Name);
+            streamReader.Close();
+        }
+
+        public FileItem(StreamReader streamReader, string fileName)
+        {
+            Read(streamReader, fileName);
+        }
+
+        private void Read(StreamReader streamReader, string fileName)
+        {
             string line;
-            while (!string.IsNullOrEmpty(line = fileStream.ReadLine()))
+            while (!string.IsNullOrEmpty(line = streamReader.ReadLine()))
             {
                 var item = new LineItem(line);
                 Items.Add(item);

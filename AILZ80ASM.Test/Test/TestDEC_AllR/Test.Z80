@@ -1,0 +1,12 @@
+﻿	dec a
+	dec b
+	dec c
+	dec d
+	dec e
+	dec h
+	dec l
+	dec bc
+	dec de
+	dec hl
+	dec sp
+	dec (hl)

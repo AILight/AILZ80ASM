@@ -1,0 +1,4 @@
+﻿	ld bc, $0123
+	ld de, $4567
+	ld hl, $89AB
+	ld sp, $CDEF

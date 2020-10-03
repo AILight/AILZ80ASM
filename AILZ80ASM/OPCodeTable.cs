@@ -9,7 +9,8 @@ namespace AILZ80ASM
     public static class OPCodeTable
     {
         private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\+|\(|\)]+)*\s*,*\s*(?<op3>.+)*";
-        private static readonly string RegexPatternIndexReg = @"^\((IX\+|IY\+)(?<value>\w)\)";
+        private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>\w)\)";
+        private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>\w)\)";
         private static readonly string RegexPatternAddress = @"^\((?<addr>[\w|$]+)\)$";
 
         private static OPCodeItem[] OPCodeItems =
@@ -21,17 +22,17 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "LD r,(IX+d)", OPCode = new[] { "11011101", "01DDD110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "LD r,(IY+d)", OPCode = new[] { "11111101", "01DDD110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "LD (HL),r", OPCode = new[] { "01110SSS" }, M = 2, T = 7 },
-                new OPCodeItem { Operation = "LD (IX+d),r", OPCode = new[] { "11011101", "01110SSS", "IIIIIIII", "NNNNNNNN" }, M = 5, T = 19 },
-                new OPCodeItem { Operation = "LD (IY+d),r", OPCode = new[] { "11111101", "01110SSS", "IIIIIIII", "NNNNNNNN" }, M = 5, T = 19 },
-                new OPCodeItem { Operation = "LD (HL),n", OPCode = new[] { "00110110" }, M = 3, T = 10 },
-                new OPCodeItem { Operation = "LD (IX+d),n", OPCode = new[] { "11011101", "00110110", "IIIIIIII" }, M = 5, T = 19 },
-                new OPCodeItem { Operation = "LD (IY+d),n", OPCode = new[] { "11111101", "00110110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "LD (IX+d),r", OPCode = new[] { "11011101", "01110SSS", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "LD (IY+d),r", OPCode = new[] { "11111101", "01110SSS", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "LD (HL),n", OPCode = new[] { "00110110", "NNNNNNNN" }, M = 3, T = 10 },
+                new OPCodeItem { Operation = "LD (IX+d),n", OPCode = new[] { "11011101", "00110110", "IIIIIIII", "NNNNNNNN" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "LD (IY+d),n", OPCode = new[] { "11111101", "00110110", "IIIIIIII", "NNNNNNNN" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "LD A,(BC)", OPCode = new[] { "00001010" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "LD A,(DE)", OPCode = new[] { "00011010" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "LD A,(nn)", OPCode = new[] { "00111010", "LLLLLLLL", "HHHHHHHH" }, M = 4, T = 13 },
                 new OPCodeItem { Operation = "LD (BC),A", OPCode = new[] { "00000010" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "LD (DE),A", OPCode = new[] { "00010010" }, M = 2, T = 7 },
-                new OPCodeItem { Operation = "LD (nn),A", OPCode = new[] { "00111010", "LLLLLLLL", "HHHHHHHH" }, M = 4, T = 13 },
+                new OPCodeItem { Operation = "LD (nn),A", OPCode = new[] { "00110010", "LLLLLLLL", "HHHHHHHH" }, M = 4, T = 13 },
                 new OPCodeItem { Operation = "LD A,I", OPCode = new[] { "11101101", "01010111" }, M = 2, T = 9 },
                 new OPCodeItem { Operation = "LD I,A", OPCode = new[] { "11101101", "01000111" }, M = 2, T = 9 },
                 new OPCodeItem { Operation = "LD A,R", OPCode = new[] { "11101101", "01011111" }, M = 2, T = 9 },
@@ -39,7 +40,7 @@ namespace AILZ80ASM
                 // 16ビットの転送命令
                 new OPCodeItem { Operation = "LD rp,nn", OPCode = new[] { "00RP0001", "LLLLLLLL", "HHHHHHHH" }, M = 3, T = 10 },
                 new OPCodeItem { Operation = "LD IX,nn", OPCode = new[] { "11011101", "00100001", "LLLLLLLL", "HHHHHHHH" }, M = 4, T = 14 },
-                new OPCodeItem { Operation = "LD IY,nn", OPCode = new[] { "11011101", "00100001", "LLLLLLLL", "HHHHHHHH" }, M = 4, T = 14 },
+                new OPCodeItem { Operation = "LD IY,nn", OPCode = new[] { "11111101", "00100001", "LLLLLLLL", "HHHHHHHH" }, M = 4, T = 14 },
                 new OPCodeItem { Operation = "LD HL,(nn)", OPCode = new[] { "00101010", "LLLLLLLL", "HHHHHHHH" }, M = 5, T = 16 },
                 new OPCodeItem { Operation = "LD rp,(nn)", OPCode = new[] { "11101101", "01RP1011", "LLLLLLLL", "HHHHHHHH" }, M = 6, T = 20 },
                 new OPCodeItem { Operation = "LD IX,(nn)", OPCode = new[] { "11011101", "00101010", "LLLLLLLL", "HHHHHHHH" }, M = 6, T = 20 },
@@ -124,11 +125,18 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "INC (IX+d)", OPCode = new[] { "11011101", "00110100", "IIIIIIII" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "INC (IY+d)", OPCode = new[] { "11111101", "00110100", "IIIIIIII" }, M = 6, T = 23 },
                 // 8ビットの減算
-                new OPCodeItem { Operation = "SUB A,r", OPCode = new[] { "10010SSS" }, M = 1, T = 4 },
-                new OPCodeItem { Operation = "SUB A,n", OPCode = new[] { "11010110", "NNNNNNNN" }, M = 2, T = 7 },
-                new OPCodeItem { Operation = "SUB A,(HL)", OPCode = new[] { "10010110" }, M = 2, T = 7 },
-                new OPCodeItem { Operation = "SUB A,(IX+d)", OPCode = new[] { "11011101", "10010110", "IIIIIIII" }, M = 5, T = 19 },
-                new OPCodeItem { Operation = "SUB A,(IY+d)", OPCode = new[] { "11111101", "10010110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "SUB r", OPCode = new[] { "10010DDD" }, M = 1, T = 4 },
+                new OPCodeItem { Operation = "SUB n", OPCode = new[] { "11010110", "NNNNNNNN" }, M = 2, T = 7 },
+                new OPCodeItem { Operation = "SUB (HL)", OPCode = new[] { "10010110" }, M = 2, T = 7 },
+                new OPCodeItem { Operation = "SUB (IX+d)", OPCode = new[] { "11011101", "10010110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "SUB (IY+d)", OPCode = new[] { "11111101", "10010110", "IIIIIIII" }, M = 5, T = 19 },
+                /*
+                new OPCodeItem { Operation = "SUB A,r", OPCode = new[] { "10010SSS" }, M = 1, T = 4, AccumulatorExtra = true },
+                new OPCodeItem { Operation = "SUB A,n", OPCode = new[] { "11010110", "NNNNNNNN" }, M = 2, T = 7, AccumulatorExtra = true },
+                new OPCodeItem { Operation = "SUB A,(HL)", OPCode = new[] { "10010110" }, M = 2, T = 7, AccumulatorExtra = true },
+                new OPCodeItem { Operation = "SUB A,(IX+d)", OPCode = new[] { "11011101", "10010110", "IIIIIIII" }, M = 5, T = 19, AccumulatorExtra = true },
+                new OPCodeItem { Operation = "SUB A,(IY+d)", OPCode = new[] { "11111101", "10010110", "IIIIIIII" }, M = 5, T = 19, AccumulatorExtra = true },
+                */
                 new OPCodeItem { Operation = "SBC A,r", OPCode = new[] { "10011SSS" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "SBC A,n", OPCode = new[] { "11011110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "SBC A,(HL)", OPCode = new[] { "10011110" }, M = 2, T = 7 },
@@ -152,17 +160,17 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "DEC IX", OPCode = new[] { "11011101", "00101011" }, M = 2, T = 10 },
                 new OPCodeItem { Operation = "DEC IY", OPCode = new[] { "11111101", "00101011" }, M = 2, T = 10 },
                 // 論理演算
-                new OPCodeItem { Operation = "AND r", OPCode = new[] { "10100SSS" }, M = 1, T = 4 },
+                new OPCodeItem { Operation = "AND r", OPCode = new[] { "10100DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "AND n", OPCode = new[] { "11100110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "AND (HL)", OPCode = new[] { "10100110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "AND (IX+d)", OPCode = new[] { "11011101", "10100110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "AND (IY+d)", OPCode = new[] { "11111101", "10100110", "IIIIIIII" }, M = 5, T = 19 },
-                new OPCodeItem { Operation = "OR r", OPCode = new[] { "10110SSS" }, M = 1, T = 4 },
+                new OPCodeItem { Operation = "OR r", OPCode = new[] { "10110DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "OR n", OPCode = new[] { "11110110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "OR (HL)", OPCode = new[] { "10110110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "OR (IX+d)", OPCode = new[] { "11011101", "10110110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "OR (IY+d)", OPCode = new[] { "11111101", "10110110", "IIIIIIII" }, M = 5, T = 19 },
-                new OPCodeItem { Operation = "XOR r", OPCode = new[] { "10101SSS" }, M = 1, T = 4 },
+                new OPCodeItem { Operation = "XOR r", OPCode = new[] { "10101DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "XOR n", OPCode = new[] { "11101110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "XOR (HL)", OPCode = new[] { "10101110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "XOR (IX+d)", OPCode = new[] { "11011101", "10101110", "IIIIIIII" }, M = 5, T = 19 },
@@ -190,7 +198,7 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "CPD", OPCode = new[] { "11101101", "10101001" }, M = 4, T = 16 },
                 new OPCodeItem { Operation = "CPDR", OPCode = new[] { "11101101", "10111001" }, M = 0, T = 0 },
                 // 比較
-                new OPCodeItem { Operation = "CP r", OPCode = new[] { "10111SSS" }, M = 1, T = 4 },
+                new OPCodeItem { Operation = "CP r", OPCode = new[] { "10111DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "CP n", OPCode = new[] { "11111110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "CP (HL)", OPCode = new[] { "10111110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "CP (IX+d)", OPCode = new[] { "11011101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
@@ -292,13 +300,14 @@ namespace AILZ80ASM
                         var bbb = "";
                         var ccc = "";
                         var ttt = "";
+                        var indexOffset = "";
                         var value8 = "";
                         var value16 = new string[2];
 
-                        if (!ProcessMark(op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref value8, ref value16))
+                        if (!ProcessMark(op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref indexOffset, ref value8, ref value16))
                             continue;
 
-                        if (!ProcessMark(op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref value8, ref value16))
+                        if (!ProcessMark(op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref indexOffset, ref value8, ref value16))
                             continue;
 
                         var opcodes = opCodeItem.OPCode;
@@ -308,6 +317,7 @@ namespace AILZ80ASM
                                                         .Replace("CCC", ccc)
                                                         .Replace("BBB", bbb)
                                                         .Replace("TTT", ttt)
+                                                        .Replace("IIIIIIII", indexOffset)
                                                         .Replace("NNNNNNNN", value8)
                                                         .Replace("HHHHHHHH", value16[0])
                                                         .Replace("LLLLLLLL", value16[1])).ToArray();
@@ -319,7 +329,7 @@ namespace AILZ80ASM
             return null;
         }
 
-        private static bool ProcessMark (string op, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, ref string value8, ref string[] value16)
+        private static bool ProcessMark (string op, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, ref string indexOffset, ref string value8, ref string[] value16)
         {
             switch (tableOp)
             {
@@ -336,8 +346,11 @@ namespace AILZ80ASM
                         return false;
                     break;
                 case "IX":
+                    if (!IsIXRegister(op))
+                        return false;
+                    break;
                 case "IY":
-                    if (!IsAddrIndexRegister(op))
+                    if (!IsIYRegister(op))
                         return false;
                     break;
                 case "r":
@@ -413,14 +426,23 @@ namespace AILZ80ASM
 
                     break;
                 case "(IX+d)":
-                case "(IY+d)":
-                    if (!IsAddrIndexWithDRegister(op))
+                    if (!IsAddrIXPlusDRegister(op))
                         return false;
 
-                    var matchedIndex = Regex.Match(op, RegexPatternIndexReg);
-                    var value = matchedIndex.Groups["value"].Value;
-                    value8 = GetNumber8(value);
-
+                    {
+                        var matchedIndex = Regex.Match(op, RegexPatternIXReg);
+                        var value = matchedIndex.Groups["value"].Value;
+                        indexOffset = GetNumber8(value);
+                    }
+                    break;
+                case "(IY+d)":
+                    if (!IsAddrIYPlusDRegister(op))
+                        return false;
+                    {
+                        var matchedIndex = Regex.Match(op, RegexPatternIYReg);
+                        var value = matchedIndex.Groups["value"].Value;
+                        indexOffset = GetNumber8(value);
+                    }
                     break;
                 case "(n)":
                     if (!IsNumber8(op))
@@ -531,7 +553,8 @@ namespace AILZ80ASM
             return Is8BitRegister(source) ||
                    Is8BitIndexRegister(source) ||
                    Is16BitRegister(source) ||
-                   IsAddrAndIndexRegister(source) ||
+                   Is16BitIndexRegister(source) ||
+                   IsAddrIndexRegister(source) ||
                    IsSPRegister(source) ||
                    IsRefreshRegister(source) ||
                    IsInterruptRegister(source) ||
@@ -559,6 +582,16 @@ namespace AILZ80ASM
             return source == "DE";
         }
 
+        private static bool IsIXRegister(string source)
+        {
+            return source == "IX";
+        }
+
+        private static bool IsIYRegister(string source)
+        {
+            return source == "IY";
+        }
+
         private static bool Is8BitRegister(string source)
         {
             return Regex.IsMatch(source, @"^(A|B|C|D|E|H|L)$");
@@ -574,9 +607,19 @@ namespace AILZ80ASM
             return Regex.IsMatch(source, @"^(BC|DE|HL|SP)$");
         }
 
-        private static bool IsAddrAndIndexRegister(string source)
+        private static bool Is16BitIndexRegister(string source)
         {
-            return IsAddrRegister(source) || IsAddrIndexWithDRegister(source);
+            return Regex.IsMatch(source, @"^(IX|IY)$");
+        }
+
+        private static bool IsAddrIXPlusDRegister(string source)
+        {
+            return Regex.IsMatch(source, RegexPatternIXReg);
+        }
+
+        private static bool IsAddrIYPlusDRegister(string source)
+        {
+            return Regex.IsMatch(source, RegexPatternIYReg);
         }
 
         private static bool IsAddrHLRegister(string source)
@@ -594,6 +637,16 @@ namespace AILZ80ASM
             return source == "(DE)";
         }
 
+        private static bool IsAddrIXRegister(string source)
+        {
+            return source == "(IX)";
+        }
+
+        private static bool IsAddrIYRegister(string source)
+        {
+            return source == "(IY)";
+        }
+
         private static bool IsAddrRegister(string source)
         {
             return Regex.IsMatch(source, @"^(\(BC\)|\(DE\)|\(HL\)|\(SP\))$");
@@ -601,12 +654,7 @@ namespace AILZ80ASM
 
         private static bool IsAddrIndexRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(IX|IY)$");
-        }
-
-        private static bool IsAddrIndexWithDRegister(string source)
-        {
-            return Regex.IsMatch(source, RegexPatternIndexReg);
+            return IsAddrIXPlusDRegister(source) || IsAddrIYPlusDRegister(source);
         }
 
         private static bool IsInterruptRegister(string source)

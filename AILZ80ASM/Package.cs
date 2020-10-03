@@ -39,14 +39,19 @@ namespace AILZ80ASM
         {
             var fileStream = output.OpenWrite();
 
-            foreach (var item in FileItems)
-            {
-                var bin = item.Bin;
-                fileStream.Write(bin, 0, bin.Length);
-            }
+            Save(fileStream);
 
             fileStream.Close();
         }
 
+        public void Save(Stream stream)
+        {
+
+            foreach (var item in FileItems)
+            {
+                var bin = item.Bin;
+                stream.Write(bin, 0, bin.Length);
+            }
+        }
     }
 }

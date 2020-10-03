@@ -1,0 +1,4 @@
+﻿	pop bc
+	pop de
+	pop hl
+	pop af	

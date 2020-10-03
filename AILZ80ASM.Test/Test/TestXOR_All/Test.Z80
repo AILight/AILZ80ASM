@@ -1,0 +1,9 @@
+﻿	xor b
+	xor c
+	xor d
+	xor e
+	xor h
+	xor l
+	xor (hl)
+	xor a
+	xor $23
