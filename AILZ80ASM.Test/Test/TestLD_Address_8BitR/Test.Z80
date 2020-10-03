@@ -8,4 +8,17 @@
 	ld (bc), a
 	ld (de), a
 	ld ($3412), a
-	
+	ld (ix+0), b
+	ld (ix+1), c
+	ld (ix+2), d
+	ld (ix+3), e
+	ld (ix+4), h
+	ld (ix+5), l
+	ld (ix+6), a
+	ld (iy+0), b
+	ld (iy+1), c
+	ld (iy+2), d
+	ld (iy+3), e
+	ld (iy+4), h
+	ld (iy+5), l
+	ld (iy+6), a

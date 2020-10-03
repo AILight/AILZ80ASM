@@ -7,3 +7,5 @@
 	xor (hl)
 	xor a
 	xor $23
+	xor (ix+0)
+	xor (iy+1)

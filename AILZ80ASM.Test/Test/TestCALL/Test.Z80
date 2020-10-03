@@ -1,0 +1,9 @@
+﻿	call nz, $0123
+	call nc, $4567
+	call po, $89AB
+	call p, $CDEF
+	call z, $3201
+	call c, $6745
+	call pe, $AB89
+	call m, $EFCD
+	call $1234

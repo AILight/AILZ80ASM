@@ -10,3 +10,7 @@
 	inc hl
 	inc sp
 	inc (hl)
+	inc ix
+	inc iy
+	inc (ix+0)
+	inc (iy+1)

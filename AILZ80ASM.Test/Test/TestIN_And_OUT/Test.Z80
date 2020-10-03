@@ -1,0 +1,24 @@
+﻿	in a,($10)
+	in b,(c)
+	in d,(c)
+	in h,(c)
+	in c,(c)
+	in e,(c)
+	in l,(c)
+	in a,(c)
+	out ($20),a
+	out (c),b
+	out (c),d
+	out (c),h
+	out (c),c
+	out (c),e
+	out (c),l
+	out (c),a
+	ini
+	inir
+	ind
+	indr
+	outi
+	otir
+	outd
+	otdr

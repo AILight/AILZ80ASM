@@ -7,3 +7,5 @@
 	adc a, (hl)
 	adc a, a
 	adc a, $23
+	adc a, (ix+0)
+	adc a, (iy+1)

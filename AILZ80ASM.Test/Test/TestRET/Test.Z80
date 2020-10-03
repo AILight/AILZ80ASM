@@ -1,0 +1,11 @@
+﻿	ret nz
+	ret nc
+	ret po
+	ret p
+	ret z
+	ret c
+	ret pe
+	ret m
+	ret
+	reti
+	retn

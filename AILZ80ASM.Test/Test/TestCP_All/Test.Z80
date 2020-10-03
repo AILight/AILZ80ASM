@@ -7,3 +7,5 @@
 	cp (hl)
 	cp a
 	cp $23
+	cp (ix+0)
+	cp (iy+1)

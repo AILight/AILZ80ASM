@@ -1,1 +1,6 @@
 ﻿	ld ($3412), hl
+	ld ($7856), ix
+	ld ($bc9a), iy
+	ld ($0123), bc
+	ld ($4567), de
+	ld ($cdef), sp

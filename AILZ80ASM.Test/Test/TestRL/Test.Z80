@@ -1,0 +1,22 @@
+﻿	rlca
+	rla
+	rlc b
+	rlc c
+	rlc d
+	rlc e
+	rlc h
+	rlc l
+	rlc (hl)
+	rlc a
+	rl b
+	rl c
+	rl d
+	rl e
+	rl h
+	rl l
+	rl (hl)
+	rl a
+	rlc (ix+$10)
+	rl (ix+$20)
+	rlc (iy+$30)
+	rl (iy+$40)

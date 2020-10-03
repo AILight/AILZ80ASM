@@ -1,0 +1,4 @@
+﻿	adc hl,bc
+	adc hl,de
+	adc hl,hl
+	adc hl,sp

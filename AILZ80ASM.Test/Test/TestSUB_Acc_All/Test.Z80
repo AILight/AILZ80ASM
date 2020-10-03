@@ -7,3 +7,5 @@
 	sub (hl)
 	sub a
 	sub $12
+	sub (ix+0)
+	sub (iy+1)

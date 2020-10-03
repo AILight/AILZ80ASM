@@ -1,0 +1,10 @@
+﻿	sla b
+	sla c
+	sla d
+	sla e
+	sla h
+	sla l
+	sla (hl)
+	sla a
+	sla (ix+$10)
+	sla (iy+$30)

@@ -8,9 +8,9 @@ namespace AILZ80ASM
 {
     public static class OPCodeTable
     {
-        private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\+|\(|\)]+)*\s*,*\s*(?<op3>.+)*";
-        private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>\w)\)";
-        private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>\w)\)";
+        private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)]+)*\s*,*\s*(?<op3>.+)*";
+        private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>.+)\)";
+        private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>.+)\)";
         private static readonly string RegexPatternAddress = @"^\((?<addr>[\w|$]+)\)$";
 
         private static OPCodeItem[] OPCodeItems =
@@ -76,36 +76,36 @@ namespace AILZ80ASM
                 // 左ローテート
                 new OPCodeItem { Operation = "RLCA", OPCode = new[] { "00000111" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "RLA", OPCode = new[] { "00010111" }, M = 1, T = 4 },
-                new OPCodeItem { Operation = "RLC r", OPCode = new[] { "11001011", "00000SSS" }, M = 1, T = 4 },
+                new OPCodeItem { Operation = "RLC r", OPCode = new[] { "11001011", "00000DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "RLC (HL)", OPCode = new[] { "11001011", "00000110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RLC (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RLC (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
-                new OPCodeItem { Operation = "RL r", OPCode = new[] { "11001011", "00010SSS" }, M = 2, T = 8 },
+                new OPCodeItem { Operation = "RL r", OPCode = new[] { "11001011", "00010DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "RL (HL)", OPCode = new[] { "11001011", "00010110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RL (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RL (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
                 // 右ローテート
                 new OPCodeItem { Operation = "RRCA", OPCode = new[] { "00001111" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "RRA", OPCode = new[] { "00011111" }, M = 1, T = 4 },
-                new OPCodeItem { Operation = "RRC r", OPCode = new[] { "11001011", "00001SSS" }, M = 1, T = 4 },
+                new OPCodeItem { Operation = "RRC r", OPCode = new[] { "11001011", "00001DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "RRC (HL)", OPCode = new[] { "11001011", "00001110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RRC (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RRC (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
-                new OPCodeItem { Operation = "RR r", OPCode = new[] { "11001011", "00011SSS" }, M = 2, T = 8 },
+                new OPCodeItem { Operation = "RR r", OPCode = new[] { "11001011", "00011DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "RR (HL)", OPCode = new[] { "11001011", "00011110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RR (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00011110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RR (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00011110" }, M = 6, T = 23 },
                 // 左シフト
-                new OPCodeItem { Operation = "SLA r", OPCode = new[] { "11001011", "00100SSS" }, M = 2, T = 8 },
+                new OPCodeItem { Operation = "SLA r", OPCode = new[] { "11001011", "00100DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "SLA (HL)", OPCode = new[] { "11001011", "00100110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "SLA (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00100110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "SLA (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00100110" }, M = 6, T = 23 },
                 // 右シフト
-                new OPCodeItem { Operation = "SRA r", OPCode = new[] { "11001011", "00101SSS" }, M = 2, T = 8 },
+                new OPCodeItem { Operation = "SRA r", OPCode = new[] { "11001011", "00101DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "SRA (HL)", OPCode = new[] { "11001011", "00101110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "SRA (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00101110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "SRA (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00101110" }, M = 6, T = 23 },
-                new OPCodeItem { Operation = "SRL r", OPCode = new[] { "11001011", "00111SSS" }, M = 2, T = 8 },
+                new OPCodeItem { Operation = "SRL r", OPCode = new[] { "11001011", "00111DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "SRL (HL)", OPCode = new[] { "11001011", "00111110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "SRL (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00111110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "SRL (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00111110" }, M = 6, T = 23 },
@@ -194,7 +194,7 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "RES b,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "10BBB110" }, M = 6, T = 23 },
                 // サーチ
                 new OPCodeItem { Operation = "CPI", OPCode = new[] { "11101101", "10100001" }, M = 4, T = 16 },
-                new OPCodeItem { Operation = "CPIR", OPCode = new[] { "11101101", "11101101" }, M = 0, T = 0 },
+                new OPCodeItem { Operation = "CPIR", OPCode = new[] { "11101101", "10110001" }, M = 0, T = 0 },
                 new OPCodeItem { Operation = "CPD", OPCode = new[] { "11101101", "10101001" }, M = 4, T = 16 },
                 new OPCodeItem { Operation = "CPDR", OPCode = new[] { "11101101", "10111001" }, M = 0, T = 0 },
                 // 比較
@@ -202,15 +202,15 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "CP n", OPCode = new[] { "11111110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "CP (HL)", OPCode = new[] { "10111110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "CP (IX+d)", OPCode = new[] { "11011101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
-                new OPCodeItem { Operation = "CP (IY+d)", OPCode = new[] { "11011101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
+                new OPCodeItem { Operation = "CP (IY+d)", OPCode = new[] { "11111101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
                 // ジャンプ
                 new OPCodeItem { Operation = "JP nn", OPCode = new[] { "11000011", "LLLLLLLL", "HHHHHHHH" }, M = 3, T = 10 },
                 new OPCodeItem { Operation = "JP cc,nn", OPCode = new[] { "11CCC010", "LLLLLLLL", "HHHHHHHH" }, M = 3, T = 10 },
                 new OPCodeItem { Operation = "JR e", OPCode = new[] { "00011000", "EEEEEEEE" }, M = 3, T = 12 },
                 new OPCodeItem { Operation = "JR C,e", OPCode = new[] { "00111000", "EEEEEEEE" }, M = 3, T = 12 },
                 new OPCodeItem { Operation = "JR NC,e", OPCode = new[] { "00110000", "EEEEEEEE" }, M = 3, T = 12 },
-                new OPCodeItem { Operation = "JR Z,e", OPCode = new[] { "00110000", "EEEEEEEE" }, M = 3, T = 12 },
-                new OPCodeItem { Operation = "JR NZ,e", OPCode = new[] { "00110000", "EEEEEEEE" }, M = 3, T = 12 },
+                new OPCodeItem { Operation = "JR Z,e", OPCode = new[] { "00101000", "EEEEEEEE" }, M = 3, T = 12 },
+                new OPCodeItem { Operation = "JR NZ,e", OPCode = new[] { "00100000", "EEEEEEEE" }, M = 3, T = 12 },
                 new OPCodeItem { Operation = "JP (HL)", OPCode = new[] { "11101001" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "JP (IX)", OPCode = new[] { "11011101", "11101001" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "JP (IY)", OPCode = new[] { "11111101", "11101001" }, M = 2, T = 8 },
@@ -242,9 +242,9 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "OUT (n),A", OPCode = new[] { "11010011", "NNNNNNNN" }, M = 3, T = 11 },
                 new OPCodeItem { Operation = "OUT (C),r", OPCode = new[] { "11101101", "01SSS001" }, M = 3, T = 12 },
                 new OPCodeItem { Operation = "OUTI", OPCode = new[] { "11101101", "10100011" }, M = 4, T = 16 },
-                new OPCodeItem { Operation = "OUTIR", OPCode = new[] { "11101101", "10110011" }, M = 0, T = 0 },
+                new OPCodeItem { Operation = "OTIR", OPCode = new[] { "11101101", "10110011" }, M = 0, T = 0 },
                 new OPCodeItem { Operation = "OUTD", OPCode = new[] { "11101101", "10101011" }, M = 4, T = 16 },
-                new OPCodeItem { Operation = "OUTDR", OPCode = new[] { "11101101", "10111011" }, M = 0, T = 0 },
+                new OPCodeItem { Operation = "OTDR", OPCode = new[] { "11101101", "10111011" }, M = 0, T = 0 },
                 // CPU 制御命令:二進化十進 (BCD) 用命令
                 new OPCodeItem { Operation = "DAA", OPCode = new[] { "00100111" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "RLD", OPCode = new[] { "11101101", "01101111" }, M = 5, T = 18 },
@@ -300,14 +300,15 @@ namespace AILZ80ASM
                         var bbb = "";
                         var ccc = "";
                         var ttt = "";
+                        var e8 = "";
                         var indexOffset = "";
                         var value8 = "";
                         var value16 = new string[2];
 
-                        if (!ProcessMark(op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref indexOffset, ref value8, ref value16))
+                        if (!ProcessMark(tableOp1, op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref e8, ref indexOffset, ref value8, ref value16))
                             continue;
 
-                        if (!ProcessMark(op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref indexOffset, ref value8, ref value16))
+                        if (!ProcessMark(tableOp1, op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref e8, ref indexOffset, ref value8, ref value16))
                             continue;
 
                         var opcodes = opCodeItem.OPCode;
@@ -319,6 +320,7 @@ namespace AILZ80ASM
                                                         .Replace("TTT", ttt)
                                                         .Replace("IIIIIIII", indexOffset)
                                                         .Replace("NNNNNNNN", value8)
+                                                        .Replace("EEEEEEEE", e8)
                                                         .Replace("HHHHHHHH", value16[0])
                                                         .Replace("LLLLLLLL", value16[1])).ToArray();
 
@@ -329,136 +331,142 @@ namespace AILZ80ASM
             return null;
         }
 
-        private static bool ProcessMark (string op, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, ref string indexOffset, ref string value8, ref string[] value16)
+        private static bool ProcessMark (string op, string arg, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, ref string e8, ref string indexOffset, ref string value8, ref string[] value16)
         {
             switch (tableOp)
             {
                 case "A":
-                    if (!IsAccumulatorRegister(op))
+                    if (!IsAccumulatorRegister(arg))
                         return false;
                     break;
                 case "HL":
-                    if (!IsHLRegister(op))
+                    if (!IsHLRegister(arg))
                         return false;
                     break;
                 case "SP":
-                    if (!IsSPRegister(op))
+                    if (!IsSPRegister(arg))
                         return false;
                     break;
                 case "IX":
-                    if (!IsIXRegister(op))
+                    if (!IsIXRegister(arg))
                         return false;
                     break;
                 case "IY":
-                    if (!IsIYRegister(op))
+                    if (!IsIYRegister(arg))
                         return false;
                     break;
                 case "r":
                 case "r1":
                 case "r2":
-                    if (!Is8BitRegister(op))
+                    if (!Is8BitRegister(arg))
                         return false;
 
                     if (index == 0)
                     {
-                        dddd = GetDDDSSS(op);
+                        dddd = GetDDDSSS(arg);
                     }
                     else
                     {
-                        ssss = GetDDDSSS(op);
+                        ssss = GetDDDSSS(arg);
                     }
                     break;
                 case "rp":
-                    if (!Is16BitRegister(op))
+                    if (!Is16BitRegister(arg))
                         return false;
 
-                    rp = GetRP(op);
+                    rp = GetRP(arg);
                     break;
                 case "cc":
-                    if (!IsConditionSymbol(op))
+                    if (!IsConditionSymbol(arg))
                         return false;
 
-                    ccc = GetCCC(op);
+                    ccc = GetCCC(arg);
                     break;
                 case "b":
-                    if (!IsNumber3Bit(op))
+                    if (!IsNumber3Bit(arg))
                         return false;
 
-                    bbb = GetNumber3Bit(op);
+                    bbb = GetNumber3Bit(arg);
                     break;
                 case "p":
-                    if (!IsNumber3Bit(op))
+                    if (!IsNumberRst(arg))
                         return false;
 
-                    ttt = GetNumber3Bit(op);
+                    ttt = GetNumberRst(arg);
                     break;
                 case "n":
-                    if (!IsNumber8(op))
+                    if (!IsNumber8(arg))
                         return false;
 
-                    value8 = GetNumber8(op);
+                    value8 = GetNumber8(arg);
+                    break;
+                case "e":
+                    if (!IsNumber8(arg) || IsConditionSymbol(arg))
+                        return false;
+
+                    e8 = GetNumber8(arg);
                     break;
                 case "nn":
-                    if (!IsNumber16(op))
+                    if (!IsNumber16(arg))
                         return false;
 
-                    value16 = GetNumber16(op);
+                    if ((IsJPOpecode(op) || IsCALLOpecode(op)) && IsConditionSymbol(arg))
+                        return false;
+
+                    value16 = GetNumber16(arg);
                     break;
                 case "(nn)":
-                    if (!IsAddrNumber16(op))
+                    if (!IsAddrNumber16(arg))
                         return false;
 
-                    value16 = GetAddNumber16(op);
+                    value16 = GetAddNumber16(arg);
                     break;
                 case "(HL)":
-                    if (!IsAddrHLRegister(op))
+                    if (!IsAddrHLRegister(arg))
                         return false;
 
                     break;
                 case "(BC)":
-                    if (!IsAddrBCRegister(op))
+                    if (!IsAddrBCRegister(arg))
                         return false;
 
                     break;
                 case "(DE)":
-                    if (!IsAddrDERegister(op))
+                    if (!IsAddrDERegister(arg))
                         return false;
 
                     break;
                 case "(IX+d)":
-                    if (!IsAddrIXPlusDRegister(op))
+                    if (!IsAddrIXPlusDRegister(arg))
                         return false;
 
                     {
-                        var matchedIndex = Regex.Match(op, RegexPatternIXReg);
+                        var matchedIndex = Regex.Match(arg, RegexPatternIXReg);
                         var value = matchedIndex.Groups["value"].Value;
                         indexOffset = GetNumber8(value);
                     }
                     break;
                 case "(IY+d)":
-                    if (!IsAddrIYPlusDRegister(op))
+                    if (!IsAddrIYPlusDRegister(arg))
                         return false;
                     {
-                        var matchedIndex = Regex.Match(op, RegexPatternIYReg);
+                        var matchedIndex = Regex.Match(arg, RegexPatternIYReg);
                         var value = matchedIndex.Groups["value"].Value;
                         indexOffset = GetNumber8(value);
                     }
                     break;
                 case "(n)":
-                    if (!IsNumber8(op))
+                    if (!IsPortNumber(arg))
                         return false;
 
-                    value8 = GetPortNumber8(op);
+                    value8 = GetPortNumber(arg);
                     break;
                 case "(C)":
-                    if (!(index == 1 && op == "(C)"))
-                        return false;
-
-                    break;
+                    return arg == tableOp;
                 case "":
-                    break;
+                    return arg == tableOp;
                 default:
-                    return false;
+                    return arg == tableOp;
             }
             return true;
         }
@@ -513,7 +521,12 @@ namespace AILZ80ASM
             return true;
         }
 
-        private static string GetPortNumber8(string source)
+        private static bool IsPortNumber(string source)
+        {
+            return Regex.IsMatch(source, RegexPatternAddress) && source != "(C)";
+        }
+
+        private static string GetPortNumber(string source)
         {
             var matched = Regex.Match(source, RegexPatternAddress);
             return GetNumber8(matched.Groups["addr"].Value);
@@ -521,13 +534,14 @@ namespace AILZ80ASM
 
         private static string GetNumber8(string source)
         {
-            if (source.IndexOf("$") == 0)
+            if (source.IndexOf("$") == 0 || source.LastIndexOf("H") == (source.Length - 1))
             {
-                return Convert.ToString(Convert.ToByte(source.Replace("$", ""), 16), 2).PadLeft(8, '0');
+                return Convert.ToString(Convert.ToByte(source.Replace("$", "").Replace("H", ""), 16), 2).PadLeft(8, '0');
             }
             else
             {
-                return Convert.ToString(Convert.ToByte(source), 2).PadLeft(8, '0');
+                var tmpString = Convert.ToString(Convert.ToSByte(source), 2).PadLeft(8, '0');
+                return tmpString.Substring(tmpString.Length - 8);
             }
         }
 
@@ -546,6 +560,22 @@ namespace AILZ80ASM
             {
                 return Convert.ToString(Convert.ToByte(source), 2).PadLeft(3, '0');
             }
+        }
+
+        private static bool IsNumberRst(string source)
+        {
+            if (!IsNumber8(source))
+                return false;
+            
+            var value = GetNumber8(source);
+            return (value.Substring(0, 2) == "00" && value.Substring(5, 3) == "000");
+        }
+
+        private static string GetNumberRst(string source)
+        {
+            var value = GetNumber8(source);
+
+            return value.Substring(2, 3);
         }
 
         private static bool IsAllRegister(string source)
@@ -680,6 +710,16 @@ namespace AILZ80ASM
         private static bool IsConditionSymbol(string source)
         {
             return Regex.IsMatch(source, @"^(NZ|Z|NC|C|PO|PE|P|M)$");
+        }
+
+        private static bool IsJPOpecode(string source)
+        {
+            return source == "JP";
+        }
+
+        private static bool IsCALLOpecode(string source)
+        {
+            return source == "CALL";
         }
 
         private static string GetDDDSSS(string source)

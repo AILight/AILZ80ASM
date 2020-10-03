@@ -7,3 +7,5 @@
 	add a, (hl)
 	add a, a
 	add a, $12
+	add a, (ix+0)
+	add a, (iy+1)

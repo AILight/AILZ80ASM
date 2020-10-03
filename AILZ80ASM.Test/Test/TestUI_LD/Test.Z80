@@ -1,0 +1,6 @@
+﻿	LD IXh,B
+	LD IXh,C
+	LD IXh,D
+	LD IXh,E
+	LD IXh,H
+	LD IXh,L

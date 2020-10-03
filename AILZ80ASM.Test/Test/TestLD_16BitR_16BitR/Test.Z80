@@ -1,0 +1,3 @@
+﻿	LD SP,HL
+	LD SP,IX
+	LD SP,IY

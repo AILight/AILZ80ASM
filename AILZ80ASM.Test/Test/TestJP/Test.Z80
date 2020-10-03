@@ -1,0 +1,12 @@
+﻿	jp nz, $0123
+	jp nc, $4567
+	jp po, $89AB
+	jp p, $CDEF
+	jp z, $3201
+	jp c, $6745
+	jp pe, $AB89
+	jp m, $EFCD
+	jp $1234
+	jp (hl)
+	jp (ix)
+	jp (iy)

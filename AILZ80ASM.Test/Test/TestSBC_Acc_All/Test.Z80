@@ -7,3 +7,5 @@
 	sbc a, (hl)
 	sbc a, a
 	sbc a, $23
+	sbc a,(ix+0)
+	sbc a,(iy+1)

@@ -7,3 +7,5 @@
 	and (hl)
 	and a
 	and $23
+	and (ix+0)
+	and (iy+1)

@@ -7,3 +7,5 @@
 	or (hl)
 	or a
 	or $23
+	or (ix+0)
+	or (iy+1)

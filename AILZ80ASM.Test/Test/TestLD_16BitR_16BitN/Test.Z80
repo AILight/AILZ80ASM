@@ -2,3 +2,5 @@
 	ld de, $4567
 	ld hl, $89AB
 	ld sp, $CDEF
+	ld ix, $1122
+	ld iy, $3344

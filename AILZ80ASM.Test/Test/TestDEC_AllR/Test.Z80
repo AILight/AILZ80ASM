@@ -10,3 +10,7 @@
 	dec hl
 	dec sp
 	dec (hl)
+	dec ix
+	dec iy
+	dec (ix+0)
+	dec (iy+1)
