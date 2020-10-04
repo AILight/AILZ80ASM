@@ -266,6 +266,24 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestUI_AO()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestUI_INC_And_DEC()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestUI_LD()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestXOR_All()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

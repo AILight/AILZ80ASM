@@ -1,0 +1,8 @@
+﻿	inc ixh
+	dec ixh
+	inc ixl
+	dec ixl
+	inc iyh
+	dec iyh
+	inc iyl
+	dec iyl
