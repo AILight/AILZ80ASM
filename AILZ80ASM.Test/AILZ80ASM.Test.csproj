@@ -18,232 +18,238 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Test\TestCPI_And_CPD\Test.BIN">
+    <None Update="Test\TestLN_Comment\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCPI_And_CPD\Test.Z80">
+    <None Update="Test\TestLN_Comment\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestBIT\Test.BIN">
+    <None Update="Test\TestOP_CPI_And_CPD\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestBIT\Test.Z80">
+    <None Update="Test\TestOP_CPI_And_CPD\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCCF_And_SCF\Test.BIN">
+    <None Update="Test\TestOP_BIT\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCCF_And_SCF\Test.Z80">
+    <None Update="Test\TestOP_BIT\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestJR\Test.BIN">
+    <None Update="Test\TestOP_CCF_And_SCF\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestJR\Test.Z80">
+    <None Update="Test\TestOP_CCF_And_SCF\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSET\Test.BIN">
+    <None Update="Test\TestOP_JR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSET\Test.Z80">
+    <None Update="Test\TestOP_JR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRES\Test.BIN">
+    <None Update="Test\TestOP_SET\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRES\Test.Z80">
+    <None Update="Test\TestOP_SET\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLDI_And_LDD\Test.BIN">
+    <None Update="Test\TestOP_RES\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLDI_And_LDD\Test.Z80">
+    <None Update="Test\TestOP_RES\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSBC_16BitR_16BitR\Test.BIN">
+    <None Update="Test\TestOP_LDI_And_LDD\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSBC_16BitR_16BitR\Test.Z80">
+    <None Update="Test\TestOP_LDI_And_LDD\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADC_Acc_All\Test.BIN">
+    <None Update="Test\TestOP_SBC_16BitR_16BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADC_Acc_All\Test.Z80">
+    <None Update="Test\TestOP_SBC_16BitR_16BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADC_16BitR_16BitR\Test.BIN">
+    <None Update="Test\TestOP_ADC_Acc_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADC_16BitR_16BitR\Test.Z80">
+    <None Update="Test\TestOP_ADC_Acc_All\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADD_16BitR_16BitR\Test.BIN">
+    <None Update="Test\TestOP_ADC_16BitR_16BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADD_16BitR_16BitR\Test.Z80">
+    <None Update="Test\TestOP_ADC_16BitR_16BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestIN_And_OUT\Test.BIN">
+    <None Update="Test\TestOP_ADD_16BitR_16BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestIN_And_OUT\Test.Z80">
+    <None Update="Test\TestOP_ADD_16BitR_16BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRST\Test.BIN">
+    <None Update="Test\TestOP_IN_And_OUT\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRST\Test.Z80">
+    <None Update="Test\TestOP_IN_And_OUT\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestBCD\Test.BIN">
+    <None Update="Test\TestOP_RST\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestBCD\Test.Z80">
+    <None Update="Test\TestOP_RST\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRET\Test.BIN">
+    <None Update="Test\TestOP_BCD\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRET\Test.Z80">
+    <None Update="Test\TestOP_BCD\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCALL\Test.BIN">
+    <None Update="Test\TestOP_RET\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCALL\Test.Z80">
+    <None Update="Test\TestOP_RET\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestJP\Test.BIN">
+    <None Update="Test\TestOP_CALL\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestJP\Test.Z80">
+    <None Update="Test\TestOP_CALL\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestEXX\Test.BIN">
+    <None Update="Test\TestOP_JP\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestEXX\Test.Z80">
+    <None Update="Test\TestOP_JP\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_16BitR_16BitR\Test.BIN">
+    <None Update="Test\TestOP_EXX\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_16BitR_16BitR\Test.Z80">
+    <None Update="Test\TestOP_EXX\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSR\Test.BIN">
+    <None Update="Test\TestOP_LD_16BitR_16BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSR\Test.Z80">
+    <None Update="Test\TestOP_LD_16BitR_16BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSL\Test.BIN">
+    <None Update="Test\TestOP_SR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSL\Test.Z80">
+    <None Update="Test\TestOP_SR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRR\Test.BIN">
+    <None Update="Test\TestOP_SL\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRR\Test.Z80">
+    <None Update="Test\TestOP_SL\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRL\Test.BIN">
+    <None Update="Test\TestOP_RR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestRL\Test.Z80">
+    <None Update="Test\TestOP_RR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCPL_And_NEG\Test.BIN">
+    <None Update="Test\TestOP_RL\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCPL_And_NEG\Test.Z80">
+    <None Update="Test\TestOP_RL\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestINT\Test.BIN">
+    <None Update="Test\TestOP_CPL_And_NEG\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestINT\Test.Z80">
+    <None Update="Test\TestOP_CPL_And_NEG\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCP_All\Test.BIN">
+    <None Update="Test\TestOP_INT\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCP_All\Test.Z80">
+    <None Update="Test\TestOP_INT\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_Address_8BitR\Test.BIN">
+    <None Update="Test\TestOP_CP_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_Address_8BitR\Test.Z80">
+    <None Update="Test\TestOP_CP_All\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPOP_16BitR\Test.BIN">
+    <None Update="Test\TestOP_LD_Address_8BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPOP_16BitR\Test.Z80">
+    <None Update="Test\TestOP_LD_Address_8BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestUI_AO\Test.BIN">
+    <None Update="Test\TestOP_POP_16BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestUI_AO\Test.Z80">
+    <None Update="Test\TestOP_POP_16BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestUI_INC_And_DEC\Test.BIN">
+    <None Update="Test\TestUD_AO\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestUI_INC_And_DEC\Test.Z80">
+    <None Update="Test\TestUD_AO\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestUI_LD\Test.BIN">
+    <None Update="Test\TestUD_INC_And_DEC\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestUI_LD\Test.Z80">
+    <None Update="Test\TestUD_INC_And_DEC\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestXOR_All\Test.BIN">
+    <None Update="Test\TestUD_LD\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestXOR_All\Test.Z80">
+    <None Update="Test\TestUD_LD\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestOR_All\Test.BIN">
+    <None Update="Test\TestOP_XOR_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestOR_All\Test.Z80">
+    <None Update="Test\TestOP_XOR_All\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSBC_Acc_All\Test.BIN">
+    <None Update="Test\TestOP_OR_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSBC_Acc_All\Test.Z80">
+    <None Update="Test\TestOP_OR_All\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestAND_All\Test.BIN">
+    <None Update="Test\TestOP_SBC_Acc_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestAND_All\Test.Z80">
+    <None Update="Test\TestOP_SBC_Acc_All\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSUB_Acc_All\Test.BIN">
+    <None Update="Test\TestOP_AND_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestSUB_Acc_All\Test.Z80">
+    <None Update="Test\TestOP_AND_All\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADD_Acc_All\Test.BIN">
+    <None Update="Test\TestOP_SUB_Acc_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestADD_Acc_All\Test.Z80">
+    <None Update="Test\TestOP_SUB_Acc_All\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestDEC_AllR\Test.BIN">
+    <None Update="Test\TestOP_ADD_Acc_All\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestDEC_AllR\Test.Z80">
+    <None Update="Test\TestOP_ADD_Acc_All\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestOP_DEC_AllR\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestOP_DEC_AllR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestADD_8BitR_A;;\Test.BIN">
@@ -252,58 +258,58 @@
     <None Update="Test\TestADD_8BitR_A;;\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestINC_AllR\Test.BIN">
+    <None Update="Test\TestOP_INC_AllR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestINC_AllR\Test.Z80">
+    <None Update="Test\TestOP_INC_AllR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_16BitR_16BitN\Test.BIN">
+    <None Update="Test\TestOP_LD_16BitR_16BitN\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_16BitR_16BitN\Test.Z80">
+    <None Update="Test\TestOP_LD_16BitR_16BitN\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_Address_16BitR\Test.BIN">
+    <None Update="Test\TestOP_LD_Address_16BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_Address_16BitR\Test.Z80">
+    <None Update="Test\TestOP_LD_Address_16BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_16BitR_Address\Test.BIN">
+    <None Update="Test\TestOP_LD_16BitR_Address\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_16BitR_Address\Test.Z80">
+    <None Update="Test\TestOP_LD_16BitR_Address\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_Address_8BitN\Test.BIN">
+    <None Update="Test\TestOP_LD_Address_8BitN\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_Address_8BitN\Test.Z80">
+    <None Update="Test\TestOP_LD_Address_8BitN\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPUSH_16BitR\Test.BIN">
+    <None Update="Test\TestOP_PUSH_16BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPUSH_16BitR\Test.Z80">
+    <None Update="Test\TestOP_PUSH_16BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_8BitR_Address\Test.BIN">
+    <None Update="Test\TestOP_LD_8BitR_Address\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_8BitR_Address\Test.Z80">
+    <None Update="Test\TestOP_LD_8BitR_Address\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_8BitR_8BitN\Test.BIN">
+    <None Update="Test\TestOP_LD_8BitR_8BitN\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_8BitR_8BitN\Test.Z80">
+    <None Update="Test\TestOP_LD_8BitR_8BitN\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_8BitR_8BitR\Test.BIN">
+    <None Update="Test\TestOP_LD_8BitR_8BitR\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLD_8BitR_8BitR\Test.Z80">
+    <None Update="Test\TestOP_LD_8BitR_8BitR\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -15,21 +15,20 @@ namespace AILZ80ASM
         public UInt16 Address { get; private set; }
         public byte[] Bin { get; private set; }
 
-        /*
-        public UInt16 Address { get; set; }
-        public string Label { get; set; }
-        public Mnemonic Mnemonic { get; set; }
-        public string Comment { get; set; }
-        */
-
         public LineItem(string lineString)
         {
             RawString = lineString;
+            //コメントを処理する
+            var indexCommnet = lineString.IndexOf(';');
+            if (indexCommnet != -1)
+            {
+                CommentString = lineString.Substring(indexCommnet);
+                lineString = lineString.Substring(0, indexCommnet);
+            }
 
-            var matched = Regex.Match(RawString, @"(?<lable>^.+:)?\s(?<mnemonic>[^;]+)(?<comment>;.+)*", RegexOptions.Singleline);
+            var matched = Regex.Match(lineString, @"(?<lable>^.+:)?\s(?<mnemonic>[^;]+)", RegexOptions.Singleline);
             LabelString = matched.Groups["lable"].Value;
             MnemonicString = matched.Groups["mnemonic"].Value;
-            CommentString = matched.Groups["comment"].Value;
         }
 
         public void SetLabel(ref ushort address, IList<Lable> labelList)
