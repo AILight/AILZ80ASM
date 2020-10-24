@@ -1,0 +1,4 @@
+﻿include ".\Test\TestPP_Include\Test.inc"
+	ld a, TRUE
+	;ld b, 0
+	ld c, FALSE

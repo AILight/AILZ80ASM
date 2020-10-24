@@ -7,10 +7,16 @@ namespace AILZ80ASM
 {
     public class FileItem
     {
-        private List<LineItem> Items { get; set; } = new List<LineItem>();
+        private Package Package { get; set; }
+        private string LoadFileName { get; set; }
+        internal List<LineItem> Items { get; set; } = new List<LineItem>();
+        internal string WorkGlobalLabelName { get; set; }
+        internal string WorkLabelName { get; set; }
 
-        public FileItem(FileInfo fileInfo)
+        public FileItem(FileInfo fileInfo, Package package)
         {
+            Package = package;
+
             using var streamReader = fileInfo.OpenText();
             Read(streamReader, fileInfo.Name);
             streamReader.Close();
@@ -24,11 +30,19 @@ namespace AILZ80ASM
         private void Read(StreamReader streamReader, string fileName)
         {
             string line;
+            var lineIndex = 0;
+            WorkGlobalLabelName = fileName;
+            WorkLabelName = "";
+
             while (!string.IsNullOrEmpty(line = streamReader.ReadLine()))
             {
-                var item = new LineItem(line);
+                var item = new LineItem(line, lineIndex, this);
                 Items.Add(item);
+
+                lineIndex++;
             }
+
+            LoadFileName = Path.GetFileNameWithoutExtension(fileName);
         }
 
         public byte[] Bin
@@ -49,21 +63,20 @@ namespace AILZ80ASM
             }
         }
 
-        public void SetLabel(ref UInt16 address, IList<Lable> labelList)
+        public void PreAssemble(ref UInt16 address)
         {
-            // ラベルを整理する
             foreach (var item in Items)
             {
-                item.SetLabel(ref address, labelList);
+                item.PreAssemble(ref address);
             }
         }
 
-        public void Assemble(ref UInt16 address, Lable[] labels)
+        public void Assemble()
         {
             // アセンブルを実行する
             foreach (var item in Items)
             {
-                item.Assemble(ref address, labels);
+                item.Assemble();
             }
         }
 

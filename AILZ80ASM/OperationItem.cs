@@ -1,44 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class LineItem
+    public class OperationItem
     {
-        private string LineString { get; set; }
-        private int LineIndex { get; set; }
-        internal FileItem FileItem { get; set; }
-        /* Configクラスへ移行
-        private const int MAX_INCLUDE_NEST = 10;
-        */
+        private string RawString { get; set; }
 
-        public string OperationString { get; private set; }
+        public string LabelString { get; private set; }
+        public string MnemonicString { get; private set; }
         public string CommentString { get; private set; }
-        //public Macro Macro { get; private set; }
-        public Lable Label { get; private set; }
-        public IOperationItem OperationItem { get; private set; }
         public UInt16 Address { get; private set; }
+        public byte[] Bin { get; private set; }
 
-
-        public byte[] Bin 
+        public OperationItem(string lineString)
         {
-            get 
-            {
-                return OperationItem == default(IOperationItem) ? new byte[] { } : OperationItem.Bin;
-            } 
-        }
-
-        public LineItem(string lineString, int lineIndex, FileItem fileItem)
-        {
-            LineString = lineString;
-            LineIndex = lineIndex;
-            FileItem = fileItem;
-
-            OperationItem = default(IOperationItem);
-
+            RawString = lineString;
             //コメントを処理する
             var indexCommnet = lineString.IndexOf(';');
             if (indexCommnet != -1)
@@ -46,70 +25,15 @@ namespace AILZ80ASM
                 CommentString = lineString.Substring(indexCommnet);
                 lineString = lineString.Substring(0, indexCommnet);
             }
+            //ラベルを処理する
+            var matched = Regex.Match(lineString, @"(?<lable>(^.+:)|(^\.([.]|[^\s])+))", RegexOptions.Singleline);
+            LabelString = matched.Groups["lable"].Value;
 
-            //命令を切り出す
-            OperationString = lineString.TrimEnd();
-
-            // ラベルを処理する
-            Label = new Lable(this);
+            MnemonicString = lineString.Substring(LabelString.Length).Trim();
         }
 
-        public void PreAssemble(ref UInt16 address)
+        public void SetLabel(ref ushort address, ref string nameSpace, IList<Lable> labelList)
         {
-            // Addressを設定
-            Address = address;
-
-            // 命令を判別する
-            OperationItem = OperationItem ?? OperationItemOPCode.Perse(this);　// OpeCode
-            OperationItem = OperationItem ?? OperationItemInclude.Perse(this); // Include
-            OperationItem = OperationItem ?? OperationItemSystem.Perse(this); // System
-
-            // ラベルを設定する
-            //Label.
-
-            // Addressを返す
-            address = OperationItem.NextAddress;
-        }
-
-        public void Assemble()
-        {
-            OperationItem.Assemble();
-        }
-
-            /*
-            public void PreProcess()
-            {
-
-                PreProcess(0);
-            }
-
-            public void PreProcess(int level)
-            {
-                // includeを処理する
-                // include "Macro.inc"
-                var matched = Regex.Match(OperationString, @"^include\s*""(?<include>.*)"".*", RegexOptions.Singleline);
-
-                if (matched.Success)
-                {
-                    if (level > MAX_INCLUDE_NEST)
-                    {
-                        throw new Exception($"Includeのネストは{MAX_INCLUDE_NEST}段までです");
-                    }
-
-                    var filePathString = matched.Groups["include"].Value;
-                    IncludeFileItem = new FileItem(new FileInfo(filePathString));
-                    IncludeFileItem.PreProcess(level + 1);
-                }
-                else
-                {
-                    OperationItem = new OperationItem(OperationString);
-                }
-            }
-            */
-
-            public void SetLabel(ref ushort address, ref string nameSpace, IList<Lable> labelList)
-        {
-            /*
             if (!string.IsNullOrEmpty(LabelString))
             {
                 if (LabelString[0] == '.')
@@ -142,12 +66,10 @@ namespace AILZ80ASM
                         break;
                 }
             }
-            */
         }
 
         public void Assemble(ref ushort address, Lable[] labelList)
         {
-            /*
             if (!string.IsNullOrEmpty(MnemonicString))
             {
                 Address = address;
@@ -168,7 +90,6 @@ namespace AILZ80ASM
                         break;
                 }
             }
-            */
         }
 
 

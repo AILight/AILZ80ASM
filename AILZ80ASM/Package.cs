@@ -13,25 +13,25 @@ namespace AILZ80ASM
         {
             foreach (var fileInfo in Files)
             {
-                FileItems.Add(new FileItem(fileInfo));
+                FileItems.Add(new FileItem(fileInfo, this));
             }
         }
 
         public void Assemble()
         {
-            var labelList = new List<Lable>();
-            labelList.Add(new Lable { LabelName = "$", DataLength = Lable.DataLengthEnum.DW, Value = 0 });
+            //var labelList = new List<Lable>();
+            //labelList.Add(new Lable { LabelName = "$", DataLength = Lable.DataLengthEnum.DW, Value = 0 });
+            
             var address = default(UInt16);
 
             foreach (var fileItem in FileItems)
             {
-                fileItem.SetLabel(ref address, labelList);
+                fileItem.PreAssemble(ref address);
             }
 
-            address = 0;
             foreach (var fileItem in FileItems)
             {
-                fileItem.Assemble(ref address, labelList.ToArray());
+                fileItem.Assemble();
             }
         }
 

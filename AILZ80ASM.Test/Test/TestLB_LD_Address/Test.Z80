@@ -1,0 +1,43 @@
+﻿	org $8000
+	ld a, 0
+addr:
+	ld a, (addr)
+	ld hl, addr
+	ld hl, (addr)
+	ld (addr), hl
+	ld bc, addr
+	ld bc, (addr)
+	ld (addr), bc
+	ld de, addr
+	ld de, (addr)
+	ld (addr), de
+	ld sp, addr
+	ld sp, (addr)
+	ld (addr), sp
+	ld ix, addr
+	ld ix, (addr)
+	ld (addr), ix
+	ld iy, addr
+	ld iy, (addr)
+	ld (addr), iy
+.test
+	ld a,(addr.test)
+	ld hl, addr.test
+	ld hl, (addr.test)
+	ld (addr.test), hl
+	ld bc, addr.test
+	ld bc, (addr.test)
+	ld (addr.test), bc
+	ld de, addr.test
+	ld de, (addr.test)
+	ld (addr.test), de
+	ld sp, addr.test
+	ld sp, (addr.test)
+	ld (addr.test), sp
+	ld ix, addr.test
+	ld ix, (addr.test)
+	ld (addr.test), ix
+	ld iy, addr.test
+	ld iy, (addr.test)
+	ld (addr.test), iy
+	
