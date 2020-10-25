@@ -83,6 +83,7 @@ namespace AILZ80ASM
         public string LongLabelName => DataType == DataTypeEnum.None ? "" : $"{GlobalLabelName}.{MiddleLabelName}";
         public string MiddleLabelName => DataType == DataTypeEnum.None ? "" : $"{LabelName}{ShortLabelName}";
         public string ShortLabelName => DataType == DataTypeEnum.None ? "" : (string.IsNullOrEmpty(SubLabelName) ? $"" : $".{SubLabelName}");
+        public bool HasValue => DataType == DataTypeEnum.Value || DataType == DataTypeEnum.ADDR;
         public string ValueString { get; private set; }
         public UInt16 Value { get; private set; }
         public DataTypeEnum DataType { get; private set; }
