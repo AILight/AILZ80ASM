@@ -49,5 +49,12 @@ namespace AILZ80ASM
         {
             return OPCode.Select(m => Convert.ToByte(m, 2)).ToArray();
         }
+
+        internal void Assemble(Label[] labels)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }

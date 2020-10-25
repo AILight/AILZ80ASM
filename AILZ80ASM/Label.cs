@@ -6,14 +6,14 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class Lable
+    public class Label
     {
         private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
         private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
         private static readonly string RegexPatternValue = @"\s+equ\s+(?<value>(.+))";
 
-        public Lable(LineItem lineItem)
+        public Label(LineItem lineItem)
         {
             //グローバルラベルの設定
             GlobalLabelName = lineItem.FileItem.WorkGlobalLabelName;
@@ -21,7 +21,7 @@ namespace AILZ80ASM
 
             //ラベルを処理する
             var lineString = lineItem.OperationString;
-            OperationCodeWithoutLabel = lineString;
+            OperationCodeWithoutLabel = lineString.Trim();
             DataType = DataTypeEnum.None;
 
             var matchedGlobalLable = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline);
@@ -89,12 +89,32 @@ namespace AILZ80ASM
         public DataTypeEnum DataType { get; private set; }
         public string OperationCodeWithoutLabel { get; private set; }
 
-        public void SetAddressLabel()
+        /// <summary>
+        /// アドレスをセット
+        /// </summary>
+        /// <param name="address"></param>
+        public void SetAddressLabel(ushort address)
         {
-            if (DataType == DataTypeEnum.Processing)
+            if (DataType == DataTypeEnum.Processing && string.IsNullOrEmpty(ValueString))
             {
-                Value = Convert.ToUInt16(new DataTable().Compute(ValueString, null));
+                DataType = DataTypeEnum.ADDR;
+                Value = address;
             }
+        }
+
+        /// <summary>
+        /// 値をセット
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="labels"></param>
+        public void SetValueLabel(ushort address, Label[] labels)
+        {
+            if (DataType == DataTypeEnum.Processing && !string.IsNullOrEmpty(ValueString))
+            {
+                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, labels);
+                DataType = DataTypeEnum.Value;
+            }
+            
         }
     }
 }

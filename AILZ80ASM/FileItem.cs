@@ -71,12 +71,20 @@ namespace AILZ80ASM
             }
         }
 
-        public void Assemble()
+        public void SetValueLabel(Label[] labels)
+        {
+            foreach (var item in Items)
+            {
+                item.SetValueLabel(labels);
+            }
+        }
+
+        public void Assemble(Label[] labels)
         {
             // アセンブルを実行する
             foreach (var item in Items)
             {
-                item.Assemble();
+                item.Assemble(labels);
             }
         }
 

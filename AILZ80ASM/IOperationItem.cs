@@ -6,11 +6,10 @@ namespace AILZ80ASM
 {
     public interface IOperationItem
     {
-        static IOperationItem Perse(LineItem lineItem) => default(IOperationItem);
-        void Assemble();
+        void Assemble(Label[] labels);
 
         byte[] Bin { get; }
-        UInt16 NextAddress { get; }
-
+        UInt16 Address { get; }
+        UInt16 NextAddress { get;}
     }
 }

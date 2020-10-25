@@ -19,10 +19,8 @@ namespace AILZ80ASM
 
         public void Assemble()
         {
-            //var labelList = new List<Lable>();
-            //labelList.Add(new Lable { LabelName = "$", DataLength = Lable.DataLengthEnum.DW, Value = 0 });
-            
             var address = default(UInt16);
+            var labels = new Label[] { };
 
             foreach (var fileItem in FileItems)
             {
@@ -31,7 +29,12 @@ namespace AILZ80ASM
 
             foreach (var fileItem in FileItems)
             {
-                fileItem.Assemble();
+                fileItem.SetValueLabel(labels);
+            }
+
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.Assemble(labels);
             }
         }
 

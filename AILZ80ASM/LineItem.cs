@@ -18,7 +18,7 @@ namespace AILZ80ASM
         public string OperationString { get; private set; }
         public string CommentString { get; private set; }
         //public Macro Macro { get; private set; }
-        public Lable Label { get; private set; }
+        public Label Label { get; private set; }
         public IOperationItem OperationItem { get; private set; }
         public UInt16 Address { get; private set; }
 
@@ -51,29 +51,33 @@ namespace AILZ80ASM
             OperationString = lineString.TrimEnd();
 
             // ラベルを処理する
-            Label = new Lable(this);
+            Label = new Label(this);
         }
 
         public void PreAssemble(ref UInt16 address)
         {
-            // Addressを設定
-            Address = address;
-
             // 命令を判別する
-            OperationItem = OperationItem ?? OperationItemOPCode.Perse(this);　// OpeCode
-            OperationItem = OperationItem ?? OperationItemInclude.Perse(this); // Include
-            OperationItem = OperationItem ?? OperationItemSystem.Perse(this); // System
+            OperationItem = OperationItem ?? OperationItemOPCode.Perse(this, address);　// OpeCode
+            OperationItem = OperationItem ?? OperationItemInclude.Perse(this, address); // Include
+            OperationItem = OperationItem ?? OperationItemSystem.Perse(this, address); // System
 
-            // ラベルを設定する
-            //Label.
-
-            // Addressを返す
+            // Addressを設定
+            Address = OperationItem.Address;
             address = OperationItem.NextAddress;
+
+            // ラベル設定
+            Label.SetAddressLabel(Address);
+
         }
 
-        public void Assemble()
+        public void SetValueLabel(Label[] labels)
         {
-            OperationItem.Assemble();
+            Label.SetValueLabel(Address, labels);
+        }
+
+        public void Assemble(Label[] labels)
+        {
+            OperationItem.Assemble(labels);
         }
 
             /*
@@ -107,7 +111,7 @@ namespace AILZ80ASM
             }
             */
 
-            public void SetLabel(ref ushort address, ref string nameSpace, IList<Lable> labelList)
+            public void SetLabel(ref ushort address, ref string nameSpace, IList<Label> labelList)
         {
             /*
             if (!string.IsNullOrEmpty(LabelString))
@@ -145,7 +149,7 @@ namespace AILZ80ASM
             */
         }
 
-        public void Assemble(ref ushort address, Lable[] labelList)
+        public void Assemble(ref ushort address, Label[] labelList)
         {
             /*
             if (!string.IsNullOrEmpty(MnemonicString))

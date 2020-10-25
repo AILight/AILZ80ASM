@@ -6,18 +6,38 @@ namespace AILZ80ASM
 {
     public class OperationItemOPCode : IOperationItem
     {
-        public static IOperationItem Perse(LineItem lineItem)
+        private OPCodeResult OPCodeResult { get; set; }
+
+        private OperationItemOPCode(OPCodeResult opCodeResult, UInt16 address)
         {
-            return default(IOperationItem);
+            OPCodeResult = opCodeResult;
+            Address = address;
         }
 
-        public void Assemble()
+        public static IOperationItem Perse(LineItem lineItem, UInt16 address)
         {
-            throw new NotImplementedException();
+            var returnValue = default(OperationItemOPCode);
+            var code = lineItem.Label.OperationCodeWithoutLabel;
+            if (!string.IsNullOrEmpty(code))
+            {
+                var opCodeResult = OPCodeTable.GetOPCodeItem(code);
+                if (opCodeResult != default(OPCodeResult))
+                {
+                    returnValue = new OperationItemOPCode(opCodeResult, address);
+                }
+            }
+
+            return returnValue;
         }
 
-        public byte[] Bin => new byte[] { };
+        public void Assemble(Label[] labels)
+        {
+            OPCodeResult.Assemble(labels);
+        }
 
-        public ushort NextAddress => throw new NotImplementedException();
+        public byte[] Bin => OPCodeResult.ToBin();
+
+        public UInt16 Address { get; set; }
+        public UInt16 NextAddress => (UInt16)(Address + Bin.Length);
     }
 }

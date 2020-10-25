@@ -15,6 +15,6 @@ namespace AILZ80ASM
 
         public LineItem LineItem { get; set; }
         public ErrorTypeEnum ErrorType { get; set; }
-        public string ErrorMessage { get; set; }
+        public string ErrorMessageString { get; set; }
     }
 }

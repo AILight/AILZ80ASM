@@ -32,7 +32,8 @@ namespace AILZ80ASM
             MnemonicString = lineString.Substring(LabelString.Length).Trim();
         }
 
-        public void SetLabel(ref ushort address, ref string nameSpace, IList<Lable> labelList)
+        /*
+        public void SetLabel(ref ushort address, ref string nameSpace, IList<Label> labelList)
         {
             if (!string.IsNullOrEmpty(LabelString))
             {
@@ -40,11 +41,11 @@ namespace AILZ80ASM
                 {
                     var tmpNameSpace = nameSpace;
                     var label = labelList.Last(_ => _.NameSpace == tmpNameSpace && _.LocalLabelName == "");
-                    labelList.Add(new Lable { NameSpace = nameSpace, LabelName = LabelString, LocalLabelName = LabelString.Substring(1), DataLength = Lable.DataLengthEnum.DW, Value = address });
+                    labelList.Add(new Label { NameSpace = nameSpace, LabelName = LabelString, LocalLabelName = LabelString.Substring(1), DataLength = Label.DataLengthEnum.DW, Value = address });
                 }
                 else
                 {
-                    labelList.Add(new Lable { NameSpace = nameSpace, LabelName = LabelString.Substring(0, LabelString.Length - 1), LocalLabelName = "", DataLength = Lable.DataLengthEnum.DW, Value = address });
+                    labelList.Add(new Label { NameSpace = nameSpace, LabelName = LabelString.Substring(0, LabelString.Length - 1), LocalLabelName = "", DataLength = Label.DataLengthEnum.DW, Value = address });
                 }
             }
 
@@ -67,13 +68,14 @@ namespace AILZ80ASM
                 }
             }
         }
+        */
 
-        public void Assemble(ref ushort address, Lable[] labelList)
+        public void Assemble(ref ushort address, Label[] labelList)
         {
             if (!string.IsNullOrEmpty(MnemonicString))
             {
                 Address = address;
-                var opCodeItem = OPCodeTable.GetOPCodeItem(MnemonicString, labelList);
+                var opCodeItem = OPCodeTable.GetOPCodeItem(MnemonicString);
                 switch (opCodeItem.OPCodeStatus)
                 {
                     case OPCodeResult.OPCodeStatusEnum.ORG:

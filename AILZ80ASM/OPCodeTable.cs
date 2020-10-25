@@ -251,7 +251,7 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "RRD", OPCode = new[] { "11101101", "01100111" }, M = 5, T = 18 },
             };
 
-        public static OPCodeResult GetOPCodeItem(string code, Lable[] lables)
+        public static OPCodeResult GetOPCodeItem(string code)
         {
             var matched = Regex.Match(code, RegexPatternOP, RegexOptions.Singleline);
 
@@ -259,24 +259,11 @@ namespace AILZ80ASM
             var op2 = matched.Groups["op2"].Value.ToUpper();
             var op3 = matched.Groups["op3"].Value.ToUpper();
 
-            if (op1 == "ORG")
-            {
-                var values = GetNumber16(op2);
-                var address = Convert.ToUInt16(values[0] + values[1], 2);
-                return new OPCodeResult(address);
-            }
-
-            if (op1 == "DB")
-            {
-                var vales = (op2 + (!string.IsNullOrEmpty(op3) ? "," : "") + op3).Split(',').Select(m => GetNumber8(m.Trim())).ToArray();
-                return new OPCodeResult(vales);
-            }
-
             // 無効命令
             if ((op1 == "PUSH" && op2 == "SP" && op3 == "") ||
                 (op1 == "POP" && op2 == "SP" && op3 == ""))
             {
-                throw new Exception($"無効な命令が指定されました。{code}");
+                throw new ErrorMessageException(ErrorMessage.ErrorTypeEnum.Error, $"無効な命令が指定されました。{code}");
             }
 
             foreach (var opCodeItem in OPCodeItems)
