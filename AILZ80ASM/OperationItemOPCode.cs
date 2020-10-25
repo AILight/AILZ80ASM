@@ -7,10 +7,12 @@ namespace AILZ80ASM
     public class OperationItemOPCode : IOperationItem
     {
         private OPCodeResult OPCodeResult { get; set; }
+        private LineItem LineItem { get; set; }
 
-        private OperationItemOPCode(OPCodeResult opCodeResult, UInt16 address)
+        private OperationItemOPCode(OPCodeResult opCodeResult, LineItem lineItem, UInt16 address)
         {
             OPCodeResult = opCodeResult;
+            LineItem = lineItem;
             Address = address;
         }
 
@@ -23,7 +25,7 @@ namespace AILZ80ASM
                 var opCodeResult = OPCodeTable.GetOPCodeItem(code);
                 if (opCodeResult != default(OPCodeResult))
                 {
-                    returnValue = new OperationItemOPCode(opCodeResult, address);
+                    returnValue = new OperationItemOPCode(opCodeResult, lineItem, address);
                 }
             }
 
@@ -32,12 +34,12 @@ namespace AILZ80ASM
 
         public void Assemble(Label[] labels)
         {
-            OPCodeResult.Assemble(labels);
+            OPCodeResult.Assemble(LineItem, labels);
         }
 
         public byte[] Bin => OPCodeResult.ToBin();
 
         public UInt16 Address { get; set; }
-        public UInt16 NextAddress => (UInt16)(Address + Bin.Length);
+        public UInt16 NextAddress => (UInt16)(Address + OPCodeResult.OPCode.Length);
     }
 }

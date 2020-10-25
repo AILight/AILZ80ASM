@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -20,13 +21,15 @@ namespace AILZ80ASM
         public void Assemble()
         {
             var address = default(UInt16);
-            var labels = new Label[] { };
+            var labelList = new List<Label>();
 
             foreach (var fileItem in FileItems)
             {
                 fileItem.PreAssemble(ref address);
+                labelList.AddRange(fileItem.Items.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label));
             }
 
+            var labels = labelList.ToArray();
             foreach (var fileItem in FileItems)
             {
                 fileItem.SetValueLabel(labels);
@@ -49,7 +52,6 @@ namespace AILZ80ASM
 
         public void Save(Stream stream)
         {
-
             foreach (var item in FileItems)
             {
                 var bin = item.Bin;
