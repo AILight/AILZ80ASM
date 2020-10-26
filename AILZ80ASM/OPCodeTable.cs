@@ -11,7 +11,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)]+)*\s*,*\s*(?<op3>.+)*";
         private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>.+)\)";
         private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>.+)\)";
-        private static readonly string RegexPatternAddress = @"^\((?<addr>[\w|$]+)\)$";
+        private static readonly string RegexPatternAddress = @"^\((?<addr>.+)\)$";
 
         private static OPCodeItem[] OPCodeItems =
             {
@@ -287,15 +287,12 @@ namespace AILZ80ASM
                         var bbb = "";
                         var ccc = "";
                         var ttt = "";
-                        var e8 = "";
-                        var indexOffset = "";
-                        var value8 = "";
-                        var value16 = new string[2];
+                        var opCodeLabelList = new List<OPCodeLabel>();
 
-                        if (!ProcessMark(tableOp1, op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref e8, ref indexOffset, ref value8, ref value16))
+                        if (!ProcessMark(tableOp1, op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, opCodeLabelList))
                             continue;
 
-                        if (!ProcessMark(tableOp1, op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref e8, ref indexOffset, ref value8, ref value16))
+                        if (!ProcessMark(tableOp1, op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, opCodeLabelList))
                             continue;
 
                         var opcodes = opCodeItem.OPCode;
@@ -304,21 +301,16 @@ namespace AILZ80ASM
                                                         .Replace("RP", rp)
                                                         .Replace("CCC", ccc)
                                                         .Replace("BBB", bbb)
-                                                        .Replace("TTT", ttt)
-                                                        .Replace("IIIIIIII", indexOffset)
-                                                        .Replace("NNNNNNNN", value8)
-                                                        .Replace("EEEEEEEE", e8)
-                                                        .Replace("HHHHHHHH", value16[0])
-                                                        .Replace("LLLLLLLL", value16[1])).ToArray();
+                                                        .Replace("TTT", ttt)).ToArray();
 
-                        return new OPCodeResult(opcodes, opCodeItem.M, opCodeItem.T);
+                        return new OPCodeResult(opcodes, opCodeItem.M, opCodeItem.T, opCodeLabelList.ToArray());
                     }
                 }
             }
             return null;
         }
 
-        private static bool ProcessMark (string op, string arg, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, ref string e8, ref string indexOffset, ref string value8, ref string[] value16)
+        private static bool ProcessMark (string op, string arg, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, IList<OPCodeLabel> opCodeLabelList)
         {
             switch (tableOp)
             {
@@ -385,13 +377,13 @@ namespace AILZ80ASM
                     if (!IsNumber8(arg))
                         return false;
 
-                    value8 = GetNumber8(arg);
+                    opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value8, arg));
                     break;
                 case "e":
                     if (!IsNumber8(arg) || IsConditionSymbol(arg))
                         return false;
 
-                    e8 = GetNumber8(arg);
+                    opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.e8, arg));
                     break;
                 case "nn":
                     if (!IsNumber16(arg))
@@ -400,13 +392,17 @@ namespace AILZ80ASM
                     if ((IsJPOpecode(op) || IsCALLOpecode(op)) && IsConditionSymbol(arg))
                         return false;
 
-                    value16 = GetNumber16(arg);
+                    opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value16, arg));
                     break;
                 case "(nn)":
                     if (!IsAddrNumber16(arg))
                         return false;
 
-                    value16 = GetAddNumber16(arg);
+                    {
+                        var matchedAddr = Regex.Match(arg, RegexPatternAddress);
+                        var value = matchedAddr.Groups["addr"].Value;
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value16, value));
+                    }
                     break;
                 case "(HL)":
                     if (!IsAddrHLRegister(arg))
@@ -430,7 +426,7 @@ namespace AILZ80ASM
                     {
                         var matchedIndex = Regex.Match(arg, RegexPatternIXReg);
                         var value = matchedIndex.Groups["value"].Value;
-                        indexOffset = GetNumber8(value);
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.IndexOffset, value));
                     }
                     break;
                 case "(IY+d)":
@@ -439,14 +435,19 @@ namespace AILZ80ASM
                     {
                         var matchedIndex = Regex.Match(arg, RegexPatternIYReg);
                         var value = matchedIndex.Groups["value"].Value;
-                        indexOffset = GetNumber8(value);
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.IndexOffset, value));
                     }
                     break;
                 case "(n)":
                     if (!IsPortNumber(arg))
                         return false;
 
-                    value8 = GetPortNumber(arg);
+                    {
+                        var matchedAddr = Regex.Match(arg, RegexPatternAddress);
+                        var value = matchedAddr.Groups["addr"].Value;
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value8, value));
+                    }
+
                     break;
                 case "(C)":
                     return arg == tableOp;
@@ -472,37 +473,13 @@ namespace AILZ80ASM
             return true;
         }
 
-        private static string[] GetAddNumber16(string source)
-        {
-            var matched = Regex.Match(source, RegexPatternAddress);
-            return GetNumber16(matched.Groups["addr"].Value);
-        }
-
-        private static string[] GetNumber16(string source)
-        {
-            var returnValues = new string[2];
-            var tmpValue = "";
-            if (source.IndexOf("$") == 0)
-            {
-                tmpValue = Convert.ToString(Convert.ToInt16(source.Replace("$", ""), 16), 2).PadLeft(16, '0');
-            }
-            else
-            {
-                tmpValue = Convert.ToString(Convert.ToInt16(source, 16), 2).PadLeft(16, '0');
-            }
-            returnValues[0] = tmpValue.Substring(0, 8);
-            returnValues[1] = tmpValue.Substring(8);
-
-            return returnValues;
-        }
-
         private static bool IsNumber8(string source)
         {
             if (IsAllRegister(source))
                 return false;
 
             // ()で囲まれた値は外す
-            if (Regex.Match(source, @"^\([\w|$]+\)$").Success)
+            if (Regex.Match(source, @"^\(.+\)$").Success)
                 return false;
 
             return true;
@@ -511,25 +488,6 @@ namespace AILZ80ASM
         private static bool IsPortNumber(string source)
         {
             return Regex.IsMatch(source, RegexPatternAddress) && source != "(C)";
-        }
-
-        private static string GetPortNumber(string source)
-        {
-            var matched = Regex.Match(source, RegexPatternAddress);
-            return GetNumber8(matched.Groups["addr"].Value);
-        }
-
-        private static string GetNumber8(string source)
-        {
-            if (source.IndexOf("$") == 0 || source.LastIndexOf("H") == (source.Length - 1))
-            {
-                return Convert.ToString(Convert.ToByte(source.Replace("$", "").Replace("H", ""), 16), 2).PadLeft(8, '0');
-            }
-            else
-            {
-                var tmpString = Convert.ToString(Convert.ToSByte(source), 2).PadLeft(8, '0');
-                return tmpString.Substring(tmpString.Length - 8);
-            }
         }
 
         private static bool IsNumber3Bit(string source)
@@ -551,18 +509,45 @@ namespace AILZ80ASM
 
         private static bool IsNumberRst(string source)
         {
-            if (!IsNumber8(source))
-                return false;
-            
-            var value = GetNumber8(source);
-            return (value.Substring(0, 2) == "00" && value.Substring(5, 3) == "000");
+            switch (source)
+            {
+                case "00H":
+                case "08H":
+                case "10H":
+                case "18H":
+                case "20H":
+                case "28H":
+                case "30H":
+                case "38H":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         private static string GetNumberRst(string source)
         {
-            var value = GetNumber8(source);
-
-            return value.Substring(2, 3);
+            switch (source)
+            {
+                case "00H":
+                    return "000";
+                case "08H":
+                    return "001";
+                case "10H":
+                    return "010";
+                case "18H":
+                    return "011";
+                case "20H":
+                    return "100";
+                case "28H":
+                    return "101";
+                case "30H":
+                    return "110";
+                case "38H":
+                    return "111";
+                default:
+                    return "";
+            }
         }
 
         private static bool IsAllRegister(string source)
