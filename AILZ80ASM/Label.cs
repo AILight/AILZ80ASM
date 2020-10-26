@@ -16,8 +16,8 @@ namespace AILZ80ASM
         public Label(LineItem lineItem)
         {
             //グローバルラベルの設定
-            GlobalLabelName = lineItem.FileItem.WorkGlobalLabelName;
-            LabelName = lineItem.FileItem.WorkLabelName;
+            GlobalLabelName = lineItem.FileItem.WorkGlobalLabelName.ToUpper();
+            LabelName = lineItem.FileItem.WorkLabelName.ToUpper();
 
             //ラベルを処理する
             var lineString = lineItem.OperationString;
@@ -28,10 +28,10 @@ namespace AILZ80ASM
             if (matchedGlobalLable.Success)
             {
                 // ラベルマッチ
-                GlobalLabelName = matchedGlobalLable.Groups["lable"].Value;
+                GlobalLabelName = matchedGlobalLable.Groups["lable"].Value.ToUpper();
                 lineItem.FileItem.WorkGlobalLabelName = GlobalLabelName;
 
-                OperationCodeWithoutLabel = lineString.Substring(GlobalLabelName.Length).Trim();
+                OperationCodeWithoutLabel = lineString.Substring(GlobalLabelName.Length + 2).Trim();
                 DataType = DataTypeEnum.Processing;
             }
             else
@@ -40,10 +40,10 @@ namespace AILZ80ASM
                 if (matchedLable.Success)
                 {
                     // ラベルマッチ
-                    LabelName = matchedLable.Groups["lable"].Value;
+                    LabelName = matchedLable.Groups["lable"].Value.ToUpper();
                     lineItem.FileItem.WorkLabelName = LabelName;
 
-                    OperationCodeWithoutLabel = lineString.Substring(LabelName.Length).Trim();
+                    OperationCodeWithoutLabel = lineString.Substring(LabelName.Length + 1).Trim();
                     DataType = DataTypeEnum.Processing;
                 }
                 else
@@ -51,8 +51,8 @@ namespace AILZ80ASM
                     var matchedSubLable = Regex.Match(lineString, RegexPatternSubLabel, RegexOptions.Singleline);
                     if (matchedSubLable.Success)
                     {
-                        SubLabelName = matchedLable.Groups["lable"].Value;
-                        OperationCodeWithoutLabel = lineString.Substring(SubLabelName.Length).Trim();
+                        SubLabelName = matchedSubLable.Groups["lable"].Value.ToUpper().Substring(1);
+                        OperationCodeWithoutLabel = lineString.Substring(SubLabelName.Length + 1).Trim();
                         DataType = DataTypeEnum.Processing;
                     }
                 }
@@ -62,7 +62,7 @@ namespace AILZ80ASM
                 var matchedValue = Regex.Match(OperationCodeWithoutLabel, RegexPatternValue, RegexOptions.Singleline);
                 if (matchedValue.Success)
                 {
-                    ValueString = matchedValue.Groups["value"].Value;
+                    ValueString = matchedValue.Groups["value"].Value.ToUpper();
                     OperationCodeWithoutLabel = "";
                 }
             }

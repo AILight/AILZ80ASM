@@ -26,7 +26,7 @@ namespace AILZ80ASM
             switch (op1)
             {
                 case "ORG":
-                    op2 = AIMath.ReplaceHexadecimal(op2, address);
+                    op2 = AIMath.Replace16Number(op2, address);
                     address = Convert.ToUInt16(op2);
 
                     returnValue = new OperationItemSystem { Address = address, NextAddress = address, Bin = new byte[] { } };

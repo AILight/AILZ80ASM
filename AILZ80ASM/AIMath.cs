@@ -76,8 +76,7 @@ namespace AILZ80ASM
         private static string ReplaceAll(string value, string globalLabelName, string lableName, ushort address, Label[] labels)
         {
             //16進数の置き換え
-            value = ReplaceHexadecimal(value, address);
-            value = ReplaceDollarHexadecimal(value, address);
+            value = Replace16Number(value, address);
 
             //2進数の置き換え
             value = ReplaceBinaryNumber(value);
@@ -112,7 +111,8 @@ namespace AILZ80ASM
 
                 label = label ?? lables.Where(m => m.HasValue && m.LongLabelName == matchResultString).FirstOrDefault();
                 label = label ?? lables.Where(m => m.HasValue && m.MiddleLabelName == matchResultString).FirstOrDefault();
-                label = label ?? lables.Where(m => m.HasValue && m.ShortLabelName == matchResultString).FirstOrDefault();
+                label = label ?? lables.Where(m => m.HasValue && m.GlobalLabelName == globalLabelName && m.LabelName == matchResultString).FirstOrDefault();
+                label = label ?? lables.Where(m => m.HasValue && m.GlobalLabelName == globalLabelName && m.LabelName == lableName && m.ShortLabelName == matchResultString).FirstOrDefault();
 
                 resultValue += workValue.Substring(0, index);
                 resultValue += label?.Value.ToString("0") ?? matchResultString;
@@ -127,13 +127,27 @@ namespace AILZ80ASM
         }
 
         /// <summary>
+        /// 16進数の変換
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static string Replace16Number(string value, UInt16 address)
+        {
+            value = ReplaceHexadecimal(value, address);
+            value = ReplaceDollarHexadecimal(value, address);
+
+            return value;
+        }
+
+        /// <summary>
         /// 16進数の変換(H)
         /// </summary>
         /// <param name="value"></param>
         /// <param name="globalLabelName"></param>
         /// <param name="lableName"></param>
         /// <param name="lables"></param>
-        public static string ReplaceHexadecimal(string value, UInt16 address)
+        private static string ReplaceHexadecimal(string value, UInt16 address)
         {
             var resultValue = "";
             var workValue = value;
@@ -176,7 +190,7 @@ namespace AILZ80ASM
         /// <param name="globalLabelName"></param>
         /// <param name="lableName"></param>
         /// <param name="lables"></param>
-        public static string ReplaceDollarHexadecimal(string value, UInt16 address)
+        private static string ReplaceDollarHexadecimal(string value, UInt16 address)
         {
             var resultValue = "";
             var workValue = value;

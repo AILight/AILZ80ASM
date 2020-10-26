@@ -56,14 +56,20 @@ namespace AILZ80ASM
 
         public void PreAssemble(ref UInt16 address)
         {
+            // Addressの設定
+            Address = address;
+
             // 命令を判別する
             OperationItem = OperationItem ?? OperationItemOPCode.Perse(this, address);　// OpeCode
             OperationItem = OperationItem ?? OperationItemInclude.Perse(this, address); // Include
             OperationItem = OperationItem ?? OperationItemSystem.Perse(this, address); // System
 
             // Addressを設定
-            Address = OperationItem.Address;
-            address = OperationItem.NextAddress;
+            if (OperationItem != default(IOperationItem))
+            {
+                Address = OperationItem.Address;
+                address = OperationItem.NextAddress;
+            }
 
             // ラベル設定
             Label.SetAddressLabel(Address);
@@ -76,7 +82,7 @@ namespace AILZ80ASM
 
         public void Assemble(Label[] labels)
         {
-            OperationItem.Assemble(labels);
+            OperationItem?.Assemble(labels);
         }
     }
 }

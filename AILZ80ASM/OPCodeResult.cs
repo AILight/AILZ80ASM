@@ -1,47 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static AILZ80ASM.OPCodeLabel;
 
 namespace AILZ80ASM
 {
     public class OPCodeResult
     {
-        public enum ValueTypeEnum
-        {
-            None,
-            IndexOffset,
-            Value8,
-            e8,
-            Value16
-        }
-
-        //public UInt16 Address { get; private set; }
         public string[] OPCode { get; private set; }
         public int M { get; private set; }
         public int T { get; private set; }
 
-        private ValueTypeEnum ValueType { get; set; }
-        private string ValueString { get; set; }
+        private OPCodeLabel[] OPCodeLabels { get; set; }
 
         public OPCodeResult(OPCodeItem opCodeItem)
-            : this(opCodeItem, ValueTypeEnum.None, "")
+            : this(opCodeItem, new OPCodeLabel[] { })
         {
 
         }
 
-        public OPCodeResult(OPCodeItem opCodeItem, ValueTypeEnum valueType, string valueString)
-            : this(opCodeItem.OPCode, opCodeItem.M, opCodeItem.T, valueType, valueString)
+        public OPCodeResult(OPCodeItem opCodeItem, OPCodeLabel[] opCodeLabels)
+            : this(opCodeItem.OPCode, opCodeItem.M, opCodeItem.T, opCodeLabels)
         {
         }
 
-        public OPCodeResult(string[] opCode, int m, int t, ValueTypeEnum valueType, string valueString)
+        public OPCodeResult(string[] opCode, int m, int t, OPCodeLabel[] opCodeLabels)
         {
-            ValueType = ValueTypeEnum.None;
             OPCode = opCode;
             M = m;
             T = t;
-            ValueType = valueType;
-            ValueString = valueString;
+            OPCodeLabels = opCodeLabels;
         }
 
         public byte[] ToBin()
@@ -52,50 +40,45 @@ namespace AILZ80ASM
         public void Assemble(LineItem lineItem, Label[] labels)
         {
             var byteList = new List<byte>();
-            if (ValueType != ValueTypeEnum.None)
+            foreach (var opCodeLabel in OPCodeLabels)
             {
-                var indexOffset = "";
-                var value8 = "";
-                var e8 = "";
-                var value16 = new[] { "", "" };
-
-                switch (ValueType)
+                switch (opCodeLabel.ValueType)
                 {
                     case ValueTypeEnum.IndexOffset:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(ValueString, lineItem, labels);
-                            indexOffset = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineItem, labels);
+                            var indexOffset = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            OPCode = OPCode.Select(m => m.Replace("IIIIIIII", indexOffset)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.Value8:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(ValueString, lineItem, labels);
-                            value8 = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineItem, labels);
+                            var value8 = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            OPCode = OPCode.Select(m => m.Replace("NNNNNNNN", value8)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.e8:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(ValueString, lineItem, labels);
-                            e8 = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineItem, labels);
+                            var e8 = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            OPCode = OPCode.Select(m => m.Replace("EEEEEEEE", e8)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.Value16:
                         {
-                            var tmpValue16 = AIMath.ConvertToUInt16(ValueString, lineItem, labels);
+                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineItem, labels);
                             var tmpValue16String = Convert.ToString(tmpValue16, 2).PadLeft(16, '0');
+                            var value16 = new[] { "", "" };
                             value16[0] = tmpValue16String.Substring(0, 8);
                             value16[1] = tmpValue16String.Substring(8);
+                            OPCode = OPCode.Select(m => m.Replace("HHHHHHHH", value16[0])
+                                                         .Replace("LLLLLLLL", value16[1])).ToArray();
                         }
                         break;
                     default:
                         break;
                 }
-
-                OPCode = OPCode.Select(m => m.Replace("IIIIIIII", indexOffset)
-                                             .Replace("NNNNNNNN", value8)
-                                             .Replace("EEEEEEEE", e8)
-                                             .Replace("HHHHHHHH", value16[0])
-                                             .Replace("LLLLLLLL", value16[1])).ToArray();
             }
         }
     }

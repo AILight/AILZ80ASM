@@ -11,7 +11,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)]+)*\s*,*\s*(?<op3>.+)*";
         private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>.+)\)";
         private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>.+)\)";
-        private static readonly string RegexPatternAddress = @"^\((?<addr>[\w|$]+)\)$";
+        private static readonly string RegexPatternAddress = @"^\((?<addr>.+)\)$";
 
         private static OPCodeItem[] OPCodeItems =
             {
@@ -287,19 +287,12 @@ namespace AILZ80ASM
                         var bbb = "";
                         var ccc = "";
                         var ttt = "";
-                        /*
-                        var e8 = "";
-                        var indexOffset = "";
-                        var value8 = "";
-                        var value16 = new string[2];
-                        */
-                        var dataType = OPCodeResult.ValueTypeEnum.None;
-                        var valueString = "";
+                        var opCodeLabelList = new List<OPCodeLabel>();
 
-                        if (!ProcessMark(tableOp1, op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref dataType, ref valueString))
+                        if (!ProcessMark(tableOp1, op2, 0, tableOp2, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, opCodeLabelList))
                             continue;
 
-                        if (!ProcessMark(tableOp1, op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, ref dataType, ref valueString))
+                        if (!ProcessMark(tableOp1, op3, 1, tableOp3, ref dddd, ref ssss, ref rp, ref bbb, ref ccc, ref ttt, opCodeLabelList))
                             continue;
 
                         var opcodes = opCodeItem.OPCode;
@@ -310,14 +303,14 @@ namespace AILZ80ASM
                                                         .Replace("BBB", bbb)
                                                         .Replace("TTT", ttt)).ToArray();
 
-                        return new OPCodeResult(opcodes, opCodeItem.M, opCodeItem.T, dataType, valueString);
+                        return new OPCodeResult(opcodes, opCodeItem.M, opCodeItem.T, opCodeLabelList.ToArray());
                     }
                 }
             }
             return null;
         }
 
-        private static bool ProcessMark (string op, string arg, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, ref OPCodeResult.ValueTypeEnum dataType, ref string valueString)
+        private static bool ProcessMark (string op, string arg, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, IList<OPCodeLabel> opCodeLabelList)
         {
             switch (tableOp)
             {
@@ -384,15 +377,13 @@ namespace AILZ80ASM
                     if (!IsNumber8(arg))
                         return false;
 
-                    dataType = OPCodeResult.ValueTypeEnum.Value8;
-                    valueString = arg;
+                    opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value8, arg));
                     break;
                 case "e":
                     if (!IsNumber8(arg) || IsConditionSymbol(arg))
                         return false;
 
-                    dataType = OPCodeResult.ValueTypeEnum.e8;
-                    valueString = arg;
+                    opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.e8, arg));
                     break;
                 case "nn":
                     if (!IsNumber16(arg))
@@ -401,15 +392,17 @@ namespace AILZ80ASM
                     if ((IsJPOpecode(op) || IsCALLOpecode(op)) && IsConditionSymbol(arg))
                         return false;
 
-                    dataType = OPCodeResult.ValueTypeEnum.Value16;
-                    valueString = arg;
+                    opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value16, arg));
                     break;
                 case "(nn)":
                     if (!IsAddrNumber16(arg))
                         return false;
 
-                    dataType = OPCodeResult.ValueTypeEnum.Value16;
-                    valueString = arg;
+                    {
+                        var matchedAddr = Regex.Match(arg, RegexPatternAddress);
+                        var value = matchedAddr.Groups["addr"].Value;
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value16, value));
+                    }
                     break;
                 case "(HL)":
                     if (!IsAddrHLRegister(arg))
@@ -433,8 +426,7 @@ namespace AILZ80ASM
                     {
                         var matchedIndex = Regex.Match(arg, RegexPatternIXReg);
                         var value = matchedIndex.Groups["value"].Value;
-                        dataType = OPCodeResult.ValueTypeEnum.IndexOffset;
-                        valueString = value;
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.IndexOffset, value));
                     }
                     break;
                 case "(IY+d)":
@@ -443,16 +435,19 @@ namespace AILZ80ASM
                     {
                         var matchedIndex = Regex.Match(arg, RegexPatternIYReg);
                         var value = matchedIndex.Groups["value"].Value;
-                        dataType = OPCodeResult.ValueTypeEnum.IndexOffset;
-                        valueString = value;
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.IndexOffset, value));
                     }
                     break;
                 case "(n)":
                     if (!IsPortNumber(arg))
                         return false;
 
-                    dataType = OPCodeResult.ValueTypeEnum.Value8;
-                    valueString = arg;
+                    {
+                        var matchedAddr = Regex.Match(arg, RegexPatternAddress);
+                        var value = matchedAddr.Groups["addr"].Value;
+                        opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value8, value));
+                    }
+
                     break;
                 case "(C)":
                     return arg == tableOp;
@@ -484,7 +479,7 @@ namespace AILZ80ASM
                 return false;
 
             // ()で囲まれた値は外す
-            if (Regex.Match(source, @"^\([\w|$]+\)$").Success)
+            if (Regex.Match(source, @"^\(.+\)$").Success)
                 return false;
 
             return true;
