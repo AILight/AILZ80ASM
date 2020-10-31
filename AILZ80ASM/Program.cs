@@ -22,20 +22,39 @@ namespace AILZ80ASM
               , description: "出力ファイルを指定します。")
                 { Argument = new Argument<FileInfo>() };
 
-            rootCommand.AddOption(outputOption);
-            rootCommand.Handler =
-              CommandHandler.Create<FileInfo[], FileInfo>(Assember);
+            try
+            {
+                rootCommand.AddOption(outputOption);
+                rootCommand.Handler =
+                  CommandHandler.Create<FileInfo[], FileInfo>(Assember);
 
-            return await rootCommand.InvokeAsync(args);
+                return await rootCommand.InvokeAsync(args);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return await Task.FromResult(1);
         }
 
         static public void Assember(
           FileInfo[] input, FileInfo output)
         {
+            if (input == default)
+            {
+                throw new ArgumentException($"入力ファイルが指定されていません");
+            }
+
+            if (output == default)
+            {
+                throw new ArgumentException($"出力ファイルが指定されていません");
+            }
 
             var package = new Package(input);
             package.Assemble();
             package.Save(output);
+
+            package.OutputError();
 
         }
     }

@@ -6,18 +6,17 @@ namespace AILZ80ASM
 {
     public class ErrorMessageException : Exception
     {
-        public ErrorMessage.ErrorTypeEnum ErrorType { get; private set; }
+        public LineItemErrorMessage.ErrorTypeEnum ErrorType { get; private set; }
 
-        public ErrorMessageException(ErrorMessage.ErrorTypeEnum errorType, string message)
-            : base(message)
+        public ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum errorType, string message)
+            : this(errorType, message, default(Exception))
         {
-            ErrorType = ErrorType;
         }
 
-        public ErrorMessageException(ErrorMessage.ErrorTypeEnum errorType, string message, Exception innerException)
+        public ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum errorType, string message, Exception innerException)
             : base(message, innerException)
         {
-            ErrorType = ErrorType;
+            ErrorType = errorType;
         }
 
     }

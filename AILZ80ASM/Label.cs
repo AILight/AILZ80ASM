@@ -11,7 +11,8 @@ namespace AILZ80ASM
         private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
         private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
-        private static readonly string RegexPatternValue = @"\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
+        private static readonly string RegexPatternValue = @"^equ\s+(?<value>([\$\w]+))";
 
         public Label(LineItem lineItem)
         {
@@ -20,8 +21,8 @@ namespace AILZ80ASM
             LabelName = lineItem.FileItem.WorkLabelName.ToUpper();
 
             //ラベルを処理する
-            var lineString = lineItem.OperationString;
-            OperationCodeWithoutLabel = lineString.Trim();
+            var lineString = lineItem.OperationString.Trim();
+            OperationCodeWithoutLabel = lineString;
             DataType = DataTypeEnum.None;
 
             var matchedGlobalLable = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline);
@@ -55,15 +56,27 @@ namespace AILZ80ASM
                         OperationCodeWithoutLabel = lineString.Substring(SubLabelName.Length + 1).Trim();
                         DataType = DataTypeEnum.Processing;
                     }
+                    else
+                    {
+                        var matchedValueLable = Regex.Match(lineString, RegexPatternValueLable, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                        if (matchedValueLable.Success)
+                        {
+                            LabelName = matchedValueLable.Groups["lable"].Value.ToUpper();
+                            OperationCodeWithoutLabel = lineString.Substring(LabelName.Length).Trim();
+                            DataType = DataTypeEnum.Processing;
+                        }
+
+                    }
                 }
             }
             if (DataType == DataTypeEnum.Processing)
             {
-                var matchedValue = Regex.Match(OperationCodeWithoutLabel, RegexPatternValue, RegexOptions.Singleline);
+                var matchedValue = Regex.Match(OperationCodeWithoutLabel, RegexPatternValue, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 if (matchedValue.Success)
                 {
                     ValueString = matchedValue.Groups["value"].Value.ToUpper();
                     OperationCodeWithoutLabel = "";
+                    DataType = DataTypeEnum.Value;
                 }
             }
 
@@ -109,10 +122,18 @@ namespace AILZ80ASM
         /// <param name="labels"></param>
         public void SetValueLabel(ushort address, Label[] labels)
         {
-            if (DataType == DataTypeEnum.Processing && !string.IsNullOrEmpty(ValueString))
+
+            switch (DataType)
             {
-                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, labels);
-                DataType = DataTypeEnum.Value;
+                case DataTypeEnum.None:
+                case DataTypeEnum.Processing:
+                case DataTypeEnum.ADDR:
+                    break;
+                case DataTypeEnum.Value:
+                    Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, labels);
+                    break;
+                default:
+                    break;
             }
             
         }

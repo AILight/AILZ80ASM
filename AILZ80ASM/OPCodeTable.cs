@@ -263,7 +263,7 @@ namespace AILZ80ASM
             if ((op1 == "PUSH" && op2 == "SP" && op3 == "") ||
                 (op1 == "POP" && op2 == "SP" && op3 == ""))
             {
-                throw new ErrorMessageException(ErrorMessage.ErrorTypeEnum.Error, $"無効な命令が指定されました。{code}");
+                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, $"無効な命令が指定されました。{code}");
             }
 
             foreach (var opCodeItem in OPCodeItems)
