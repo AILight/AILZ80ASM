@@ -1,0 +1,7 @@
+﻿	org $8000
+	ld a, 0
+	GREEN_ADDR equ $C000
+	LD HL, GREEN_ADDR
+	LD DE, $
+
+	

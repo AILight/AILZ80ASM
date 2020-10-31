@@ -36,7 +36,7 @@ namespace AILZ80ASM
             WorkGlobalLabelName = fileName;
             WorkLabelName = "";
 
-            while (!string.IsNullOrEmpty(line = streamReader.ReadLine()))
+            while ((line = streamReader.ReadLine()) != default(string))
             {
                 var item = new LineItem(line, lineIndex, this);
                 Items.Add(item);

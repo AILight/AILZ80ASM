@@ -56,7 +56,7 @@ namespace AILZ80ASM
 
         public void Save(FileInfo output)
         {
-            var fileStream = output.OpenWrite();
+            using var fileStream = output.OpenWrite();
 
             Save(fileStream);
 
@@ -68,7 +68,10 @@ namespace AILZ80ASM
             foreach (var item in FileItems)
             {
                 var bin = item.Bin;
-                stream.Write(bin, 0, bin.Length);
+                if (bin.Length > 0)
+                {
+                    stream.Write(bin, 0, bin.Length);
+                }
             }
         }
 
