@@ -37,6 +37,8 @@ namespace AILZ80ASM
             package.Assemble();
             package.Save(output);
 
+            package.OutputError();
+
         }
     }
 }

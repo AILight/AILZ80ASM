@@ -8,10 +8,12 @@ namespace AILZ80ASM
     public class FileItem
     {
         private Package Package { get; set; }
-        private string LoadFileName { get; set; }
+        
+        internal string LoadFileName { get; set; }
         internal List<LineItem> Items { get; set; } = new List<LineItem>();
         internal string WorkGlobalLabelName { get; set; }
         internal string WorkLabelName { get; set; }
+        internal List<LineItemErrorMessage> ErrorMessages { get; set; } = new List<LineItemErrorMessage>();
 
         public FileItem(FileInfo fileInfo, Package package)
         {
@@ -67,7 +69,14 @@ namespace AILZ80ASM
         {
             foreach (var item in Items)
             {
-                item.PreAssemble(ref address);
+                try
+                {
+                    item.PreAssemble(ref address);
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new LineItemErrorMessage(ex.ErrorType, ex.Message, item));
+                }
             }
         }
 
@@ -75,7 +84,14 @@ namespace AILZ80ASM
         {
             foreach (var item in Items)
             {
-                item.SetValueLabel(labels);
+                try
+                {
+                    item.SetValueLabel(labels);
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new LineItemErrorMessage(ex.ErrorType, ex.Message, item));
+                }
             }
         }
 
@@ -84,7 +100,14 @@ namespace AILZ80ASM
             // アセンブルを実行する
             foreach (var item in Items)
             {
-                item.Assemble(labels);
+                try
+                {
+                    item.Assemble(labels);
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new LineItemErrorMessage(ex.ErrorType, ex.Message, item));
+                }
             }
         }
 

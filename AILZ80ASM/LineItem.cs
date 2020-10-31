@@ -9,8 +9,8 @@ namespace AILZ80ASM
     public class LineItem
     {
         private string LineString { get; set; }
-        private int LineIndex { get; set; }
-        internal FileItem FileItem { get; set; }
+        public int LineIndex { get; private set; }
+        public FileItem FileItem { get; private set; }
         /* Configクラスへ移行
         private const int MAX_INCLUDE_NEST = 10;
         */
