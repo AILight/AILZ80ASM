@@ -47,28 +47,33 @@ namespace AILZ80ASM
                     case ValueTypeEnum.IndexOffset:
                         {
                             var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineItem, labels);
-                            var indexOffset = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            var indexOffset = ConvertTo2BaseString(tmpValue8, 8);
                             OPCode = OPCode.Select(m => m.Replace("IIIIIIII", indexOffset)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.Value8:
                         {
                             var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineItem, labels);
-                            var value8 = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            var value8 = ConvertTo2BaseString(tmpValue8, 8);
                             OPCode = OPCode.Select(m => m.Replace("NNNNNNNN", value8)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.e8:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineItem, labels);
-                            var e8 = Convert.ToString(tmpValue8, 2).PadLeft(8, '0');
+                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineItem, labels);
+                            var offsetAddress = tmpValue16 - lineItem.Address - 2;
+                            if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
+                            {
+                                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, $"相対ジャンプの範囲は、{SByte.MinValue}～{SByte.MaxValue}までです。指定された値は、{offsetAddress}でした。");
+                            }
+                            var e8 = ConvertTo2BaseString(offsetAddress, 8);
                             OPCode = OPCode.Select(m => m.Replace("EEEEEEEE", e8)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.Value16:
                         {
                             var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineItem, labels);
-                            var tmpValue16String = Convert.ToString(tmpValue16, 2).PadLeft(16, '0');
+                            var tmpValue16String = ConvertTo2BaseString(tmpValue16, 16);
                             var value16 = new[] { "", "" };
                             value16[0] = tmpValue16String.Substring(0, 8);
                             value16[1] = tmpValue16String.Substring(8);
@@ -80,6 +85,19 @@ namespace AILZ80ASM
                         break;
                 }
             }
+        }
+
+        private string ConvertTo2BaseString(int value, int length)
+        {
+            var returnValue = Convert.ToString(value, 2).PadLeft(length, '0'); ;
+            var overString = returnValue.Substring(0, returnValue.Length - length);
+            if ((value > 0 && overString.Contains("1")) ||
+                (value < 0 && overString.Contains("0")) )
+            {
+                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, $"バイト変換で有効桁数をオーバーしました。 {value:x}");
+            }
+
+            return returnValue.Substring(overString.Length);
         }
     }
 }

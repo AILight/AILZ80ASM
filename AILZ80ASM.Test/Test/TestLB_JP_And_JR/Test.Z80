@@ -1,0 +1,26 @@
+﻿	org $8000
+	ld a, 0
+addr:
+	JP addr
+	JP c, addr
+	JR addr
+	JR c, addr
+	DJNZ addr
+	JR addr2
+	nop
+	nop
+.test
+	jp addr.test
+	jp pe, .test
+	jr addr.test
+	jr c, .test
+	djnz addr.test
+	JR addr2.test
+addr2:
+	nop
+.test
+	nop
+	ret
+
+
+	

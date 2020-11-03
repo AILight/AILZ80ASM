@@ -1,0 +1,6 @@
+﻿	org $8000
+	ld a, 0
+test:
+	jp pe, test
+	jr pe, test	; 存在しない命令
+	ret
