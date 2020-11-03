@@ -70,6 +70,14 @@ namespace AILZ80ASM
                 Address = OperationItem.Address;
                 address = OperationItem.NextAddress;
             }
+            else
+            {
+                var operationCode = this.Label.OperationCodeWithoutLabel;
+                if (!string.IsNullOrEmpty(operationCode))
+                {
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0001, $"{operationCode}");
+                }
+            }
 
             // ラベル設定
             Label.SetAddressLabel(Address);

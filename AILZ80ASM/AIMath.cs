@@ -40,7 +40,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "演算に失敗しました。演算内容を確認してください。", ex);
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}", ex);
             }
 
         }
@@ -68,7 +68,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "演算に失敗しました。演算内容を確認してください。", ex);
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}", ex);
             }
 
         }
@@ -155,7 +155,7 @@ namespace AILZ80ASM
 
             if (Regex.Match(workValue, RegexPatternErrorHexadecimal).Success)
             {
-                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "16進数の変換に失敗しました。");
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
             }
 
             var regexResult = default(Match);
@@ -171,7 +171,7 @@ namespace AILZ80ASM
                 }
                 catch
                 {
-                    throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "16進数の変換に失敗しました。");
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 
@@ -198,7 +198,7 @@ namespace AILZ80ASM
 
             if (Regex.Match(workValue, RegexPatternErrorDollarHexadecimal).Success)
             {
-                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "16進数の変換に失敗しました。");
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
             }
 
             var regexResult = default(Match);
@@ -214,7 +214,7 @@ namespace AILZ80ASM
                 }
                 catch
                 {
-                    throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "16進数の変換に失敗しました。");
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 
@@ -245,7 +245,7 @@ namespace AILZ80ASM
 
             if (Regex.Match(workValue, RegexPatternErrorBinaryNumber).Success)
             {
-                throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "2進数の変換に失敗しました。");
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
             }
 
             var regexResult = default(Match);
@@ -261,7 +261,7 @@ namespace AILZ80ASM
                 }
                 catch
                 {
-                    throw new ErrorMessageException(LineItemErrorMessage.ErrorTypeEnum.Error, "2進数の変換に失敗しました。");
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 

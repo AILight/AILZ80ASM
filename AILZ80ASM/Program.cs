@@ -51,11 +51,10 @@ namespace AILZ80ASM
             }
 
             var package = new Package(input);
+            package.OutputStart();
             package.Assemble();
             package.Save(output);
-
             package.OutputError();
-
         }
     }
 }
