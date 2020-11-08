@@ -24,6 +24,8 @@ namespace AILZ80ASM
 
             try
             {
+                OutputStart();
+
                 rootCommand.AddOption(outputOption);
                 rootCommand.Handler =
                   CommandHandler.Create<FileInfo[], FileInfo>(Assember);
@@ -40,21 +42,35 @@ namespace AILZ80ASM
         static public void Assember(
           FileInfo[] input, FileInfo output)
         {
-            if (input == default)
+            try
             {
-                throw new ArgumentException($"入力ファイルが指定されていません");
-            }
+                if (input == default)
+                {
+                    throw new ArgumentException($"入力ファイルが指定されていません");
+                }
 
-            if (output == default)
+                if (output == default)
+                {
+                    throw new ArgumentException($"出力ファイルが指定されていません");
+                }
+
+                var package = new Package(input);
+                package.Assemble();
+                package.Save(output);
+                package.OutputError();
+            }
+            catch (Exception ex)
             {
-                throw new ArgumentException($"出力ファイルが指定されていません");
+                Console.WriteLine($"Error:{ex.Message}");
             }
-
-            var package = new Package(input);
-            package.OutputStart();
-            package.Assemble();
-            package.Save(output);
-            package.OutputError();
         }
+
+        private static void OutputStart()
+        {
+            Console.WriteLine($"*** AILZ80ASM *** Z-80 Assembler, .NET Core version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
+            Console.WriteLine($"Copyright (C) {DateTime.Today.Year:0} by M.Ishino (AILight)");
+        }
+
+
     }
 }

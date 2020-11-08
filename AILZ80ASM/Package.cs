@@ -23,13 +23,6 @@ namespace AILZ80ASM
             }
         }
 
-        internal void OutputStart()
-        {
-            Console.WriteLine($"*** AILZ80ASM *** Z-80 Assembler, .NET Core version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
-            Console.WriteLine($"Copyright (C) {DateTime.Today.Year:0} by M.Ishino (AILight)");
-            Console.WriteLine();
-        }
-
         public void Assemble()
         {
             var address = default(UInt16);
@@ -58,7 +51,6 @@ namespace AILZ80ASM
             {
                 ErrorMessages.Add(new FileItemErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
             }
-            //ErrorMessages = ErrorMessages.OrderBy(m => (int)m.ErrorType).ThenBy(m => m.).ToList();
         }
 
         public void Save(FileInfo output)
@@ -84,10 +76,13 @@ namespace AILZ80ASM
 
         public void OutputError()
         {
-            Console.WriteLine($"");
-            OutputError(Errors, "Error");
-            OutputError(Warnings, "Warning");
-            OutputError(Infomations, "Infomation");
+            if (ErrorMessages.Count > 0)
+            {
+                Console.WriteLine($"");
+                OutputError(Errors, "Error");
+                OutputError(Warnings, "Warning");
+                OutputError(Infomations, "Infomation");
+            }
 
             Console.WriteLine($"");
             Console.WriteLine($" {Errors.Count():0} error(s), {Warnings.Count()} warning(s), {Infomations.Count()} infomation");
