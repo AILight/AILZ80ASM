@@ -1,6 +1,7 @@
-﻿	DJNZ -1
-	JR NZ, -1
-	JR NC, -1
-	JR -1
-	JR Z, -1
-	JR C, -1
+﻿	NOP
+	DJNZ $-1
+	JR NZ, $-1
+	JR NC, $-1
+	JR $-1
+	JR Z, $-1
+	JR C, $-1
