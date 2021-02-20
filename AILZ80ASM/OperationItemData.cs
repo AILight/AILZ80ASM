@@ -14,8 +14,8 @@ namespace AILZ80ASM
 
         private enum DataTypeEnum
         {
-            dw = 1,
-            db = 2,
+            db = 1,
+            dw = 2,
         }
 
         private OperationItemData()

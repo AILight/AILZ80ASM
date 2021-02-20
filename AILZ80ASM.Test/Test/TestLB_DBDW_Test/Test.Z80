@@ -3,7 +3,12 @@ LB:
 	LD DE, CHAR_01
 	DB 0, 1, 2, 20H
 	DW 0, 1, 2, 2000H
+	NOP
+CHAR_00:
+	DB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; キャラL
+	DB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; キャラH
 CHAR_01:
-	DB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	DB $00, $00, $01, $01, $01, $05, $05, $04 ; キャラL
+	DB $00, $00, $03, $03, $03, $07, $0F, $04 ; キャラH
 
 	
