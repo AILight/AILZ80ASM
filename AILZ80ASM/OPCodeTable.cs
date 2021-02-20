@@ -8,7 +8,7 @@ namespace AILZ80ASM
 {
     public static class OPCodeTable
     {
-        private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)]+)*\s*,*\s*(?<op3>.+)*";
+        public static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)|_]+)*\s*,*\s*(?<op3>.+)*";
         private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>.+)\)";
         private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>.+)\)";
         private static readonly string RegexPatternAddress = @"^\((?<addr>.+)\)$";

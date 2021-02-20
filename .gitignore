@@ -340,4 +340,5 @@ ASALocalRun/
 healthchecksdb
 
 # build sample
+Sample.Z80
 Sample.Z80.local

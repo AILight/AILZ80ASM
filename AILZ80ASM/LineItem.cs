@@ -61,6 +61,7 @@ namespace AILZ80ASM
 
             // 命令を判別する
             OperationItem = OperationItem ?? OperationItemOPCode.Perse(this, address);　// OpeCode
+            OperationItem = OperationItem ?? OperationItemData.Perse(this, address);　// OpeCode
             OperationItem = OperationItem ?? OperationItemInclude.Perse(this, address); // Include
             OperationItem = OperationItem ?? OperationItemSystem.Perse(this, address); // System
 

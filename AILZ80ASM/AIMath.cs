@@ -9,8 +9,8 @@ namespace AILZ80ASM
 {
     public static class AIMath
     {
-        private static readonly string RegexPatternErrorHexadecimal = @"(?<start>\s?)(?<value>(H[0-9A-Fa-f]+H))(?<end>\s?)";
-        private static readonly string RegexPatternHexadecimal = @"(?<start>\s?)(?<value>([0-9A-Fa-f]+H))(?<end>\s?)";
+        private static readonly string RegexPatternErrorHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>(H[0-9A-Fa-f]+H))(?<end>(\s+)|($))";
+        private static readonly string RegexPatternHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>([0-9A-Fa-f]+H))(?<end>(\s+)|($))";
         private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
