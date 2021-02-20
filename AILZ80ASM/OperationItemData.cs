@@ -8,7 +8,6 @@ namespace AILZ80ASM
 {
     public class OperationItemData : IOperationItem
     {
-        private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)]+)*\s*,*\s*(?<op3>.+)*";
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
         private LineItem LineItem { get; set; }
@@ -27,7 +26,7 @@ namespace AILZ80ASM
         public static IOperationItem Perse(LineItem lineItem, UInt16 address)
         {
             var returnValue = default(OperationItemData);
-            var matched = Regex.Match(lineItem.Label.OperationCodeWithoutLabel, RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(lineItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
 
             var op1 = matched.Groups["op1"].Value.ToUpper();
             var op2 = matched.Groups["op2"].Value.ToUpper();
