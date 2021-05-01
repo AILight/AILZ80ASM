@@ -14,7 +14,11 @@ namespace AILZ80ASM
         private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
-        private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+))(?<end>\s?)";
+        private static readonly string[] RegexPatternBinaryNumbers =
+            {
+                @"(?<start>\s?)(?<value>(%[01_]+))(?<end>\s?)",
+                @"(?<start>\s?)(?<value>([01_]+B))(?<end>\s?)",
+            };
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.]+))(?<end>\s?)";
 
         public static byte ConvertToByte(string value, LineItem lineItem, Label[] labels)
@@ -249,24 +253,27 @@ namespace AILZ80ASM
             }
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternBinaryNumber)).Success && limitCounter < 10000)
+            foreach (var regexPatternBinaryNumber in RegexPatternBinaryNumbers)
             {
-                var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString);
-
-                resultValue += workValue.Substring(0, index);
-                try
+                while ((regexResult = Regex.Match(workValue, regexPatternBinaryNumber)).Success && limitCounter < 10000)
                 {
-                    resultValue += Convert.ToInt32(matchResultString.Substring(1), 2).ToString("0");
-                }
-                catch
-                {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
-                }
-                workValue = workValue.Substring(index + matchResultString.Length);
+                    var matchResultString = regexResult.Groups["value"].Value;
+                    var index = workValue.IndexOf(matchResultString);
 
-                regexResult = Regex.Match(workValue, RegexPatternBinaryNumber);
-                limitCounter++;
+                    resultValue += workValue.Substring(0, index);
+                    try
+                    {
+                        resultValue += Convert.ToInt32(matchResultString.ToUpper().Replace("_", "").Replace("%", "").Replace("B", ""), 2).ToString("0");
+                    }
+                    catch
+                    {
+                        throw new ErrorMessageException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
+                    }
+                    workValue = workValue.Substring(index + matchResultString.Length);
+
+                    regexResult = Regex.Match(workValue, regexPatternBinaryNumber);
+                    limitCounter++;
+                }
             }
             resultValue += workValue;
 
