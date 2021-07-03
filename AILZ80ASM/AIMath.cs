@@ -14,7 +14,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
-        private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+))(?<end>\s?)";
+        private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.]+))(?<end>\s?)";
 
         public static byte ConvertToByte(string value, LineItem lineItem, Label[] labels)
@@ -28,7 +28,9 @@ namespace AILZ80ASM
 
             try
             {
-                var calcedValue = Convert.ToInt32(new DataTable().Compute(tmpValue, null).ToString());
+                var nCalcExpression = new NCalc.Expression(tmpValue);
+                var calcedValue = nCalcExpression.ToLambda<int>().Invoke();
+
                 if (calcedValue < 0)
                 {
                     return (byte)(byte.MaxValue + calcedValue + 1);
@@ -257,7 +259,7 @@ namespace AILZ80ASM
                 resultValue += workValue.Substring(0, index);
                 try
                 {
-                    resultValue += Convert.ToInt32(matchResultString.Substring(1), 2).ToString("0");
+                    resultValue += Convert.ToInt32(matchResultString.ToUpper().Replace("_", "").Replace("%", "").Replace("B", ""), 2).ToString("0");
                 }
                 catch
                 {
