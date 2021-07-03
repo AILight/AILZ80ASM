@@ -14,7 +14,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
-        private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01]+)|(^%[01]+[_]*[01]+)|(^[01]+B)|(^[01]+[_]*[01]+B))(?<end>\s?)";
+        private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.]+))(?<end>\s?)";
 
         public static byte ConvertToByte(string value, LineItem lineItem, Label[] labels)
