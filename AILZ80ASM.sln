@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AILZ80ASM", "AILZ80ASM\AILZ80ASM.csproj", "{93C0C165-4B19-4A3D-B8BB-5276087C989F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AILZ80ASM.Test", "AILZ80ASM.Test\AILZ80ASM.Test.csproj", "{5411EED7-F51B-4892-92A4-09A52C8CFC39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AILZ80ASM.Test", "AILZ80ASM.Test\AILZ80ASM.Test.csproj", "{5411EED7-F51B-4892-92A4-09A52C8CFC39}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BAC6C55-7F0D-4A16-9DF9-4278AF26A9A5}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
