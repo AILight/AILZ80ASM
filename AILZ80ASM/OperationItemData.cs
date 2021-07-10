@@ -44,7 +44,6 @@ namespace AILZ80ASM
                     {
                         valuesStrings = (op2 + (!string.IsNullOrEmpty(op3) ? "," : "") + op3).Split(',').ToArray();
                     }
-                    var dataType = op1 == "DB" ? DataTypeEnum.db : DataTypeEnum.dw;
                     returnValue = new OperationItemData()
                     {
                         ValueStrings = valuesStrings,
@@ -64,6 +63,45 @@ namespace AILZ80ASM
                         Length = new AsmLength(valuesStrings.Length * 2),
                         LineItem = lineItem
                     };
+                    break;
+                case "DS":
+                case "DBS":
+                    {
+                        var count = Convert.ToInt32(AIMath.Replace16Number(op2));
+                        if (string.IsNullOrEmpty(op3))
+                        {
+                            op3 = "0";
+                        }
+                        valuesStrings = Enumerable.Range(0, count).Select(_ => op3).ToArray();
+
+                        returnValue = new OperationItemData()
+                        {
+                            ValueStrings = valuesStrings,
+                            DataType = DataTypeEnum.db,
+                            Address = address,
+                            Length = new AsmLength(valuesStrings.Length),
+                            LineItem = lineItem
+                        };
+                    }
+                    break;
+                case "DWS":
+                    {
+                        var count = Convert.ToInt32(AIMath.Replace16Number(op2));
+                        if (string.IsNullOrEmpty(op3))
+                        {
+                            op3 = "0";
+                        }
+                        valuesStrings = Enumerable.Range(0, count).Select(_ => op3).ToArray();
+
+                        returnValue = new OperationItemData()
+                        {
+                            ValueStrings = valuesStrings,
+                            DataType = DataTypeEnum.dw,
+                            Address = address,
+                            Length = new AsmLength(valuesStrings.Length * 2),
+                            LineItem = lineItem
+                        };
+                    }
                     break;
                 default:
                     break;
