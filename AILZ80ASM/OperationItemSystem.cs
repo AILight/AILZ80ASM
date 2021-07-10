@@ -12,7 +12,7 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Perse(LineItem lineItem, UInt16 address)
+        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
         {
             var returnValue = default(OperationItemSystem);
             var matched = Regex.Match(lineItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
@@ -24,10 +24,26 @@ namespace AILZ80ASM
             switch (op1)
             {
                 case "ORG":
-                    op2 = AIMath.Replace16Number(op2, address);
-                    address = Convert.ToUInt16(op2);
+                    op2 = AIMath.Replace16NumberAndCurrentAddress(op2, address);
+                    var programAddress = Convert.ToUInt16(op2);
+                    op3 = AIMath.Replace16Number(op3);
+                    var bytes = new byte[] { };
+                    var outputAddress = address.Output;
+                    var length = new AsmLength(0);
 
-                    returnValue = new OperationItemSystem { Address = address, NextAddress = address, Bin = new byte[] { } };
+                    if (!string.IsNullOrEmpty(op3))
+                    {
+                        var localOutputAddress = Convert.ToUInt32(op3);
+                        if (address.Output > localOutputAddress)
+                        {
+                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0009);
+                        }
+
+                        length.Output = localOutputAddress - address.Output;
+                        bytes = new byte[length.Output];
+                    }
+
+                    returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), Length = length, Bin = bytes };
                     break;
                 default:
                     break;
@@ -38,8 +54,8 @@ namespace AILZ80ASM
 
         public byte[] Bin { get; set; }
 
-        public UInt16 Address { get; set; }
-        public UInt16 NextAddress { get; set; }
+        public AsmAddress Address { get; set; }
+        public AsmLength Length { get; set; }
 
         public void Assemble(Label[] labels)
         {

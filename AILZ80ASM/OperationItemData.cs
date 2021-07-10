@@ -23,7 +23,7 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Perse(LineItem lineItem, UInt16 address)
+        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
         {
             var returnValue = default(OperationItemData);
             var matched = Regex.Match(lineItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
@@ -50,7 +50,7 @@ namespace AILZ80ASM
                         ValueStrings = valuesStrings,
                         DataType = DataTypeEnum.db,
                         Address = address,
-                        NextAddress = (UInt16)(address + (valuesStrings.Length)),
+                        Length = new AsmLength(valuesStrings.Length),
                         LineItem = lineItem
                     };
                     break;
@@ -61,7 +61,7 @@ namespace AILZ80ASM
                         ValueStrings = valuesStrings,
                         DataType = DataTypeEnum.dw,
                         Address = address,
-                        NextAddress = (UInt16)(address + (valuesStrings.Length * 2)),
+                        Length = new AsmLength(valuesStrings.Length * 2),
                         LineItem = lineItem
                     };
                     break;
@@ -74,9 +74,9 @@ namespace AILZ80ASM
 
         public byte[] Bin { get; set; }
 
-        public UInt16 Address { get; set; }
+        public AsmAddress Address { get; set; }
 
-        public UInt16 NextAddress { get; set; }
+        public AsmLength Length { get; set; }
 
         public void Assemble(Label[] labels)
         {

@@ -6,16 +6,15 @@ namespace AILZ80ASM
 {
     public class OperationItemInclude : IOperationItem
     {
-        public static IOperationItem Perse(LineItem lineItem, UInt16 address)
+        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
         {
             return default(IOperationItem);
         }
 
         public byte[] Bin => throw new NotImplementedException();
 
-        public ushort Address => throw new NotImplementedException();
-
-        public ushort NextAddress => throw new NotImplementedException();
+        public AsmAddress Address => throw new NotImplementedException();
+        public AsmLength Length => throw new NotImplementedException();
 
         public void Assemble(Label[] labels)
         {

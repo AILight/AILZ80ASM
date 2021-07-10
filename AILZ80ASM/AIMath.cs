@@ -22,7 +22,7 @@ namespace AILZ80ASM
             return ConvertToByte(value, lineItem.Label.GlobalLabelName, lineItem.Label.LabelName, lineItem.Address, labels);
         }
 
-        public static byte ConvertToByte(string value, string globalLabelName, string lableName, UInt16 address, Label[] labels)
+        public static byte ConvertToByte(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
         {
             var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, labels);
 
@@ -52,7 +52,7 @@ namespace AILZ80ASM
             return ConvertToUInt16(value, lineItem.Label.GlobalLabelName, lineItem.Label.LabelName, lineItem.Address, labels);
         }
 
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, UInt16 address, Label[] labels)
+        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
         {
             var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, labels);
 
@@ -75,10 +75,10 @@ namespace AILZ80ASM
 
         }
 
-        private static string ReplaceAll(string value, string globalLabelName, string lableName, ushort address, Label[] labels)
+        private static string ReplaceAll(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
         {
             //16進数の置き換え
-            value = Replace16Number(value, address);
+            value = Replace16NumberAndCurrentAddress(value, address);
 
             //2進数の置き換え
             value = ReplaceBinaryNumber(value);
@@ -128,16 +128,33 @@ namespace AILZ80ASM
             return resultValue;
         }
 
+
         /// <summary>
         /// 16進数の変換
         /// </summary>
         /// <param name="value"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        public static string Replace16Number(string value, UInt16 address)
+        public static string Replace16Number(string value)
         {
-            value = ReplaceHexadecimal(value, address);
-            value = ReplaceDollarHexadecimal(value, address);
+            value = ReplaceHexadecimal(value);
+            value = ReplaceDollarHexadecimal(value);
+
+            return value;
+        }
+
+        /// <summary>
+        /// 16進数の変換
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static string Replace16NumberAndCurrentAddress(string value, AsmAddress address)
+        {
+            value = Replace16Number(value);
+
+            // $の値を現在のアドレスに置き換える
+            value = value.Replace("$", $"{address.Program:0}");
 
             return value;
         }
@@ -149,7 +166,7 @@ namespace AILZ80ASM
         /// <param name="globalLabelName"></param>
         /// <param name="lableName"></param>
         /// <param name="lables"></param>
-        private static string ReplaceHexadecimal(string value, UInt16 address)
+        private static string ReplaceHexadecimal(string value)
         {
             var resultValue = "";
             var workValue = value;
@@ -192,7 +209,7 @@ namespace AILZ80ASM
         /// <param name="globalLabelName"></param>
         /// <param name="lableName"></param>
         /// <param name="lables"></param>
-        private static string ReplaceDollarHexadecimal(string value, UInt16 address)
+        private static string ReplaceDollarHexadecimal(string value)
         {
             var resultValue = "";
             var workValue = value;
@@ -224,9 +241,6 @@ namespace AILZ80ASM
                 limitCounter++;
             }
             resultValue += workValue;
-
-            // $の値を現在のアドレスに置き換える
-            resultValue = resultValue.Replace("$", $"{address:0}");
 
             return resultValue;
         }

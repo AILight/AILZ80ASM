@@ -9,6 +9,11 @@ namespace AILZ80ASM
         public Error.ErrorCodeEnum ErrorCode { get; private set; }
         public string AdditionalMessage { get; private set; }
 
+        public ErrorMessageException(Error.ErrorCodeEnum errorCode)
+            : this(errorCode, "", default(Exception))
+        {
+        }
+
         public ErrorMessageException(Error.ErrorCodeEnum errorCode, string message)
             : this(errorCode, message, default(Exception))
         {
