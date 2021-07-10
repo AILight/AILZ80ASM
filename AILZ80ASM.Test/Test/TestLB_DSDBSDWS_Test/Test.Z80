@@ -1,0 +1,11 @@
+﻿	org $8000
+LB:
+	LD DE, CHAR_00
+	DB 0, 1, 2, 20H
+	DW 0, 1, 2, 2000H
+	NOP
+CHAR_00:
+	DS 16
+	DS 16, 1
+	DBS 16, 5
+	DWS 8, 0102H
