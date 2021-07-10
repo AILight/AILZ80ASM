@@ -61,7 +61,7 @@ namespace AILZ80ASM
                     case ValueTypeEnum.e8:
                         {
                             var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineItem, labels);
-                            var offsetAddress = tmpValue16 - lineItem.Address - 2;
+                            var offsetAddress = tmpValue16 - lineItem.Address.Program - 2;
                             if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                             {
                                 throw new ErrorMessageException(Error.ErrorCodeEnum.E0003, $"指定された値は、{offsetAddress}でした。");

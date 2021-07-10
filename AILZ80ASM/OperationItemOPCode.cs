@@ -9,14 +9,14 @@ namespace AILZ80ASM
         private OPCodeResult OPCodeResult { get; set; }
         private LineItem LineItem { get; set; }
 
-        private OperationItemOPCode(OPCodeResult opCodeResult, LineItem lineItem, UInt16 address)
+        private OperationItemOPCode(OPCodeResult opCodeResult, LineItem lineItem, AsmAddress address)
         {
             OPCodeResult = opCodeResult;
             LineItem = lineItem;
             Address = address;
         }
 
-        public static IOperationItem Perse(LineItem lineItem, UInt16 address)
+        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
         {
             var returnValue = default(OperationItemOPCode);
             var code = lineItem.Label.OperationCodeWithoutLabel;
@@ -39,7 +39,7 @@ namespace AILZ80ASM
 
         public byte[] Bin => OPCodeResult.ToBin();
 
-        public UInt16 Address { get; set; }
-        public UInt16 NextAddress => (UInt16)(Address + OPCodeResult.OPCode.Length);
+        public AsmAddress Address { get; set; }
+        public AsmLength Length => new AsmLength(OPCodeResult.OPCode.Length);
     }
 }

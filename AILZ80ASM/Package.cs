@@ -25,7 +25,7 @@ namespace AILZ80ASM
 
         public void Assemble()
         {
-            var address = default(UInt16);
+            var address = default(AsmAddress);
             var labelList = new List<Label>();
 
             foreach (var fileItem in FileItems)
