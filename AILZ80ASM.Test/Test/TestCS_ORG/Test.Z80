@@ -1,0 +1,22 @@
+﻿	org $8000
+	ld a, 0
+	call PUT_CHR1
+	call PUT_CHR2
+	ret
+
+PUT_CHR1:
+	ld a, 1
+	call PUT_CHR1.test
+	ret
+.test
+	ld a, 2
+	ret
+
+	org $2000, $20
+PUT_CHR2:
+	ld a, 1
+	call PUT_CHR2.test
+	ret
+.test
+	ld a, 2
+	ret

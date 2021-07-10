@@ -60,8 +60,8 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
             [ErrorCodeEnum.E0007] = "8進数の変換に失敗しました。",
             [ErrorCodeEnum.E0008] = "2進数の変換に失敗しました。",
-            [ErrorCodeEnum.E0008] = "",
-            [ErrorCodeEnum.E0009] = "",
+            [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
+            [ErrorCodeEnum.E0010] = "",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"

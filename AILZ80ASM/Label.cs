@@ -106,12 +106,12 @@ namespace AILZ80ASM
         /// アドレスをセット
         /// </summary>
         /// <param name="address"></param>
-        public void SetAddressLabel(ushort address)
+        public void SetAddressLabel(AsmAddress address)
         {
             if (DataType == DataTypeEnum.Processing && string.IsNullOrEmpty(ValueString))
             {
                 DataType = DataTypeEnum.ADDR;
-                Value = address;
+                Value = address.Program;
             }
         }
 
@@ -120,7 +120,7 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="address"></param>
         /// <param name="labels"></param>
-        public void SetValueLabel(ushort address, Label[] labels)
+        public void SetValueLabel(AsmAddress address, Label[] labels)
         {
 
             switch (DataType)

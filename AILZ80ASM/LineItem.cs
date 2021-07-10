@@ -20,7 +20,7 @@ namespace AILZ80ASM
         //public Macro Macro { get; private set; }
         public Label Label { get; private set; }
         public IOperationItem OperationItem { get; private set; }
-        public UInt16 Address { get; private set; }
+        public AsmAddress Address { get; private set; }
 
 
         public byte[] Bin 
@@ -54,22 +54,22 @@ namespace AILZ80ASM
             Label = new Label(this);
         }
 
-        public void PreAssemble(ref UInt16 address)
+        public void PreAssemble(ref AsmAddress address)
         {
             // Addressの設定
             Address = address;
 
             // 命令を判別する
-            OperationItem = OperationItem ?? OperationItemOPCode.Perse(this, address);　// OpeCode
-            OperationItem = OperationItem ?? OperationItemData.Perse(this, address);　  // Data
-            OperationItem = OperationItem ?? OperationItemInclude.Perse(this, address); // Include
-            OperationItem = OperationItem ?? OperationItemSystem.Perse(this, address);  // System
+            OperationItem = OperationItem ?? OperationItemOPCode.Parse(this, address);　// OpeCode
+            OperationItem = OperationItem ?? OperationItemData.Parse(this, address);　  // Data
+            OperationItem = OperationItem ?? OperationItemInclude.Parse(this, address); // Include
+            OperationItem = OperationItem ?? OperationItemSystem.Parse(this, address);  // System
 
             // Addressを設定
             if (OperationItem != default(IOperationItem))
             {
                 Address = OperationItem.Address;
-                address = OperationItem.NextAddress;
+                address = new AsmAddress(OperationItem.Address, OperationItem.Length);
             }
             else
             {

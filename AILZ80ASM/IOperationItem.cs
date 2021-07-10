@@ -9,7 +9,7 @@ namespace AILZ80ASM
         void Assemble(Label[] labels);
 
         byte[] Bin { get; }
-        UInt16 Address { get; }
-        UInt16 NextAddress { get;}
+        AsmAddress Address { get; }
+        AsmLength Length { get;}
     }
 }

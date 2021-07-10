@@ -67,7 +67,7 @@ namespace AILZ80ASM
             }
         }
 
-        public void PreAssemble(ref UInt16 address)
+        public void PreAssemble(ref AsmAddress address)
         {
             foreach (var item in Items)
             {
