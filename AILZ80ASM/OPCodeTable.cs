@@ -38,10 +38,10 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "LD A,R", OPCode = new[] { "11101101", "01011111" }, M = 2, T = 9 },
                 new OPCodeItem { Operation = "LD R,A", OPCode = new[] { "11101101", "01001111" }, M = 2, T = 9 },
                 new OPCodeItem { Operation = "LD ixr,r", OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
-                new OPCodeItem { Operation = "LD r, ixr", OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
+                new OPCodeItem { Operation = "LD rs, ixr", OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
                 new OPCodeItem { Operation = "LD ixr,n", OPCode = new[] { "11011101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented=true },
                 new OPCodeItem { Operation = "LD iyr,r", OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
-                new OPCodeItem { Operation = "LD r,iyr", OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
+                new OPCodeItem { Operation = "LD rs,iyr", OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
                 new OPCodeItem { Operation = "LD iyr,n", OPCode = new[] { "11111101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented=true },
 
                 // 16ビットの転送命令
@@ -168,8 +168,8 @@ namespace AILZ80ASM
                 // 16ビットの加算
                 new OPCodeItem { Operation = "ADD HL,rp", OPCode = new[] { "00RP1001" }, M = 3, T = 13 },
                 new OPCodeItem { Operation = "ADC HL,rp", OPCode = new[] { "11101101", "01RP1010" }, M = 4, T = 15 },
-                new OPCodeItem { Operation = "ADD IX,rp", OPCode = new[] { "11011101", "00RP1001" }, M = 4, T = 15 },
-                new OPCodeItem { Operation = "ADD IY,rp", OPCode = new[] { "11111101", "00RP1001" }, M = 4, T = 15 },
+                new OPCodeItem { Operation = "ADD IX,rps", OPCode = new[] { "11011101", "00RP1001" }, M = 4, T = 15 },
+                new OPCodeItem { Operation = "ADD IY,rps", OPCode = new[] { "11111101", "00RP1001" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "INC rp", OPCode = new[] { "00RP0011" }, M = 1, T = 6 },
                 new OPCodeItem { Operation = "INC IX", OPCode = new[] { "11011101", "00100011" }, M = 2, T = 10 },
                 new OPCodeItem { Operation = "INC IY", OPCode = new[] { "11111101", "00100011" }, M = 2, T = 10 },
@@ -403,8 +403,27 @@ namespace AILZ80ASM
                         ssss = GetDDDSSS(arg);
                     }
                     break;
+                case "rs":
+                    if (!Is8BitSmallRegister(arg))
+                        return false;
+                    
+                    if (index == 0)
+                    {
+                        dddd = GetDDDSSS(arg);
+                    }
+                    else
+                    {
+                        ssss = GetDDDSSS(arg);
+                    }
+                    break;
                 case "rp":
                     if (!Is16BitRegister(arg))
+                        return false;
+
+                    rp = GetRP(arg);
+                    break;
+                case "rps":
+                    if (!Is16BitSmallRegister(arg))
                         return false;
 
                     rp = GetRP(arg);
@@ -663,6 +682,11 @@ namespace AILZ80ASM
             return Regex.IsMatch(source, @"^(A|B|C|D|E|H|L)$");
         }
 
+        private static bool Is8BitSmallRegister(string source)
+        {
+            return Regex.IsMatch(source, @"^(A|B|C|D|E|)$");
+        }
+
         private static bool Is8BitIndexRegister(string source)
         {
             return Regex.IsMatch(source, @"^(IXH|IXL|IYH|IYL)$");
@@ -671,6 +695,11 @@ namespace AILZ80ASM
         private static bool Is16BitRegister(string source)
         {
             return Regex.IsMatch(source, @"^(BC|DE|HL|SP)$");
+        }
+
+        private static bool Is16BitSmallRegister(string source)
+        {
+            return Regex.IsMatch(source, @"^(BC|DE|SP)$");
         }
 
         private static bool Is16BitIndexRegister(string source)
