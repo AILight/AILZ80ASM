@@ -37,6 +37,13 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "LD I,A", OPCode = new[] { "11101101", "01000111" }, M = 2, T = 9 },
                 new OPCodeItem { Operation = "LD A,R", OPCode = new[] { "11101101", "01011111" }, M = 2, T = 9 },
                 new OPCodeItem { Operation = "LD R,A", OPCode = new[] { "11101101", "01001111" }, M = 2, T = 9 },
+                new OPCodeItem { Operation = "LD ixr,r", OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
+                new OPCodeItem { Operation = "LD r, ixr", OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
+                new OPCodeItem { Operation = "LD ixr,n", OPCode = new[] { "11011101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented=true },
+                new OPCodeItem { Operation = "LD iyr,r", OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
+                new OPCodeItem { Operation = "LD r,iyr", OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented=true },
+                new OPCodeItem { Operation = "LD iyr,n", OPCode = new[] { "11111101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented=true },
+
                 // 16ビットの転送命令
                 new OPCodeItem { Operation = "LD rp,nn", OPCode = new[] { "00RP0001", "LLLLLLLL", "HHHHHHHH" }, M = 3, T = 10 },
                 new OPCodeItem { Operation = "LD IX,nn", OPCode = new[] { "11011101", "00100001", "LLLLLLLL", "HHHHHHHH" }, M = 4, T = 14 },
@@ -115,21 +122,29 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "ADD A,(HL)", OPCode = new[] { "10000110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "ADD A,(IX+d)", OPCode = new[] { "11011101", "10000110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "ADD A,(IY+d)", OPCode = new[] { "11111101", "10000110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "ADD A,ixr", OPCode = new[] { "11011101", "10000SSS" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "ADD A,iyr", OPCode = new[] { "11111101", "10000SSS" }, M = 2, T = 10, UnDocumented = true },
                 new OPCodeItem { Operation = "ADC A,r", OPCode = new[] { "10001SSS" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "ADC A,n", OPCode = new[] { "11001110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "ADC A,(HL)", OPCode = new[] { "10001110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "ADC A,(IX+d)", OPCode = new[] { "11011101", "10001110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "ADC A,(IY+d)", OPCode = new[] { "11111101", "10001110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "ADC A,ixr", OPCode = new[] { "11011101", "10001SSS" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "ADC A,iyr", OPCode = new[] { "11111101", "10001SSS" }, M = 2, T = 10, UnDocumented = true },
                 new OPCodeItem { Operation = "INC r", OPCode = new[] { "00DDD100" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "INC (HL)", OPCode = new[] { "00110100" }, M = 3, T = 11 },
                 new OPCodeItem { Operation = "INC (IX+d)", OPCode = new[] { "11011101", "00110100", "IIIIIIII" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "INC (IY+d)", OPCode = new[] { "11111101", "00110100", "IIIIIIII" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "INC ixr", OPCode = new[] { "11011101", "00DDD100" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "INC iyr", OPCode = new[] { "11111101", "00DDD100" }, M = 2, T = 10, UnDocumented = true },
                 // 8ビットの減算
                 new OPCodeItem { Operation = "SUB r", OPCode = new[] { "10010DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "SUB n", OPCode = new[] { "11010110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "SUB (HL)", OPCode = new[] { "10010110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "SUB (IX+d)", OPCode = new[] { "11011101", "10010110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "SUB (IY+d)", OPCode = new[] { "11111101", "10010110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "SUB ixr", OPCode = new[] { "11011101", "10010DDD" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "SUB iyr", OPCode = new[] { "11111101", "10010DDD" }, M = 2, T = 10, UnDocumented = true },
                 /*
                 new OPCodeItem { Operation = "SUB A,r", OPCode = new[] { "10010SSS" }, M = 1, T = 4, AccumulatorExtra = true },
                 new OPCodeItem { Operation = "SUB A,n", OPCode = new[] { "11010110", "NNNNNNNN" }, M = 2, T = 7, AccumulatorExtra = true },
@@ -142,10 +157,14 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "SBC A,(HL)", OPCode = new[] { "10011110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "SBC A,(IX+d)", OPCode = new[] { "11011101", "10011110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "SBC A,(IY+d)", OPCode = new[] { "11111101", "10011110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "SBC A,ixr", OPCode = new[] { "11011101", "10011SSS" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "SBC A,iyr", OPCode = new[] { "11111101", "10011SSS" }, M = 2, T = 10, UnDocumented = true },
                 new OPCodeItem { Operation = "DEC r", OPCode = new[] { "00DDD101" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "DEC (HL)", OPCode = new[] { "00110101" }, M = 3, T = 11 },
                 new OPCodeItem { Operation = "DEC (IX+d)", OPCode = new[] { "11011101", "00110101", "IIIIIIII" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "DEC (IY+d)", OPCode = new[] { "11111101", "00110101", "IIIIIIII" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "DEC ixr", OPCode = new[] { "11011101", "00DDD101" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "DEC iyr", OPCode = new[] { "11111101", "00DDD101" }, M = 2, T = 10, UnDocumented = true },
                 // 16ビットの加算
                 new OPCodeItem { Operation = "ADD HL,rp", OPCode = new[] { "00RP1001" }, M = 3, T = 13 },
                 new OPCodeItem { Operation = "ADC HL,rp", OPCode = new[] { "11101101", "01RP1010" }, M = 4, T = 15 },
@@ -154,6 +173,7 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "INC rp", OPCode = new[] { "00RP0011" }, M = 1, T = 6 },
                 new OPCodeItem { Operation = "INC IX", OPCode = new[] { "11011101", "00100011" }, M = 2, T = 10 },
                 new OPCodeItem { Operation = "INC IY", OPCode = new[] { "11111101", "00100011" }, M = 2, T = 10 },
+
                 // 16ビットの減算
                 new OPCodeItem { Operation = "SBC HL,rp", OPCode = new[] { "11101101", "01RP0010" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "DEC rp", OPCode = new[] { "00RP1011" }, M = 1, T = 6 },
@@ -165,16 +185,22 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "AND (HL)", OPCode = new[] { "10100110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "AND (IX+d)", OPCode = new[] { "11011101", "10100110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "AND (IY+d)", OPCode = new[] { "11111101", "10100110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "AND ixr", OPCode = new[] { "11011101", "10100DDD" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "AND iyr", OPCode = new[] { "11111101", "10100DDD" }, M = 2, T = 10, UnDocumented = true },
                 new OPCodeItem { Operation = "OR r", OPCode = new[] { "10110DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "OR n", OPCode = new[] { "11110110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "OR (HL)", OPCode = new[] { "10110110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "OR (IX+d)", OPCode = new[] { "11011101", "10110110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "OR (IY+d)", OPCode = new[] { "11111101", "10110110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "OR ixr", OPCode = new[] { "11011101", "10110DDD" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "OR iyr", OPCode = new[] { "11111101", "10110DDD" }, M = 2, T = 10, UnDocumented = true },
                 new OPCodeItem { Operation = "XOR r", OPCode = new[] { "10101DDD" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "XOR n", OPCode = new[] { "11101110", "NNNNNNNN" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "XOR (HL)", OPCode = new[] { "10101110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "XOR (IX+d)", OPCode = new[] { "11011101", "10101110", "IIIIIIII" }, M = 5, T = 19 },
                 new OPCodeItem { Operation = "XOR (IY+d)", OPCode = new[] { "11111101", "10101110", "IIIIIIII" }, M = 5, T = 19 },
+                new OPCodeItem { Operation = "XOR ixr", OPCode = new[] { "11011101", "10101DDD" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "XOR iyr", OPCode = new[] { "11111101", "10101DDD" }, M = 2, T = 10, UnDocumented = true },
                 new OPCodeItem { Operation = "CPL", OPCode = new[] { "00101111" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "NEG", OPCode = new[] { "11101101", "01000100" }, M = 2, T = 8 },
                 // ビット操作
@@ -203,6 +229,8 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "CP (HL)", OPCode = new[] { "10111110" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "CP (IX+d)", OPCode = new[] { "11011101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
                 new OPCodeItem { Operation = "CP (IY+d)", OPCode = new[] { "11111101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
+                new OPCodeItem { Operation = "CP ixr", OPCode = new[] { "11011101", "10111DDD" }, M = 2, T = 10, UnDocumented = true },
+                new OPCodeItem { Operation = "CP iyr", OPCode = new[] { "11111101", "10111DDD" }, M = 2, T = 10, UnDocumented = true },
                 // ジャンプ
                 new OPCodeItem { Operation = "JP nn", OPCode = new[] { "11000011", "LLLLLLLL", "HHHHHHHH" }, M = 3, T = 10 },
                 new OPCodeItem { Operation = "JP cc,nn", OPCode = new[] { "11CCC010", "LLLLLLLL", "HHHHHHHH" }, M = 3, T = 10 },
@@ -333,6 +361,32 @@ namespace AILZ80ASM
                 case "IY":
                     if (!IsIYRegister(arg))
                         return false;
+                    break;
+                case "ixr":
+                    if (!IsIXHLRegister(arg))
+                        return false;
+
+                    if (index == 0)
+                    {
+                        dddd = GetDDDSSS_IXHL(arg);
+                    }
+                    else
+                    {
+                        ssss = GetDDDSSS_IXHL(arg);
+                    }
+                    break;
+                case "iyr":
+                    if (!IsIYHLRegister(arg))
+                        return false;
+
+                    if (index == 0)
+                    {
+                        dddd = GetDDDSSS_IYHL(arg);
+                    }
+                    else
+                    {
+                        ssss = GetDDDSSS_IYHL(arg);
+                    }
                     break;
                 case "r":
                 case "r1":
@@ -589,9 +643,19 @@ namespace AILZ80ASM
             return source == "IX";
         }
 
+        private static bool IsIXHLRegister(string source)
+        {
+            return source == "IXH" || source == "IXL";
+        }
+
         private static bool IsIYRegister(string source)
         {
             return source == "IY";
+        }
+
+        private static bool IsIYHLRegister(string source)
+        {
+            return source == "IYH" || source == "IYL";
         }
 
         private static bool Is8BitRegister(string source)
@@ -711,6 +775,32 @@ namespace AILZ80ASM
                 case "H":
                     return "100";
                 case "L":
+                    return "101";
+                default:
+                    throw new Exception($"レジスタの指定が間違っています。{source}");
+            }
+        }
+
+        private static string GetDDDSSS_IXHL(string source)
+        {
+            switch (source)
+            {
+                case "IXH":
+                    return "100";
+                case "IXL":
+                    return "101";
+                default:
+                    throw new Exception($"レジスタの指定が間違っています。{source}");
+            }
+        }
+
+        private static string GetDDDSSS_IYHL(string source)
+        {
+            switch (source)
+            {
+                case "IYH":
+                    return "100";
+                case "IYL":
                     return "101";
                 default:
                     throw new Exception($"レジスタの指定が間違っています。{source}");
