@@ -1,4 +1,6 @@
 ﻿	org $8000
+	ADDR equ $2000
+
 	ld a, 0
 	call PUT_CHR1
 	call PUT_CHR2
@@ -12,7 +14,7 @@ PUT_CHR1:
 	ld a, 2
 	ret
 
-	org $2000, $20
+	org ADDR, $20
 PUT_CHR2:
 	ld a, 1
 	call PUT_CHR2.test

@@ -1,7 +1,7 @@
 ﻿	add a,ixh
 	add a,ixl
-	sub a,ixh
-	sub a,ixl
+	sub ixh
+	sub ixl
 	and ixh
 	and ixl
 	or ixh
@@ -16,8 +16,8 @@
 	cp ixl
 	add a,iyh
 	add a,iyl
-	sub a,iyh
-	sub a,iyl
+	sub iyh
+	sub iyl
 	and iyh
 	and iyl
 	or iyh
