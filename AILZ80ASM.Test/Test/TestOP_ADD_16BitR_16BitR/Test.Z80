@@ -4,9 +4,7 @@
 	add hl,sp
 	add ix,bc
 	add ix,de
-	add ix,hl
 	add ix,sp
 	add iy,bc
 	add iy,de
-	add iy,hl
 	add iy,sp
