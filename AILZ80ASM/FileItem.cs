@@ -14,6 +14,8 @@ namespace AILZ80ASM
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
         public List<Macro> Macros { get; private set; } = new List<Macro>();
+        public Label[] Labels => Items.SelectMany(m => m.Labels).ToArray();
+
         public string WorkGlobalLabelName { get; set; }
         public string WorkLabelName { get; set; }
         public List<LineItemErrorMessage> ErrorMessages { get; private set; } = new List<LineItemErrorMessage>();
@@ -106,6 +108,24 @@ namespace AILZ80ASM
             }
         }
 
+        public void ProcessLabelValue(Label[] labels)
+        {
+            foreach (var item in Items)
+            {
+                item.ProcessLabelValue(labels);
+            }
+
+        }
+
+
+        public void ProcessLabelValueAndAddress(Label[] labels)
+        {
+            foreach (var item in Items)
+            {
+                item.ProcessLabelValueAndAddress(labels);
+            }
+        }
+
         /// <summary>
         /// マクロその他命令の展開
         /// </summary>
@@ -142,6 +162,7 @@ namespace AILZ80ASM
                             continue;
                         }
                     }
+
                     // 通常命令の展開
                     item.ExpansionItem();
 
@@ -153,21 +174,13 @@ namespace AILZ80ASM
             }
         }
 
-        /// <summary>
-        /// ラベルをロードする
-        /// </summary>
-        public void LoadLabel()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void PreAssemble(ref AsmAddress address)
+        public void PreAssemble(ref AsmAddress address, Label[] labels)
         {
             foreach (var item in Items)
             {
                 try
                 {
-                    item.PreAssemble(ref address);
+                    item.PreAssemble(ref address, labels);
                 }
                 catch (ErrorMessageException ex)
                 {

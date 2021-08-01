@@ -52,10 +52,20 @@ namespace AILZ80ASM
             return ConvertToUInt16(value, lineExpansionItem.Label.GlobalLabelName, lineExpansionItem.Label.LabelName, lineExpansionItem.Address, labels);
         }
 
+        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, Label[] labels)
+        {
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, labels);
+            return InternalConvertToUInt16(value, tmpValue);
+        }
+
         public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
         {
             var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, labels);
+            return InternalConvertToUInt16(value, tmpValue);
+        }
 
+        public static UInt16 InternalConvertToUInt16(string value, string tmpValue)
+        {
             try
             {
                 var calcedValue = Convert.ToInt32(new DataTable().Compute(tmpValue, null).ToString());
@@ -72,7 +82,20 @@ namespace AILZ80ASM
             {
                 throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}", ex);
             }
+        }
 
+        private static string ReplaceAll(string value, string globalLabelName, string lableName, Label[] labels)
+        {
+            //16進数の置き換え
+            value = Replace16Number(value);
+
+            //2進数の置き換え
+            value = ReplaceBinaryNumber(value);
+
+            // ラベルの置き換え
+            value = ReplaceLabel(value, globalLabelName, lableName, labels);
+            
+            return value;
         }
 
         private static string ReplaceAll(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
@@ -85,7 +108,7 @@ namespace AILZ80ASM
 
             // ラベルの置き換え
             value = ReplaceLabel(value, globalLabelName, lableName, labels);
-            
+
             return value;
         }
 
@@ -111,10 +134,10 @@ namespace AILZ80ASM
                 // ラベルチェック
                 var label = default(Label);
 
-                label = label ?? lables.Where(m => m.HasValue && m.LongLabelName == matchResultString).FirstOrDefault();
-                label = label ?? lables.Where(m => m.HasValue && m.MiddleLabelName == matchResultString).FirstOrDefault();
-                label = label ?? lables.Where(m => m.HasValue && m.GlobalLabelName == globalLabelName && m.LabelName == matchResultString).FirstOrDefault();
-                label = label ?? lables.Where(m => m.HasValue && m.GlobalLabelName == globalLabelName && m.LabelName == lableName && m.ShortLabelName == matchResultString).FirstOrDefault();
+                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.LongLabelName, matchResultString, true) == 0).FirstOrDefault();
+                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.MiddleLabelName, matchResultString, true) == 0).FirstOrDefault();
+                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, matchResultString, true) == 0).FirstOrDefault();
+                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, lableName, true) == 0 && string.Compare(m.ShortLabelName, matchResultString, true) == 0).FirstOrDefault();
 
                 resultValue += workValue.Substring(0, index);
                 resultValue += label?.Value.ToString("0") ?? matchResultString;
@@ -265,7 +288,7 @@ namespace AILZ80ASM
             }
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternBinaryNumber)).Success && limitCounter < 10000)
+            while ((regexResult = Regex.Match(workValue, RegexPatternBinaryNumber, RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
             {
                 var matchResultString = regexResult.Groups["value"].Value;
                 var index = workValue.IndexOf(matchResultString);
