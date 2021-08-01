@@ -28,7 +28,6 @@ namespace AILZ80ASM
         public void Assemble()
         {
             var address = default(AsmAddress);
-            var labelList = new List<Label>();
 
             // マクロをロードする
             foreach (var fileItem in FileItems)
@@ -43,30 +42,86 @@ namespace AILZ80ASM
                 fileItem.ExpansionItem(Macros);
             }
 
+            // 値のラベルを処理する
+            ProcessLabelValue();
 
-            foreach (var fileItem in FileItems)
             {
-                fileItem.PreAssemble(ref address);
-                labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
+                var labels = FileItems.SelectMany(m => m.Labels.Where(m => m.HasValue)).ToArray();
+                foreach (var fileItem in FileItems)
+                {
+                    fileItem.PreAssemble(ref address, labels);
+                }
             }
 
-            var labels = labelList.ToArray();
-            foreach (var fileItem in FileItems)
+            // 値のラベルを処理する
+            ProcessLabelValueAndAddress();
+
+            //　アセンブルを行う
             {
-                fileItem.SetValueLabel(labels);
-                labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
+                var labels = FileItems.SelectMany(m => m.Labels.Where(m => m.HasValue)).ToArray();
+                foreach (var fileItem in FileItems)
+                {
+                    fileItem.Assemble(labels);
+                }
             }
 
-            foreach (var fileItem in FileItems)
-            {
-                fileItem.Assemble(labels);
-                labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
-            }
-
+            // エラーの出力
             foreach (var fileItem in FileItems)
             {
                 ErrorMessages.Add(new FileItemErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
             }
+
+            /*
+            {
+                var labels = labelList.ToArray();
+                foreach (var fileItem in FileItems)
+                {
+                    fileItem.SetValueLabel(labels);
+                    labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
+                }
+
+                foreach (var fileItem in FileItems)
+                {
+                    fileItem.Assemble(labels);
+                    labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
+                }
+
+                foreach (var fileItem in FileItems)
+                {
+                    ErrorMessages.Add(new FileItemErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
+                }
+            }
+            */
+        }
+
+        private void ProcessLabelValue()
+        {
+            var labelValueCount = 0;
+            var labels = default(Label[]);
+            do
+            {
+                labels = FileItems.SelectMany(m => m.Labels).ToArray();
+                labelValueCount = labels.Count(m => m.HasValue);
+                foreach (var fileItem in FileItems)
+                {
+                    fileItem.ProcessLabelValue(labels);
+                }
+            } while (labelValueCount != labels.Count(m => m.HasValue));
+        }
+
+        private void ProcessLabelValueAndAddress()
+        {
+            var labelValueCount = 0;
+            var labels = default(Label[]);
+            do
+            {
+                labels = FileItems.SelectMany(m => m.Labels).ToArray();
+                labelValueCount = labels.Count(m => m.HasValue);
+                foreach (var fileItem in FileItems)
+                {
+                    fileItem.ProcessLabelValueAndAddress(labels);
+                }
+            } while (labelValueCount != labels.Count(m => m.HasValue));
         }
 
         public void Save(FileInfo output)

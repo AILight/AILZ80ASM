@@ -6,7 +6,7 @@ namespace AILZ80ASM
 {
     public class OperationItemInclude : IOperationItem
     {
-        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address)
+        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address, Label[] labels)
         {
             return default(IOperationItem);
         }

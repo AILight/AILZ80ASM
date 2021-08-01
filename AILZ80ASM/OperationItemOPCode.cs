@@ -16,10 +16,10 @@ namespace AILZ80ASM
             Address = address;
         }
 
-        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address)
+        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address, Label[] labels)
         {
             var returnValue = default(OperationItemOPCode);
-            var code = lineExpansionItem.Label.OperationCodeWithoutLabel;
+            var code = $"{lineExpansionItem.InstructionText} {lineExpansionItem.ArgumentText}";
             if (!string.IsNullOrEmpty(code))
             {
                 var opCodeResult = OPCodeTable.GetOPCodeItem(code);

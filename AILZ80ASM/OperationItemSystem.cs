@@ -12,10 +12,10 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address)
+        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address, Label[] labels)
         {
             var returnValue = default(OperationItemSystem);
-            var matched = Regex.Match(lineExpansionItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match($"{lineExpansionItem.InstructionText} {lineExpansionItem.ArgumentText}", OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
 
             var op1 = matched.Groups["op1"].Value.ToUpper();
             var op2 = matched.Groups["op2"].Value.ToUpper();
@@ -24,16 +24,14 @@ namespace AILZ80ASM
             switch (op1)
             {
                 case "ORG":
-                    op2 = AIMath.Replace16NumberAndCurrentAddress(op2, address);
-                    var programAddress = Convert.ToUInt16(op2);
-                    op3 = AIMath.Replace16Number(op3);
+                    var programAddress = AIMath.ConvertToUInt16(op2, lineExpansionItem, labels);
                     var bytes = new byte[] { };
                     var outputAddress = address.Output;
                     var length = new AsmLength(0);
 
                     if (!string.IsNullOrEmpty(op3))
                     {
-                        var localOutputAddress = Convert.ToUInt32(op3);
+                        var localOutputAddress = AIMath.ConvertToUInt16(op3, lineExpansionItem, labels);
                         if (address.Output > localOutputAddress)
                         {
                             throw new ErrorMessageException(Error.ErrorCodeEnum.E0009);

@@ -11,6 +11,7 @@ namespace AILZ80ASM
         private string LineString { get; set; }
         public int LineIndex { get; private set; }
         public FileItem FileItem { get; private set; }
+        public Label[] Labels => LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label).ToArray();
 
         public string OperationString { get; private set; }
         public string CommentString { get; private set; }
@@ -57,7 +58,7 @@ namespace AILZ80ASM
             }
 
             // 命令を切り出す
-            OperationString = lineString.TrimEnd();
+            OperationString = lineString.Trim();
 
             //ラベルの切り出し
             LabelText= Label.GetLabelText(OperationString);
@@ -70,19 +71,19 @@ namespace AILZ80ASM
                 if (matchResult.Success)
                 {
                     InstructionText = matchResult.Groups["Instruction"].Value;
-                    ArgumentText = tmpInstructionText.Substring(InstructionText.Length);
+                    ArgumentText = tmpInstructionText.Substring(InstructionText.Length).TrimStart();
                 }
             }
         }
 
-        public void PreAssemble(ref AsmAddress address)
+        public void PreAssemble(ref AsmAddress address, Label[] labels)
         {
             if (IsAssembled)
                 return;
 
             foreach (var item in LineExpansionItems)
             {
-                item.PreAssemble(ref address);
+                item.PreAssemble(ref address, labels);
             }
         }
 
@@ -114,9 +115,9 @@ namespace AILZ80ASM
         /// <param name="macro"></param>
         public void ExpansionMacro(Macro macro)
         {
-            foreach (var item in macro.LineItems)
+            foreach (var item in macro.LineItems.Select((Value, Index) => new { Value, Index}))
             {
-                LineExpansionItems.Add(new LineExpansionItem(item.LineString, LineIndex, item.FileItem));
+                LineExpansionItems.Add(new LineExpansionItem(item.Value.LabelText, item.Value.InstructionText, item.Value.ArgumentText, item.Index + 1, this));
             }
         }
 
@@ -125,7 +126,30 @@ namespace AILZ80ASM
         /// </summary>
         public void ExpansionItem()
         {
-            LineExpansionItems.Add(new LineExpansionItem(LineString, LineIndex, FileItem));
+            LineExpansionItems.Add(new LineExpansionItem(LabelText, InstructionText, ArgumentText, LineIndex, this));
         }
+
+        /// <summary>
+        /// ラベルを処理するする（値）
+        /// </summary>
+        public void ProcessLabelValue(Label[] labels)
+        {
+            foreach (var item in LineExpansionItems)
+            {
+                item.ProcessLabelValue(labels);
+            }
+        }
+
+        /// <summary>
+        /// ラベルを処理するする（値とアドレス）
+        /// </summary>
+        public void ProcessLabelValueAndAddress(Label[] labels)
+        {
+            foreach (var item in LineExpansionItems)
+            {
+                item.ProcessLabelValueAndAddress(labels);
+            }
+        }
+
     }
 }

@@ -23,10 +23,10 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address)
+        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address, Label[] labels)
         {
             var returnValue = default(OperationItemData);
-            var matched = Regex.Match(lineExpansionItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match($"{lineExpansionItem.InstructionText} {lineExpansionItem.ArgumentText}", OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
 
             var op1 = matched.Groups["op1"].Value.ToUpper();
             var op2 = matched.Groups["op2"].Value.ToUpper();
