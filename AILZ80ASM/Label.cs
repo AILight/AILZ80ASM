@@ -14,14 +14,14 @@ namespace AILZ80ASM
         private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
         private static readonly string RegexPatternValue = @"^equ\s+(?<value>([\$\w]+))";
 
-        public Label(LineItem lineItem)
+        public Label(LineExpansionItem lineExpansionItem)
         {
             //グローバルラベルの設定
-            GlobalLabelName = lineItem.FileItem.WorkGlobalLabelName.ToUpper();
-            LabelName = lineItem.FileItem.WorkLabelName.ToUpper();
+            GlobalLabelName = lineExpansionItem.FileItem.WorkGlobalLabelName.ToUpper();
+            LabelName = lineExpansionItem.FileItem.WorkLabelName.ToUpper();
 
             //ラベルを処理する
-            var lineString = lineItem.OperationString.Trim();
+            var lineString = lineExpansionItem.OperationString.Trim();
             OperationCodeWithoutLabel = lineString;
             DataType = DataTypeEnum.None;
 
@@ -30,7 +30,7 @@ namespace AILZ80ASM
             {
                 // ラベルマッチ
                 GlobalLabelName = matchedGlobalLable.Groups["lable"].Value.ToUpper();
-                lineItem.FileItem.WorkGlobalLabelName = GlobalLabelName;
+                lineExpansionItem.FileItem.WorkGlobalLabelName = GlobalLabelName;
 
                 OperationCodeWithoutLabel = lineString.Substring(GlobalLabelName.Length + 2).Trim();
                 DataType = DataTypeEnum.Processing;
@@ -42,7 +42,7 @@ namespace AILZ80ASM
                 {
                     // ラベルマッチ
                     LabelName = matchedLable.Groups["lable"].Value.ToUpper();
-                    lineItem.FileItem.WorkLabelName = LabelName;
+                    lineExpansionItem.FileItem.WorkLabelName = LabelName;
 
                     OperationCodeWithoutLabel = lineString.Substring(LabelName.Length + 1).Trim();
                     DataType = DataTypeEnum.Processing;
@@ -136,6 +136,27 @@ namespace AILZ80ASM
                     break;
             }
             
+        }
+        
+        public static string GetLabelText(string lineString)
+        {
+            var matchedGlobalLable = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline);
+            if (matchedGlobalLable.Success)
+            {
+                return matchedGlobalLable.Groups["lable"].Value;
+            }
+            var matchedLable = Regex.Match(lineString, RegexPatternLabel, RegexOptions.Singleline);
+            if (matchedLable.Success)
+            {
+                return matchedLable.Groups["lable"].Value;
+            }
+            var matchedSubLable = Regex.Match(lineString, RegexPatternSubLabel, RegexOptions.Singleline);
+            if (matchedSubLable.Success)
+            {
+                return matchedSubLable.Groups["lable"].Value;
+            }
+
+            return "";
         }
     }
 }

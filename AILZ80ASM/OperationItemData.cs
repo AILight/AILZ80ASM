@@ -10,7 +10,7 @@ namespace AILZ80ASM
     {
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
-        private LineItem LineItem { get; set; }
+        private LineExpansionItem LineExpansionItem { get; set; }
 
         private enum DataTypeEnum
         {
@@ -23,10 +23,10 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
+        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address)
         {
             var returnValue = default(OperationItemData);
-            var matched = Regex.Match(lineItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(lineExpansionItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
 
             var op1 = matched.Groups["op1"].Value.ToUpper();
             var op2 = matched.Groups["op2"].Value.ToUpper();
@@ -50,7 +50,7 @@ namespace AILZ80ASM
                         DataType = DataTypeEnum.db,
                         Address = address,
                         Length = new AsmLength(valuesStrings.Length),
-                        LineItem = lineItem
+                        LineExpansionItem = lineExpansionItem
                     };
                     break;
                 case "DW":
@@ -61,7 +61,7 @@ namespace AILZ80ASM
                         DataType = DataTypeEnum.dw,
                         Address = address,
                         Length = new AsmLength(valuesStrings.Length * 2),
-                        LineItem = lineItem
+                        LineExpansionItem = lineExpansionItem
                     };
                     break;
                 case "DS":
@@ -80,7 +80,7 @@ namespace AILZ80ASM
                             DataType = DataTypeEnum.db,
                             Address = address,
                             Length = new AsmLength(valuesStrings.Length),
-                            LineItem = lineItem
+                            LineExpansionItem = lineExpansionItem
                         };
                     }
                     break;
@@ -99,7 +99,7 @@ namespace AILZ80ASM
                             DataType = DataTypeEnum.dw,
                             Address = address,
                             Length = new AsmLength(valuesStrings.Length * 2),
-                            LineItem = lineItem
+                            LineExpansionItem = lineExpansionItem
                         };
                     }
                     break;
@@ -124,7 +124,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.dw:
                     foreach (var valueString in ValueStrings)
                     {
-                        var value = AIMath.ConvertToUInt16(valueString, LineItem, labels);
+                        var value = AIMath.ConvertToUInt16(valueString, LineExpansionItem, labels);
                         byteList.Add((byte)(value % 256));
                         byteList.Add((byte)(value / 256));
                     }
@@ -132,7 +132,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.db:
                     foreach (var valueString in ValueStrings)
                     {
-                        byteList.Add((byte)AIMath.ConvertToUInt16(valueString, LineItem, labels));
+                        byteList.Add((byte)AIMath.ConvertToUInt16(valueString, LineExpansionItem, labels));
                     }
                     break;
                 default:

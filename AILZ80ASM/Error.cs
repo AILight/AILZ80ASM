@@ -25,6 +25,8 @@ namespace AILZ80ASM
             E0008,
             E0009,
             E0010,
+            E0011,
+            E0012,
             W0001,
             I0001,
         }
@@ -61,7 +63,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0007] = "8進数の変換に失敗しました。",
             [ErrorCodeEnum.E0008] = "2進数の変換に失敗しました。",
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
-            [ErrorCodeEnum.E0010] = "",
+            [ErrorCodeEnum.E0010] = "MACROに対応するEND MACROが見つかりませんでした",
+            [ErrorCodeEnum.E0011] = "MACROが重複登録されていますので、名前解決が出来ません。",
+            [ErrorCodeEnum.E0012] = "",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"

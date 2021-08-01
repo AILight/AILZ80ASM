@@ -7,25 +7,25 @@ namespace AILZ80ASM
     public class OperationItemOPCode : IOperationItem
     {
         private OPCodeResult OPCodeResult { get; set; }
-        private LineItem LineItem { get; set; }
+        private LineExpansionItem LineExpansionItem { get; set; }
 
-        private OperationItemOPCode(OPCodeResult opCodeResult, LineItem lineItem, AsmAddress address)
+        private OperationItemOPCode(OPCodeResult opCodeResult, LineExpansionItem lineExpansionItem, AsmAddress address)
         {
             OPCodeResult = opCodeResult;
-            LineItem = lineItem;
+            LineExpansionItem = lineExpansionItem;
             Address = address;
         }
 
-        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
+        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address)
         {
             var returnValue = default(OperationItemOPCode);
-            var code = lineItem.Label.OperationCodeWithoutLabel;
+            var code = lineExpansionItem.Label.OperationCodeWithoutLabel;
             if (!string.IsNullOrEmpty(code))
             {
                 var opCodeResult = OPCodeTable.GetOPCodeItem(code);
                 if (opCodeResult != default(OPCodeResult))
                 {
-                    returnValue = new OperationItemOPCode(opCodeResult, lineItem, address);
+                    returnValue = new OperationItemOPCode(opCodeResult, lineExpansionItem, address);
                 }
             }
 
@@ -34,7 +34,7 @@ namespace AILZ80ASM
 
         public void Assemble(Label[] labels)
         {
-            OPCodeResult.Assemble(LineItem, labels);
+            OPCodeResult.Assemble(LineExpansionItem, labels);
         }
 
         public byte[] Bin => OPCodeResult.ToBin();
