@@ -9,13 +9,20 @@ namespace AILZ80ASM
 {
     public static class AIMath
     {
+        private enum MacroValueEnum
+        {
+            None,
+            High,
+            Low,
+        }
+
         private static readonly string RegexPatternErrorHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>(H[0-9A-Fa-f]+H))(?<end>(\s+)|($))";
         private static readonly string RegexPatternHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>([0-9A-Fa-f]+H))(?<end>(\s+)|($))";
         private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
-        private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.]+))(?<end>\s?)";
+        private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
         public static byte ConvertToByte(string value, LineExpansionItem lineExpansionItem, Label[] labels)
         {
@@ -128,8 +135,20 @@ namespace AILZ80ASM
             var regexResult = default(Match);
             while ((regexResult = Regex.Match(workValue, RegexPatternLabel)).Success && limitCounter < 10000)
             {
+                var macroValue = MacroValueEnum.None;
+
                 var matchResultString = regexResult.Groups["value"].Value;
                 var index = workValue.IndexOf(matchResultString);
+                if (matchResultString.EndsWith(".@H", StringComparison.OrdinalIgnoreCase))
+                {
+                    macroValue = MacroValueEnum.High;
+                    matchResultString = matchResultString.Substring(0, matchResultString.Length - 3);
+                }
+                else if (matchResultString.EndsWith(".@L", StringComparison.OrdinalIgnoreCase))
+                {
+                    macroValue = MacroValueEnum.Low;
+                    matchResultString = matchResultString.Substring(0, matchResultString.Length - 3);
+                }
 
                 // ラベルチェック
                 var label = default(Label);
@@ -139,8 +158,38 @@ namespace AILZ80ASM
                 label = label ?? lables.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, matchResultString, true) == 0).FirstOrDefault();
                 label = label ?? lables.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, lableName, true) == 0 && string.Compare(m.ShortLabelName, matchResultString, true) == 0).FirstOrDefault();
 
+                var valueString = "";
+                switch (macroValue)
+                {
+                    case MacroValueEnum.High:
+                        matchResultString += ".@H";
+                        if (label == default)
+                        {
+                            valueString = matchResultString;
+                        }
+                        else
+                        {
+                            valueString = ((int)(label.Value / 256)).ToString("0");
+                        }
+                        break;
+                    case MacroValueEnum.Low:
+                        matchResultString += ".@L";
+                        if (label == default)
+                        {
+                            valueString = matchResultString;
+                        }
+                        else
+                        {
+                            valueString = ((int)(label.Value % 256)).ToString("0");
+                        }
+                        break;
+                    default:
+                        valueString = label?.Value.ToString("0") ?? matchResultString;
+                        break;
+                }
+
                 resultValue += workValue.Substring(0, index);
-                resultValue += label?.Value.ToString("0") ?? matchResultString;
+                resultValue += valueString;
                 workValue = workValue.Substring(index + matchResultString.Length);
 
                 regexResult = Regex.Match(workValue, RegexPatternLabel);
