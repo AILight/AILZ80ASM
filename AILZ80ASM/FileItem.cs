@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace AILZ80ASM
@@ -12,6 +13,7 @@ namespace AILZ80ASM
         public string LoadFileName {get ; private set;}
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
+        public List<Macro> Macros { get; private set; } = new List<Macro>();
         public string WorkGlobalLabelName { get; set; }
         public string WorkLabelName { get; set; }
         public List<LineItemErrorMessage> ErrorMessages { get; private set; } = new List<LineItemErrorMessage>();
@@ -65,6 +67,98 @@ namespace AILZ80ASM
 
                 return bytes.ToArray();
             }
+        }
+
+        /// <summary>
+        /// マクロをロードする
+        /// </summary>
+        public void LoadMacro()
+        {
+            var whileMacro = false;
+            var macroItems = new List<LineItem>();
+
+            foreach (var item in Items)
+            {
+                if (item.OperationString.TrimStart().ToUpper().StartsWith("MACRO"))
+                {
+                    if (whileMacro)
+                    {
+                        ErrorMessages.Add(new LineItemErrorMessage(new ErrorMessageException(Error.ErrorCodeEnum.E0010), item));
+                    }
+                    whileMacro = true;
+                    macroItems.Clear();
+                }
+
+                if (whileMacro)
+                {
+                    macroItems.Add(item);
+                }
+
+                if (item.OperationString.TrimStart().ToUpper().StartsWith("END MACRO"))
+                {
+                    Macros.Add(new Macro(macroItems, this));
+                    whileMacro = false;
+                }
+            }
+            if (whileMacro)
+            {
+                ErrorMessages.Add(new LineItemErrorMessage(new ErrorMessageException(Error.ErrorCodeEnum.E0010), Items.Last()));
+            }
+        }
+
+        /// <summary>
+        /// マクロその他命令の展開
+        /// </summary>
+        /// <param name="macros"></param>
+        public void ExpansionItem(List<Macro> macros)
+        {
+            foreach (var item in Items)
+            {
+                try
+                {
+                    // マクロの展開（グローバルマクロ）
+                    {
+                        var foundMacros = Macros.Where(row => row.FullName == item.InstructionText);
+                        if (foundMacros.Count() > 2)
+                        {
+                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0011);
+                        }
+                        if (foundMacros.Count() == 1)
+                        {
+                            item.ExpansionMacro(foundMacros.First());
+                            continue;
+                        }
+                    }
+                    // ローカルマクロ
+                    {
+                        var foundMacros = Macros.Where(row => row.Name == item.InstructionText);
+                        if (foundMacros.Count() > 2)
+                        {
+                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0011);
+                        }
+                        if (foundMacros.Count() == 1)
+                        {
+                            item.ExpansionMacro(foundMacros.First());
+                            continue;
+                        }
+                    }
+                    // 通常命令の展開
+                    item.ExpansionItem();
+
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                }
+            }
+        }
+
+        /// <summary>
+        /// ラベルをロードする
+        /// </summary>
+        public void LoadLabel()
+        {
+            throw new NotImplementedException();
         }
 
         public void PreAssemble(ref AsmAddress address)

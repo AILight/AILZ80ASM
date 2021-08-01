@@ -11,23 +11,34 @@ namespace AILZ80ASM
         private string LineString { get; set; }
         public int LineIndex { get; private set; }
         public FileItem FileItem { get; private set; }
-        /* Configクラスへ移行
-        private const int MAX_INCLUDE_NEST = 10;
-        */
 
         public string OperationString { get; private set; }
         public string CommentString { get; private set; }
-        //public Macro Macro { get; private set; }
-        public Label Label { get; private set; }
-        public IOperationItem OperationItem { get; private set; }
-        public AsmAddress Address { get; private set; }
 
+        public string LabelText { get; private set; }
+        public string InstructionText { get; private set; }
+        public string ArgumentText { get; private set; }
+        public bool IsAssembled { get; set; } = false;
+
+        private static readonly string RegexPatternInstruction = @"(?<Instruction>(^[\w\(\)]+))";
+
+        public List<LineExpansionItem> LineExpansionItems { get; private set; } = new List<LineExpansionItem>();
 
         public byte[] Bin 
         {
             get 
             {
-                return OperationItem == default(IOperationItem) ? new byte[] { } : OperationItem.Bin;
+                var bytes = new List<byte>();
+
+                foreach (var item in LineExpansionItems)
+                {
+                    if (item.Bin != default(byte[]))
+                    {
+                        bytes.AddRange(item.Bin);
+                    }
+                }
+
+                return bytes.ToArray();
             } 
         }
 
@@ -37,8 +48,6 @@ namespace AILZ80ASM
             LineIndex = lineIndex;
             FileItem = fileItem;
 
-            OperationItem = default(IOperationItem);
-
             //コメントを処理する
             var indexCommnet = lineString.IndexOf(';');
             if (indexCommnet != -1)
@@ -47,51 +56,76 @@ namespace AILZ80ASM
                 lineString = lineString.Substring(0, indexCommnet);
             }
 
-            //命令を切り出す
+            // 命令を切り出す
             OperationString = lineString.TrimEnd();
 
-            // ラベルを処理する
-            Label = new Label(this);
+            //ラベルの切り出し
+            LabelText= Label.GetLabelText(OperationString);
+            
+            // 命令の切りだし
+            var tmpInstructionText = OperationString.Substring(LabelText.Length).TrimStart();
+            if (!string.IsNullOrEmpty(tmpInstructionText))
+            {
+                var matchResult = Regex.Match(tmpInstructionText, RegexPatternInstruction, RegexOptions.Singleline);
+                if (matchResult.Success)
+                {
+                    InstructionText = matchResult.Groups["Instruction"].Value;
+                    ArgumentText = tmpInstructionText.Substring(InstructionText.Length);
+                }
+            }
         }
 
         public void PreAssemble(ref AsmAddress address)
         {
-            // Addressの設定
-            Address = address;
+            if (IsAssembled)
+                return;
 
-            // 命令を判別する
-            OperationItem = OperationItem ?? OperationItemOPCode.Parse(this, address);　// OpeCode
-            OperationItem = OperationItem ?? OperationItemData.Parse(this, address);　  // Data
-            OperationItem = OperationItem ?? OperationItemInclude.Parse(this, address); // Include
-            OperationItem = OperationItem ?? OperationItemSystem.Parse(this, address);  // System
-
-            // Addressを設定
-            if (OperationItem != default(IOperationItem))
+            foreach (var item in LineExpansionItems)
             {
-                Address = OperationItem.Address;
-                address = new AsmAddress(OperationItem.Address, OperationItem.Length);
+                item.PreAssemble(ref address);
             }
-            else
-            {
-                var operationCode = this.Label.OperationCodeWithoutLabel;
-                if (!string.IsNullOrEmpty(operationCode))
-                {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0001, $"{operationCode}");
-                }
-            }
-
-            // ラベル設定
-            Label.SetAddressLabel(Address);
         }
 
         public void SetValueLabel(Label[] labels)
         {
-            Label.SetValueLabel(Address, labels);
+            if (IsAssembled)
+                return;
+
+            foreach (var item in LineExpansionItems)
+            {
+                item.SetValueLabel(labels);
+            }
         }
 
         public void Assemble(Label[] labels)
         {
-            OperationItem?.Assemble(labels);
+            if (IsAssembled)
+                return;
+
+            foreach (var item in LineExpansionItems)
+            {
+                item.Assemble(labels);
+            }
+        }
+
+        /// <summary>
+        /// マクロを展開する
+        /// </summary>
+        /// <param name="macro"></param>
+        public void ExpansionMacro(Macro macro)
+        {
+            foreach (var item in macro.LineItems)
+            {
+                LineExpansionItems.Add(new LineExpansionItem(item.LineString, LineIndex, item.FileItem));
+            }
+        }
+
+        /// <summary>
+        /// 通常命令の展開
+        /// </summary>
+        public void ExpansionItem()
+        {
+            LineExpansionItems.Add(new LineExpansionItem(LineString, LineIndex, FileItem));
         }
     }
 }

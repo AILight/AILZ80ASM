@@ -17,9 +17,9 @@ namespace AILZ80ASM
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.]+))(?<end>\s?)";
 
-        public static byte ConvertToByte(string value, LineItem lineItem, Label[] labels)
+        public static byte ConvertToByte(string value, LineExpansionItem lineExpansionItem, Label[] labels)
         {
-            return ConvertToByte(value, lineItem.Label.GlobalLabelName, lineItem.Label.LabelName, lineItem.Address, labels);
+            return ConvertToByte(value, lineExpansionItem.Label.GlobalLabelName, lineExpansionItem.Label.LabelName, lineExpansionItem.Address, labels);
         }
 
         public static byte ConvertToByte(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
@@ -47,9 +47,9 @@ namespace AILZ80ASM
 
         }
 
-        public static UInt16 ConvertToUInt16(string value, LineItem lineItem, Label[] labels)
+        public static UInt16 ConvertToUInt16(string value, LineExpansionItem lineExpansionItem, Label[] labels)
         {
-            return ConvertToUInt16(value, lineItem.Label.GlobalLabelName, lineItem.Label.LabelName, lineItem.Address, labels);
+            return ConvertToUInt16(value, lineExpansionItem.Label.GlobalLabelName, lineExpansionItem.Label.LabelName, lineExpansionItem.Address, labels);
         }
 
         public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)

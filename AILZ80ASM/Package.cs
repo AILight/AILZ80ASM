@@ -9,6 +9,8 @@ namespace AILZ80ASM
     public class Package
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
+        private List<Macro> Macros { get; set; } = new List<Macro>();
+
         private List<FileItemErrorMessage> ErrorMessages { get; set; } = new List<FileItemErrorMessage>();
 
         public FileItemErrorMessage[] Errors => ErrorMessages.Where(m => m.LineItemErrorMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error)).Select(m => new FileItemErrorMessage(m.LineItemErrorMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error).ToArray(), m.FileItem)).ToArray();
@@ -28,23 +30,37 @@ namespace AILZ80ASM
             var address = default(AsmAddress);
             var labelList = new List<Label>();
 
+            // マクロをロードする
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.LoadMacro();
+                Macros.AddRange(this.Macros);
+            }
+
+            // 命令を展開する
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.ExpansionItem(Macros);
+            }
+
+
             foreach (var fileItem in FileItems)
             {
                 fileItem.PreAssemble(ref address);
-                labelList.AddRange(fileItem.Items.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label));
+                labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
             }
 
             var labels = labelList.ToArray();
             foreach (var fileItem in FileItems)
             {
                 fileItem.SetValueLabel(labels);
-                labelList.AddRange(fileItem.Items.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label));
+                labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
             }
 
             foreach (var fileItem in FileItems)
             {
                 fileItem.Assemble(labels);
-                labelList.AddRange(fileItem.Items.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label));
+                labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
             }
 
             foreach (var fileItem in FileItems)
