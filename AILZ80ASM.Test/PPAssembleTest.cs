@@ -7,11 +7,13 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class PPAssembleTest
     {
+        /*
         [TestMethod]
         public void TestPP_Include()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
+        */
 
         [TestMethod]
         public void TestPP_Macro()
