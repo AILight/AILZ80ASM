@@ -10,12 +10,11 @@ namespace AILZ80ASM
     {
         private Package Package { get; set; }
 
-        public string LoadFileName {get ; private set;}
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
-        public List<Macro> Macros { get; private set; } = new List<Macro>();
-        public Label[] Labels => Items.SelectMany(m => m.Labels).ToArray();
 
+        public List<Macro> Macros { get; private set; } = new List<Macro>();
+        //public Label[] Labels => Items.SelectMany(m => m.Labels).ToArray();
         public string WorkGlobalLabelName { get; set; }
         public string WorkLabelName { get; set; }
         public List<LineItemErrorMessage> ErrorMessages { get; private set; } = new List<LineItemErrorMessage>();
@@ -30,22 +29,26 @@ namespace AILZ80ASM
             streamReader.Close();
         }
 
+        /*
         public FileItem(StreamReader streamReader)
         {
             Read(streamReader);
         }
+        */
 
         private void Read(StreamReader streamReader)
         {
             string line;
             var lineIndex = 0;
-            LoadFileName = Path.GetFileNameWithoutExtension(FileInfo.Name);
-            WorkGlobalLabelName = LoadFileName.Replace(".", "_");
+            var loadFileName = Path.GetFileNameWithoutExtension(FileInfo.Name);
+            /*
+            WorkGlobalLabelName = loadFileName.Replace(".", "_");
             WorkLabelName = "";
+            */
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var item = new LineItem(line, lineIndex, this);
+                var item = new LineItem(line, lineIndex);
                 Items.Add(item);
 
                 lineIndex++;
@@ -53,6 +56,7 @@ namespace AILZ80ASM
 
         }
 
+        /*
         public byte[] Bin
         {
             get
@@ -70,12 +74,14 @@ namespace AILZ80ASM
                 return bytes.ToArray();
             }
         }
+        */
 
         /// <summary>
         /// マクロをロードする
         /// </summary>
         public void LoadMacro()
         {
+            /*
             var whileMacro = false;
             var macroItems = new List<LineItem>();
 
@@ -106,13 +112,15 @@ namespace AILZ80ASM
             {
                 ErrorMessages.Add(new LineItemErrorMessage(new ErrorMessageException(Error.ErrorCodeEnum.E0010), Items.Last()));
             }
+            */
         }
+
 
         public void ProcessLabelValue(Label[] labels)
         {
             foreach (var item in Items)
             {
-                item.ProcessLabelValue(labels);
+                //item.ProcessLabelValue(labels);
             }
 
         }
@@ -122,7 +130,7 @@ namespace AILZ80ASM
         {
             foreach (var item in Items)
             {
-                item.ProcessLabelValueAndAddress(labels);
+                //item.ProcessLabelValueAndAddress(labels);
             }
         }
 
@@ -132,6 +140,7 @@ namespace AILZ80ASM
         /// <param name="macros"></param>
         public void ExpansionItem(List<Macro> macros)
         {
+            /*
             foreach (var item in Items)
             {
                 try
@@ -172,6 +181,7 @@ namespace AILZ80ASM
                     ErrorMessages.Add(new LineItemErrorMessage(ex, item));
                 }
             }
+            */
         }
 
         public void PreAssemble(ref AsmAddress address, Label[] labels)
@@ -180,7 +190,7 @@ namespace AILZ80ASM
             {
                 try
                 {
-                    item.PreAssemble(ref address, labels);
+                    //item.PreAssemble(ref address, labels);
                 }
                 catch (ErrorMessageException ex)
                 {
@@ -195,7 +205,7 @@ namespace AILZ80ASM
             {
                 try
                 {
-                    item.SetValueLabel(labels);
+                    //item.SetValueLabel(labels);
                 }
                 catch (ErrorMessageException ex)
                 {
@@ -211,7 +221,7 @@ namespace AILZ80ASM
             {
                 try
                 {
-                    item.Assemble(labels);
+                    //item.Assemble(labels);
                 }
                 catch (ErrorMessageException ex)
                 {

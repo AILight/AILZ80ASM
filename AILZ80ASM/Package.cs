@@ -46,11 +46,13 @@ namespace AILZ80ASM
             ProcessLabelValue();
 
             {
+                /*
                 var labels = FileItems.SelectMany(m => m.Labels.Where(m => m.HasValue)).ToArray();
                 foreach (var fileItem in FileItems)
                 {
                     fileItem.PreAssemble(ref address, labels);
                 }
+                */
             }
 
             // 値のラベルを処理する
@@ -58,11 +60,13 @@ namespace AILZ80ASM
 
             //　アセンブルを行う
             {
+                /*
                 var labels = FileItems.SelectMany(m => m.Labels.Where(m => m.HasValue)).ToArray();
                 foreach (var fileItem in FileItems)
                 {
                     fileItem.Assemble(labels);
                 }
+                */
             }
 
             // エラーの出力
@@ -100,7 +104,7 @@ namespace AILZ80ASM
             var labels = default(Label[]);
             do
             {
-                labels = FileItems.SelectMany(m => m.Labels).ToArray();
+                //labels = FileItems.SelectMany(m => m.Labels).ToArray();
                 labelValueCount = labels.Count(m => m.HasValue);
                 foreach (var fileItem in FileItems)
                 {
@@ -115,7 +119,7 @@ namespace AILZ80ASM
             var labels = default(Label[]);
             do
             {
-                labels = FileItems.SelectMany(m => m.Labels).ToArray();
+                //labels = FileItems.SelectMany(m => m.Labels).ToArray();
                 labelValueCount = labels.Count(m => m.HasValue);
                 foreach (var fileItem in FileItems)
                 {
@@ -137,11 +141,13 @@ namespace AILZ80ASM
         {
             foreach (var item in FileItems)
             {
+                /*
                 var bin = item.Bin;
                 if (bin.Length > 0)
                 {
                     stream.Write(bin, 0, bin.Length);
                 }
+                */
             }
         }
 

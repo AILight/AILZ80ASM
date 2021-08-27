@@ -18,8 +18,8 @@ namespace AILZ80ASM
         public Label(LineExpansionItem lineExpansionItem)
         {
             //グローバルラベルの設定
-            GlobalLabelName = lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName;
-            LabelName = lineExpansionItem.LineItem.FileItem.WorkLabelName;
+            //GlobalLabelName = lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName;
+            //LabelName = lineExpansionItem.LineItem.FileItem.WorkLabelName;
 
             //ラベルを処理する
             DataType = DataTypeEnum.None;
@@ -34,7 +34,7 @@ namespace AILZ80ASM
             {
                 // ラベルマッチ
                 GlobalLabelName = matchedGlobalLable.Groups["lable"].Value;
-                lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName = GlobalLabelName;
+                //lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName = GlobalLabelName;
                 DataType = DataTypeEnum.Processing;
             }
             else
@@ -44,7 +44,7 @@ namespace AILZ80ASM
                 {
                     // ラベルマッチ
                     LabelName = matchedLable.Groups["lable"].Value;
-                    lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
+                    //lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
 
                     DataType = DataTypeEnum.Processing;
                 }
@@ -59,7 +59,7 @@ namespace AILZ80ASM
                     else
                     {
                         LabelName = lineExpansionItem.LabelText;
-                        lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
+                        //lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
                         DataType = DataTypeEnum.Processing;
                     }
                 }

@@ -21,7 +21,7 @@ namespace AILZ80ASM
             GlobalMacroName = fileItem.WorkGlobalLabelName;
             foreach (var item in lineItems)
             {
-                item.IsAssembled = true;
+                //item.IsAssembled = true;
             }
 
             var firstLineItem = lineItems.First();

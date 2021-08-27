@@ -1,0 +1,10 @@
+﻿REPEAT 3
+        xor     a
+END REPEAT
+
+REPEAT 8 LAST -1
+        ld      (hl), a
+        set     5, h
+        ld      (hl), a
+        add     hl, de
+END REPEAT
