@@ -19,7 +19,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternInclude = @"\s*include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
 
 
-        public LineDetailItemInclude(FileInfo fileInfo, FileTypeEnum fileType, int start, int length)
+        public LineDetailItemInclude(FileInfo fileInfo, FileTypeEnum fileType, int start, int length, AsmLoad asmLoad)
         {
             FileInfo = fileInfo;
             using var streamReader = fileInfo.OpenText();
@@ -29,14 +29,14 @@ namespace AILZ80ASM
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var item = new LineItem(line, lineIndex);
+                var item = new LineItem(line, lineIndex, asmLoad);
                 Items.Add(item);
 
                 lineIndex++;
             }
         }
 
-        public static LineDetailItemInclude Create(string lineString)
+        public static LineDetailItemInclude Create(string lineString, AsmLoad asmLoad)
         {
             var matched = Regex.Match(lineString, RegexPatternInclude, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
@@ -66,7 +66,7 @@ namespace AILZ80ASM
                     length = resultLength;
                 }
 
-                return new LineDetailItemInclude(fileInfo, fileType, start, length);
+                return new LineDetailItemInclude(fileInfo, fileType, start, length, asmLoad);
             }
             
             return default;

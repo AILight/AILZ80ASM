@@ -41,6 +41,9 @@ namespace AILZ80ASM
             string line;
             var lineIndex = 0;
             var loadFileName = Path.GetFileNameWithoutExtension(FileInfo.Name);
+            
+            Package.AssembleLoad.GlobalLableName = loadFileName.Replace(".", "_");
+
             /*
             WorkGlobalLabelName = loadFileName.Replace(".", "_");
             WorkLabelName = "";
@@ -48,7 +51,7 @@ namespace AILZ80ASM
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var item = new LineItem(line, lineIndex);
+                var item = new LineItem(line, lineIndex, Package.AssembleLoad);
                 Items.Add(item);
 
                 lineIndex++;

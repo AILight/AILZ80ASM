@@ -7,14 +7,23 @@ namespace AILZ80ASM
 {
     public class Macro
     {
-        public string GlobalMacroName { get; private set; }
+        public string GlobalLabelName { get; private set; }
         public string Name { get; private set; }
-        public string FullName => $"{GlobalMacroName}.Name";
+        public string FullName => $"{GlobalLabelName}.{Name}";
 
         public List<string> Args { get; private set; } = new List<string>();
-        public FileItem FileItem { get; private set; }
         public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
 
+        public Macro(string macroName, string args, LineItem[] lineItems, AsmLoad asmLoad)
+        {
+            this.GlobalLabelName = asmLoad.GlobalLableName;
+            this.Name = macroName;
+            Args.AddRange(args.Split(',').Select(m => m.Trim()));
+
+            LineItems.AddRange(lineItems);
+        }
+
+        /*
         public Macro(List<LineItem> lineItems, FileItem fileItem)
         {
             FileItem = fileItem;
@@ -40,7 +49,7 @@ namespace AILZ80ASM
 
             LineItems.AddRange(lineItems.Skip(1).SkipLast(1));
         }
-
+        */
 
     }
 }

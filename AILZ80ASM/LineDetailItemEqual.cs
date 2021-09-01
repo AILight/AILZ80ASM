@@ -8,25 +8,38 @@ namespace AILZ80ASM
 {
     public class LineDetailItemEqual : LineDetailItem
     {
-        public FileInfo FileInfo { get; private set; }
-        public List<LineItem> Items { get; private set; } = new List<LineItem>();
-        //GREEN_ADDR equ 
-        private static readonly string RegexPatternEqual = @"\s*(?<label>\.?[a-zA-Z0-9_]+)\s+equ\s+(?<value>.+)";
-
+        private static readonly string RegexPatternEqual = @"^\s*(?<label>\.?[a-zA-Z0-9_]+:?)\s+equ\s+(?<value>.+)";
 
         public LineDetailItemEqual()
         {
 
         }
 
-        public static LineDetailItemEqual Create(string lineString)
+        public static LineDetailItemEqual Create(string lineString, AsmLoad asmLoad)
         {
             var matched = Regex.Match(lineString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
+                var labelName = matched.Groups["label"].Value;
+                var lableValue = matched.Groups["value"].Value.Trim();
+
+                // エラーチェック
+                if (labelName.StartsWith(".") && labelName.EndsWith(":"))
+                {
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0013);
+                }
+
+                if (!labelName.StartsWith("."))
+                {
+                    asmLoad.LabelName = labelName.Replace(":", "");
+                }
+
+                var label = new Label(labelName, lableValue, asmLoad);
+                asmLoad.Labels.Add(label);
+
                 return new LineDetailItemEqual();
             }
-            
+
             return default;
         }
     }

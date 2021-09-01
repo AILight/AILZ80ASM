@@ -10,6 +10,7 @@ namespace AILZ80ASM
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         private List<Macro> Macros { get; set; } = new List<Macro>();
+        public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
 
         private List<FileItemErrorMessage> ErrorMessages { get; set; } = new List<FileItemErrorMessage>();
 

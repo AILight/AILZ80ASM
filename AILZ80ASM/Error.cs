@@ -28,6 +28,7 @@ namespace AILZ80ASM
             E0011,
             E0012,
             E0013,
+            E0014,
             W0001,
             I0001,
         }
@@ -66,7 +67,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
             [ErrorCodeEnum.E0010] = "MACROに対応するEND MACROが見つかりませんでした",
             [ErrorCodeEnum.E0011] = "MACROが重複登録されていますので、名前解決が出来ません。",
-            [ErrorCodeEnum.E0012] = "データの指定が間違っています",
+            [ErrorCodeEnum.E0012] = "データの指定が間違っています。",
+            [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
+            [ErrorCodeEnum.E0014] = "END MACROが先に見つかりました",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"

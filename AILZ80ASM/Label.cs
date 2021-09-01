@@ -9,6 +9,24 @@ namespace AILZ80ASM
 {
     public class Label
     {
+        public Label(string labelName, string valueString, AsmLoad asmLoad)
+        {
+            DataType = DataTypeEnum.ProcessingForValue;
+            GlobalLabelName = asmLoad.GlobalLableName;
+            LabelName = asmLoad.LabelName;
+            if (labelName.StartsWith("."))
+            {
+                SubLabelName = labelName.Substring(1);
+            }
+            else
+            {
+                LabelName = labelName.Replace(":", "");
+            }
+            ValueString = valueString;
+
+            SetValue(asmLoad.Labels.ToArray());
+        }
+
         private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
         private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";

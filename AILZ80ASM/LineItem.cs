@@ -18,7 +18,7 @@ namespace AILZ80ASM
         public string CommentString { get; private set; }
         public LineDetailItem LineDetailItem { get; private set; }
 
-        public LineItem(string lineString, int lineIndex)
+        public LineItem(string lineString, int lineIndex, AsmLoad asmLoad)
         {
             // 読み込んだ情報
             LineString = lineString;
@@ -31,10 +31,14 @@ namespace AILZ80ASM
             if (indexCommnet != -1)
             {
                 CommentString = lineString.Substring(indexCommnet);
-                OperationString = lineString.Substring(0, indexCommnet);
+                OperationString = lineString.Substring(0, indexCommnet).TrimEnd();
+            }
+            else
+            {
+                OperationString = lineString.TrimEnd();
             }
             // LineDetailItem作成
-            LineDetailItem = LineDetailItem.CreateLineDetailItem(OperationString);
+            LineDetailItem = LineDetailItem.CreateLineDetailItem(OperationString, asmLoad);
         }
 
         public LineAssemblyItem[] LineAssemblyItems

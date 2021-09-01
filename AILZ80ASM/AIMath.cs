@@ -59,6 +59,12 @@ namespace AILZ80ASM
             return ConvertToUInt16(value, lineExpansionItem.Label.GlobalLabelName, lineExpansionItem.Label.LabelName, lineExpansionItem.Address, labels);
         }
 
+        public static UInt16 ConvertToUInt16(string value, AsmLoad asmLoad)
+        {
+            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad.Labels.ToArray());
+            return InternalConvertToUInt16(value, tmpValue);
+        }
+
         public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, Label[] labels)
         {
             var tmpValue = ReplaceAll(value, globalLabelName, lableName, labels);
