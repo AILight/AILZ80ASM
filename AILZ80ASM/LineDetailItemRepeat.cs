@@ -8,66 +8,95 @@ namespace AILZ80ASM
 {
     public class LineDetailItemRepeat : LineDetailItem
     {
-        private static readonly string RegexPatternMacroStart = @"^\s*Repeat\s+(?<count>.+)\s+(?<mode>.+)\s+(?<arg>.+)";
-        private static readonly string RegexPatternMacroEnd = @"^\s*End\s+Repeat\s*$";
+        // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
+        private static readonly string RegexPatternRepeatFullStart = @"^\s*Repeat\s+(?<count>.+)\s+LAST\s+(?<last_arg>.+)$";
+        private static readonly string RegexPatternRepeatSimpleStart = @"^\s*Repeat\s+(?<count>.+)$";
+        private static readonly string RegexPatternRepeatEnd = @"^\s*End\s+Repeat\s*$";
 
-        public string MacroName { get; private set; } = "";
-        public string MacroArgs { get; private set; } = "";
-        private List<string> MacroLines = new List<string>();
+        private static string RepeatCountLabel { get; set; }
+        private static string RepeatLastLabel { get; set; }
+
+        private List<LineItem> RepeatLines = new List<LineItem>();
 
         public LineDetailItemRepeat()
         {
 
         }
 
-        public static LineDetailItemMacro Create(string lineString, AsmLoad asmLoad)
+        public static LineDetailItemRepeat Create(string lineString, AsmLoad asmLoad)
         {
-            var startMatched = Regex.Match(lineString, RegexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineString, RegexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched = Regex.Match(lineString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startSimpleMatched = Regex.Match(lineString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = Regex.Match(lineString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            if (asmLoad.LineDetailItemMacro != default)
+            if (asmLoad.LineDetailItemRepeat != default)
             {
-                if (startMatched.Success)
-                {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0010);
-                }
-
                 if (endMatched.Success)
                 {
-                    // Macro登録
-                    var lineDetailItemMacro = asmLoad.LineDetailItemMacro;
-                    var macro = new Macro(lineDetailItemMacro.MacroName, lineDetailItemMacro.MacroArgs, lineDetailItemMacro.MacroLines.ToArray(), asmLoad);
-                    asmLoad.Macros.Add(macro);
-
                     // 終了
-                    asmLoad.LineDetailItemMacro = default;
+                    asmLoad.LineDetailItemRepeat = null;
                 }
                 else
                 {
-                    asmLoad.LineDetailItemMacro.MacroLines.Add(lineString);
+                    var repeatLines = asmLoad.LineDetailItemRepeat.RepeatLines;
+                    var repeatAsmLoad = asmLoad.Clone();
+                    repeatAsmLoad.LineDetailItemRepeat = default;
+
+                    repeatLines.Add(new LineItem(lineString, repeatLines.Count + 1, repeatAsmLoad));
                 }
-                return new LineDetailItemMacro();
+                return new LineDetailItemRepeat();
             }
             else
             {
                 if (startMatched.Success)
                 {
-                    var lineDetailItemMacro = new LineDetailItemMacro();
+                    var lineDetailItemRepeat = new LineDetailItemRepeat();
 
-                    lineDetailItemMacro.MacroName = startMatched.Groups["macro_name"].Value;
-                    lineDetailItemMacro.MacroArgs = startMatched.Groups["args"].Value;
+                    RepeatCountLabel = startMatched.Groups["count"].Value;
+                    RepeatLastLabel = startMatched.Groups["last_arg"].Value;
 
-                    asmLoad.LineDetailItemMacro = lineDetailItemMacro;
+                    asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
 
-                    return lineDetailItemMacro;
+                    return lineDetailItemRepeat;
+                }
+                else if (startSimpleMatched.Success)
+                {
+                    var lineDetailItemRepeat = new LineDetailItemRepeat();
+
+                    RepeatCountLabel = startSimpleMatched.Groups["count"].Value;
+
+                    asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
+
+                    return lineDetailItemRepeat;
+
                 }
 
                 if (endMatched.Success)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0014);
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1012);
                 }
             }
             return default;
+        }
+
+        public override void ExpansionItem(AsmLoad assembleLoad)
+        {
+            // リピート数が設定されているものを処理する
+            if (!string.IsNullOrEmpty(RepeatCountLabel))
+            {
+                var count = AIMath.ConvertToUInt16(RepeatCountLabel, assembleLoad);
+                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : AIMath.ConvertToUInt16(RepeatLastLabel, assembleLoad);
+
+                foreach (var repeatCounter in Enumerable.Range(0, count))
+                {
+                    foreach (var item in RepeatLines)
+                    {
+
+                    }
+                }
+            }
+
+            base.ExpansionItem(assembleLoad);
         }
     }
 }

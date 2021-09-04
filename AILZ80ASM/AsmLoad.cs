@@ -26,9 +26,37 @@ namespace AILZ80ASM
         public List<Macro> Macros { get; private set; } = new List<Macro>();
 
         public LineDetailItemMacro LineDetailItemMacro { get; set; } = null;
+        public LineDetailItemRepeat LineDetailItemRepeat { get; set; } = null; 
 
         public AsmLoad()
         {
+        }
+
+        public AsmLoad Clone()
+        {
+            return new AsmLoad
+            {
+                GlobalLableName = this.GlobalLableName,
+                LabelName = this.LabelName,
+                LoadFiles = this.LoadFiles,
+                Macros = this.Macros,
+                LineDetailItemMacro = this.LineDetailItemMacro,
+                Labels = this.Labels,
+                LineDetailItemRepeat = LineDetailItemRepeat
+            };
+        }
+
+        public void LoadCloseValidate()
+        {
+            if (LineDetailItemMacro != default)
+            {
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E1001);
+            }
+
+            if (LineDetailItemRepeat != default)
+            {
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E1011);
+            }
         }
     }
 }

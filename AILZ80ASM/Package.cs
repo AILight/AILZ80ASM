@@ -9,7 +9,7 @@ namespace AILZ80ASM
     public class Package
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
-        private List<Macro> Macros { get; set; } = new List<Macro>();
+        //private List<Macro> Macros { get; set; } = new List<Macro>();
         public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
 
         private List<FileItemErrorMessage> ErrorMessages { get; set; } = new List<FileItemErrorMessage>();
@@ -24,23 +24,27 @@ namespace AILZ80ASM
             {
                 FileItems.Add(new FileItem(fileInfo, this));
             }
+
+            this.AssembleLoad.LoadCloseValidate();
         }
 
         public void Assemble()
         {
             var address = default(AsmAddress);
 
+            /*
             // マクロをロードする
             foreach (var fileItem in FileItems)
             {
                 fileItem.LoadMacro();
                 Macros.AddRange(this.Macros);
             }
+            */
 
             // 命令を展開する
             foreach (var fileItem in FileItems)
             {
-                fileItem.ExpansionItem(Macros);
+                fileItem.ExpansionItem(AssembleLoad);
             }
 
             // 値のラベルを処理する

@@ -15,7 +15,7 @@ namespace AILZ80ASM
         }
 
         public FileInfo FileInfo { get; private set; }
-        public List<LineItem> Items { get; private set; } = new List<LineItem>();
+        public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
         private static readonly string RegexPatternInclude = @"\s*include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
 
 
@@ -29,8 +29,8 @@ namespace AILZ80ASM
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var item = new LineItem(line, lineIndex, asmLoad);
-                Items.Add(item);
+                var lineItem = new LineItem(line, lineIndex, asmLoad);
+                LineItems.Add(lineItem);
 
                 lineIndex++;
             }
@@ -70,6 +70,16 @@ namespace AILZ80ASM
             }
             
             return default;
+        }
+
+        public override void ExpansionItem(AsmLoad assembleLoad)
+        {
+            foreach (var lineItem in LineItems)
+            {
+                lineItem.ExpansionItem(assembleLoad);
+            }
+
+            base.ExpansionItem(assembleLoad);
         }
     }
 }

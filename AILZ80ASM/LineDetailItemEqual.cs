@@ -37,7 +37,13 @@ namespace AILZ80ASM
                 var label = new Label(labelName, lableValue, asmLoad);
                 asmLoad.Labels.Add(label);
 
-                return new LineDetailItemEqual();
+                return new LineDetailItemEqual()
+                {
+                    LineDetailExpansionItems = new[] 
+                    {
+                        new LineDetailExpansionItem { Label = label } 
+                    }
+                };
             }
 
             return default;

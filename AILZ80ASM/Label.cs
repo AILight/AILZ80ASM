@@ -9,6 +9,12 @@ namespace AILZ80ASM
 {
     public class Label
     {
+        private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
+        private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
+        private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
+        private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
+        //private static readonly string RegexPatternValue = @"^equ\s+(?<value>([\$\w]+))";
+
         public Label(string labelName, string valueString, AsmLoad asmLoad)
         {
             DataType = DataTypeEnum.ProcessingForValue;
@@ -27,48 +33,42 @@ namespace AILZ80ASM
             SetValue(asmLoad.Labels.ToArray());
         }
 
-        private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
-        private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
-        private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
-        private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
-        private static readonly string RegexPatternValue = @"^equ\s+(?<value>([\$\w]+))";
-
-        public Label(LineExpansionItem lineExpansionItem)
+        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
             //グローバルラベルの設定
-            //GlobalLabelName = lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName;
-            //LabelName = lineExpansionItem.LineItem.FileItem.WorkLabelName;
+            GlobalLabelName = asmLoad.GlobalLableName;
+            LabelName = asmLoad.LabelName;
 
             //ラベルを処理する
             DataType = DataTypeEnum.None;
 
-            if (string.IsNullOrEmpty(lineExpansionItem.LabelText))
+            if (string.IsNullOrEmpty(lineDetailExpansionItemOperation.LabelText))
             {
                 return;
             }
 
-            var matchedGlobalLable = Regex.Match(lineExpansionItem.LabelText, RegexPatternGlobalLabel, RegexOptions.Singleline);
+            var matchedGlobalLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternGlobalLabel, RegexOptions.Singleline);
             if (matchedGlobalLable.Success)
             {
                 // ラベルマッチ
                 GlobalLabelName = matchedGlobalLable.Groups["lable"].Value;
-                //lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName = GlobalLabelName;
+                asmLoad.GlobalLableName = GlobalLabelName;
                 DataType = DataTypeEnum.Processing;
             }
             else
             {
-                var matchedLable = Regex.Match(lineExpansionItem.LabelText, RegexPatternLabel, RegexOptions.Singleline);
+                var matchedLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternLabel, RegexOptions.Singleline);
                 if (matchedLable.Success)
                 {
                     // ラベルマッチ
                     LabelName = matchedLable.Groups["lable"].Value;
-                    //lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
+                    asmLoad.LabelName = LabelName;
 
                     DataType = DataTypeEnum.Processing;
                 }
                 else
                 {
-                    var matchedSubLable = Regex.Match(lineExpansionItem.LabelText, RegexPatternSubLabel, RegexOptions.Singleline);
+                    var matchedSubLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternSubLabel, RegexOptions.Singleline);
                     if (matchedSubLable.Success)
                     {
                         SubLabelName = matchedSubLable.Groups["lable"].Value.Substring(1);
@@ -76,17 +76,17 @@ namespace AILZ80ASM
                     }
                     else
                     {
-                        LabelName = lineExpansionItem.LabelText;
-                        //lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
+                        LabelName = lineDetailExpansionItemOperation.LabelText;
+                        asmLoad.LabelName = LabelName;
                         DataType = DataTypeEnum.Processing;
                     }
                 }
             }
-            if (DataType == DataTypeEnum.Processing && string.Compare(lineExpansionItem.InstructionText, "equ", true) == 0)
+            if (DataType == DataTypeEnum.Processing && string.Compare(lineDetailExpansionItemOperation.InstructionText, "equ", true) == 0)
             {
-                ValueString = lineExpansionItem.ArgumentText;
+                ValueString = lineDetailExpansionItemOperation.ArgumentText;
                 DataType = DataTypeEnum.ProcessingForValue;
-                lineExpansionItem.IsAssembled = true;
+                lineDetailExpansionItemOperation.IsAssembled = true;
             }
         }
 

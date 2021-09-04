@@ -8,9 +8,18 @@ namespace AILZ80ASM
 {
     public class LineDetailItemOperation : LineDetailItem
     {
+        public string OperationString { get; set; }
 
         public LineDetailItemOperation(string operationString)
         {
+            this.OperationString = operationString;
+        }
+
+        public override void ExpansionItem(AsmLoad asmLoad)
+        {
+            var macro = Macro.Macth(this.OperationString, asmLoad);
+
+            base.ExpansionItem(assembleLoad);
         }
 
         //public void PreAssemble(ref AsmAddress address, Label[] labels)

@@ -13,7 +13,7 @@ namespace AILZ80ASM
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
 
-        public List<Macro> Macros { get; private set; } = new List<Macro>();
+        //public List<Macro> Macros { get; private set; } = new List<Macro>();
         //public Label[] Labels => Items.SelectMany(m => m.Labels).ToArray();
         public string WorkGlobalLabelName { get; set; }
         public string WorkLabelName { get; set; }
@@ -29,13 +29,6 @@ namespace AILZ80ASM
             streamReader.Close();
         }
 
-        /*
-        public FileItem(StreamReader streamReader)
-        {
-            Read(streamReader);
-        }
-        */
-
         private void Read(StreamReader streamReader)
         {
             string line;
@@ -43,11 +36,6 @@ namespace AILZ80ASM
             var loadFileName = Path.GetFileNameWithoutExtension(FileInfo.Name);
             
             Package.AssembleLoad.GlobalLableName = loadFileName.Replace(".", "_");
-
-            /*
-            WorkGlobalLabelName = loadFileName.Replace(".", "_");
-            WorkLabelName = "";
-            */
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
@@ -59,30 +47,86 @@ namespace AILZ80ASM
 
         }
 
-        /*
-        public byte[] Bin
+        /// <summary>
+        /// マクロその他命令の展開
+        /// </summary>
+        /// <param name="macros"></param>
+        public void ExpansionItem()
         {
-            get
+            foreach (var item in Items)
             {
-                var bytes = new List<byte>();
+                item.ExpansionItem(Package.AssembleLoad);
+            }
 
+            /*
                 foreach (var item in Items)
                 {
-                    if (item.Bin != default(byte[]))
+                    try
                     {
-                        bytes.AddRange(item.Bin);
+                        // マクロの展開（グローバルマクロ）
+                        {
+                            var foundMacros = Macros.Where(row => row.FullName == item.InstructionText);
+                            if (foundMacros.Count() > 2)
+                            {
+                                throw new ErrorMessageException(Error.ErrorCodeEnum.E0011);
+                            }
+                            if (foundMacros.Count() == 1)
+                            {
+                                item.ExpansionMacro(foundMacros.First());
+                                continue;
+                            }
+                        }
+                        // ローカルマクロ
+                        {
+                            var foundMacros = Macros.Where(row => row.Name == item.InstructionText);
+                            if (foundMacros.Count() > 2)
+                            {
+                                throw new ErrorMessageException(Error.ErrorCodeEnum.E0011);
+                            }
+                            if (foundMacros.Count() == 1)
+                            {
+                                item.ExpansionMacro(foundMacros.First());
+                                continue;
+                            }
+                        }
+
+                        // 通常命令の展開
+                        item.ExpansionItem();
+
+                    }
+                    catch (ErrorMessageException ex)
+                    {
+                        ErrorMessages.Add(new LineItemErrorMessage(ex, item));
                     }
                 }
-
-                return bytes.ToArray();
+                */
             }
-        }
-        */
 
-        /// <summary>
-        /// マクロをロードする
-        /// </summary>
-        public void LoadMacro()
+
+            /*
+            public byte[] Bin
+            {
+                get
+                {
+                    var bytes = new List<byte>();
+
+                    foreach (var item in Items)
+                    {
+                        if (item.Bin != default(byte[]))
+                        {
+                            bytes.AddRange(item.Bin);
+                        }
+                    }
+
+                    return bytes.ToArray();
+                }
+            }
+            */
+
+            /// <summary>
+            /// マクロをロードする
+            /// </summary>
+            public void LoadMacro()
         {
             /*
             var whileMacro = false;
@@ -137,56 +181,7 @@ namespace AILZ80ASM
             }
         }
 
-        /// <summary>
-        /// マクロその他命令の展開
-        /// </summary>
-        /// <param name="macros"></param>
-        public void ExpansionItem(List<Macro> macros)
-        {
-            /*
-            foreach (var item in Items)
-            {
-                try
-                {
-                    // マクロの展開（グローバルマクロ）
-                    {
-                        var foundMacros = Macros.Where(row => row.FullName == item.InstructionText);
-                        if (foundMacros.Count() > 2)
-                        {
-                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0011);
-                        }
-                        if (foundMacros.Count() == 1)
-                        {
-                            item.ExpansionMacro(foundMacros.First());
-                            continue;
-                        }
-                    }
-                    // ローカルマクロ
-                    {
-                        var foundMacros = Macros.Where(row => row.Name == item.InstructionText);
-                        if (foundMacros.Count() > 2)
-                        {
-                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0011);
-                        }
-                        if (foundMacros.Count() == 1)
-                        {
-                            item.ExpansionMacro(foundMacros.First());
-                            continue;
-                        }
-                    }
-
-                    // 通常命令の展開
-                    item.ExpansionItem();
-
-                }
-                catch (ErrorMessageException ex)
-                {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
-                }
-            }
-            */
-        }
-
+       
         public void PreAssemble(ref AsmAddress address, Label[] labels)
         {
             foreach (var item in Items)

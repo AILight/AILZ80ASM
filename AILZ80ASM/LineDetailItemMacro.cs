@@ -29,7 +29,7 @@ namespace AILZ80ASM
             {
                 if (startMatched.Success)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0010);
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1001);
                 }
 
                 if (endMatched.Success)
@@ -64,10 +64,11 @@ namespace AILZ80ASM
 
                 if (endMatched.Success)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0014);
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1002);
                 }
             }
             return default;
         }
+
     }
 }

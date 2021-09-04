@@ -9,6 +9,8 @@ namespace AILZ80ASM
     public abstract class LineDetailItem
     {
         private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
+        
+        public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
 
         public static LineDetailItem CreateLineDetailItem(string operationString, AsmLoad asmLoad)
         {
@@ -19,6 +21,7 @@ namespace AILZ80ASM
             var lineDetailItem = default(LineDetailItem);
 
             lineDetailItem = lineDetailItem ?? LineDetailItemMacro.Create(operationString, asmLoad);
+            lineDetailItem = lineDetailItem ?? LineDetailItemRepeat.Create(operationString, asmLoad);
             lineDetailItem = lineDetailItem ?? LineDetailItemEqual.Create(operationString, asmLoad);
             lineDetailItem = lineDetailItem ?? LineDetailItemInclude.Create(operationString, asmLoad);
             lineDetailItem = lineDetailItem ?? new LineDetailItemOperation(operationString);
@@ -41,6 +44,11 @@ namespace AILZ80ASM
                     asmLoad.LabelName = label.Substring(0, label.Length - 1);
                 }
             }
+        }
+
+        public virtual void ExpansionItem(AsmLoad assembleLoad)
+        {
+            
         }
 
         public virtual LineAssemblyItem[] LineAssemblyItems { get; } = new LineAssemblyItem[] { };

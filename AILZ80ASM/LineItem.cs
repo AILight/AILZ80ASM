@@ -41,6 +41,12 @@ namespace AILZ80ASM
             LineDetailItem = LineDetailItem.CreateLineDetailItem(OperationString, asmLoad);
         }
 
+
+        public void ExpansionItem(AsmLoad assembleLoad)
+        {
+            LineDetailItem.ExpansionItem(assembleLoad);
+        }
+
         public LineAssemblyItem[] LineAssemblyItems
         {
             get 
@@ -48,6 +54,7 @@ namespace AILZ80ASM
                 return LineDetailItem.LineAssemblyItems;
             }
         }
+
 
 
         //public Label[] Labels => LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label).ToArray();
