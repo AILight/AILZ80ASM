@@ -10,14 +10,15 @@ namespace AILZ80ASM
     {
         private static readonly string RegexPatternEqual = @"^\s*(?<label>\.?[a-zA-Z0-9_]+:?)\s+equ\s+(?<value>.+)";
 
-        public LineDetailItemEqual()
+        public LineDetailItemEqual(LineItem lineItem)
+            : base(lineItem)
         {
 
         }
 
-        public static LineDetailItemEqual Create(string lineString, AsmLoad asmLoad)
+        public static LineDetailItemEqual Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(lineString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = Regex.Match(lineItem.OperationString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
                 var labelName = matched.Groups["label"].Value;
@@ -37,7 +38,7 @@ namespace AILZ80ASM
                 var label = new Label(labelName, lableValue, asmLoad);
                 asmLoad.Labels.Add(label);
 
-                return new LineDetailItemEqual()
+                return new LineDetailItemEqual(lineItem)
                 {
                     LineDetailExpansionItems = new[] 
                     {

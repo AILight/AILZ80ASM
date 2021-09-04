@@ -38,10 +38,9 @@ namespace AILZ80ASM
                 OperationString = lineString.TrimEnd();
             }
             // LineDetailItem作成
-            LineDetailItem = LineDetailItem.CreateLineDetailItem(OperationString, asmLoad);
+            LineDetailItem = LineDetailItem.CreateLineDetailItem(this, asmLoad);
         }
-
-
+        
         public void ExpansionItem(AsmLoad assembleLoad)
         {
             LineDetailItem.ExpansionItem(assembleLoad);
@@ -54,6 +53,8 @@ namespace AILZ80ASM
                 return LineDetailItem.LineAssemblyItems;
             }
         }
+
+
 
 
 

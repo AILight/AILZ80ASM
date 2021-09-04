@@ -13,7 +13,7 @@ namespace AILZ80ASM
         public string FullName => $"{GlobalLabelName}.{Name}";
 
         public List<string> Args { get; private set; } = new List<string>();
-        public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
+        public List<string> LineStrings { get; private set; } = new List<string>();
 
         private static readonly string RegexPatternLabel = @"^(?<label>([^\.][a-zA-Z0-9_]+::?)|(\.[a-zA-Z0-9_]+[^:]))\s*.*$";
         private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_\.]+)\s*(?<args>.*)$";
@@ -24,7 +24,7 @@ namespace AILZ80ASM
             this.Name = macroName;
             Args.AddRange(args.Split(',').Select(m => m.Trim()));
 
-            LineItems.AddRange(lineItems);
+            LineStrings.AddRange(lineItems.Select(m => m.LineString));
         }
 
         public static LineDetailExpansionItem[] Expansion(string operationString, AsmLoad asmLoad)
@@ -58,11 +58,28 @@ namespace AILZ80ASM
                     return default(LineDetailExpansionItem[]);
                 }
                 // 展開をする
-                var lineDetailExpansionItems = new List<LineDetailExpansionItem>();
-                lineDetailExpansionItems.Add(new LineDetailExpansionItem)
+                if (macro != default)
+                {
+                    var lineDetailExpansionItems = new List<LineDetailExpansionItem>();
+                    var lineIndex = 1;
+                    if (!string.IsNullOrEmpty(labelName))
+                    {
+                        lineDetailExpansionItems.Add(new LineDetailExpansionItemOperation(new LineItem(labelName, lineIndex, asmLoad), asmLoad));
+                    }
+                    // 引数を展開する
+                    var lineStrings = macro.LineStrings.ToArray();
+
+                    // LineItemsを作成
+                    var lineItems = lineStrings.Select(m => new LineItem(m, lineIndex++, asmLoad));
+                    foreach (var lineItem in lineItems)
+                    {
+                        lineItem.ExpansionItem(asmLoad);
+                        lineDetailExpansionItems.AddRange(lineItem.LineDetailItem.LineDetailExpansionItems);
+                    }
+                    return lineDetailExpansionItems.ToArray();
+                }
 
             }
-
 
             return default(LineDetailExpansionItem[]);
 

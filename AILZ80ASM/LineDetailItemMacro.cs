@@ -15,15 +15,16 @@ namespace AILZ80ASM
         private string MacroArgs { get; set; } = "";
         private List<LineItem> MacroLines = new List<LineItem>();
 
-        public LineDetailItemMacro()
+        public LineDetailItemMacro(LineItem lineItem)
+            : base(lineItem)
         {
 
         }
 
-        public static LineDetailItemMacro Create(string lineString, AsmLoad asmLoad)
+        public static LineDetailItemMacro Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var startMatched = Regex.Match(lineString, RegexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineString, RegexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             if (asmLoad.LineDetailItemMacro != default)
             {
@@ -44,15 +45,15 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    asmLoad.LineDetailItemMacro.MacroLines.Add(new LineItem(lineString, asmLoad.LineDetailItemMacro.MacroLines.Count + 1, asmLoad));
+                    asmLoad.LineDetailItemMacro.MacroLines.Add(new LineItem(lineItem.OperationString, asmLoad.LineDetailItemMacro.MacroLines.Count + 1, asmLoad));
                 }
-                return new LineDetailItemMacro();
+                return new LineDetailItemMacro(lineItem);
             }
             else
             {
                 if (startMatched.Success)
                 {
-                    var lineDetailItemMacro = new LineDetailItemMacro();
+                    var lineDetailItemMacro = new LineDetailItemMacro(lineItem);
 
                     lineDetailItemMacro.MacroName = startMatched.Groups["macro_name"].Value;
                     lineDetailItemMacro.MacroArgs = startMatched.Groups["args"].Value;

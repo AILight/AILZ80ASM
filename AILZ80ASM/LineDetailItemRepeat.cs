@@ -18,16 +18,17 @@ namespace AILZ80ASM
 
         private List<LineItem> RepeatLines = new List<LineItem>();
 
-        public LineDetailItemRepeat()
+        public LineDetailItemRepeat(LineItem lineItem)
+            : base(lineItem)
         {
 
         }
 
-        public static LineDetailItemRepeat Create(string lineString, AsmLoad asmLoad)
+        public static LineDetailItemRepeat Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var startMatched = Regex.Match(lineString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var startSimpleMatched = Regex.Match(lineString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startSimpleMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             if (asmLoad.LineDetailItemRepeat != default)
             {
@@ -42,15 +43,15 @@ namespace AILZ80ASM
                     var repeatAsmLoad = asmLoad.Clone();
                     repeatAsmLoad.LineDetailItemRepeat = default;
 
-                    repeatLines.Add(new LineItem(lineString, repeatLines.Count + 1, repeatAsmLoad));
+                    repeatLines.Add(new LineItem(lineItem.OperationString, repeatLines.Count + 1, repeatAsmLoad));
                 }
-                return new LineDetailItemRepeat();
+                return new LineDetailItemRepeat(lineItem);
             }
             else
             {
                 if (startMatched.Success)
                 {
-                    var lineDetailItemRepeat = new LineDetailItemRepeat();
+                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem);
 
                     RepeatCountLabel = startMatched.Groups["count"].Value;
                     RepeatLastLabel = startMatched.Groups["last_arg"].Value;
@@ -61,7 +62,7 @@ namespace AILZ80ASM
                 }
                 else if (startSimpleMatched.Success)
                 {
-                    var lineDetailItemRepeat = new LineDetailItemRepeat();
+                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem);
 
                     RepeatCountLabel = startSimpleMatched.Groups["count"].Value;
 

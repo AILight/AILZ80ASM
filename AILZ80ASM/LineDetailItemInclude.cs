@@ -18,8 +18,8 @@ namespace AILZ80ASM
         public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
         private static readonly string RegexPatternInclude = @"\s*include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
 
-
-        public LineDetailItemInclude(FileInfo fileInfo, FileTypeEnum fileType, int start, int length, AsmLoad asmLoad)
+        public LineDetailItemInclude(LineItem lineItem, FileInfo fileInfo, FileTypeEnum fileType, int start, int length, AsmLoad asmLoad)
+            : base(lineItem)
         {
             FileInfo = fileInfo;
             using var streamReader = fileInfo.OpenText();
@@ -29,16 +29,16 @@ namespace AILZ80ASM
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var lineItem = new LineItem(line, lineIndex, asmLoad);
-                LineItems.Add(lineItem);
+                var localLineItem = new LineItem(line, lineIndex, asmLoad);
+                LineItems.Add(localLineItem);
 
                 lineIndex++;
             }
         }
 
-        public static LineDetailItemInclude Create(string lineString, AsmLoad asmLoad)
+        public static LineDetailItemInclude Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(lineString, RegexPatternInclude, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = Regex.Match(lineItem.OperationString, RegexPatternInclude, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
                 var filename = matched.Groups["Filename"].Value;
@@ -66,20 +66,20 @@ namespace AILZ80ASM
                     length = resultLength;
                 }
 
-                return new LineDetailItemInclude(fileInfo, fileType, start, length, asmLoad);
+                return new LineDetailItemInclude(lineItem, fileInfo, fileType, start, length, asmLoad);
             }
             
             return default;
         }
 
-        public override void ExpansionItem(AsmLoad assembleLoad)
+        public override void ExpansionItem(AsmLoad asmLoad)
         {
             foreach (var lineItem in LineItems)
             {
-                lineItem.ExpansionItem(assembleLoad);
+                lineItem.ExpansionItem(asmLoad);
             }
 
-            base.ExpansionItem(assembleLoad);
+            base.ExpansionItem(asmLoad);
         }
     }
 }

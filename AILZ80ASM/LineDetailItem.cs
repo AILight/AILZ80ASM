@@ -9,29 +9,35 @@ namespace AILZ80ASM
     public abstract class LineDetailItem
     {
         private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
-        
+        protected LineItem LineItem { get; set; }
+
         public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
 
-        public static LineDetailItem CreateLineDetailItem(string operationString, AsmLoad asmLoad)
+        public LineDetailItem(LineItem lineItem)
+        {
+            LineItem = lineItem;
+        }
+
+        public static LineDetailItem CreateLineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
             // ラベルの処理
-            ProcessAsmLoad(operationString, asmLoad);
+            ProcessAsmLoad(lineItem, asmLoad);
 
             // インクルードのチェック
             var lineDetailItem = default(LineDetailItem);
 
-            lineDetailItem = lineDetailItem ?? LineDetailItemMacro.Create(operationString, asmLoad);
-            lineDetailItem = lineDetailItem ?? LineDetailItemRepeat.Create(operationString, asmLoad);
-            lineDetailItem = lineDetailItem ?? LineDetailItemEqual.Create(operationString, asmLoad);
-            lineDetailItem = lineDetailItem ?? LineDetailItemInclude.Create(operationString, asmLoad);
-            lineDetailItem = lineDetailItem ?? new LineDetailItemOperation(operationString);
+            lineDetailItem = lineDetailItem ?? LineDetailItemMacro.Create(lineItem, asmLoad);
+            lineDetailItem = lineDetailItem ?? LineDetailItemRepeat.Create(lineItem, asmLoad);
+            lineDetailItem = lineDetailItem ?? LineDetailItemEqual.Create(lineItem, asmLoad);
+            lineDetailItem = lineDetailItem ?? LineDetailItemInclude.Create(lineItem, asmLoad);
+            lineDetailItem = lineDetailItem ?? new LineDetailItemOperation(lineItem);
 
             return lineDetailItem;
         }
 
-        private static void ProcessAsmLoad(string operationString, AsmLoad asmLoad)
+        private static void ProcessAsmLoad(LineItem lineItem, AsmLoad asmLoad)
         {
-            var labelMatched = Regex.Match(operationString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var labelMatched = Regex.Match(lineItem.OperationString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (labelMatched.Success)
             {
                 var label = labelMatched.Groups["label"].Value;
@@ -46,7 +52,7 @@ namespace AILZ80ASM
             }
         }
 
-        public virtual void ExpansionItem(AsmLoad assembleLoad)
+        public virtual void ExpansionItem(AsmLoad asmLoad)
         {
             
         }

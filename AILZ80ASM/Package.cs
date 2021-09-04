@@ -44,7 +44,7 @@ namespace AILZ80ASM
             // 命令を展開する
             foreach (var fileItem in FileItems)
             {
-                fileItem.ExpansionItem(AssembleLoad);
+                fileItem.ExpansionItem();
             }
 
             // 値のラベルを処理する

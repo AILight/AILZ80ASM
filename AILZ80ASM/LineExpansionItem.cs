@@ -39,7 +39,7 @@ namespace AILZ80ASM
             OperationItem = default(IOperationItem);
 
             // ラベルを処理する
-            Label = new Label(this);
+            //Label = new Label(this);
         }
 
         public void PreAssemble(ref AsmAddress address, Label[] labels)
