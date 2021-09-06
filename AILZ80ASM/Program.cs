@@ -73,7 +73,5 @@ namespace AILZ80ASM
             Console.WriteLine($"*** AILZ80ASM *** Z-80 Assembler, .NET Core version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine($"Copyright (C) {DateTime.Today.Year:0} by M.Ishino (AILight)");
         }
-
-
     }
 }

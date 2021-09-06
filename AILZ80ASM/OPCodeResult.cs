@@ -14,7 +14,7 @@ namespace AILZ80ASM
         private OPCodeLabel[] OPCodeLabels { get; set; }
 
         public OPCodeResult(OPCodeItem opCodeItem)
-            : this(opCodeItem, new OPCodeLabel[] { })
+            : this(opCodeItem, Array.Empty<OPCodeLabel>())
         {
 
         }
@@ -37,7 +37,7 @@ namespace AILZ80ASM
             return OPCode.Select(m => Convert.ToByte(m, 2)).ToArray();
         }
 
-        public void Assemble(LineExpansionItem lineExpansionItem, Label[] labels)
+        public void Assemble(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
             var byteList = new List<byte>();
             foreach (var opCodeLabel in OPCodeLabels)
@@ -46,22 +46,22 @@ namespace AILZ80ASM
                 {
                     case ValueTypeEnum.IndexOffset:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineExpansionItem, labels);
+                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
                             var indexOffset = ConvertTo2BaseString(tmpValue8, 8);
                             OPCode = OPCode.Select(m => m.Replace("IIIIIIII", indexOffset)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.Value8:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineExpansionItem, labels);
+                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
                             var value8 = ConvertTo2BaseString(tmpValue8, 8);
                             OPCode = OPCode.Select(m => m.Replace("NNNNNNNN", value8)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.e8:
                         {
-                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineExpansionItem, labels);
-                            var offsetAddress = tmpValue16 - lineExpansionItem.Address.Program - 2;
+                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
+                            var offsetAddress = tmpValue16 - lineDetailExpansionItemOperation.Address.Program - 2;
                             if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                             {
                                 throw new ErrorMessageException(Error.ErrorCodeEnum.E0003, $"指定された値は、{offsetAddress}でした。");
@@ -72,7 +72,7 @@ namespace AILZ80ASM
                         break;
                     case ValueTypeEnum.Value16:
                         {
-                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineExpansionItem, labels);
+                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
                             var tmpValue16String = ConvertTo2BaseString(tmpValue16, 16);
                             var value16 = new[] { "", "" };
                             value16[0] = tmpValue16String.Substring(0, 8);
@@ -87,7 +87,7 @@ namespace AILZ80ASM
             }
         }
 
-        private string ConvertTo2BaseString(int value, int length)
+        private static string ConvertTo2BaseString(int value, int length)
         {
             var returnValue = Convert.ToString(value, 2).PadLeft(length, '0'); ;
             var overString = returnValue.Substring(0, returnValue.Length - length);

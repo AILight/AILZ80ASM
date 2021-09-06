@@ -13,7 +13,6 @@ namespace AILZ80ASM
         private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
         private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
-        //private static readonly string RegexPatternValue = @"^equ\s+(?<value>([\$\w]+))";
 
         public Label(string labelName, string valueString, AsmLoad asmLoad)
         {
@@ -30,7 +29,7 @@ namespace AILZ80ASM
             }
             ValueString = valueString;
 
-            SetValue(asmLoad.Labels.ToArray());
+            SetValue(asmLoad);
         }
 
         public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
@@ -99,15 +98,14 @@ namespace AILZ80ASM
             ADDR,
         }
 
-        public void SetValue(Label[] labels)
+        public void SetValue(AsmLoad asmLoad)
         {
             if (this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
-            var valueLabels = labels.Where(m => m.DataType == DataTypeEnum.Value).ToArray();
             try
             {
-                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, valueLabels);
+                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, asmLoad);
                 this.DataType = DataTypeEnum.Value;
             }
             catch
@@ -115,16 +113,15 @@ namespace AILZ80ASM
             }
         }
 
-        public void SetValueAndAddress(AsmAddress address, Label[] labels)
+        public void SetValueAndAddress(AsmAddress address, AsmLoad asmLoad)
         {
             if (this.DataType != DataTypeEnum.Processing &&
                 this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
-            var valueLabels = labels.Where(m => m.HasValue).ToArray();
             try
             {
-                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, valueLabels);
+                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, asmLoad);
                 this.DataType = DataTypeEnum.Value;
             }
             catch
@@ -161,7 +158,7 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="address"></param>
         /// <param name="labels"></param>
-        public void SetValueLabel(AsmAddress address, Label[] labels)
+        public void SetValueLabel(AsmAddress address, AsmLoad asmLoad)
         {
 
             switch (DataType)
@@ -171,7 +168,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.ADDR:
                     break;
                 case DataTypeEnum.Value:
-                    Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, labels);
+                    Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, asmLoad);
                     break;
                 default:
                     break;
@@ -204,5 +201,6 @@ namespace AILZ80ASM
 
             return "";
         }
+
     }
 }

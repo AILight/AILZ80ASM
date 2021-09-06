@@ -19,12 +19,28 @@ namespace AILZ80ASM
         private static readonly string RegexPatternInclude = @"\s*include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
 
         public LineDetailItemInclude(LineItem lineItem, FileInfo fileInfo, FileTypeEnum fileType, int start, int length, AsmLoad asmLoad)
-            : base(lineItem)
+            : base(lineItem, asmLoad)
         {
             FileInfo = fileInfo;
+
+            // ファイルの存在チェック
+            if (!fileInfo.Exists)
+            {
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0001, $"Filename:{fileInfo.Name}");
+            }
+
+            // 重複読み込みチェック
+            if (asmLoad.LoadFiles.Any(m => m.FullName == fileInfo.FullName))
+            {
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0002, $"Filename:{fileInfo.Name}");
+            }
+
+            // スタックに読み込みファイルを積む
+            asmLoad.LoadFiles.Push(fileInfo);
+
             using var streamReader = fileInfo.OpenText();
 
-            string line;
+            var line = default(string);
             var lineIndex = 0;
 
             while ((line = streamReader.ReadLine()) != default(string))
@@ -34,6 +50,7 @@ namespace AILZ80ASM
 
                 lineIndex++;
             }
+            asmLoad.LoadFiles.Pop();
         }
 
         public static LineDetailItemInclude Create(LineItem lineItem, AsmLoad asmLoad)
@@ -72,14 +89,18 @@ namespace AILZ80ASM
             return default;
         }
 
-        public override void ExpansionItem(AsmLoad asmLoad)
+        public override void ExpansionItem()
         {
+            var lineDetailExpansionItems = new List<LineDetailExpansionItem>();
+
             foreach (var lineItem in LineItems)
             {
-                lineItem.ExpansionItem(asmLoad);
+                lineItem.ExpansionItem();
+                lineDetailExpansionItems.AddRange(lineItem.LineDetailItem.LineDetailExpansionItems);
             }
+            this.LineDetailExpansionItems = lineDetailExpansionItems.ToArray();
 
-            base.ExpansionItem(asmLoad);
+            base.ExpansionItem();
         }
     }
 }

@@ -16,11 +16,7 @@ namespace AILZ80ASM.Test
             var actualBytes = new byte[READ_BUFFER_LENGTH];
             var address = default(UInt32);
 
-            var expectedReadLength = 0;
-            var actualReadLength = 0;
-            var index = 0;
-
-            Read(expectedStream, actualStream, expectedBytes, actualBytes, out expectedReadLength, out actualReadLength, out index);
+            Read(expectedStream, actualStream, expectedBytes, actualBytes, out var expectedReadLength, out var actualReadLength, out var index);
 
             while (expectedReadLength > 0 || actualReadLength > 0)
             {
@@ -64,13 +60,12 @@ namespace AILZ80ASM.Test
 
         public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile)
         {
-            using (var memoryStream = new MemoryStream())
-            using (var outputStream = outputFile.OpenRead())
-            {
-                Lib.Assemble(inputFiles, memoryStream);
-                memoryStream.Position = 0;
-                Lib.AreSame(outputStream, memoryStream);
-            }
+            using var memoryStream = new MemoryStream();
+            using var outputStream = outputFile.OpenRead();
+
+            Lib.Assemble(inputFiles, memoryStream);
+            memoryStream.Position = 0;
+            Lib.AreSame(outputStream, memoryStream);
         }
 
 

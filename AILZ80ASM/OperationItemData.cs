@@ -10,7 +10,7 @@ namespace AILZ80ASM
     {
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
-        private LineExpansionItem LineExpansionItem { get; set; }
+        private LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
         private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
         private static readonly string RegexPatternDataString = @"^\""(?<string>.*)\""$";
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
@@ -26,10 +26,10 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address, Label[] labels)
+        public static IOperationItem Parse(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemData);
-            var matched = Regex.Match($"{lineExpansionItem.InstructionText} {lineExpansionItem.ArgumentText}", RegexPatternDataOP, RegexOptions.Singleline);
+            var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             var op1 = matched.Groups["op1"].Value.ToUpper();
             var op2 = matched.Groups["op2"].Value;
@@ -37,17 +37,17 @@ namespace AILZ80ASM
             switch (op1)
             {
                 case "DB":
-                    returnValue = DBDW(DataTypeEnum.db, op2, lineExpansionItem, address, labels);
+                    returnValue = DBDW(DataTypeEnum.db, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 case "DW":
-                    returnValue = DBDW(DataTypeEnum.dw, op2, lineExpansionItem, address, labels);
+                    returnValue = DBDW(DataTypeEnum.dw, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 case "DS":
                 case "DBS":
-                    returnValue = DBDWS(DataTypeEnum.db, op2, lineExpansionItem, address);
+                    returnValue = DBDWS(DataTypeEnum.db, op2, lineDetailExpansionItemOperation, address);
                     break;
                 case "DWS":
-                    returnValue = DBDWS(DataTypeEnum.dw, op2, lineExpansionItem, address);
+                    returnValue = DBDWS(DataTypeEnum.dw, op2, lineDetailExpansionItemOperation, address);
                     break;
                 default:
                     break;
@@ -61,14 +61,14 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="dataType"></param>
         /// <param name="op2"></param>
-        /// <param name="lineExpansionItem"></param>
+        /// <param name="lineDetailExpansionItemOperation"></param>
         /// <param name="address"></param>
         /// <param name="labels"></param>
         /// <returns></returns>
-        private static OperationItemData DBDW(DataTypeEnum dataType, string op2, LineExpansionItem lineExpansionItem, AsmAddress address, Label[] labels)
+        private static OperationItemData DBDW(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var ops = op2.Split(',').Select(m => m.Trim()).ToArray();
-            var matchString = Regex.Match(op2, RegexPatternDataString);
+            var matchString = Regex.Match(op2, RegexPatternDataString, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matchString.Success)
             {
                 ops = System.Text.Encoding.ASCII.GetBytes(matchString.Groups["string"].Value).Select(m => m.ToString("0")).ToArray();
@@ -77,7 +77,7 @@ namespace AILZ80ASM
             {
                 if (Regex.IsMatch(op2, RegexPatternDataFunction))
                 {
-                    ops = DBDW_Function(op2, lineExpansionItem, labels).ToArray();
+                    ops = DBDW_Function(op2, lineDetailExpansionItemOperation, asmLoad).ToArray();
                 }
             }
 
@@ -87,7 +87,7 @@ namespace AILZ80ASM
                 DataType = dataType,
                 Address = address,
                 Length = new AsmLength(ops.Length * (int)dataType),
-                LineExpansionItem = lineExpansionItem
+                LineDetailExpansionItemOperation = lineDetailExpansionItemOperation
             };
         }
 
@@ -98,11 +98,11 @@ namespace AILZ80ASM
         /// <param name="lineExpansionItem"></param>
         /// <param name="labels"></param>
         /// <returns></returns>
-        private static string[] DBDW_Function(string op, LineExpansionItem lineExpansionItem, Label[] labels)
+        private static string[] DBDW_Function(string op, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
             var returnValues = new List<string>();
 
-            var matchFunction = Regex.Match(op, RegexPatternDataFunction);
+            var matchFunction = Regex.Match(op, RegexPatternDataFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matchFunction.Success)
             {
                 var variableName = matchFunction.Groups["variable"].Value.Trim();
@@ -111,18 +111,18 @@ namespace AILZ80ASM
                 var operation = matchFunction.Groups["operation"].Value.Trim();
 
                 //ループの展開
-                var startValue = (int)AIMath.ConvertToUInt16(start, lineExpansionItem, labels);
-                var endValue = (int)AIMath.ConvertToUInt16(end, lineExpansionItem, labels);
+                var startValue = (int)AIMath.ConvertToUInt16(start, lineDetailExpansionItemOperation, asmLoad);
+                var endValue = (int)AIMath.ConvertToUInt16(end, lineDetailExpansionItemOperation, asmLoad);
                 var stepValue = startValue < endValue ? 1 : -1;
                 var loopCount = (endValue - startValue) * stepValue;
                 var currentValue = startValue;
                 for (var index = 0; index <= loopCount; index++)
                 {
                     //ループの展開
-                    var tmpOperation = Regex.Replace(operation, $"\\b{variableName}\\b", $"{currentValue}");
+                    var tmpOperation = Regex.Replace(operation, $"\\b{variableName}\\b", $"{currentValue}", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                     if (Regex.IsMatch(tmpOperation, RegexPatternDataFunction))
                     {
-                        returnValues.AddRange(DBDW_Function(tmpOperation, lineExpansionItem, labels));
+                        returnValues.AddRange(DBDW_Function(tmpOperation, lineDetailExpansionItemOperation, asmLoad));
                     }
                     else
                     {
@@ -146,7 +146,7 @@ namespace AILZ80ASM
         /// <param name="lineExpansionItem"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static OperationItemData DBDWS(DataTypeEnum dataType, string op2, LineExpansionItem lineExpansionItem, AsmAddress address)
+        private static OperationItemData DBDWS(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)
         {
             var returnValue = default(OperationItemData);
             var ops = op2.Split(',');
@@ -170,7 +170,7 @@ namespace AILZ80ASM
                 DataType = dataType,
                 Address = address,
                 Length = new AsmLength(valuesStrings.Length * (int)dataType),
-                LineExpansionItem = lineExpansionItem
+                LineDetailExpansionItemOperation = lineDetailExpansionItemOperation
             };
 
             return returnValue;
@@ -182,7 +182,7 @@ namespace AILZ80ASM
 
         public AsmLength Length { get; set; }
 
-        public void Assemble(Label[] labels)
+        public void Assemble(AsmLoad asmLoad)
         {
             var byteList = new List<byte>();
             switch (DataType)
@@ -190,7 +190,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.dw:
                     foreach (var valueString in ValueStrings)
                     {
-                        var value = AIMath.ConvertToUInt16(valueString, LineExpansionItem, labels);
+                        var value = AIMath.ConvertToUInt16(valueString, LineDetailExpansionItemOperation, asmLoad);
                         byteList.Add((byte)(value % 256));
                         byteList.Add((byte)(value / 256));
                     }
@@ -198,7 +198,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.db:
                     foreach (var valueString in ValueStrings)
                     {
-                        byteList.Add((byte)AIMath.ConvertToUInt16(valueString, LineExpansionItem, labels));
+                        byteList.Add((byte)AIMath.ConvertToUInt16(valueString, LineDetailExpansionItemOperation, asmLoad));
                     }
                     break;
                 default:

@@ -12,10 +12,10 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Parse(LineExpansionItem lineExpansionItem, AsmAddress address, Label[] labels)
+        public static IOperationItem Parse(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemSystem);
-            var matched = Regex.Match($"{lineExpansionItem.InstructionText} {lineExpansionItem.ArgumentText}", OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
 
             var op1 = matched.Groups["op1"].Value.ToUpper();
             var op2 = matched.Groups["op2"].Value.ToUpper();
@@ -24,14 +24,14 @@ namespace AILZ80ASM
             switch (op1)
             {
                 case "ORG":
-                    var programAddress = AIMath.ConvertToUInt16(op2, lineExpansionItem, labels);
-                    var bytes = new byte[] { };
+                    var programAddress = AIMath.ConvertToUInt16(op2, lineDetailExpansionItemOperation, asmLoad);
+                    var bytes = Array.Empty<byte>();
                     var outputAddress = address.Output;
                     var length = new AsmLength(0);
 
                     if (!string.IsNullOrEmpty(op3))
                     {
-                        var localOutputAddress = AIMath.ConvertToUInt16(op3, lineExpansionItem, labels);
+                        var localOutputAddress = AIMath.ConvertToUInt16(op3, lineDetailExpansionItemOperation, asmLoad);
                         if (address.Output > localOutputAddress)
                         {
                             throw new ErrorMessageException(Error.ErrorCodeEnum.E0009);
@@ -55,7 +55,7 @@ namespace AILZ80ASM
         public AsmAddress Address { get; set; }
         public AsmLength Length { get; set; }
 
-        public void Assemble(Label[] labels)
+        public void Assemble(AsmLoad asmLoad)
         {
         }
     }

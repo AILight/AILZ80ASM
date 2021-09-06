@@ -9,7 +9,6 @@ namespace AILZ80ASM
     public class Package
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
-        //private List<Macro> Macros { get; set; } = new List<Macro>();
         public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
 
         private List<FileItemErrorMessage> ErrorMessages { get; set; } = new List<FileItemErrorMessage>();
@@ -30,107 +29,97 @@ namespace AILZ80ASM
 
         public void Assemble()
         {
-            var address = default(AsmAddress);
-
-            /*
-            // マクロをロードする
-            foreach (var fileItem in FileItems)
-            {
-                fileItem.LoadMacro();
-                Macros.AddRange(this.Macros);
-            }
-            */
-
             // 命令を展開する
-            foreach (var fileItem in FileItems)
-            {
-                fileItem.ExpansionItem();
-            }
+            ExpansionItem();
 
             // 値のラベルを処理する
-            ProcessLabelValue();
+            BuildValueLabel();
 
-            {
-                /*
-                var labels = FileItems.SelectMany(m => m.Labels.Where(m => m.HasValue)).ToArray();
-                foreach (var fileItem in FileItems)
-                {
-                    fileItem.PreAssemble(ref address, labels);
-                }
-                */
-            }
+            // プレアセンブル
+            PreAssemble();
 
             // 値のラベルを処理する
-            ProcessLabelValueAndAddress();
+            BuildAddressLabel();
 
-            //　アセンブルを行う
-            {
-                /*
-                var labels = FileItems.SelectMany(m => m.Labels.Where(m => m.HasValue)).ToArray();
-                foreach (var fileItem in FileItems)
-                {
-                    fileItem.Assemble(labels);
-                }
-                */
-            }
+            // アセンブルを行う
+            InternalAssemble();
 
             // エラーの出力
             foreach (var fileItem in FileItems)
             {
                 ErrorMessages.Add(new FileItemErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
             }
+        }
 
-            /*
+        /// <summary>
+        /// プレアセンブル
+        /// </summary>
+        private void PreAssemble()
+        {
+            var address = default(AsmAddress);
+
+            foreach (var fileItem in FileItems)
             {
-                var labels = labelList.ToArray();
-                foreach (var fileItem in FileItems)
-                {
-                    fileItem.SetValueLabel(labels);
-                    labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
-                }
-
-                foreach (var fileItem in FileItems)
-                {
-                    fileItem.Assemble(labels);
-                    labelList.AddRange(fileItem.Items.SelectMany(m => m.LineExpansionItems.Where(m => m.Label.DataType != Label.DataTypeEnum.None).Select(m => m.Label)));
-                }
-
-                foreach (var fileItem in FileItems)
-                {
-                    ErrorMessages.Add(new FileItemErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
-                }
+                fileItem.PreAssemble(ref address);
             }
-            */
         }
 
-        private void ProcessLabelValue()
+        /// <summary>
+        /// 命令の展開
+        /// </summary>
+        private void ExpansionItem()
         {
-            var labelValueCount = 0;
-            var labels = default(Label[]);
-            do
+            foreach (var fileItem in FileItems)
             {
-                //labels = FileItems.SelectMany(m => m.Labels).ToArray();
-                labelValueCount = labels.Count(m => m.HasValue);
-                foreach (var fileItem in FileItems)
-                {
-                    fileItem.ProcessLabelValue(labels);
-                }
-            } while (labelValueCount != labels.Count(m => m.HasValue));
+                fileItem.ExpansionItem();
+            }
         }
 
-        private void ProcessLabelValueAndAddress()
+        /// <summary>
+        /// 値ラベルを作りこむ
+        /// </summary>
+        private void BuildValueLabel()
         {
-            var labelValueCount = 0;
-            var labels = default(Label[]);
+            var labelCount = 0;
+
             do
             {
-                //labels = FileItems.SelectMany(m => m.Labels).ToArray();
-                labelValueCount = labels.Count(m => m.HasValue);
+                labelCount = AssembleLoad.Labels.Count(m => m.HasValue);
+                foreach (var label in AssembleLoad.Labels.Where(m => !m.HasValue))
+                {
+                    label.SetValue(AssembleLoad);
+                }
+
+            } while (labelCount != AssembleLoad.Labels.Count(m => m.HasValue));
+        }
+
+        /// <summary>
+        /// アドレスラベルを作りこむ
+        /// </summary>
+        private void BuildAddressLabel()
+        {
+            var labelCount = 0;
+
+            do
+            {
+                labelCount = AssembleLoad.Labels.Count(m => m.HasValue);
                 foreach (var fileItem in FileItems)
                 {
-                    fileItem.ProcessLabelValueAndAddress(labels);
+                    fileItem.BuildAddressLabel();
                 }
-            } while (labelValueCount != labels.Count(m => m.HasValue));
+
+            } while (labelCount != AssembleLoad.Labels.Count(m => m.HasValue));
+        }
+
+        /// <summary>
+        /// アセンブルを実行する
+        /// </summary>
+        private void InternalAssemble()
+        {
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.Assemble();
+            }
         }
 
         public void Save(FileInfo output)
@@ -146,13 +135,11 @@ namespace AILZ80ASM
         {
             foreach (var item in FileItems)
             {
-                /*
                 var bin = item.Bin;
                 if (bin.Length > 0)
                 {
                     stream.Write(bin, 0, bin.Length);
                 }
-                */
             }
         }
 
@@ -167,12 +154,12 @@ namespace AILZ80ASM
             }
 
             Console.WriteLine($"");
-            Console.WriteLine($" {Errors.Count():0} error(s), {Warnings.Count()} warning(s), {Infomations.Count()} infomation");
+            Console.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Infomations.Length} infomation");
         }
 
         private void OutputError(FileItemErrorMessage[] fileItemErrorMessages, string title)
         {
-            var count = fileItemErrorMessages.Sum(m => m.LineItemErrorMessages.Count());
+            var count = fileItemErrorMessages.Sum(m => m.LineItemErrorMessages.Length);
             if (count > 0)
             {
                 Console.WriteLine(new string('-', 60));

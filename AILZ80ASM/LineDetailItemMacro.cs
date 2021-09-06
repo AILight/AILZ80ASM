@@ -13,10 +13,10 @@ namespace AILZ80ASM
 
         private string MacroName { get; set; } = "";
         private string MacroArgs { get; set; } = "";
-        private List<LineItem> MacroLines = new List<LineItem>();
+        private readonly List<string> MacroLines = new List<string>();
 
-        public LineDetailItemMacro(LineItem lineItem)
-            : base(lineItem)
+        public LineDetailItemMacro(LineItem lineItem, AsmLoad asmLoad)
+            : base(lineItem, asmLoad)
         {
 
         }
@@ -45,18 +45,20 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    asmLoad.LineDetailItemMacro.MacroLines.Add(new LineItem(lineItem.OperationString, asmLoad.LineDetailItemMacro.MacroLines.Count + 1, asmLoad));
+                    asmLoad.LineDetailItemMacro.MacroLines.Add(lineItem.LineString);
                 }
-                return new LineDetailItemMacro(lineItem);
+                return new LineDetailItemMacro(lineItem, asmLoad) { LineDetailExpansionItems = Array.Empty<LineDetailExpansionItem>() };
             }
             else
             {
                 if (startMatched.Success)
                 {
-                    var lineDetailItemMacro = new LineDetailItemMacro(lineItem);
-
-                    lineDetailItemMacro.MacroName = startMatched.Groups["macro_name"].Value;
-                    lineDetailItemMacro.MacroArgs = startMatched.Groups["args"].Value;
+                    var lineDetailItemMacro = new LineDetailItemMacro(lineItem, asmLoad)
+                    {
+                        MacroName = startMatched.Groups["macro_name"].Value,
+                        MacroArgs = startMatched.Groups["args"].Value,
+                        LineDetailExpansionItems = Array.Empty<LineDetailExpansionItem>()
+                    };
 
                     asmLoad.LineDetailItemMacro = lineDetailItemMacro;
 

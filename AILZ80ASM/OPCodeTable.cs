@@ -13,7 +13,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>.+)\)";
         private static readonly string RegexPatternAddress = @"^\((?<addr>.+)\)$";
 
-        private static OPCodeItem[] OPCodeItems =
+        private static readonly OPCodeItem[] OPCodeItems =
             {
                 // 8ビットの転送命令
                 new OPCodeItem { Operation = "LD r1,r2", OPCode = new[] { "01DDDSSS" }, M = 1, T = 4 },
@@ -582,45 +582,27 @@ namespace AILZ80ASM
 
         private static bool IsNumberRst(string source)
         {
-            switch (source)
+            return source switch
             {
-                case "00H":
-                case "08H":
-                case "10H":
-                case "18H":
-                case "20H":
-                case "28H":
-                case "30H":
-                case "38H":
-                    return true;
-                default:
-                    return false;
-            }
+                "00H" or "08H" or "10H" or "18H" or "20H" or "28H" or "30H" or "38H" => true,
+                _ => false,
+            };
         }
 
         private static string GetNumberRst(string source)
         {
-            switch (source)
+            return source switch
             {
-                case "00H":
-                    return "000";
-                case "08H":
-                    return "001";
-                case "10H":
-                    return "010";
-                case "18H":
-                    return "011";
-                case "20H":
-                    return "100";
-                case "28H":
-                    return "101";
-                case "30H":
-                    return "110";
-                case "38H":
-                    return "111";
-                default:
-                    return "";
-            }
+                "00H" => "000",
+                "08H" => "001",
+                "10H" => "010",
+                "18H" => "011",
+                "20H" => "100",
+                "28H" => "101",
+                "30H" => "110",
+                "38H" => "111",
+                _ => "",
+            };
         }
 
         private static bool IsAllRegister(string source)
@@ -789,93 +771,65 @@ namespace AILZ80ASM
 
         private static string GetDDDSSS(string source)
         {
-            switch (source)
+            return source switch
             {
-                case "A":
-                    return "111";
-                case "B":
-                    return "000";
-                case "C":
-                    return "001";
-                case "D":
-                    return "010";
-                case "E":
-                    return "011";
-                case "H":
-                    return "100";
-                case "L":
-                    return "101";
-                default:
-                    throw new Exception($"レジスタの指定が間違っています。{source}");
-            }
+                "A" => "111",
+                "B" => "000",
+                "C" => "001",
+                "D" => "010",
+                "E" => "011",
+                "H" => "100",
+                "L" => "101",
+                _ => throw new Exception($"レジスタの指定が間違っています。{source}"),
+            };
         }
 
         private static string GetDDDSSS_IXHL(string source)
         {
-            switch (source)
+            return source switch
             {
-                case "IXH":
-                    return "100";
-                case "IXL":
-                    return "101";
-                default:
-                    throw new Exception($"レジスタの指定が間違っています。{source}");
-            }
+                "IXH" => "100",
+                "IXL" => "101",
+                _ => throw new Exception($"レジスタの指定が間違っています。{source}"),
+            };
         }
 
         private static string GetDDDSSS_IYHL(string source)
         {
-            switch (source)
+            return source switch
             {
-                case "IYH":
-                    return "100";
-                case "IYL":
-                    return "101";
-                default:
-                    throw new Exception($"レジスタの指定が間違っています。{source}");
-            }
+                "IYH" => "100",
+                "IYL" => "101",
+                _ => throw new Exception($"レジスタの指定が間違っています。{source}"),
+            };
         }
 
         private static string GetRP(string source)
         {
-            switch (source)
+            return source switch
             {
-                case "BC":
-                    return "00";
-                case "DE":
-                    return "01";
-                case "HL":
-                    return "10";
-                case "SP":
-                    return "11";
-                default:
-                    throw new Exception($"レジスタの指定が間違っています。{source}");
-            }
+                "BC" => "00",
+                "DE" => "01",
+                "HL" => "10",
+                "SP" => "11",
+                _ => throw new Exception($"レジスタの指定が間違っています。{source}"),
+            };
         }
 
         private static string GetCCC(string source)
         {
-            switch (source)
+            return source switch
             {
-                case "NZ":
-                    return "000";
-                case "Z":
-                    return "001";
-                case "NC":
-                    return "010";
-                case "C":
-                    return "011";
-                case "PO":
-                    return "100";
-                case "PE":
-                    return "101";
-                case "P":
-                    return "110";
-                case "M":
-                    return "111";
-                default:
-                    throw new Exception($"レジスタの指定が間違っています。{source}");
-            }
+                "NZ" => "000",
+                "Z" => "001",
+                "NC" => "010",
+                "C" => "011",
+                "PO" => "100",
+                "PE" => "101",
+                "P" => "110",
+                "M" => "111",
+                _ => throw new Exception($"レジスタの指定が間違っています。{source}"),
+            };
         }
     }
 }

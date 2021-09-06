@@ -1,4 +1,9 @@
-﻿	ALLLD
+﻿ARG1	equ 2
+.Three  equ 3
+	
+	ALLLD
+	TestArg 0, 1
+	TestArg ARG1, ARG1.Three
 
 MACRO ALLLD
 	ld a,1
@@ -9,3 +14,8 @@ MACRO ALLLD
 	ld h,6
 	ld l,7
 END MACRO
+
+macro TestArg a1, a2
+	ld a, a1
+	ld b, a2
+end macro

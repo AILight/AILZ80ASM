@@ -18,28 +18,32 @@ namespace AILZ80ASM
         private static readonly string RegexPatternLabel = @"^(?<label>([^\.][a-zA-Z0-9_]+::?)|(\.[a-zA-Z0-9_]+[^:]))\s*.*$";
         private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_\.]+)\s*(?<args>.*)$";
 
-        public Macro(string macroName, string args, LineItem[] lineItems, AsmLoad asmLoad)
+        public Macro(string macroName, string args, string[] lineStrings, AsmLoad asmLoad)
         {
             this.GlobalLabelName = asmLoad.GlobalLableName;
             this.Name = macroName;
-            Args.AddRange(args.Split(',').Select(m => m.Trim()));
+            if (!string.IsNullOrEmpty(args.Trim()))
+            {
+                Args.AddRange(args.Split(',').Select(m => m.Trim()));
+            }
 
-            LineStrings.AddRange(lineItems.Select(m => m.LineString));
+            LineStrings.AddRange(lineStrings);
         }
 
-        public static LineDetailExpansionItem[] Expansion(string operationString, AsmLoad asmLoad)
+        public static LineDetailExpansionItem[] Expansion(LineItem lineItem, AsmLoad asmLoad)
         {
             var labelName = "";
-            var labelMatched = Regex.Match(operationString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var labelMatched = Regex.Match(lineItem.OperationString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (labelMatched.Success)
             {
                 labelName = labelMatched.Groups["label"].Value;
             }
-            var operation = operationString.Substring(labelName.Length).Trim();
+            var operation = lineItem.OperationString.Substring(labelName.Length).Trim();
             var operationMatched = Regex.Match(operation, RegexPatternMacro, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (operationMatched.Success)
             {
                 var macroName = operationMatched.Groups["macro"].Value;
+                var macroArgs = operationMatched.Groups["args"].Value;
                 var macro = default(Macro);
 
                 try
@@ -66,15 +70,31 @@ namespace AILZ80ASM
                     {
                         lineDetailExpansionItems.Add(new LineDetailExpansionItemOperation(new LineItem(labelName, lineIndex, asmLoad), asmLoad));
                     }
-                    // 引数を展開する
-                    var lineStrings = macro.LineStrings.ToArray();
+                    // Macro展開用のAsmLoadを作成する
+                    var macroAsmLoad = asmLoad.CloneForLocal();
+                    macroAsmLoad.LabelName = $"{macro.Name}_{Guid.NewGuid():N}";
 
-                    // LineItemsを作成
-                    var lineItems = lineStrings.Select(m => new LineItem(m, lineIndex++, asmLoad));
-                    foreach (var lineItem in lineItems)
+                    if (!string.IsNullOrEmpty(macroArgs.Trim()))
                     {
-                        lineItem.ExpansionItem(asmLoad);
-                        lineDetailExpansionItems.AddRange(lineItem.LineDetailItem.LineDetailExpansionItems);
+                        var argValues = macroArgs.Split(',').Select(m => m.Trim()).ToArray();
+                        if (argValues.Count() != macro.Args.Count())
+                        {
+                            throw new ErrorMessageException(Error.ErrorCodeEnum.E1004);
+                        }
+
+                        // 引数の割り当て
+                        foreach (var index in Enumerable.Range(0, argValues.Count()))
+                        {
+                            macroAsmLoad.LocalLabels.Add(new Label(macro.Args[index], argValues[index], macroAsmLoad));
+                        }
+                    }
+                    // LineItemsを作成
+                    var lineStrings = macro.LineStrings.ToArray();
+                    var lineItems = lineStrings.Select(m => new LineItem(m, lineIndex++, macroAsmLoad));
+                    foreach (var localLineItem in lineItems)
+                    {
+                        localLineItem.ExpansionItem();
+                        lineDetailExpansionItems.AddRange(localLineItem.LineDetailItem.LineDetailExpansionItems);
                     }
                     return lineDetailExpansionItems.ToArray();
                 }
@@ -84,34 +104,5 @@ namespace AILZ80ASM
             return default(LineDetailExpansionItem[]);
 
         }
-
-        /*
-        public Macro(List<LineItem> lineItems, FileItem fileItem)
-        {
-            FileItem = fileItem;
-            GlobalMacroName = fileItem.WorkGlobalLabelName;
-            foreach (var item in lineItems)
-            {
-                //item.IsAssembled = true;
-            }
-
-            var firstLineItem = lineItems.First();
-            var macroIndex = firstLineItem.OperationString.IndexOf("macro", StringComparison.OrdinalIgnoreCase);
-            var operationString = firstLineItem.OperationString.Substring(macroIndex + 5).TrimStart();
-            var argsIndex = operationString.IndexOf(" ");
-            if (argsIndex == -1)
-            {
-                Name = operationString;
-            }
-            else
-            {
-                Name = operationString.Substring(0, argsIndex);
-                Args.AddRange(operationString.Substring(argsIndex).Split(",").Select(m => m.Trim()));
-            }
-
-            LineItems.AddRange(lineItems.Skip(1).SkipLast(1));
-        }
-        */
-
     }
 }

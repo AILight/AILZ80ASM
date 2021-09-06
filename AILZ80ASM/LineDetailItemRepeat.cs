@@ -13,13 +13,13 @@ namespace AILZ80ASM
         private static readonly string RegexPatternRepeatSimpleStart = @"^\s*Repeat\s+(?<count>.+)$";
         private static readonly string RegexPatternRepeatEnd = @"^\s*End\s+Repeat\s*$";
 
-        private static string RepeatCountLabel { get; set; }
-        private static string RepeatLastLabel { get; set; }
+        private string RepeatCountLabel { get; set; }
+        private string RepeatLastLabel { get; set; }
 
-        private List<LineItem> RepeatLines = new List<LineItem>();
+        private readonly List<string> RepeatLines = new List<string>();
 
-        public LineDetailItemRepeat(LineItem lineItem)
-            : base(lineItem)
+        public LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
+            : base(lineItem, asmLoad)
         {
 
         }
@@ -43,29 +43,31 @@ namespace AILZ80ASM
                     var repeatAsmLoad = asmLoad.Clone();
                     repeatAsmLoad.LineDetailItemRepeat = default;
 
-                    repeatLines.Add(new LineItem(lineItem.OperationString, repeatLines.Count + 1, repeatAsmLoad));
+                    repeatLines.Add(lineItem.LineString);
                 }
-                return new LineDetailItemRepeat(lineItem);
+                return new LineDetailItemRepeat(lineItem, asmLoad);
             }
             else
             {
                 if (startMatched.Success)
                 {
-                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem);
+                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad)
+                    {
+                        RepeatCountLabel = startMatched.Groups["count"].Value,
+                        RepeatLastLabel = startMatched.Groups["last_arg"].Value,
 
-                    RepeatCountLabel = startMatched.Groups["count"].Value;
-                    RepeatLastLabel = startMatched.Groups["last_arg"].Value;
-
+                    };
                     asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
                 }
                 else if (startSimpleMatched.Success)
                 {
-                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem);
+                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad)
+                    {
+                        RepeatCountLabel = startSimpleMatched.Groups["count"].Value
 
-                    RepeatCountLabel = startSimpleMatched.Groups["count"].Value;
-
+                    };
                     asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
@@ -80,24 +82,49 @@ namespace AILZ80ASM
             return default;
         }
 
-        public override void ExpansionItem(AsmLoad assembleLoad)
+        public override void ExpansionItem()
         {
             // リピート数が設定されているものを処理する
             if (!string.IsNullOrEmpty(RepeatCountLabel))
             {
-                var count = AIMath.ConvertToUInt16(RepeatCountLabel, assembleLoad);
-                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : AIMath.ConvertToUInt16(RepeatLastLabel, assembleLoad);
+                var lineDetailExpansionItems = new List<LineDetailExpansionItem>();
+                var count = AIMath.ConvertToUInt16(RepeatCountLabel, this.AsmLoad);
+                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertToUInt16(RepeatLastLabel, this.AsmLoad);
+                var lineIndex = 1;
 
-                foreach (var repeatCounter in Enumerable.Range(0, count))
+                foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
-                    foreach (var item in RepeatLines)
-                    {
+                    var lineItems = default(IEnumerable<LineItem>);
 
+                    if (repeatCounter == count)
+                    {
+                        var take = RepeatLines.Count + last;
+                        if (take <= 0 || last > 0)
+                        {
+                            throw new ErrorMessageException(Error.ErrorCodeEnum.E1013);
+                        }
+                        //最終ページ処理
+                        lineItems = RepeatLines.Take(take).Select(m => new LineItem(m, lineIndex++, this.AsmLoad));
+                    }
+                    else
+                    {
+                        lineItems = RepeatLines.Select(m => new LineItem(m, lineIndex++, this.AsmLoad));
+                    }
+
+                    foreach (var lineItem in lineItems)
+                    {
+                        lineItem.ExpansionItem();
+                        lineDetailExpansionItems.AddRange(lineItem.LineDetailItem.LineDetailExpansionItems);
                     }
                 }
+                LineDetailExpansionItems = lineDetailExpansionItems.ToArray();
             }
+            else
+            {
+                LineDetailExpansionItems = Array.Empty< LineDetailExpansionItem>();
+            }    
 
-            base.ExpansionItem(assembleLoad);
+            base.ExpansionItem();
         }
     }
 }

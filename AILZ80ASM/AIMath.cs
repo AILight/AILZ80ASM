@@ -24,14 +24,14 @@ namespace AILZ80ASM
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
-        public static byte ConvertToByte(string value, LineExpansionItem lineExpansionItem, Label[] labels)
+        public static byte ConvertToByte(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
-            return ConvertToByte(value, lineExpansionItem.Label.GlobalLabelName, lineExpansionItem.Label.LabelName, lineExpansionItem.Address, labels);
+            return ConvertToByte(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
         }
 
-        public static byte ConvertToByte(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
+        public static byte ConvertToByte(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, labels);
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
 
             try
             {
@@ -54,26 +54,26 @@ namespace AILZ80ASM
 
         }
 
-        public static UInt16 ConvertToUInt16(string value, LineExpansionItem lineExpansionItem, Label[] labels)
+        public static UInt16 ConvertToUInt16(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
-            return ConvertToUInt16(value, lineExpansionItem.Label.GlobalLabelName, lineExpansionItem.Label.LabelName, lineExpansionItem.Address, labels);
+            return ConvertToUInt16(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
         }
 
         public static UInt16 ConvertToUInt16(string value, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad.Labels.ToArray());
+            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad);
             return InternalConvertToUInt16(value, tmpValue);
         }
 
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, Label[] labels)
+        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, labels);
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, asmLoad);
             return InternalConvertToUInt16(value, tmpValue);
         }
 
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
+        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, labels);
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
             return InternalConvertToUInt16(value, tmpValue);
         }
 
@@ -81,7 +81,9 @@ namespace AILZ80ASM
         {
             try
             {
-                var calcedValue = Convert.ToInt32(new DataTable().Compute(tmpValue, null).ToString());
+                var nCalcExpression = new NCalc.Expression(tmpValue);
+                var calcedValue = nCalcExpression.ToLambda<int>().Invoke();
+
                 if (calcedValue < 0)
                 {
                     return (UInt16)(UInt16.MaxValue + calcedValue + 1);
@@ -97,7 +99,7 @@ namespace AILZ80ASM
             }
         }
 
-        private static string ReplaceAll(string value, string globalLabelName, string lableName, Label[] labels)
+        private static string ReplaceAll(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
         {
             //16進数の置き換え
             value = Replace16Number(value);
@@ -106,12 +108,12 @@ namespace AILZ80ASM
             value = ReplaceBinaryNumber(value);
 
             // ラベルの置き換え
-            value = ReplaceLabel(value, globalLabelName, lableName, labels);
+            value = ReplaceLabel(value, globalLabelName, lableName, asmLoad);
             
             return value;
         }
 
-        private static string ReplaceAll(string value, string globalLabelName, string lableName, AsmAddress address, Label[] labels)
+        private static string ReplaceAll(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
         {
             //16進数の置き換え
             value = Replace16NumberAndCurrentAddress(value, address);
@@ -120,7 +122,7 @@ namespace AILZ80ASM
             value = ReplaceBinaryNumber(value);
 
             // ラベルの置き換え
-            value = ReplaceLabel(value, globalLabelName, lableName, labels);
+            value = ReplaceLabel(value, globalLabelName, lableName, asmLoad);
 
             return value;
         }
@@ -132,7 +134,7 @@ namespace AILZ80ASM
         /// <param name="globalLabelName"></param>
         /// <param name="lableName"></param>
         /// <param name="lables"></param>
-        private static string ReplaceLabel(string value, string globalLabelName, string lableName, Label[] lables)
+        private static string ReplaceLabel(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
         {
             var resultValue = "";
             var workValue = value;
@@ -158,11 +160,12 @@ namespace AILZ80ASM
 
                 // ラベルチェック
                 var label = default(Label);
+                var labels = asmLoad.AllLables.Where(m => m.HasValue).ToArray();
 
-                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.LongLabelName, matchResultString, true) == 0).FirstOrDefault();
-                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.MiddleLabelName, matchResultString, true) == 0).FirstOrDefault();
-                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, matchResultString, true) == 0).FirstOrDefault();
-                label = label ?? lables.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, lableName, true) == 0 && string.Compare(m.ShortLabelName, matchResultString, true) == 0).FirstOrDefault();
+                label ??= labels.Where(m => m.HasValue && string.Compare(m.LongLabelName, matchResultString, true) == 0).FirstOrDefault();
+                label ??= labels.Where(m => m.HasValue && string.Compare(m.MiddleLabelName, matchResultString, true) == 0).FirstOrDefault();
+                label ??= labels.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, matchResultString, true) == 0).FirstOrDefault();
+                label ??= labels.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, lableName, true) == 0 && string.Compare(m.ShortLabelName, matchResultString, true) == 0).FirstOrDefault();
 
                 var valueString = "";
                 switch (macroValue)
@@ -256,10 +259,10 @@ namespace AILZ80ASM
             }
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal)).Success && limitCounter < 10000)
+            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
             {
                 var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString);
+                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
 
                 resultValue += workValue.Substring(0, index);
                 try
@@ -272,7 +275,6 @@ namespace AILZ80ASM
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 
-                regexResult = Regex.Match(workValue, RegexPatternHexadecimal);
                 limitCounter++;
             }
             resultValue += workValue;
@@ -293,16 +295,16 @@ namespace AILZ80ASM
             var workValue = value;
             var limitCounter = 0;
 
-            if (Regex.Match(workValue, RegexPatternErrorDollarHexadecimal).Success)
+            if (Regex.Match(workValue, RegexPatternErrorDollarHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
             }
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternDollarHexadecimal)).Success && limitCounter < 10000)
+            while ((regexResult = Regex.Match(workValue, RegexPatternDollarHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
             {
                 var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString);
+                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
 
                 resultValue += workValue.Substring(0, index);
                 try
@@ -315,7 +317,6 @@ namespace AILZ80ASM
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 
-                regexResult = Regex.Match(workValue, RegexPatternDollarHexadecimal);
                 limitCounter++;
             }
             resultValue += workValue;
@@ -343,10 +344,10 @@ namespace AILZ80ASM
             }
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternBinaryNumber, RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
+            while ((regexResult = Regex.Match(workValue, RegexPatternBinaryNumber, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
             {
                 var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString);
+                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
 
                 resultValue += workValue.Substring(0, index);
                 try
@@ -359,7 +360,6 @@ namespace AILZ80ASM
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 
-                regexResult = Regex.Match(workValue, RegexPatternBinaryNumber);
                 limitCounter++;
             }
             resultValue += workValue;

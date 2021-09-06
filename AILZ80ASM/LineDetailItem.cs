@@ -10,12 +10,26 @@ namespace AILZ80ASM
     {
         private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
         protected LineItem LineItem { get; set; }
+        protected AsmLoad AsmLoad {get;set; }
 
         public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
+        public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();
 
-        public LineDetailItem(LineItem lineItem)
+        public LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
             LineItem = lineItem;
+            // ラベルの処理をする
+            var labelName = Label.GetLabelText(lineItem.OperationString);
+            if (labelName.EndsWith("::"))
+            {
+                asmLoad.GlobalLableName = labelName.Substring(0, labelName.Length - 2);
+            }
+            else if (labelName.EndsWith(":"))
+            {
+                asmLoad.LabelName = labelName.Substring(0, labelName.Length - 1);
+            }
+
+            AsmLoad = asmLoad.Clone();
         }
 
         public static LineDetailItem CreateLineDetailItem(LineItem lineItem, AsmLoad asmLoad)
@@ -26,11 +40,11 @@ namespace AILZ80ASM
             // インクルードのチェック
             var lineDetailItem = default(LineDetailItem);
 
-            lineDetailItem = lineDetailItem ?? LineDetailItemMacro.Create(lineItem, asmLoad);
-            lineDetailItem = lineDetailItem ?? LineDetailItemRepeat.Create(lineItem, asmLoad);
-            lineDetailItem = lineDetailItem ?? LineDetailItemEqual.Create(lineItem, asmLoad);
-            lineDetailItem = lineDetailItem ?? LineDetailItemInclude.Create(lineItem, asmLoad);
-            lineDetailItem = lineDetailItem ?? new LineDetailItemOperation(lineItem);
+            lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
+            lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
+            lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
+            lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
+            lineDetailItem ??= new LineDetailItemOperation(lineItem, asmLoad);
 
             return lineDetailItem;
         }
@@ -52,11 +66,40 @@ namespace AILZ80ASM
             }
         }
 
-        public virtual void ExpansionItem(AsmLoad asmLoad)
+        public virtual void ExpansionItem()
         {
             
         }
 
-        public virtual LineAssemblyItem[] LineAssemblyItems { get; } = new LineAssemblyItem[] { };
+        public virtual void PreAssemble(ref AsmAddress asmAddress)
+        {
+            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            {
+                lineDetailExpansionItem.PreAssemble(ref asmAddress, AsmLoad);
+            }
+        }
+
+        public virtual void BuildAddressLabel()
+        {
+            if (LineDetailExpansionItems == default)
+                return;
+
+            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            {
+                lineDetailExpansionItem.BuildAddressLabel(AsmLoad);
+            }
+        }
+
+        public virtual void Assemble()
+        {
+            if (LineDetailExpansionItems == default)
+                return;
+
+            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            {
+                lineDetailExpansionItem.Assemble(AsmLoad);
+            }
+        }
+
     }
 }
