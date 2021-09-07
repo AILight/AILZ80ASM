@@ -89,8 +89,41 @@ addr:
 #### MACRO <マクロ名> [<引数1>, <引数2>]　～ END MACRO
 - MACROからEND MACROまでがマクロとして定義されます
 - 引数に付けた名前がマクロ内で利用できます
+```
+ARG1	equ 2
+.Three  equ 3
+	
+	ALLLD
+	TestArg ARG1, ARG1.Three
+
+MACRO ALLLD
+	ld a,1
+	ld b,2
+	ld c,3
+	ld d,4
+	ld e,5
+	ld h,6
+	ld l,7
+END MACRO
+
+MACRO TestArg a1, a2
+	ld a, a1
+	ld b, a2
+END MACRO
+```
 
 #### REPEAT <式1> [LAST <式2>]　～ END REPEAT
 - 式1に設定した値の回数分をREPEATの中に記述してある命令を展開します
 - 式2には、最終の展開時に削除したい命令数を負の値で設定します
+```
+REPEAT 3
+        xor     a
+END REPEAT
 
+REPEAT 8 LAST -1
+        ld      (hl), a
+        set     5, h
+        ld      (hl), a
+        add     hl, de
+END REPEAT
+```
