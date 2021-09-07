@@ -6,7 +6,7 @@ namespace AILZ80ASM
 {
     public interface IOperationItem
     {
-        void Assemble(Label[] labels);
+        void Assemble(AsmLoad asmLoad);
 
         byte[] Bin { get; }
         AsmAddress Address { get; }

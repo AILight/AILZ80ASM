@@ -13,44 +13,61 @@ namespace AILZ80ASM
         private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
         private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
-        private static readonly string RegexPatternValue = @"^equ\s+(?<value>([\$\w]+))";
 
-        public Label(LineExpansionItem lineExpansionItem)
+        public Label(string labelName, string valueString, AsmLoad asmLoad)
+        {
+            DataType = DataTypeEnum.ProcessingForValue;
+            GlobalLabelName = asmLoad.GlobalLableName;
+            LabelName = asmLoad.LabelName;
+            if (labelName.StartsWith("."))
+            {
+                SubLabelName = labelName.Substring(1);
+            }
+            else
+            {
+                LabelName = labelName.Replace(":", "");
+            }
+            ValueString = valueString;
+
+            SetValue(asmLoad);
+        }
+
+        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
             //グローバルラベルの設定
-            GlobalLabelName = lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName;
-            LabelName = lineExpansionItem.LineItem.FileItem.WorkLabelName;
+            GlobalLabelName = asmLoad.GlobalLableName;
+            LabelName = asmLoad.LabelName;
 
             //ラベルを処理する
             DataType = DataTypeEnum.None;
 
-            if (string.IsNullOrEmpty(lineExpansionItem.LabelText))
+            if (string.IsNullOrEmpty(lineDetailExpansionItemOperation.LabelText))
             {
                 return;
             }
 
-            var matchedGlobalLable = Regex.Match(lineExpansionItem.LabelText, RegexPatternGlobalLabel, RegexOptions.Singleline);
+            var matchedGlobalLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternGlobalLabel, RegexOptions.Singleline);
             if (matchedGlobalLable.Success)
             {
                 // ラベルマッチ
                 GlobalLabelName = matchedGlobalLable.Groups["lable"].Value;
-                lineExpansionItem.LineItem.FileItem.WorkGlobalLabelName = GlobalLabelName;
+                asmLoad.GlobalLableName = GlobalLabelName;
                 DataType = DataTypeEnum.Processing;
             }
             else
             {
-                var matchedLable = Regex.Match(lineExpansionItem.LabelText, RegexPatternLabel, RegexOptions.Singleline);
+                var matchedLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternLabel, RegexOptions.Singleline);
                 if (matchedLable.Success)
                 {
                     // ラベルマッチ
                     LabelName = matchedLable.Groups["lable"].Value;
-                    lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
+                    asmLoad.LabelName = LabelName;
 
                     DataType = DataTypeEnum.Processing;
                 }
                 else
                 {
-                    var matchedSubLable = Regex.Match(lineExpansionItem.LabelText, RegexPatternSubLabel, RegexOptions.Singleline);
+                    var matchedSubLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternSubLabel, RegexOptions.Singleline);
                     if (matchedSubLable.Success)
                     {
                         SubLabelName = matchedSubLable.Groups["lable"].Value.Substring(1);
@@ -58,17 +75,17 @@ namespace AILZ80ASM
                     }
                     else
                     {
-                        LabelName = lineExpansionItem.LabelText;
-                        lineExpansionItem.LineItem.FileItem.WorkLabelName = LabelName;
+                        LabelName = lineDetailExpansionItemOperation.LabelText;
+                        asmLoad.LabelName = LabelName;
                         DataType = DataTypeEnum.Processing;
                     }
                 }
             }
-            if (DataType == DataTypeEnum.Processing && string.Compare(lineExpansionItem.InstructionText, "equ", true) == 0)
+            if (DataType == DataTypeEnum.Processing && string.Compare(lineDetailExpansionItemOperation.InstructionText, "equ", true) == 0)
             {
-                ValueString = lineExpansionItem.ArgumentText;
+                ValueString = lineDetailExpansionItemOperation.ArgumentText;
                 DataType = DataTypeEnum.ProcessingForValue;
-                lineExpansionItem.IsAssembled = true;
+                lineDetailExpansionItemOperation.IsAssembled = true;
             }
         }
 
@@ -81,15 +98,14 @@ namespace AILZ80ASM
             ADDR,
         }
 
-        public void SetValue(Label[] labels)
+        public void SetValue(AsmLoad asmLoad)
         {
             if (this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
-            var valueLabels = labels.Where(m => m.DataType == DataTypeEnum.Value).ToArray();
             try
             {
-                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, valueLabels);
+                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, asmLoad);
                 this.DataType = DataTypeEnum.Value;
             }
             catch
@@ -97,16 +113,15 @@ namespace AILZ80ASM
             }
         }
 
-        public void SetValueAndAddress(AsmAddress address, Label[] labels)
+        public void SetValueAndAddress(AsmAddress address, AsmLoad asmLoad)
         {
             if (this.DataType != DataTypeEnum.Processing &&
                 this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
-            var valueLabels = labels.Where(m => m.HasValue).ToArray();
             try
             {
-                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, valueLabels);
+                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, asmLoad);
                 this.DataType = DataTypeEnum.Value;
             }
             catch
@@ -143,7 +158,7 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="address"></param>
         /// <param name="labels"></param>
-        public void SetValueLabel(AsmAddress address, Label[] labels)
+        public void SetValueLabel(AsmAddress address, AsmLoad asmLoad)
         {
 
             switch (DataType)
@@ -153,7 +168,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.ADDR:
                     break;
                 case DataTypeEnum.Value:
-                    Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, labels);
+                    Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, asmLoad);
                     break;
                 default:
                     break;
@@ -186,5 +201,6 @@ namespace AILZ80ASM
 
             return "";
         }
+
     }
 }

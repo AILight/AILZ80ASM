@@ -24,10 +24,21 @@ namespace AILZ80ASM
             E0007,
             E0008,
             E0009,
-            E0010,
-            E0011,
             E0012,
             E0013,
+
+            E1001,
+            E1002,
+            E1003,
+            E1004,
+
+            E1011,
+            E1012,
+            E1013,
+
+            E2001,
+            E2002,
+
             W0001,
             I0001,
         }
@@ -53,7 +64,7 @@ namespace AILZ80ASM
             return ErrorMessages[errorCode];
         }
 
-        private static Dictionary<ErrorCodeEnum, string> ErrorMessages = new Dictionary<ErrorCodeEnum, string>()
+        private static readonly Dictionary<ErrorCodeEnum, string> ErrorMessages = new Dictionary<ErrorCodeEnum, string>()
         {
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
@@ -64,9 +75,21 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0007] = "8進数の変換に失敗しました。",
             [ErrorCodeEnum.E0008] = "2進数の変換に失敗しました。",
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
-            [ErrorCodeEnum.E0010] = "MACROに対応するEND MACROが見つかりませんでした",
-            [ErrorCodeEnum.E0011] = "MACROが重複登録されていますので、名前解決が出来ません。",
-            [ErrorCodeEnum.E0012] = "データの指定が間違っています",
+            [ErrorCodeEnum.E0012] = "データの指定が間違っています。",
+            [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
+            // マクロ
+            [ErrorCodeEnum.E1001] = "MACROに対応するEND MACROが見つかりませんでした。",
+            [ErrorCodeEnum.E1002] = "END MACROが先に見つかりました。",
+            [ErrorCodeEnum.E1003] = "MACROが重複登録されていますので、名前解決が出来ません。",
+            [ErrorCodeEnum.E1004] = "MACROの引数の個数が一致していません。",
+            // マクロリピート
+            [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
+            [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",
+            [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。",
+
+            // Include
+            [ErrorCodeEnum.E2001] = "Include 該当するファイルが存在しませんでした。",
+            [ErrorCodeEnum.E2002] = "Include 同一のファイルは読み込みできません。",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"
