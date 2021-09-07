@@ -38,8 +38,9 @@ namespace AILZ80ASM
             // プレアセンブル
             PreAssemble();
 
-            // 値のラベルを処理する
+            // アドレスラベルを処理する
             BuildAddressLabel();
+            BuildValueLabel();
 
             // アセンブルを行う
             InternalAssemble();
@@ -84,13 +85,13 @@ namespace AILZ80ASM
 
             do
             {
-                labelCount = AssembleLoad.Labels.Count(m => m.HasValue);
-                foreach (var label in AssembleLoad.Labels.Where(m => !m.HasValue))
+                labelCount = AssembleLoad.AllLables.Count(m => m.HasValue);
+                foreach (var label in AssembleLoad.AllLables.Where(m => !m.HasValue))
                 {
                     label.SetValue(AssembleLoad);
                 }
 
-            } while (labelCount != AssembleLoad.Labels.Count(m => m.HasValue));
+            } while (labelCount != AssembleLoad.AllLables.Count(m => m.HasValue));
         }
 
         /// <summary>
@@ -102,13 +103,13 @@ namespace AILZ80ASM
 
             do
             {
-                labelCount = AssembleLoad.Labels.Count(m => m.HasValue);
+                labelCount = AssembleLoad.AllLables.Count(m => m.HasValue);
                 foreach (var fileItem in FileItems)
                 {
                     fileItem.BuildAddressLabel();
                 }
 
-            } while (labelCount != AssembleLoad.Labels.Count(m => m.HasValue));
+            } while (labelCount != AssembleLoad.AllLables.Count(m => m.HasValue));
         }
 
         /// <summary>

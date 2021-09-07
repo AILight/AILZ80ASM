@@ -9,8 +9,14 @@ namespace AILZ80ASM
 {
     public class AsmLoad
     {
-        private string _GlobalLableName;
+        public enum ScopeModeEnum
+        {
+            Global,
+            Local
+        }
 
+        private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
+        private string _GlobalLableName;
         public string GlobalLableName 
         {
             get { return _GlobalLableName; }
@@ -42,32 +48,33 @@ namespace AILZ80ASM
         {
             return new AsmLoad
             {
+                ScopeMode = this.ScopeMode,
                 GlobalLableName = this.GlobalLableName,
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
                 Macros = this.Macros,
                 LineDetailItemMacro = this.LineDetailItemMacro,
+                LineDetailItemRepeat = LineDetailItemRepeat,
+
                 Labels = this.Labels,
                 LocalLabels = this.LocalLabels,
-                LineDetailItemRepeat = LineDetailItemRepeat
             };
         }
 
-        /// <summary>
-        /// クローン（ローカルラベルはコピーしない）
-        /// </summary>
-        /// <returns></returns>
-        public AsmLoad CloneForLocal()
+        public AsmLoad Clone(ScopeModeEnum scopeMode)
         {
             return new AsmLoad
             {
+                ScopeMode = scopeMode,
                 GlobalLableName = this.GlobalLableName,
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
                 Macros = this.Macros,
                 LineDetailItemMacro = this.LineDetailItemMacro,
+                LineDetailItemRepeat = LineDetailItemRepeat,
+
                 Labels = this.Labels,
-                LineDetailItemRepeat = LineDetailItemRepeat
+                LocalLabels = scopeMode == ScopeModeEnum.Global ? this.LocalLabels : new List<Label>(),
             };
         }
 
@@ -81,6 +88,21 @@ namespace AILZ80ASM
             if (LineDetailItemRepeat != default)
             {
                 throw new ErrorMessageException(Error.ErrorCodeEnum.E1011);
+            }
+        }
+
+        public void AddLabel(Label label)
+        {
+            switch (ScopeMode)
+            {
+                case ScopeModeEnum.Global:
+                    Labels.Add(label);
+                    break;
+                case ScopeModeEnum.Local:
+                    LocalLabels.Add(label);
+                    break;
+                default:
+                    throw new InvalidOperationException();
             }
         }
     }

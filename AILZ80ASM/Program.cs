@@ -16,17 +16,18 @@ namespace AILZ80ASM
               aliases: new string[] { "--input", "-i" }
               , description: "アセンブリ対象のファイルをカンマ区切りで指定します。")
                 { Argument = new Argument<FileInfo[]>() };
-                rootCommand.AddOption(inputOption);
+            rootCommand.AddOption(inputOption);
             var outputOption = new Option(
               aliases: new string[] { "--output", "-o" }
               , description: "出力ファイルを指定します。")
                 { Argument = new Argument<FileInfo>() };
+            rootCommand.AddOption(outputOption);
 
             try
             {
                 OutputStart();
 
-                rootCommand.AddOption(outputOption);
+                // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
                 rootCommand.Handler =
                   CommandHandler.Create<FileInfo[], FileInfo>(Assember);
 
@@ -39,6 +40,11 @@ namespace AILZ80ASM
             return await Task.FromResult(1);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="output"></param>
         static public void Assember(
           FileInfo[] input, FileInfo output)
         {

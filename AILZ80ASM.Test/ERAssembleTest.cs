@@ -8,15 +8,22 @@ namespace AILZ80ASM.Test
     public class ERAssembleTest
     {
         [TestMethod]
-        public void TestER_LD_Address()
+        public void TestER_Address()
         {
-            var targetDirectoryName = Path.Combine(".", "Test", "TestER_Address");
+            var targetDirectoryName = Path.Combine(".", "Test", "TestER");
 
-            var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Test.Z80")) };
+            var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Address.Z80")) };
 
             using (var memoryStream = new MemoryStream())
             {
-                Lib.Assemble(inputFiles, memoryStream);
+                var errors = Lib.Assemble(inputFiles, memoryStream);
+
+                Assert.AreEqual(errors.Length, 1);
+                Assert.AreEqual(errors[0].LineItemErrorMessages.Length, 2);
+                Assert.AreEqual(errors[0].LineItemErrorMessages[0].ErrorMessageException.ErrorCode, Error.ErrorCodeEnum.E0001);
+                Assert.AreEqual(errors[0].LineItemErrorMessages[0].LineItem.LineIndex, 7);
+                Assert.AreEqual(errors[0].LineItemErrorMessages[1].ErrorMessageException.ErrorCode, Error.ErrorCodeEnum.E0001);
+                Assert.AreEqual(errors[0].LineItemErrorMessages[1].LineItem.LineIndex, 9);
             }
         }
     }

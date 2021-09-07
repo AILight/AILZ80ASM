@@ -30,7 +30,7 @@ namespace AILZ80ASM
             LineStrings.AddRange(lineStrings);
         }
 
-        public static LineDetailExpansionItem[] Expansion(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailScopeItem[] Expansion(LineItem lineItem, AsmLoad asmLoad)
         {
             var labelName = "";
             var labelMatched = Regex.Match(lineItem.OperationString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -59,19 +59,19 @@ namespace AILZ80ASM
                 }
                 catch
                 {
-                    return default(LineDetailExpansionItem[]);
+                    return default;
                 }
                 // 展開をする
                 if (macro != default)
                 {
-                    var lineDetailExpansionItems = new List<LineDetailExpansionItem>();
+                    var lineDetailScopeItems = new List<LineDetailScopeItem>();
                     var lineIndex = 1;
                     if (!string.IsNullOrEmpty(labelName))
                     {
-                        lineDetailExpansionItems.Add(new LineDetailExpansionItemOperation(new LineItem(labelName, lineIndex, asmLoad), asmLoad));
+                        lineDetailScopeItems.Add(new LineDetailScopeItem(new LineItem(labelName, lineIndex, asmLoad), asmLoad));
                     }
                     // Macro展開用のAsmLoadを作成する
-                    var macroAsmLoad = asmLoad.CloneForLocal();
+                    var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
                     macroAsmLoad.LabelName = $"{macro.Name}_{Guid.NewGuid():N}";
 
                     if (!string.IsNullOrEmpty(macroArgs.Trim()))
@@ -85,7 +85,7 @@ namespace AILZ80ASM
                         // 引数の割り当て
                         foreach (var index in Enumerable.Range(0, argValues.Count()))
                         {
-                            macroAsmLoad.LocalLabels.Add(new Label(macro.Args[index], argValues[index], macroAsmLoad));
+                            macroAsmLoad.AddLabel(new Label(macro.Args[index], argValues[index], macroAsmLoad));
                         }
                     }
                     // LineItemsを作成
@@ -94,14 +94,14 @@ namespace AILZ80ASM
                     foreach (var localLineItem in lineItems)
                     {
                         localLineItem.ExpansionItem();
-                        lineDetailExpansionItems.AddRange(localLineItem.LineDetailItem.LineDetailExpansionItems);
+                        lineDetailScopeItems.AddRange(localLineItem.LineDetailItem.LineDetailScopeItems);
                     }
-                    return lineDetailExpansionItems.ToArray();
+                    return lineDetailScopeItems.ToArray();
                 }
 
             }
 
-            return default(LineDetailExpansionItem[]);
+            return default;
 
         }
     }

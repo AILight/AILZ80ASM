@@ -49,7 +49,14 @@ namespace AILZ80ASM
         {
             foreach (var item in Items)
             {
-                item.ExpansionItem();
+                try
+                {
+                    item.ExpansionItem();
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                }
             }
         }
 
@@ -76,7 +83,14 @@ namespace AILZ80ASM
         {
             foreach (var item in Items)
             {
-                item.BuildAddressLabel();
+                try
+                {
+                    item.BuildAddressLabel();
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                }
             }
         }
 

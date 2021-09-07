@@ -33,7 +33,7 @@ namespace AILZ80ASM
 
         public virtual void BuildAddressLabel(AsmLoad asmLoad)
         {
-            Label.SetValueAndAddress(Address, asmLoad);
+            Label?.SetValueAndAddress(Address, asmLoad);
         }
 
         public virtual void Assemble( AsmLoad asmLoad)

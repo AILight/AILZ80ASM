@@ -87,7 +87,7 @@ namespace AILZ80ASM
             // リピート数が設定されているものを処理する
             if (!string.IsNullOrEmpty(RepeatCountLabel))
             {
-                var lineDetailExpansionItems = new List<LineDetailExpansionItem>();
+                var lineDetailScopeItems = new List<LineDetailScopeItem>();
                 var count = AIMath.ConvertToUInt16(RepeatCountLabel, this.AsmLoad);
                 var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertToUInt16(RepeatLastLabel, this.AsmLoad);
                 var lineIndex = 1;
@@ -95,6 +95,8 @@ namespace AILZ80ASM
                 foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
                     var lineItems = default(IEnumerable<LineItem>);
+                    var localAsmLoad = AsmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
+                    localAsmLoad.LabelName = $"REPEAT_{Guid.NewGuid():N}";
 
                     if (repeatCounter == count)
                     {
@@ -104,24 +106,24 @@ namespace AILZ80ASM
                             throw new ErrorMessageException(Error.ErrorCodeEnum.E1013);
                         }
                         //最終ページ処理
-                        lineItems = RepeatLines.Take(take).Select(m => new LineItem(m, lineIndex++, this.AsmLoad));
+                        lineItems = RepeatLines.Take(take).Select(m => new LineItem(m, lineIndex++, localAsmLoad));
                     }
                     else
                     {
-                        lineItems = RepeatLines.Select(m => new LineItem(m, lineIndex++, this.AsmLoad));
+                        lineItems = RepeatLines.Select(m => new LineItem(m, lineIndex++, localAsmLoad));
                     }
 
                     foreach (var lineItem in lineItems)
                     {
                         lineItem.ExpansionItem();
-                        lineDetailExpansionItems.AddRange(lineItem.LineDetailItem.LineDetailExpansionItems);
+                        lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
                     }
                 }
-                LineDetailExpansionItems = lineDetailExpansionItems.ToArray();
+                LineDetailScopeItems = lineDetailScopeItems.ToArray();
             }
             else
             {
-                LineDetailExpansionItems = Array.Empty< LineDetailExpansionItem>();
+                LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
             }    
 
             base.ExpansionItem();

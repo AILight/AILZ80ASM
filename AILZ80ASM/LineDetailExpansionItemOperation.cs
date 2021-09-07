@@ -40,6 +40,10 @@ namespace AILZ80ASM
                     InstructionText = matchResult.Groups["Instruction"].Value;
                     ArgumentText = tmpInstructionText.Substring(InstructionText.Length).TrimStart();
                 }
+                else
+                {
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0001);
+                }
             }
 
             OperationItem = default(IOperationItem);
@@ -87,7 +91,7 @@ namespace AILZ80ASM
             Label.SetAddressLabel(Address);
             if (Label.HasValue)
             {
-                asmLoad.Labels.Add(Label);
+                asmLoad.AddLabel(Label);
             }
         }
 

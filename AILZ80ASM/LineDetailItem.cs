@@ -12,8 +12,8 @@ namespace AILZ80ASM
         protected LineItem LineItem { get; set; }
         protected AsmLoad AsmLoad {get;set; }
 
-        public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
-        public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();
+        public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
+        public byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
 
         public LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
@@ -73,31 +73,34 @@ namespace AILZ80ASM
 
         public virtual void PreAssemble(ref AsmAddress asmAddress)
         {
-            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            if (LineDetailScopeItems == default)
+                return;
+
+            foreach (var item in LineDetailScopeItems)
             {
-                lineDetailExpansionItem.PreAssemble(ref asmAddress, AsmLoad);
+                item.PreAssemble(ref asmAddress);
             }
         }
 
         public virtual void BuildAddressLabel()
         {
-            if (LineDetailExpansionItems == default)
+            if (LineDetailScopeItems == default)
                 return;
 
-            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            foreach (var item in LineDetailScopeItems)
             {
-                lineDetailExpansionItem.BuildAddressLabel(AsmLoad);
+                item.BuildAddressLabel();
             }
         }
 
         public virtual void Assemble()
         {
-            if (LineDetailExpansionItems == default)
+            if (LineDetailScopeItems == default)
                 return;
 
-            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            foreach (var item in LineDetailScopeItems)
             {
-                lineDetailExpansionItem.Assemble(AsmLoad);
+                item.Assemble();
             }
         }
 

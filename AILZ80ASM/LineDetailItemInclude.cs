@@ -91,14 +91,15 @@ namespace AILZ80ASM
 
         public override void ExpansionItem()
         {
-            var lineDetailExpansionItems = new List<LineDetailExpansionItem>();
+            var lineDetailScopeItem = new List<LineDetailScopeItem>();
 
             foreach (var lineItem in LineItems)
             {
                 lineItem.ExpansionItem();
-                lineDetailExpansionItems.AddRange(lineItem.LineDetailItem.LineDetailExpansionItems);
+                lineDetailScopeItem.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
             }
-            this.LineDetailExpansionItems = lineDetailExpansionItems.ToArray();
+
+            LineDetailScopeItems = lineDetailScopeItem.ToArray();
 
             base.ExpansionItem();
         }

@@ -48,13 +48,15 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static void Assemble(FileInfo[] Files, Stream assebledStream)
+        public static FileItemErrorMessage[] Assemble(FileInfo[] Files, Stream assebledStream)
         {
             var package = new Package(Files);
 
             package.Assemble();
 
             package.Save(assebledStream);
+
+            return package.Errors;
         }
 
 

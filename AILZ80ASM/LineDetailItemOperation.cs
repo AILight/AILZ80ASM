@@ -15,13 +15,13 @@ namespace AILZ80ASM
 
         public override void ExpansionItem()
         {
-            this.LineDetailExpansionItems = Macro.Expansion(this.LineItem, this.AsmLoad);
-            if (this.LineDetailExpansionItems != default)
+            this.LineDetailScopeItems = Macro.Expansion(this.LineItem, this.AsmLoad);
+            if (this.LineDetailScopeItems != default)
                 return;
             // マクロ展開できなかったら通常展開
-            this.LineDetailExpansionItems = new[]
+            this.LineDetailScopeItems = new[]
             {
-                new LineDetailExpansionItemOperation(this.LineItem, this.AsmLoad)
+                new LineDetailScopeItem(this.LineItem, this.AsmLoad)
             };
 
             base.ExpansionItem();

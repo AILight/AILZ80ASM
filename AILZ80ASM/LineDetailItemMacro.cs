@@ -47,7 +47,7 @@ namespace AILZ80ASM
                 {
                     asmLoad.LineDetailItemMacro.MacroLines.Add(lineItem.LineString);
                 }
-                return new LineDetailItemMacro(lineItem, asmLoad) { LineDetailExpansionItems = Array.Empty<LineDetailExpansionItem>() };
+                return new LineDetailItemMacro(lineItem, asmLoad);
             }
             else
             {
@@ -57,7 +57,6 @@ namespace AILZ80ASM
                     {
                         MacroName = startMatched.Groups["macro_name"].Value,
                         MacroArgs = startMatched.Groups["args"].Value,
-                        LineDetailExpansionItems = Array.Empty<LineDetailExpansionItem>()
                     };
 
                     asmLoad.LineDetailItemMacro = lineDetailItemMacro;
@@ -73,5 +72,9 @@ namespace AILZ80ASM
             return default;
         }
 
+        public override void ExpansionItem()
+        {
+            LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
+        }
     }
 }
