@@ -89,7 +89,7 @@ namespace AILZ80ASM
             if (LineDetailItemRepeat != default)
             {
                 var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1011);
-                errorMessages.Add(new FileInfoErrorMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemMacro.LineItem) }, LineDetailItemMacro.LineItem.FileInfo));
+                errorMessages.Add(new FileInfoErrorMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemRepeat.LineItem) }, LineDetailItemRepeat.LineItem.FileInfo));
             }
         }
 

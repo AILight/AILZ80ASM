@@ -43,6 +43,13 @@ namespace AILZ80ASM
                     var repeatAsmLoad = asmLoad.Clone();
                     repeatAsmLoad.LineDetailItemRepeat = default;
 
+                    // ローカルラベル以外は使用禁止
+                    var lable = Label.GetLabelText(lineItem.OperationString);
+                    if (lable.EndsWith(":"))
+                    {
+                        throw new ErrorMessageException(Error.ErrorCodeEnum.E1014);
+                    }
+
                     repeatLines.Add(lineItem);
                 }
                 return new LineDetailItemRepeat(lineItem, asmLoad);

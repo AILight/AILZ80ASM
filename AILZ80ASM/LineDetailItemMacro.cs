@@ -45,6 +45,7 @@ namespace AILZ80ASM
                 }
                 else
                 {
+                    // ローカルラベル以外は使用禁止
                     var lable = Label.GetLabelText(lineItem.OperationString);
                     if (lable.EndsWith(":"))
                     {

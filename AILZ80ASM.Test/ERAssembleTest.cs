@@ -43,6 +43,20 @@ namespace AILZ80ASM.Test
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1004, 4, errors[1].ErrorLineItemMessages);
         }
 
+        [TestMethod]
+        public void TestER_Repeat()
+        {
+            var errors = Assemble("Repeat.Z80");
+
+            Assert.AreEqual(errors.Length, 2);
+            Assert.AreEqual(errors[0].ErrorLineItemMessages.Length, 1);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1011, 17, errors[0].ErrorLineItemMessages);
+            Assert.AreEqual(errors[1].ErrorLineItemMessages.Length, 3);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1014, 6, errors[1].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1012, 15, errors[1].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 13, errors[1].ErrorLineItemMessages);
+        }
+
         private static void AssertErrorItemMessage(Error.ErrorCodeEnum errorCode, int lineIndex, ErrorLineItemMessage[] errors)
         {
             if (!errors.Any(m => m.ErrorMessageException.ErrorCode == errorCode && m.LineItem.LineIndex == lineIndex))

@@ -37,6 +37,7 @@ namespace AILZ80ASM
             E1011,
             E1012,
             E1013,
+            E1014,
 
             E2001,
             E2002,
@@ -91,6 +92,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
             [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",
             [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。",
+            [ErrorCodeEnum.E1014] = "REPEATでは、ローカルラベルしか使えません。",
 
             // Include
             [ErrorCodeEnum.E2001] = "Include 該当するファイルが存在しませんでした。",

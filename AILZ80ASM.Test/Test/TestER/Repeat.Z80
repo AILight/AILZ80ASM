@@ -1,0 +1,19 @@
+﻿REPEAT 3
+        xor     a
+END REPEAT
+
+REPEAT 8 LAST -1
+        ld      (hl), a
+ABC:    set     5, h
+        ld      (hl), a
+.LP     add     hl, de
+        jr      nz, .lp
+        add     hl, de
+END REPEAT
+
+REPEAT
+        xor     a
+END REPEAT
+
+REPEAT 3
+        xor     a
