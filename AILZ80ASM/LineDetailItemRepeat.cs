@@ -16,7 +16,7 @@ namespace AILZ80ASM
         private string RepeatCountLabel { get; set; }
         private string RepeatLastLabel { get; set; }
 
-        private readonly List<string> RepeatLines = new List<string>();
+        private readonly List<LineItem> RepeatLines = new List<LineItem>();
 
         public LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -43,7 +43,7 @@ namespace AILZ80ASM
                     var repeatAsmLoad = asmLoad.Clone();
                     repeatAsmLoad.LineDetailItemRepeat = default;
 
-                    repeatLines.Add(lineItem.LineString);
+                    repeatLines.Add(lineItem);
                 }
                 return new LineDetailItemRepeat(lineItem, asmLoad);
             }
@@ -90,7 +90,6 @@ namespace AILZ80ASM
                 var lineDetailScopeItems = new List<LineDetailScopeItem>();
                 var count = AIMath.ConvertToUInt16(RepeatCountLabel, this.AsmLoad);
                 var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertToUInt16(RepeatLastLabel, this.AsmLoad);
-                var lineIndex = 1;
 
                 foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
@@ -106,11 +105,21 @@ namespace AILZ80ASM
                             throw new ErrorMessageException(Error.ErrorCodeEnum.E1013);
                         }
                         //最終ページ処理
-                        lineItems = RepeatLines.Take(take).Select(m => new LineItem(m, lineIndex++, localAsmLoad));
+                        lineItems = RepeatLines.Take(take).Select(m =>
+                        {
+                            var lineItem = new LineItem(m);
+                            lineItem.CreateLineDetailItem(localAsmLoad);
+                            return lineItem;
+                        });
                     }
                     else
                     {
-                        lineItems = RepeatLines.Select(m => new LineItem(m, lineIndex++, localAsmLoad));
+                        lineItems = RepeatLines.Select(m =>
+                        {
+                            var lineItem = new LineItem(m);
+                            lineItem.CreateLineDetailItem(localAsmLoad);
+                            return lineItem;
+                        });
                     }
 
                     foreach (var lineItem in lineItems)

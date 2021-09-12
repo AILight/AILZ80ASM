@@ -45,7 +45,8 @@ namespace AILZ80ASM
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var localLineItem = new LineItem(line, lineIndex, asmLoad);
+                var localLineItem = new LineItem(line, lineIndex, fileInfo);
+                localLineItem.CreateLineDetailItem(asmLoad);
                 LineItems.Add(localLineItem);
 
                 lineIndex++;

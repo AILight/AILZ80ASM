@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace AILZ80ASM.Test
@@ -7,23 +8,46 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class ERAssembleTest
     {
+        private FileInfoErrorMessage[] Assemble(string fileName)
+        {
+            var targetDirectoryName = Path.Combine(".", "Test", "TestER");
+            var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
+            using var memoryStream = new MemoryStream();
+
+            return Lib.Assemble(inputFiles, memoryStream);
+        }
+
         [TestMethod]
         public void TestER_Address()
         {
-            var targetDirectoryName = Path.Combine(".", "Test", "TestER");
+            var errors = Assemble("Address.Z80");
 
-            var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Address.Z80")) };
+            Assert.AreEqual(errors.Length, 1);
+            Assert.AreEqual(errors[0].ErrorLineItemMessages.Length, 2);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 7, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 9, errors[0].ErrorLineItemMessages);
+        }
 
-            using (var memoryStream = new MemoryStream())
+        [TestMethod]
+        public void TestER_Macro()
+        {
+            var errors = Assemble("Macro.Z80");
+
+            Assert.AreEqual(errors.Length, 2);
+            Assert.AreEqual(errors[0].ErrorLineItemMessages.Length, 1);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1001, 27, errors[0].ErrorLineItemMessages);
+            Assert.AreEqual(errors[1].ErrorLineItemMessages.Length, 4);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1006, 9, errors[1].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1005, 22, errors[1].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1004, 2, errors[1].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1004, 4, errors[1].ErrorLineItemMessages);
+        }
+
+        private static void AssertErrorItemMessage(Error.ErrorCodeEnum errorCode, int lineIndex, ErrorLineItemMessage[] errors)
+        {
+            if (!errors.Any(m => m.ErrorMessageException.ErrorCode == errorCode && m.LineItem.LineIndex == lineIndex))
             {
-                var errors = Lib.Assemble(inputFiles, memoryStream);
-
-                Assert.AreEqual(errors.Length, 1);
-                Assert.AreEqual(errors[0].LineItemErrorMessages.Length, 2);
-                Assert.AreEqual(errors[0].LineItemErrorMessages[0].ErrorMessageException.ErrorCode, Error.ErrorCodeEnum.E0001);
-                Assert.AreEqual(errors[0].LineItemErrorMessages[0].LineItem.LineIndex, 7);
-                Assert.AreEqual(errors[0].LineItemErrorMessages[1].ErrorMessageException.ErrorCode, Error.ErrorCodeEnum.E0001);
-                Assert.AreEqual(errors[0].LineItemErrorMessages[1].LineItem.LineIndex, 9);
+                Assert.Fail($"エラーが見つかりませんでした。　ErrorCode:{errorCode} LineIndex:{lineIndex}");
             }
         }
     }

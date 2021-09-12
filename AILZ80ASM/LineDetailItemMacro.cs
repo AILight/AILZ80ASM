@@ -12,8 +12,8 @@ namespace AILZ80ASM
         private static readonly string RegexPatternMacroEnd = @"^\s*End\s+Macro\s*$";
 
         private string MacroName { get; set; } = "";
-        private string MacroArgs { get; set; } = "";
-        private readonly List<string> MacroLines = new List<string>();
+        private string[] MacroArgs { get; set; }
+        private readonly List<LineItem> MacroLines = new List<LineItem>();
 
         public LineDetailItemMacro(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -45,7 +45,13 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    asmLoad.LineDetailItemMacro.MacroLines.Add(lineItem.LineString);
+                    var lable = Label.GetLabelText(lineItem.OperationString);
+                    if (lable.EndsWith(":"))
+                    {
+                        throw new ErrorMessageException(Error.ErrorCodeEnum.E1006);
+                    }
+
+                    asmLoad.LineDetailItemMacro.MacroLines.Add(lineItem);
                 }
                 return new LineDetailItemMacro(lineItem, asmLoad);
             }
@@ -53,11 +59,25 @@ namespace AILZ80ASM
             {
                 if (startMatched.Success)
                 {
+                    var args = new List<string>();
+                    var argsText = startMatched.Groups["args"].Value;
+
+                    if (!string.IsNullOrEmpty(argsText.Trim()))
+                    {
+                        args.AddRange(argsText.Split(',').Select(m => m.Trim()));
+                    }
+
                     var lineDetailItemMacro = new LineDetailItemMacro(lineItem, asmLoad)
                     {
                         MacroName = startMatched.Groups["macro_name"].Value,
-                        MacroArgs = startMatched.Groups["args"].Value,
+                        MacroArgs = args.ToArray(),
                     };
+
+                    // 引数、有効文字チェック
+                    if (!args.All(m => Label.IsArgument(m)))
+                    {
+                        lineDetailItemMacro.InternalErrorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1005);
+                    }
 
                     asmLoad.LineDetailItemMacro = lineDetailItemMacro;
 

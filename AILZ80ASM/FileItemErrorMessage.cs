@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace AILZ80ASM
 {
-    public class FileItemErrorMessage
+    public class FileInfoErrorMessage
     {
-        public FileItem FileItem { get; private set; }
-        public LineItemErrorMessage[] LineItemErrorMessages { get; private set; }
+        public FileInfo FileInfo { get; private set; }
+        public ErrorLineItemMessage[] ErrorLineItemMessages { get; private set; }
 
-        public FileItemErrorMessage(LineItemErrorMessage[] lineItemErrorMessages, FileItem fileItem)
+        public FileInfoErrorMessage(ErrorLineItemMessage[] errorLineItemMessage, FileItem fileItem)
         {
-            FileItem = fileItem;
-            LineItemErrorMessages = lineItemErrorMessages;
+            FileInfo = fileItem.FileInfo;
+            ErrorLineItemMessages = errorLineItemMessage;
+        }
+
+        public FileInfoErrorMessage(ErrorLineItemMessage[] errorLineItemMessage, FileInfo fileInfo)
+        {
+            FileInfo = fileInfo;
+            ErrorLineItemMessages = errorLineItemMessage;
         }
 
     }

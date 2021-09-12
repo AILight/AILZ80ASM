@@ -11,7 +11,7 @@ namespace AILZ80ASM
         private Package Package { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
-        public List<LineItemErrorMessage> ErrorMessages { get; private set; } = new List<LineItemErrorMessage>();
+        public List<ErrorLineItemMessage> ErrorMessages { get; private set; } = new List<ErrorLineItemMessage>();
 
         public FileItem(FileInfo fileInfo, Package package)
         {
@@ -33,10 +33,23 @@ namespace AILZ80ASM
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var item = new LineItem(line, lineIndex, Package.AssembleLoad);
-                Items.Add(item);
-
+                var item = new LineItem(line, lineIndex, FileInfo);
                 lineIndex++;
+                try
+                {
+                    item.CreateLineDetailItem(Package.AssembleLoad);
+                    Items.Add(item);
+
+                    // 内部エラーを積む
+                    if (item?.LineDetailItem?.InternalErrorMessageException != default)
+                    {
+                        throw item.LineDetailItem.InternalErrorMessageException;
+                    }
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                }
             }
 
         }
@@ -55,7 +68,7 @@ namespace AILZ80ASM
                 }
                 catch (ErrorMessageException ex)
                 {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
                 }
             }
         }
@@ -89,7 +102,7 @@ namespace AILZ80ASM
                 }
                 catch (ErrorMessageException ex)
                 {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
                 }
             }
         }
@@ -105,7 +118,7 @@ namespace AILZ80ASM
                 }
                 catch (ErrorMessageException ex)
                 {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
                 }
             }
         }
@@ -120,7 +133,7 @@ namespace AILZ80ASM
                 }
                 catch (ErrorMessageException ex)
                 {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
                 }
             }
         }

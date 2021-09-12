@@ -9,10 +9,20 @@ namespace AILZ80ASM
 {
     public class Label
     {
+        public enum DataTypeEnum
+        {
+            None,
+            Processing,
+            ProcessingForValue,
+            Value,
+            ADDR,
+        }
+
         private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
         private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
         private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
+        private static readonly string RegexPatternArgument = @"(?<argument>(^\w+))";
 
         public Label(string labelName, string valueString, AsmLoad asmLoad)
         {
@@ -89,13 +99,18 @@ namespace AILZ80ASM
             }
         }
 
-        public enum DataTypeEnum
+        /// <summary>
+        /// 引数のラベルチェック
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool IsArgument(string target)
         {
-            None,
-            Processing,
-            ProcessingForValue,
-            Value,
-            ADDR,
+            if (string.IsNullOrEmpty(target))
+                return false;
+
+            var matched = Regex.Match(target, RegexPatternArgument, RegexOptions.Singleline);
+            return matched.Success && matched.Groups["argument"].Value == target;
         }
 
         public void SetValue(AsmLoad asmLoad)

@@ -78,16 +78,18 @@ namespace AILZ80ASM
             };
         }
 
-        public void LoadCloseValidate()
+        public void LoadCloseValidate(IList<FileInfoErrorMessage> errorMessages)
         {
             if (LineDetailItemMacro != default)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E1001);
+                var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1001);
+                errorMessages.Add(new FileInfoErrorMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemMacro.LineItem) }, LineDetailItemMacro.LineItem.FileInfo));
             }
 
             if (LineDetailItemRepeat != default)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E1011);
+                var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1011);
+                errorMessages.Add(new FileInfoErrorMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemMacro.LineItem) }, LineDetailItemMacro.LineItem.FileInfo));
             }
         }
 

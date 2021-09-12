@@ -9,11 +9,12 @@ namespace AILZ80ASM
     public abstract class LineDetailItem
     {
         private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
-        protected LineItem LineItem { get; set; }
+        public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad {get;set; }
 
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         public byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
+        public ErrorMessageException InternalErrorMessageException { get; set; }
 
         public LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {

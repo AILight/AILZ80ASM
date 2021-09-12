@@ -31,6 +31,8 @@ namespace AILZ80ASM
             E1002,
             E1003,
             E1004,
+            E1005,
+            E1006,
 
             E1011,
             E1012,
@@ -82,6 +84,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1002] = "END MACROが先に見つかりました。",
             [ErrorCodeEnum.E1003] = "MACROが重複登録されていますので、名前解決が出来ません。",
             [ErrorCodeEnum.E1004] = "MACROの引数の個数が一致していません。",
+            [ErrorCodeEnum.E1005] = "MACROの引数名が有効ではありません。",
+            [ErrorCodeEnum.E1006] = "MACROでは、ローカルラベルしか使えません。",
+
             // マクロリピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
             [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",

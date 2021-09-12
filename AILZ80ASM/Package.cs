@@ -11,11 +11,11 @@ namespace AILZ80ASM
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
 
-        private List<FileItemErrorMessage> ErrorMessages { get; set; } = new List<FileItemErrorMessage>();
+        private List<FileInfoErrorMessage> ErrorMessages { get; set; } = new List<FileInfoErrorMessage>();
 
-        public FileItemErrorMessage[] Errors => ErrorMessages.Where(m => m.LineItemErrorMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error)).Select(m => new FileItemErrorMessage(m.LineItemErrorMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error).ToArray(), m.FileItem)).ToArray();
-        public FileItemErrorMessage[] Warnings => ErrorMessages.Where(m => m.LineItemErrorMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning)).Select(m => new FileItemErrorMessage(m.LineItemErrorMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning).ToArray(), m.FileItem)).ToArray();
-        public FileItemErrorMessage[] Infomations => ErrorMessages.Where(m => m.LineItemErrorMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation)).Select(m => new FileItemErrorMessage(m.LineItemErrorMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation).ToArray(), m.FileItem)).ToArray();
+        public FileInfoErrorMessage[] Errors => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error)).Select(m => new FileInfoErrorMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error).ToArray(), m.FileInfo)).ToArray();
+        public FileInfoErrorMessage[] Warnings => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning)).Select(m => new FileInfoErrorMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning).ToArray(), m.FileInfo)).ToArray();
+        public FileInfoErrorMessage[] Infomations => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation)).Select(m => new FileInfoErrorMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation).ToArray(), m.FileInfo)).ToArray();
 
         public Package(FileInfo[] Files)
         {
@@ -24,7 +24,7 @@ namespace AILZ80ASM
                 FileItems.Add(new FileItem(fileInfo, this));
             }
 
-            this.AssembleLoad.LoadCloseValidate();
+            this.AssembleLoad.LoadCloseValidate(ErrorMessages);
         }
 
         public void Assemble()
@@ -48,7 +48,7 @@ namespace AILZ80ASM
             // エラーの出力
             foreach (var fileItem in FileItems)
             {
-                ErrorMessages.Add(new FileItemErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
+                ErrorMessages.Add(new FileInfoErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
             }
         }
 
@@ -158,17 +158,17 @@ namespace AILZ80ASM
             Console.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Infomations.Length} infomation");
         }
 
-        private void OutputError(FileItemErrorMessage[] fileItemErrorMessages, string title)
+        private static void OutputError(FileInfoErrorMessage[] fileItemErrorMessages, string title)
         {
-            var count = fileItemErrorMessages.Sum(m => m.LineItemErrorMessages.Length);
+            var count = fileItemErrorMessages.Sum(m => m.ErrorLineItemMessages.Length);
             if (count > 0)
             {
                 Console.WriteLine(new string('-', 60));
                 foreach (var fileItemError in fileItemErrorMessages)
                 {
-                    foreach (var lineItemError in fileItemError.LineItemErrorMessages)
+                    foreach (var errorItem in fileItemError.ErrorLineItemMessages)
                     {
-                        Console.WriteLine($"{fileItemError.FileItem.FileInfo.Name}:{lineItemError.LineItem.LineIndex + 1:000000} {lineItemError.ErrorMessageException.Message} -> {lineItemError.ErrorMessageException.AdditionalMessage}");
+                        Console.WriteLine($"{fileItemError.FileInfo.Name}:{errorItem.LineItem.LineIndex + 1:0,6:d} {errorItem.ErrorMessageException.Message} -> {errorItem.ErrorMessageException.AdditionalMessage}");
                     }
                 }
             }

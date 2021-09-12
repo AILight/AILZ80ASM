@@ -9,6 +9,9 @@ namespace AILZ80ASM
     public class LineItem
     {
         // ファイル情報
+        public FileInfo FileInfo { get; set; }
+
+        // レコード情報
         public string LineString { get; private set; }
         public int LineIndex { get; private set; }
         public byte[] Bin => LineDetailItem.Bin;
@@ -18,8 +21,12 @@ namespace AILZ80ASM
         public string CommentString { get; private set; }
         public LineDetailItem LineDetailItem { get; private set; }
 
-        public LineItem(string lineString, int lineIndex, AsmLoad asmLoad)
+
+        public LineItem(string lineString, int lineIndex, FileInfo fileInfo)
         {
+            // ファイル情報
+            FileInfo = fileInfo;
+
             // 読み込んだ情報
             LineString = lineString;
             LineIndex = lineIndex;
@@ -36,6 +43,25 @@ namespace AILZ80ASM
             {
                 OperationString = lineString.TrimEnd();
             }
+        }
+
+        public LineItem(LineItem lineItem)
+        {
+            FileInfo = lineItem.FileInfo;
+            LineString = lineItem.LineString;
+            LineIndex = lineItem.LineIndex;
+            OperationString = lineItem.OperationString;
+            CommentString = lineItem.CommentString;
+            LineDetailItem = lineItem.LineDetailItem;
+        }
+
+        public void SetLabelForMacro(string labelName)
+        {
+            OperationString = labelName;
+        }
+
+        public void CreateLineDetailItem(AsmLoad asmLoad)
+        {
             // LineDetailItem作成
             LineDetailItem = LineDetailItem.CreateLineDetailItem(this, asmLoad);
         }
@@ -59,5 +85,6 @@ namespace AILZ80ASM
         {
             LineDetailItem.Assemble();
         }
+
     }
 }
