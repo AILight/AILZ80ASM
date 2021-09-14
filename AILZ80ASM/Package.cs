@@ -8,14 +8,15 @@ namespace AILZ80ASM
 {
     public class Package
     {
+        private const int CONSOLE_WIDTH = 100;
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
 
-        private List<FileItemErrorMessage> ErrorMessages { get; set; } = new List<FileItemErrorMessage>();
+        private List<ErrorFileInfoMessage> ErrorMessages { get; set; } = new List<ErrorFileInfoMessage>();
 
-        public FileItemErrorMessage[] Errors => ErrorMessages.Where(m => m.LineItemErrorMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error)).Select(m => new FileItemErrorMessage(m.LineItemErrorMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error).ToArray(), m.FileItem)).ToArray();
-        public FileItemErrorMessage[] Warnings => ErrorMessages.Where(m => m.LineItemErrorMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning)).Select(m => new FileItemErrorMessage(m.LineItemErrorMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning).ToArray(), m.FileItem)).ToArray();
-        public FileItemErrorMessage[] Infomations => ErrorMessages.Where(m => m.LineItemErrorMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation)).Select(m => new FileItemErrorMessage(m.LineItemErrorMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation).ToArray(), m.FileItem)).ToArray();
+        public ErrorFileInfoMessage[] Errors => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error).ToArray(), m.FileInfo)).ToArray();
+        public ErrorFileInfoMessage[] Warnings => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning).ToArray(), m.FileInfo)).ToArray();
+        public ErrorFileInfoMessage[] Infomations => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation).ToArray(), m.FileInfo)).ToArray();
 
         public Package(FileInfo[] Files)
         {
@@ -24,7 +25,7 @@ namespace AILZ80ASM
                 FileItems.Add(new FileItem(fileInfo, this));
             }
 
-            this.AssembleLoad.LoadCloseValidate();
+            this.AssembleLoad.LoadCloseValidate(ErrorMessages);
         }
 
         public void Assemble()
@@ -48,7 +49,7 @@ namespace AILZ80ASM
             // エラーの出力
             foreach (var fileItem in FileItems)
             {
-                ErrorMessages.Add(new FileItemErrorMessage(fileItem.ErrorMessages.ToArray(), fileItem));
+                ErrorMessages.Add(new ErrorFileInfoMessage(fileItem.ErrorMessages.ToArray(), fileItem));
             }
         }
 
@@ -158,20 +159,54 @@ namespace AILZ80ASM
             Console.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Infomations.Length} infomation");
         }
 
-        private void OutputError(FileItemErrorMessage[] fileItemErrorMessages, string title)
+        /// <summary>
+        /// エラーを表示する
+        /// </summary>
+        /// <param name="fileItemErrorMessages"></param>
+        /// <param name="title"></param>
+        public static void OutputError(ErrorFileInfoMessage[] fileItemErrorMessages, string title)
         {
-            var count = fileItemErrorMessages.Sum(m => m.LineItemErrorMessages.Length);
+            var count = fileItemErrorMessages.Sum(m => m.ErrorLineItemMessages.Length);
             if (count > 0)
             {
-                Console.WriteLine(new string('-', 60));
-                foreach (var fileItemError in fileItemErrorMessages)
+                Console.WriteLine(("> " + title + " ").PadRight(CONSOLE_WIDTH, '-'));
+                InternalOutputError(fileItemErrorMessages, 0);
+                Console.WriteLine("< ".PadRight(CONSOLE_WIDTH, '-'));
+            }
+        }
+
+        private static void InternalOutputError(ErrorFileInfoMessage[] fileItemErrorMessages, int indent)
+        {
+            foreach (var fileItem in fileItemErrorMessages)
+            {
+                foreach (var lineItem in fileItem.ErrorLineItemMessages)
                 {
-                    foreach (var lineItemError in fileItemError.LineItemErrorMessages)
+                    var errorMessage = lineItem.ErrorMessageException.Parameters == default ?
+                                        lineItem.ErrorMessageException.Message :
+                                        string.Format(lineItem.ErrorMessageException.Message, lineItem.ErrorMessageException.Parameters);
+
+                    OutputErrorForConsole(2, lineItem.ErrorMessageException.ErrorCode.ToString());
+                    OutputErrorForConsole(8, errorMessage);
+                    OutputErrorForConsole(75, $"{fileItem.FileInfo.Name}: {(lineItem.LineItem.LineIndex + 1)}");
+                    Console.WriteLine();
+                    if (lineItem.ErrorMessageException.ErrorFileInfoMessage != default)
                     {
-                        Console.WriteLine($"{fileItemError.FileItem.FileInfo.Name}:{lineItemError.LineItem.LineIndex + 1:000000} {lineItemError.ErrorMessageException.Message} -> {lineItemError.ErrorMessageException.AdditionalMessage}");
+                        InternalOutputError(new[] { lineItem.ErrorMessageException.ErrorFileInfoMessage }, indent + 1);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 指定の位置にメッセージを出力する
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="message"></param>
+        private static void OutputErrorForConsole(int left, string message)
+        {
+            var pos = Console.GetCursorPosition();
+            Console.SetCursorPosition(left, pos.Top);
+            Console.Write(message);
         }
 
     }

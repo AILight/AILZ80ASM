@@ -12,22 +12,20 @@ namespace AILZ80ASM
         public string Name { get; private set; }
         public string FullName => $"{GlobalLabelName}.{Name}";
 
-        public List<string> Args { get; private set; } = new List<string>();
-        public List<string> LineStrings { get; private set; } = new List<string>();
+        public string[] Args { get; private set; }
+        public LineItem[] LineItems { get; private set; }
 
         private static readonly string RegexPatternLabel = @"^(?<label>([^\.][a-zA-Z0-9_]+::?)|(\.[a-zA-Z0-9_]+[^:]))\s*.*$";
         private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_\.]+)\s*(?<args>.*)$";
 
-        public Macro(string macroName, string args, string[] lineStrings, AsmLoad asmLoad)
+        public Macro(string macroName, string[] args, LineItem[] lineItems, AsmLoad asmLoad)
         {
             this.GlobalLabelName = asmLoad.GlobalLableName;
             this.Name = macroName;
-            if (!string.IsNullOrEmpty(args.Trim()))
-            {
-                Args.AddRange(args.Split(',').Select(m => m.Trim()));
-            }
 
-            LineStrings.AddRange(lineStrings);
+            Args = args;
+
+            LineItems = lineItems;
         }
 
         public static LineDetailScopeItem[] Expansion(LineItem lineItem, AsmLoad asmLoad)
@@ -65,10 +63,13 @@ namespace AILZ80ASM
                 if (macro != default)
                 {
                     var lineDetailScopeItems = new List<LineDetailScopeItem>();
-                    var lineIndex = 1;
                     if (!string.IsNullOrEmpty(labelName))
                     {
-                        lineDetailScopeItems.Add(new LineDetailScopeItem(new LineItem(labelName, lineIndex, asmLoad), asmLoad));
+                        var localLineItem = new LineItem(lineItem);
+                        localLineItem.SetLabelForMacro(labelName);
+
+                        localLineItem.CreateLineDetailItem(asmLoad);
+                        lineDetailScopeItems.Add(new LineDetailScopeItem(localLineItem, asmLoad));
                     }
                     // Macro展開用のAsmLoadを作成する
                     var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
@@ -77,20 +78,24 @@ namespace AILZ80ASM
                     if (!string.IsNullOrEmpty(macroArgs.Trim()))
                     {
                         var argValues = macroArgs.Split(',').Select(m => m.Trim()).ToArray();
-                        if (argValues.Count() != macro.Args.Count())
+                        if (argValues.Length != macro.Args.Length)
                         {
                             throw new ErrorMessageException(Error.ErrorCodeEnum.E1004);
                         }
 
                         // 引数の割り当て
-                        foreach (var index in Enumerable.Range(0, argValues.Count()))
+                        foreach (var index in Enumerable.Range(0, argValues.Length))
                         {
                             macroAsmLoad.AddLabel(new Label(macro.Args[index], argValues[index], macroAsmLoad));
                         }
                     }
                     // LineItemsを作成
-                    var lineStrings = macro.LineStrings.ToArray();
-                    var lineItems = lineStrings.Select(m => new LineItem(m, lineIndex++, macroAsmLoad));
+                    var lineItems = macro.LineItems.Select(m =>
+                        {
+                            var lineItem = new LineItem(m);
+                            lineItem.CreateLineDetailItem(macroAsmLoad);
+                            return lineItem;
+                        });
                     foreach (var localLineItem in lineItems)
                     {
                         localLineItem.ExpansionItem();

@@ -61,10 +61,13 @@ namespace AILZ80ASM
                 }
 
                 var package = new Package(input);
-                package.Assemble();
                 if (package.Errors.Length == 0)
                 {
-                    package.Save(output);
+                    package.Assemble();
+                    if (package.Errors.Length == 0)
+                    {
+                        package.Save(output);
+                    }
                 }
                 package.OutputError();
             }
