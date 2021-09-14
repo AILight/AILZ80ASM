@@ -27,7 +27,8 @@ namespace AILZ80ASM
             }
         }
         public string LabelName { get; set; }
-        public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>();
+        public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include用
+
         public Label[] AllLables => Labels.Union(LocalLabels).ToArray();
         public List<Label> Labels { get; private set; } = new List<Label>();
         public List<Label> LocalLabels { get; private set; } = new List<Label>();
@@ -78,18 +79,18 @@ namespace AILZ80ASM
             };
         }
 
-        public void LoadCloseValidate(IList<FileInfoErrorMessage> errorMessages)
+        public void LoadCloseValidate(IList<ErrorFileInfoMessage> errorMessages)
         {
             if (LineDetailItemMacro != default)
             {
                 var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1001);
-                errorMessages.Add(new FileInfoErrorMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemMacro.LineItem) }, LineDetailItemMacro.LineItem.FileInfo));
+                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemMacro.LineItem) }, LineDetailItemMacro.LineItem.FileInfo));
             }
 
             if (LineDetailItemRepeat != default)
             {
                 var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1011);
-                errorMessages.Add(new FileInfoErrorMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemRepeat.LineItem) }, LineDetailItemRepeat.LineItem.FileInfo));
+                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemRepeat.LineItem) }, LineDetailItemRepeat.LineItem.FileInfo));
             }
         }
 

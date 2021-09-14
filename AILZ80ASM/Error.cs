@@ -41,6 +41,7 @@ namespace AILZ80ASM
 
             E2001,
             E2002,
+            E2003,
 
             W0001,
             I0001,
@@ -72,7 +73,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
             [ErrorCodeEnum.E0003] = "相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。",
-            [ErrorCodeEnum.E0004] = "演算に失敗しました。",
+            [ErrorCodeEnum.E0004] = "演算に失敗しました。{0}",
             [ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
             [ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
             [ErrorCodeEnum.E0007] = "8進数の変換に失敗しました。",
@@ -84,9 +85,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1001] = "MACROに対応するEND MACROが見つかりませんでした。",
             [ErrorCodeEnum.E1002] = "END MACROが先に見つかりました。",
             [ErrorCodeEnum.E1003] = "MACROが重複登録されていますので、名前解決が出来ません。",
-            [ErrorCodeEnum.E1004] = "MACROの引数の個数が一致していません。",
+            [ErrorCodeEnum.E1004] = "MACROの引数の数が一致していません。",
             [ErrorCodeEnum.E1005] = "MACROの引数名が有効ではありません。",
-            [ErrorCodeEnum.E1006] = "MACROでは、ローカルラベルしか使えません。",
+            [ErrorCodeEnum.E1006] = "MACROでは、ローカルラベル以外は使えません。",
 
             // マクロリピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
@@ -95,8 +96,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1014] = "REPEATでは、ローカルラベルしか使えません。",
 
             // Include
-            [ErrorCodeEnum.E2001] = "Include 該当するファイルが存在しませんでした。",
-            [ErrorCodeEnum.E2002] = "Include 同一のファイルは読み込みできません。",
+            [ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",
+            [ErrorCodeEnum.E2002] = "Include ファイルが存在しませんでした。[{0}]",
+            [ErrorCodeEnum.E2003] = "Include 既に読み込み済みのファイルです。[{0}]",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"

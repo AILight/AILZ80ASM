@@ -1,4 +1,7 @@
 ﻿include ".\Test\TestPP_Include\Test.inc"
+	ORG	$8000
 	ld a, TRUE
 	;ld b, 0
 	ld c, FALSE
+include ".\Test\TestPP_Include\Test1.inc"
+	jp	LABEL

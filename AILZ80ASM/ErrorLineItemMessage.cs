@@ -14,6 +14,5 @@ namespace AILZ80ASM
             ErrorMessageException = errorMessageException;
             LineItem = lineItem;
         }
-
     }
 }

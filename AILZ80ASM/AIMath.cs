@@ -49,7 +49,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}", ex);
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
             }
 
         }
@@ -95,7 +95,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}", ex);
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
             }
         }
 

@@ -48,7 +48,7 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static FileInfoErrorMessage[] Assemble(FileInfo[] Files, Stream assebledStream)
+        public static ErrorFileInfoMessage[] Assemble(FileInfo[] Files, Stream assebledStream)
         {
             var package = new Package(Files);
 

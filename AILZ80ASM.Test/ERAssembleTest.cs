@@ -8,7 +8,7 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class ERAssembleTest
     {
-        private FileInfoErrorMessage[] Assemble(string fileName)
+        private ErrorFileInfoMessage[] Assemble(string fileName)
         {
             var targetDirectoryName = Path.Combine(".", "Test", "TestER");
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
@@ -26,6 +26,21 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(errors[0].ErrorLineItemMessages.Length, 2);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 7, errors[0].ErrorLineItemMessages);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 9, errors[0].ErrorLineItemMessages);
+        }
+
+        [TestMethod]
+        public void TestER_Include()
+        {
+            var errors = Assemble("Include.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            Assert.AreEqual(errors[0].ErrorLineItemMessages.Length, 3);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E2002, 2, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E2001, 4, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E2002, 2, errors[0].ErrorLineItemMessages[1].ErrorMessageException.ErrorFileInfoMessage.ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E2003, 4, errors[0].ErrorLineItemMessages[1].ErrorMessageException.ErrorFileInfoMessage.ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E2001, 3, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 0, errors[0].ErrorLineItemMessages[2].ErrorMessageException.ErrorFileInfoMessage.ErrorLineItemMessages);
         }
 
         [TestMethod]
