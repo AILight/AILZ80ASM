@@ -55,7 +55,7 @@ namespace AILZ80ASM
                 LoadFiles = this.LoadFiles,
                 Macros = this.Macros,
                 LineDetailItemMacro = this.LineDetailItemMacro,
-                LineDetailItemRepeat = LineDetailItemRepeat,
+                LineDetailItemRepeat = this.LineDetailItemRepeat,
 
                 Labels = this.Labels,
                 LocalLabels = this.LocalLabels,
@@ -72,7 +72,7 @@ namespace AILZ80ASM
                 LoadFiles = this.LoadFiles,
                 Macros = this.Macros,
                 LineDetailItemMacro = this.LineDetailItemMacro,
-                LineDetailItemRepeat = LineDetailItemRepeat,
+                LineDetailItemRepeat = this.LineDetailItemRepeat,
 
                 Labels = this.Labels,
                 LocalLabels = scopeMode == ScopeModeEnum.Global ? this.LocalLabels : new List<Label>(),

@@ -17,6 +17,7 @@ namespace AILZ80ASM
         private string RepeatLastLabel { get; set; }
 
         private readonly List<LineItem> RepeatLines = new List<LineItem>();
+        private int RepeatNestedCount { get; set; } = 0;
 
         public LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -30,39 +31,57 @@ namespace AILZ80ASM
             var startSimpleMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
+            // リピート処理中
             if (asmLoad.LineDetailItemRepeat != default)
             {
+                // 終了条件チェック
                 if (endMatched.Success)
                 {
-                    // 終了
-                    asmLoad.LineDetailItemRepeat = null;
-                }
-                else
-                {
-                    var repeatLines = asmLoad.LineDetailItemRepeat.RepeatLines;
-                    var repeatAsmLoad = asmLoad.Clone();
-                    repeatAsmLoad.LineDetailItemRepeat = default;
+                    asmLoad.LineDetailItemRepeat.RepeatNestedCount--;
 
-                    // ローカルラベル以外は使用禁止
-                    var lable = Label.GetLabelText(lineItem.OperationString);
-                    if (lable.EndsWith(":"))
+                    // リピートが終了
+                    if (asmLoad.LineDetailItemRepeat.RepeatNestedCount == 0)
                     {
-                        throw new ErrorMessageException(Error.ErrorCodeEnum.E1014);
+                        asmLoad.LineDetailItemRepeat = default;
+                        return new LineDetailItemRepeat(lineItem, asmLoad);
                     }
 
-                    repeatLines.Add(lineItem);
                 }
+
+                // 開始条件
+                if (startMatched.Success || startSimpleMatched.Success)
+                {
+                    asmLoad.LineDetailItemRepeat.RepeatNestedCount++;
+                }
+
+                var repeatLines = asmLoad.LineDetailItemRepeat.RepeatLines;
+
+                // ローカルラベル以外は使用禁止
+                var lable = Label.GetLabelText(lineItem.OperationString);
+                if (lable.EndsWith(":"))
+                {
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1014);
+                }
+
+                repeatLines.Add(lineItem);
                 return new LineDetailItemRepeat(lineItem, asmLoad);
             }
             else
             {
+                // 終了条件チェック
+                if (endMatched.Success)
+                {
+                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1012);
+                }
+
+                // 開始条件チェック
                 if (startMatched.Success)
                 {
                     var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad)
                     {
                         RepeatCountLabel = startMatched.Groups["count"].Value,
                         RepeatLastLabel = startMatched.Groups["last_arg"].Value,
-
+                        RepeatNestedCount = 1
                     };
                     asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
 
@@ -72,20 +91,15 @@ namespace AILZ80ASM
                 {
                     var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad)
                     {
-                        RepeatCountLabel = startSimpleMatched.Groups["count"].Value
-
+                        RepeatCountLabel = startSimpleMatched.Groups["count"].Value,
+                        RepeatNestedCount = 1
                     };
                     asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
-
-                }
-
-                if (endMatched.Success)
-                {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1012);
                 }
             }
+
             return default;
         }
 
@@ -100,7 +114,7 @@ namespace AILZ80ASM
 
                 foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
-                    var lineItems = default(IEnumerable<LineItem>);
+                    var lineItems = default(LineItem[]);
                     var localAsmLoad = AsmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
                     localAsmLoad.LabelName = $"REPEAT_{Guid.NewGuid():N}";
 
@@ -117,7 +131,7 @@ namespace AILZ80ASM
                             var lineItem = new LineItem(m);
                             lineItem.CreateLineDetailItem(localAsmLoad);
                             return lineItem;
-                        });
+                        }).ToArray();
                     }
                     else
                     {
@@ -126,7 +140,7 @@ namespace AILZ80ASM
                             var lineItem = new LineItem(m);
                             lineItem.CreateLineDetailItem(localAsmLoad);
                             return lineItem;
-                        });
+                        }).ToArray();
                     }
 
                     foreach (var lineItem in lineItems)
