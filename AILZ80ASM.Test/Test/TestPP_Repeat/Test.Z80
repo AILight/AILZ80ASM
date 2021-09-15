@@ -8,3 +8,12 @@ REPEAT 8 LAST -1
         ld      (hl), a
         add     hl, de
 END REPEAT
+
+REPEAT 2
+        xor     a
+
+REPEAT 3
+        LD      a, 0
+END REPEAT
+
+END REPEAT
