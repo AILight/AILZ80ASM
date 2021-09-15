@@ -3,12 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
     public class Package
     {
-        private const int CONSOLE_WIDTH = 100;
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
 
@@ -169,9 +169,9 @@ namespace AILZ80ASM
             var count = fileItemErrorMessages.Sum(m => m.ErrorLineItemMessages.Length);
             if (count > 0)
             {
-                Console.WriteLine(("> " + title + " ").PadRight(CONSOLE_WIDTH, '-'));
+                Console.WriteLine($"> {title}");
                 InternalOutputError(fileItemErrorMessages, 0);
-                Console.WriteLine("< ".PadRight(CONSOLE_WIDTH, '-'));
+                Console.WriteLine();
             }
         }
 
@@ -185,10 +185,10 @@ namespace AILZ80ASM
                                         lineItem.ErrorMessageException.Message :
                                         string.Format(lineItem.ErrorMessageException.Message, lineItem.ErrorMessageException.Parameters);
 
-                    OutputErrorForConsole(2, lineItem.ErrorMessageException.ErrorCode.ToString());
-                    OutputErrorForConsole(8, errorMessage);
-                    OutputErrorForConsole(75, $"{fileItem.FileInfo.Name}: {(lineItem.LineItem.LineIndex + 1)}");
-                    Console.WriteLine();
+                    var errorCode = lineItem.ErrorMessageException.ErrorCode.ToString();
+                    var filePosition = $"{fileItem.FileInfo.Name}:({(lineItem.LineItem.LineIndex + 1)})";
+
+                    Console.WriteLine($"{filePosition} {errorCode} {errorMessage}");
                     if (lineItem.ErrorMessageException.ErrorFileInfoMessage != default)
                     {
                         InternalOutputError(new[] { lineItem.ErrorMessageException.ErrorFileInfoMessage }, indent + 1);
@@ -196,18 +196,5 @@ namespace AILZ80ASM
                 }
             }
         }
-
-        /// <summary>
-        /// 指定の位置にメッセージを出力する
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="message"></param>
-        private static void OutputErrorForConsole(int left, string message)
-        {
-            var pos = Console.GetCursorPosition();
-            Console.SetCursorPosition(left, pos.Top);
-            Console.Write(message);
-        }
-
     }
 }
