@@ -77,7 +77,35 @@ namespace AILZ80ASM
             return InternalConvertToUInt16(value, tmpValue);
         }
 
-        public static UInt16 InternalConvertToUInt16(string value, string tmpValue)
+        public static UInt32 ConvertToUInt32(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
+        {
+            return ConvertToUInt32(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
+        }
+
+        public static UInt32 ConvertToUInt32(string value, AsmLoad asmLoad)
+        {
+            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad);
+            return InternalConvertToUInt32(value, tmpValue);
+        }
+
+        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
+        {
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, asmLoad);
+            return InternalConvertToUInt32(value, tmpValue);
+        }
+
+        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
+        {
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
+            return InternalConvertToUInt32(value, tmpValue);
+        }
+
+        private static UInt16 InternalConvertToUInt16(string value, string tmpValue)
+        {
+            return (UInt16)InternalConvertToUInt32(value, tmpValue);
+        }
+
+        private static UInt32 InternalConvertToUInt32(string value, string tmpValue)
         {
             try
             {
@@ -86,11 +114,11 @@ namespace AILZ80ASM
 
                 if (calcedValue < 0)
                 {
-                    return (UInt16)(UInt16.MaxValue + calcedValue + 1);
+                    return (UInt32)(UInt32.MaxValue + calcedValue + 1);
                 }
                 else
                 {
-                    return (UInt16)calcedValue;
+                    return (UInt32)calcedValue;
                 }
             }
             catch (Exception ex)
