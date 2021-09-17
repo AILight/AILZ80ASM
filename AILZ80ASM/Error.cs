@@ -42,6 +42,9 @@ namespace AILZ80ASM
             E2001,
             E2002,
             E2003,
+            E2004,
+            E2005,
+            E2006,
 
             W0001,
             I0001,
@@ -99,6 +102,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",
             [ErrorCodeEnum.E2002] = "Include ファイルが存在しませんでした。[{0}]",
             [ErrorCodeEnum.E2003] = "Include 既に読み込み済みのファイルです。[{0}]",
+            [ErrorCodeEnum.E2004] = "Include 開始アドレスの指定が間違っています。",
+            [ErrorCodeEnum.E2005] = "Include 長さの指定が間違っています。",
+            [ErrorCodeEnum.E2006] = "Include 開始アドレスがファイルの長さを超えています。",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"

@@ -19,11 +19,17 @@ namespace AILZ80ASM
 
         private Dictionary<LineItem, LineDetailScopeItem[]> DicLineDetailScopeItem { get; set; } = new Dictionary<LineItem, LineDetailScopeItem[]>(); // 逆引き用
         private static readonly string RegexPatternInclude = @"\s*include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
+        private FileTypeEnum FileType { get; set; } = FileTypeEnum.Text;
+        private string FileStart { get; set; }
+        private string FileLength { get; set; }
 
-        public LineDetailItemInclude(LineItem lineItem, FileInfo fileInfo, FileTypeEnum fileType, int start, int length, AsmLoad asmLoad)
+        public LineDetailItemInclude(LineItem lineItem, FileInfo fileInfo, FileTypeEnum fileType, string fileStart, string fileLength, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
             FileInfo = fileInfo;
+            FileType = fileType;
+            FileStart = fileStart;
+            FileLength = fileLength;
 
             // ファイルの存在チェック
             if (!fileInfo.Exists)
@@ -87,31 +93,50 @@ namespace AILZ80ASM
 
                 var fileInfo = new FileInfo(filename);
                 var fileType = LineDetailItemInclude.FileTypeEnum.Text;
-                var start = 0;
-                var length = int.MaxValue;
 
                 if ((new[] { "B", "Binary" }).Any(m => string.Compare(m, fileTypeString, StringComparison.OrdinalIgnoreCase) == 0))
                 {
                     fileType = LineDetailItemInclude.FileTypeEnum.Binary;
                 }
 
-                if (int.TryParse(startAddressString, out var resultStart))
-                {
-                    start = resultStart;
-                }
-
-                if (int.TryParse(startAddressString, out var resultLength))
-                {
-                    length = resultLength;
-                }
-
-                return new LineDetailItemInclude(lineItem, fileInfo, fileType, start, length, asmLoad);
+                return new LineDetailItemInclude(lineItem, fileInfo, fileType, startAddressString, lengthString, asmLoad);
             }
             
             return default;
         }
 
         public override void ExpansionItem()
+        {
+            var errorLineItemMessages = new List<ErrorLineItemMessage>();
+
+            switch (FileType)
+            {
+                case FileTypeEnum.Text:
+                    ExpansionItemForText();
+                    break;
+                case FileTypeEnum.Binary:
+                    ExpansionItemForBinary();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+
+            base.ExpansionItem();
+        }
+
+        private void ExpansionItemForBinary()
+        {
+            var lineDetailExpansionItems = new LineDetailExpansionItem[] { new LineDetailExpansionItemBinaryFile(LineItem, FileInfo, FileStart, FileLength) };
+            LineDetailScopeItems = new[] { new LineDetailScopeItem(lineDetailExpansionItems, AsmLoad) };
+        }
+
+        /// <summary>
+        /// テキスト展開
+        /// </summary>
+        /// <param name="lineDetailScopeItem"></param>
+        /// <param name="errorLineItemMessages"></param>
+        private void ExpansionItemForText()
         {
             var lineDetailScopeItem = new List<LineDetailScopeItem>();
             var errorLineItemMessages = new List<ErrorLineItemMessage>();
@@ -136,8 +161,6 @@ namespace AILZ80ASM
             {
                 throw new ErrorMessageException(Error.ErrorCodeEnum.E2001, new ErrorFileInfoMessage(errorLineItemMessages.ToArray(), FileInfo));
             }
-
-            base.ExpansionItem();
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress)

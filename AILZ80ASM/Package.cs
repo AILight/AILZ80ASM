@@ -186,9 +186,9 @@ namespace AILZ80ASM
                                         string.Format(lineItem.ErrorMessageException.Message, lineItem.ErrorMessageException.Parameters);
 
                     var errorCode = lineItem.ErrorMessageException.ErrorCode.ToString();
-                    var filePosition = $"{fileItem.FileInfo.Name}:({(lineItem.LineItem.LineIndex + 1)})";
+                    var filePosition = $"{fileItem.FileInfo.Name}({(lineItem.LineItem.LineIndex + 1)})";
 
-                    Console.WriteLine($"{filePosition} {errorCode} {errorMessage}");
+                    Console.WriteLine($"{filePosition}: {errorCode} {errorMessage}");
                     if (lineItem.ErrorMessageException.ErrorFileInfoMessage != default)
                     {
                         InternalOutputError(new[] { lineItem.ErrorMessageException.ErrorFileInfoMessage }, indent + 1);

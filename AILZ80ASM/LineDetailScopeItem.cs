@@ -28,6 +28,12 @@ namespace AILZ80ASM
             };
         }
 
+        public LineDetailScopeItem(LineDetailExpansionItem[] lineDetailExpansionItems, AsmLoad asmLoad)
+        {
+            AsmLoad = asmLoad.Clone();
+            LineDetailExpansionItems = lineDetailExpansionItems;
+        }
+
         public virtual void PreAssemble(ref AsmAddress asmAddress)
         {
             foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
