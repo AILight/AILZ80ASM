@@ -1,9 +1,16 @@
 ﻿ARG1	equ 2
 .Three  equ 3
+VRAM_ADDRESS	equ $8001
+
+	ORG	$9000
 	
 	ALLLD
+ADDR:
 	TestArg 0, 1
 	TestArg ARG1, ARG1.Three
+	VRAMSET VRAM_ADDRESS
+	VRAMSET ADDR
+	REPEAT_TEST
 
 MACRO ALLLD
 	ld a,1
@@ -18,4 +25,24 @@ END MACRO
 macro TestArg a1, a2
 	ld a, a1
 	ld b, a2
+end macro
+
+macro VRAMSET VRAM_ADDRESS
+
+	ld H, VRAM_ADDRESS.@H
+	ld L, VRAM_ADDRESS.@L
+
+end macro
+
+macro REPEAT_TEST
+
+REPEAT 2
+        xor     a	
+END REPEAT
+
+REPEAT 3 LAST - 1
+	ld a,1
+	ld b,2
+END REPEAT
+
 end macro

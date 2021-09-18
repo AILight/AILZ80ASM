@@ -93,6 +93,11 @@ namespace AILZ80ASM
                 }
 
             } while (labelCount != AssembleLoad.AllLables.Count(m => m.HasValue));
+
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.BuildValueLabel();
+            }
         }
 
         /// <summary>

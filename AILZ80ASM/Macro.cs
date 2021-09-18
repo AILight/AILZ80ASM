@@ -73,7 +73,9 @@ namespace AILZ80ASM
                     }
                     // Macro展開用のAsmLoadを作成する
                     var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
-                    macroAsmLoad.LabelName = $"{macro.Name}_{Guid.NewGuid():N}";
+                    var guid = $"{Guid.NewGuid():N}";
+                    macroAsmLoad.GlobalLableName = $"global_{macro.Name}_{guid}";
+                    macroAsmLoad.LabelName = $"label_{macro.Name}_{guid}";
 
                     if (!string.IsNullOrEmpty(macroArgs.Trim()))
                     {
@@ -95,7 +97,8 @@ namespace AILZ80ASM
                             var lineItem = new LineItem(m);
                             lineItem.CreateLineDetailItem(macroAsmLoad);
                             return lineItem;
-                        });
+                        }).ToArray(); //　シーケンシャルに処理する必要があるため、ToArrayは必須
+
                     foreach (var localLineItem in lineItems)
                     {
                         localLineItem.ExpansionItem();
