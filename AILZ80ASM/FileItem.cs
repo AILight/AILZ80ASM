@@ -107,6 +107,22 @@ namespace AILZ80ASM
             }
         }
 
+
+        public void BuildValueLabel()
+        {
+            foreach (var item in Items)
+            {
+                try
+                {
+                    item.BuildValueLabel();
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                }
+            }
+        }
+
         public void Assemble()
         {
             // アセンブルを実行する
@@ -137,5 +153,6 @@ namespace AILZ80ASM
                 }
             }
         }
+
     }
 }

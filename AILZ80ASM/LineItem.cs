@@ -81,10 +81,14 @@ namespace AILZ80ASM
             LineDetailItem.BuildAddressLabel();
         }
 
+        public void BuildValueLabel()
+        {
+            LineDetailItem.BuildValueLabel();
+        }
+
         public void Assemble()
         {
             LineDetailItem.Assemble();
         }
-
     }
 }

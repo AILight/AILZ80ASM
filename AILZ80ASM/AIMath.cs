@@ -191,9 +191,9 @@ namespace AILZ80ASM
                 var labels = asmLoad.AllLables.Where(m => m.HasValue).ToArray();
 
                 label ??= labels.Where(m => m.HasValue && string.Compare(m.LongLabelName, matchResultString, true) == 0).FirstOrDefault();
-                label ??= labels.Where(m => m.HasValue && string.Compare(m.MiddleLabelName, matchResultString, true) == 0).FirstOrDefault();
                 label ??= labels.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, matchResultString, true) == 0).FirstOrDefault();
                 label ??= labels.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, lableName, true) == 0 && string.Compare(m.ShortLabelName, matchResultString, true) == 0).FirstOrDefault();
+                label ??= labels.Where(m => m.HasValue && string.Compare(m.MiddleLabelName, matchResultString, true) == 0).FirstOrDefault();
 
                 var valueString = "";
                 switch (macroValue)
