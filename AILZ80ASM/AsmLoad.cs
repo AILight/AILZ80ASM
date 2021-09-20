@@ -35,7 +35,8 @@ namespace AILZ80ASM
         public List<Macro> Macros { get; private set; } = new List<Macro>();
 
         public LineDetailItemMacro LineDetailItemMacro { get; set; } = null;
-        public LineDetailItemRepeat LineDetailItemRepeat { get; set; } = null; 
+        public LineDetailItemRepeat LineDetailItemRepeat { get; set; } = null;
+        public LineDetailItemConditional LineDetailItemConditional { get; set; } = null;
 
         public AsmLoad()
         {
@@ -56,6 +57,7 @@ namespace AILZ80ASM
                 Macros = this.Macros,
                 LineDetailItemMacro = this.LineDetailItemMacro,
                 LineDetailItemRepeat = this.LineDetailItemRepeat,
+                LineDetailItemConditional = this.LineDetailItemConditional,
 
                 Labels = this.Labels,
                 LocalLabels = this.LocalLabels,
@@ -73,6 +75,7 @@ namespace AILZ80ASM
                 Macros = this.Macros,
                 LineDetailItemMacro = this.LineDetailItemMacro,
                 LineDetailItemRepeat = this.LineDetailItemRepeat,
+                LineDetailItemConditional = this.LineDetailItemConditional,
 
                 Labels = this.Labels,
                 LocalLabels = scopeMode == ScopeModeEnum.Global ? this.LocalLabels : new List<Label>(),
@@ -91,6 +94,12 @@ namespace AILZ80ASM
             {
                 var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1011);
                 errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemRepeat.LineItem) }, LineDetailItemRepeat.LineItem.FileInfo));
+            }
+
+            if (LineDetailItemConditional != default)
+            {
+                var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1021);
+                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemConditional.LineItem) }, LineDetailItemRepeat.LineItem.FileInfo));
             }
         }
 

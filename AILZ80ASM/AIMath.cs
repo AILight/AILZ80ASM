@@ -100,6 +100,29 @@ namespace AILZ80ASM
             return InternalConvertToUInt32(value, tmpValue);
         }
 
+        public static bool ConvertToBoolean(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
+        {
+            return ConvertToBoolean(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
+        }
+
+        public static bool ConvertToBoolean(string value, AsmLoad asmLoad)
+        {
+            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad);
+            return InternalConvertToBoolean(value, tmpValue);
+        }
+
+        public static bool ConvertToBoolean(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
+        {
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, asmLoad);
+            return InternalConvertToBoolean(value, tmpValue);
+        }
+
+        public static bool ConvertToBoolean(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
+        {
+            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
+            return InternalConvertToBoolean(value, tmpValue);
+        }
+
         private static UInt16 InternalConvertToUInt16(string value, string tmpValue)
         {
             return (UInt16)InternalConvertToUInt32(value, tmpValue);
@@ -120,6 +143,21 @@ namespace AILZ80ASM
                 {
                     return (UInt32)calcedValue;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
+            }
+        }
+
+        private static bool InternalConvertToBoolean(string value, string tmpValue)
+        {
+            try
+            {
+                var nCalcExpression = new NCalc.Expression(tmpValue);
+                var calcedValue = nCalcExpression.ToLambda<bool>().Invoke();
+
+                return calcedValue;
             }
             catch (Exception ex)
             {
