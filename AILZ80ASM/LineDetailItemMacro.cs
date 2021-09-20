@@ -26,7 +26,7 @@ namespace AILZ80ASM
             var startMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            if (asmLoad.LineDetailItemMacro != default)
+            if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacro asmLoad_LineDetailItemMacro)
             {
                 if (startMatched.Success)
                 {
@@ -36,12 +36,12 @@ namespace AILZ80ASM
                 if (endMatched.Success)
                 {
                     // Macro登録
-                    var lineDetailItemMacro = asmLoad.LineDetailItemMacro;
+                    var lineDetailItemMacro = asmLoad_LineDetailItemMacro;
                     var macro = new Macro(lineDetailItemMacro.MacroName, lineDetailItemMacro.MacroArgs, lineDetailItemMacro.MacroLines.ToArray(), asmLoad);
                     asmLoad.Macros.Add(macro);
 
                     // 終了
-                    asmLoad.LineDetailItemMacro = default;
+                    asmLoad.LineDetailItemForExpandItem = default;
                 }
                 else
                 {
@@ -52,7 +52,7 @@ namespace AILZ80ASM
                         throw new ErrorMessageException(Error.ErrorCodeEnum.E1006);
                     }
 
-                    asmLoad.LineDetailItemMacro.MacroLines.Add(lineItem);
+                    asmLoad_LineDetailItemMacro.MacroLines.Add(lineItem);
                 }
                 return new LineDetailItemMacro(lineItem, asmLoad);
             }
@@ -80,7 +80,7 @@ namespace AILZ80ASM
                         lineDetailItemMacro.InternalErrorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1005);
                     }
 
-                    asmLoad.LineDetailItemMacro = lineDetailItemMacro;
+                    asmLoad.LineDetailItemForExpandItem = lineDetailItemMacro;
 
                     return lineDetailItemMacro;
                 }

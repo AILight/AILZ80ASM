@@ -32,29 +32,28 @@ namespace AILZ80ASM
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // リピート処理中
-            if (asmLoad.LineDetailItemRepeat != default)
+            if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeat asmLoad_LineDetailItemRepeat)
             {
                 // 終了条件チェック
                 if (endMatched.Success)
                 {
-                    asmLoad.LineDetailItemRepeat.RepeatNestedCount--;
+                    asmLoad_LineDetailItemRepeat.RepeatNestedCount--;
 
                     // リピートが終了
-                    if (asmLoad.LineDetailItemRepeat.RepeatNestedCount == 0)
+                    if (asmLoad_LineDetailItemRepeat.RepeatNestedCount == 0)
                     {
-                        asmLoad.LineDetailItemRepeat = default;
+                        asmLoad.LineDetailItemForExpandItem = default;
                         return new LineDetailItemRepeat(lineItem, asmLoad);
                     }
-
                 }
 
                 // 開始条件
                 if (startMatched.Success || startSimpleMatched.Success)
                 {
-                    asmLoad.LineDetailItemRepeat.RepeatNestedCount++;
+                    asmLoad_LineDetailItemRepeat.RepeatNestedCount++;
                 }
 
-                var repeatLines = asmLoad.LineDetailItemRepeat.RepeatLines;
+                var repeatLines = asmLoad_LineDetailItemRepeat.RepeatLines;
 
                 // ローカルラベル以外は使用禁止
                 var lable = Label.GetLabelText(lineItem.OperationString);
@@ -83,7 +82,7 @@ namespace AILZ80ASM
                         RepeatLastLabel = startMatched.Groups["last_arg"].Value,
                         RepeatNestedCount = 1
                     };
-                    asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
+                    asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
                 }
@@ -94,7 +93,7 @@ namespace AILZ80ASM
                         RepeatCountLabel = startSimpleMatched.Groups["count"].Value,
                         RepeatNestedCount = 1
                     };
-                    asmLoad.LineDetailItemRepeat = lineDetailItemRepeat;
+                    asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
                 }

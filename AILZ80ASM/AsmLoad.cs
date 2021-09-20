@@ -34,8 +34,7 @@ namespace AILZ80ASM
         public List<Label> LocalLabels { get; private set; } = new List<Label>();
         public List<Macro> Macros { get; private set; } = new List<Macro>();
 
-        public LineDetailItemMacro LineDetailItemMacro { get; set; } = null;
-        public LineDetailItemRepeat LineDetailItemRepeat { get; set; } = null; 
+        public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
 
         public AsmLoad()
         {
@@ -54,8 +53,7 @@ namespace AILZ80ASM
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
                 Macros = this.Macros,
-                LineDetailItemMacro = this.LineDetailItemMacro,
-                LineDetailItemRepeat = this.LineDetailItemRepeat,
+                LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
 
                 Labels = this.Labels,
                 LocalLabels = this.LocalLabels,
@@ -71,8 +69,7 @@ namespace AILZ80ASM
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
                 Macros = this.Macros,
-                LineDetailItemMacro = this.LineDetailItemMacro,
-                LineDetailItemRepeat = this.LineDetailItemRepeat,
+                LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
 
                 Labels = this.Labels,
                 LocalLabels = scopeMode == ScopeModeEnum.Global ? this.LocalLabels : new List<Label>(),
@@ -81,16 +78,22 @@ namespace AILZ80ASM
 
         public void LoadCloseValidate(IList<ErrorFileInfoMessage> errorMessages)
         {
-            if (LineDetailItemMacro != default)
+            if (this.LineDetailItemForExpandItem is LineDetailItemMacro)
             {
                 var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1001);
-                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemMacro.LineItem) }, LineDetailItemMacro.LineItem.FileInfo));
+                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemForExpandItem.LineItem) }, LineDetailItemForExpandItem.LineItem.FileInfo));
             }
 
-            if (LineDetailItemRepeat != default)
+            if (this.LineDetailItemForExpandItem is LineDetailItemRepeat)
             {
                 var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1011);
-                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemRepeat.LineItem) }, LineDetailItemRepeat.LineItem.FileInfo));
+                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemForExpandItem.LineItem) }, LineDetailItemForExpandItem.LineItem.FileInfo));
+            }
+
+            if (this.LineDetailItemForExpandItem is LineDetailItemConditional)
+            {
+                var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1021);
+                errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemForExpandItem.LineItem) }, LineDetailItemForExpandItem.LineItem.FileInfo));
             }
         }
 

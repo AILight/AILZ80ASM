@@ -41,12 +41,41 @@ namespace AILZ80ASM
             // インクルードのチェック
             var lineDetailItem = default(LineDetailItem);
 
-            lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
-            lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
-            lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
-            lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
-            lineDetailItem ??= new LineDetailItemOperation(lineItem, asmLoad);
-
+            if (asmLoad.LineDetailItemForExpandItem != default)
+            {
+                if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacro)
+                {
+                    lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
+                }
+                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeat)
+                {
+                    lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
+                }
+                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemConditional)
+                {
+                    lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+                /* 例外が切れるので、この処理は使わない
+                var methodInfo = asmLoad.LineDetailItemForExpandItem.GetType().GetMethod("Create");
+                if (methodInfo != null)
+                {
+                    lineDetailItem = (LineDetailItem)methodInfo.Invoke(null, new object[] { lineItem, asmLoad });
+                }
+                */
+            }
+            else
+            {
+                lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
+                lineDetailItem ??= new LineDetailItemOperation(lineItem, asmLoad);
+            }
             return lineDetailItem;
         }
 

@@ -39,6 +39,10 @@ namespace AILZ80ASM
             E1013,
             E1014,
 
+            E1021,
+            E1022,
+            E1023,
+
             E2001,
             E2002,
             E2003,
@@ -92,11 +96,16 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1005] = "MACROの引数名が有効ではありません。",
             [ErrorCodeEnum.E1006] = "MACROでは、ローカルラベル以外は使えません。",
 
-            // マクロリピート
+            // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
             [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",
             [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。",
             [ErrorCodeEnum.E1014] = "REPEATでは、ローカルラベルしか使えません。",
+
+            // コンディショナル
+            [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
+            [ErrorCodeEnum.E1022] = "#ENDIFが先に見つかりました。",
+            [ErrorCodeEnum.E1023] = "#ELSEの後に#ELSIF、#ELSEは設定できません。",
 
             // Include
             [ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",
