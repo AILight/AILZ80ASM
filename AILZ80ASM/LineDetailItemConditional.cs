@@ -32,17 +32,17 @@ namespace AILZ80ASM
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // リピート処理中
-            if (asmLoad.LineDetailItemConditional != default)
+            if (asmLoad.LineDetailItemForExpandItem is LineDetailItemConditional asmLoad_LineDetailItemConditional)
             {
                 // 終了条件チェック
                 if (endMatched.Success)
                 {
-                    asmLoad.LineDetailItemConditional.ConditionalNestedCount--;
+                    asmLoad_LineDetailItemConditional.ConditionalNestedCount--;
 
                     // リピートが終了
-                    if (asmLoad.LineDetailItemConditional.ConditionalNestedCount == 0)
+                    if (asmLoad_LineDetailItemConditional.ConditionalNestedCount == 0)
                     {
-                        asmLoad.LineDetailItemConditional = default;
+                        asmLoad.LineDetailItemForExpandItem = default;
                         return new LineDetailItemConditional(lineItem, asmLoad);
                     }
 
@@ -51,33 +51,33 @@ namespace AILZ80ASM
                 // 開始条件
                 if (ifMatched.Success)
                 {
-                    asmLoad.LineDetailItemConditional.ConditionalNestedCount++;
+                    asmLoad_LineDetailItemConditional.ConditionalNestedCount++;
                 }
                 else if (elifMatched.Success)
                 {
-                    if (asmLoad.LineDetailItemConditional.Conditions.ContainsKey(""))
+                    if (asmLoad_LineDetailItemConditional.Conditions.ContainsKey(""))
                     {
                         // Elseが既にある場合
                         throw new ErrorMessageException(Error.ErrorCodeEnum.E1023);
                     }
 
-                    asmLoad.LineDetailItemConditional.ConditionKey = elifMatched.Groups["condition"].Value;
-                    asmLoad.LineDetailItemConditional.Conditions.Add(asmLoad.LineDetailItemConditional.ConditionKey, new List<LineItem>());
+                    asmLoad_LineDetailItemConditional.ConditionKey = elifMatched.Groups["condition"].Value;
+                    asmLoad_LineDetailItemConditional.Conditions.Add(asmLoad_LineDetailItemConditional.ConditionKey, new List<LineItem>());
                 }
                 else if (elseMatched.Success)
                 {
-                    if (asmLoad.LineDetailItemConditional.Conditions.ContainsKey(""))
+                    if (asmLoad_LineDetailItemConditional.Conditions.ContainsKey(""))
                     {
                         // Elseが既にある場合
                         throw new ErrorMessageException(Error.ErrorCodeEnum.E1023);
                     }
 
-                    asmLoad.LineDetailItemConditional.ConditionKey = "";
-                    asmLoad.LineDetailItemConditional.Conditions.Add(asmLoad.LineDetailItemConditional.ConditionKey, new List<LineItem>());
+                    asmLoad_LineDetailItemConditional.ConditionKey = "";
+                    asmLoad_LineDetailItemConditional.Conditions.Add(asmLoad_LineDetailItemConditional.ConditionKey, new List<LineItem>());
                 }
                 else
                 {
-                    var lines = asmLoad.LineDetailItemConditional.Conditions[asmLoad.LineDetailItemConditional.ConditionKey];
+                    var lines = asmLoad_LineDetailItemConditional.Conditions[asmLoad_LineDetailItemConditional.ConditionKey];
                     lines.Add(lineItem);
                 }
                 return new LineDetailItemConditional(lineItem, asmLoad);
@@ -100,7 +100,7 @@ namespace AILZ80ASM
                     };
                     lineDetailItemConditional.Conditions.Add(lineDetailItemConditional.ConditionKey, new List<LineItem>());
 
-                    asmLoad.LineDetailItemConditional = lineDetailItemConditional;
+                    asmLoad.LineDetailItemForExpandItem = lineDetailItemConditional;
 
                     return lineDetailItemConditional;
                 }
