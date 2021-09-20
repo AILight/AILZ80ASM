@@ -42,6 +42,8 @@ namespace AILZ80ASM
             E1021,
             E1022,
             E1023,
+            
+            E1031,
 
             E2001,
             E2002,
@@ -106,6 +108,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
             [ErrorCodeEnum.E1022] = "#ENDIFが先に見つかりました。",
             [ErrorCodeEnum.E1023] = "#ELSEの後に#ELSIF、#ELSEは設定できません。",
+
+            // エラー
+            [ErrorCodeEnum.E1031] = "#ERROR:{0}",
 
             // Include
             [ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",

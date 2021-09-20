@@ -10,7 +10,7 @@ namespace AILZ80ASM
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternRepeatIf = @"^\s*#IF\s+(?<condition>.+)$";
-        private static readonly string RegexPatternRepeatElIf = @"^\s*#ELIF*$";
+        private static readonly string RegexPatternRepeatElIf = @"^\s*#ELIF\s+(?<condition>.+)$";
         private static readonly string RegexPatternRepeatElse = @"^\s*#ELSE*$";
         private static readonly string RegexPatternRepeatEnd = @"^\s*#ENDIF\s*$";
 

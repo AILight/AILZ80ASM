@@ -72,6 +72,7 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                 lineDetailItem ??= new LineDetailItemOperation(lineItem, asmLoad);
