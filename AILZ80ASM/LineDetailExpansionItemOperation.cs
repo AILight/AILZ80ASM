@@ -50,6 +50,10 @@ namespace AILZ80ASM
 
             // ラベルを処理する
             Label = new Label(this, asmLoad);
+            if (Label.Invalidate)
+            {
+                throw new ErrorMessageException(Error.ErrorCodeEnum.E0013);
+            }
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress, AsmLoad asmLoad)

@@ -12,90 +12,104 @@ namespace AILZ80ASM
         public enum DataTypeEnum
         {
             None,
-            Processing,
+            Invalidate,
+            ProcessingForAddress,
             ProcessingForValue,
+            ProcessingForArgument,
             Value,
             ADDR,
         }
 
         private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
         private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
+        private static readonly string RegexPatternEquLabel = @"(?<lable>(^\w+)):?";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
         private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
         private static readonly string RegexPatternArgument = @"(?<argument>(^\w+))";
+        private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
+        private static readonly string RegexPatternLabelValidate = @"^(\D+)[a-zA-Z0-9_]+";
+
+        public string GlobalLabelName { get; private set; }
+        public string LabelName { get; private set; }
+        public string SubLabelName { get; private set; }
+        public string LongLabelName => DataType == DataTypeEnum.None ? "" : $"{GlobalLabelName}:{MiddleLabelName}";
+        public string MiddleLabelName => DataType == DataTypeEnum.None ? "" : $"{LabelName}{ShortLabelName}";
+        public string ShortLabelName => DataType == DataTypeEnum.None ? "" : (string.IsNullOrEmpty(SubLabelName) ? $"" : $".{SubLabelName}");
+        
+        public bool HasValue => DataType == DataTypeEnum.Value || DataType == DataTypeEnum.ADDR;
+        public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
+        public UInt16 Value { get; private set; }
+        public string ValueString { get; private set; }
+
+        public DataTypeEnum DataType { get; private set; }
+        public AsmLoad AsmLoadForArgmument { get; private set; }
 
         public Label(string labelName, string valueString, AsmLoad asmLoad)
         {
-            DataType = DataTypeEnum.ProcessingForValue;
             GlobalLabelName = asmLoad.GlobalLableName;
             LabelName = asmLoad.LabelName;
-            if (labelName.StartsWith("."))
-            {
-                SubLabelName = labelName.Substring(1);
-            }
-            else
-            {
-                LabelName = labelName.Replace(":", "");
-            }
-            ValueString = valueString;
-
-            SetValue(asmLoad);
-        }
-
-        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            //グローバルラベルの設定
-            GlobalLabelName = asmLoad.GlobalLableName;
-            LabelName = asmLoad.LabelName;
-
-            //ラベルを処理する
             DataType = DataTypeEnum.None;
 
-            if (string.IsNullOrEmpty(lineDetailExpansionItemOperation.LabelText))
+            if (string.IsNullOrEmpty(labelName))
             {
                 return;
             }
-
-            var matchedGlobalLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternGlobalLabel, RegexOptions.Singleline);
-            if (matchedGlobalLable.Success)
+            
+            if (!DeclareLabelValidate(labelName))
             {
-                // ラベルマッチ
-                GlobalLabelName = matchedGlobalLable.Groups["lable"].Value;
-                asmLoad.GlobalLableName = GlobalLabelName;
-                DataType = DataTypeEnum.Processing;
+                DataType = DataTypeEnum.Invalidate;
             }
             else
             {
-                var matchedLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternLabel, RegexOptions.Singleline);
-                if (matchedLable.Success)
-                {
-                    // ラベルマッチ
-                    LabelName = matchedLable.Groups["lable"].Value;
-                    asmLoad.LabelName = LabelName;
+                DataType = DataTypeEnum.ProcessingForValue;
 
-                    DataType = DataTypeEnum.Processing;
+                var matchedGlobalLable = Regex.Match(labelName, RegexPatternGlobalLabel, RegexOptions.Singleline);
+                if (matchedGlobalLable.Success)
+                {
+                    // グローバルラベル
+                    GlobalLabelName = matchedGlobalLable.Groups["lable"].Value;
+                    asmLoad.GlobalLableName = GlobalLabelName;
                 }
                 else
                 {
-                    var matchedSubLable = Regex.Match(lineDetailExpansionItemOperation.LabelText, RegexPatternSubLabel, RegexOptions.Singleline);
-                    if (matchedSubLable.Success)
+                    // valueStringが空の場合、通常ラベル、値が設定されている場合にはEquLabel
+                    var matchedLable = Regex.Match(labelName,string.IsNullOrEmpty(valueString) ? RegexPatternLabel : RegexPatternEquLabel, RegexOptions.Singleline);
+                    if (matchedLable.Success)
                     {
-                        SubLabelName = matchedSubLable.Groups["lable"].Value.Substring(1);
-                        DataType = DataTypeEnum.Processing;
+                        // ラベル
+                        LabelName = matchedLable.Groups["lable"].Value;
+                        asmLoad.LabelName = LabelName;
                     }
                     else
                     {
-                        LabelName = lineDetailExpansionItemOperation.LabelText;
-                        asmLoad.LabelName = LabelName;
-                        DataType = DataTypeEnum.Processing;
+                        var matchedSubLable = Regex.Match(labelName, RegexPatternSubLabel, RegexOptions.Singleline);
+                        if (matchedSubLable.Success)
+                        {
+                            SubLabelName = matchedSubLable.Groups["lable"].Value.Substring(1);
+                        }
                     }
                 }
+
+                ValueString = valueString;
             }
-            if (DataType == DataTypeEnum.Processing && string.Compare(lineDetailExpansionItemOperation.InstructionText, "equ", true) == 0)
+        }
+
+        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
+            : this(lineDetailExpansionItemOperation.LabelText, "", asmLoad)
+        {
+            if (this.DataType == DataTypeEnum.ProcessingForValue)
             {
-                ValueString = lineDetailExpansionItemOperation.ArgumentText;
-                DataType = DataTypeEnum.ProcessingForValue;
-                lineDetailExpansionItemOperation.IsAssembled = true;
+                DataType = DataTypeEnum.ProcessingForAddress;
+            }
+        }
+
+        public Label(string labelName, string valueString, AsmLoad asmLoad, AsmLoad asmLoadForArgument)
+            : this(labelName, valueString, asmLoad)
+        {
+            if (this.DataType == DataTypeEnum.ProcessingForValue)
+            {
+                DataType = DataTypeEnum.ProcessingForArgument;
+                AsmLoadForArgmument = asmLoadForArgument;
             }
         }
 
@@ -113,6 +127,54 @@ namespace AILZ80ASM
             return matched.Success && matched.Groups["argument"].Value == target;
         }
 
+        public static bool DeclareLabelValidate(string target)
+        {
+            if (target.StartsWith(".") && target.EndsWith(":"))
+            {
+                return false;
+            }
+
+            // ラベルの名称だけを取得
+            if (target.EndsWith("::"))
+            {
+                target = target.Substring(0, target.Length - 2);
+            }
+
+            if (target.EndsWith(":"))
+            {
+                target = target.Substring(0, target.Length - 1);
+            }
+
+            if (target.StartsWith("."))
+            {
+                target = target.Substring(1);
+            }
+
+            if (string.IsNullOrEmpty(target))
+            {
+                return false;
+            }
+
+            // 含まれてはいけない文字の調査
+            if (target.ToArray().Any(m => ":. ".Contains(m)))
+            {
+                return false;
+            }
+
+            // レジスター文字列は利用不可
+            if (OPCodeTable.IsRegister(target.ToUpper()))
+            {
+                return false;
+            }
+
+            if (AIMath.IsNumber(target))
+            {
+                return false;
+            }
+
+            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline).Success;
+        }
+
         public void SetValue(AsmLoad asmLoad)
         {
             if (this.DataType != DataTypeEnum.ProcessingForValue)
@@ -128,9 +190,24 @@ namespace AILZ80ASM
             }
         }
 
+        public void SetArgument()
+        {
+            if (this.DataType != DataTypeEnum.ProcessingForArgument)
+                return;
+
+            try
+            {
+                Value = AIMath.ConvertToUInt16(ValueString, AsmLoadForArgmument);
+                this.DataType = DataTypeEnum.Value;
+            }
+            catch
+            {
+            }
+        }
+
         public void SetValueAndAddress(AsmAddress address, AsmLoad asmLoad)
         {
-            if (this.DataType != DataTypeEnum.Processing &&
+            if (this.DataType != DataTypeEnum.ProcessingForAddress &&
                 this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
@@ -144,24 +221,13 @@ namespace AILZ80ASM
             }
         }
 
-        public string GlobalLabelName { get; private set; }
-        public string LabelName { get; private set; }
-        public string SubLabelName { get; private set; }
-        public string LongLabelName => DataType == DataTypeEnum.None ? "" : $"{GlobalLabelName}.{MiddleLabelName}";
-        public string MiddleLabelName => DataType == DataTypeEnum.None ? "" : $"{LabelName}{ShortLabelName}";
-        public string ShortLabelName => DataType == DataTypeEnum.None ? "" : (string.IsNullOrEmpty(SubLabelName) ? $"" : $".{SubLabelName}");
-        public bool HasValue => DataType == DataTypeEnum.Value || DataType == DataTypeEnum.ADDR;
-        public string ValueString { get; private set; }
-        public UInt16 Value { get; private set; }
-        public DataTypeEnum DataType { get; private set; }
-
         /// <summary>
         /// アドレスをセット
         /// </summary>
         /// <param name="address"></param>
         public void SetAddressLabel(AsmAddress address)
         {
-            if (DataType == DataTypeEnum.Processing && string.IsNullOrEmpty(ValueString))
+            if (DataType == DataTypeEnum.ProcessingForAddress && string.IsNullOrEmpty(ValueString))
             {
                 DataType = DataTypeEnum.ADDR;
                 Value = address.Program;
@@ -179,7 +245,7 @@ namespace AILZ80ASM
             switch (DataType)
             {
                 case DataTypeEnum.None:
-                case DataTypeEnum.Processing:
+                case DataTypeEnum.ProcessingForAddress:
                 case DataTypeEnum.ADDR:
                     break;
                 case DataTypeEnum.Value:
@@ -217,5 +283,57 @@ namespace AILZ80ASM
             return "";
         }
 
+        /// <summary>
+        /// ロングラベル名を生成する
+        /// </summary>
+        /// <param name="labelName"></param>
+        /// <param name="asmLoad"></param>
+        /// <returns></returns>
+        public static string GetLongLabelName(string labelName, AsmLoad asmLoad)
+        {
+            if (!Regex.Match(labelName, RegexPatternArgumentLabel, RegexOptions.IgnoreCase | RegexOptions.Singleline).Success)
+                return labelName;
+
+            if (labelName.IndexOf(":") > 0)
+            {
+                return labelName;
+            }
+
+            var dotIndex = labelName.IndexOf(".");
+            if (dotIndex == 0)
+            {
+                return $"{asmLoad.GlobalLableName}:{asmLoad.LabelName}{labelName}";
+            }
+
+            return $"{asmLoad.GlobalLableName}:{labelName}";
+        }
+
+        /*
+        /// <summary>
+        /// 引数を正規化する
+        /// </summary>
+        /// <param name="argument"></param>
+        /// <param name="asmLoad"></param>
+        /// <returns></returns>
+        public static string GetArgumentNormalization(string argument, AsmLoad asmLoad)
+        {
+            var resultValue = "";
+            var workValue = argument;
+            var regexResult = default(Match);
+
+            while ((regexResult = Regex.Match(workValue, RegexPatternArgumentLabel, RegexOptions.IgnoreCase | RegexOptions.Singleline)).Success)
+            {
+                var matchResult = regexResult.Groups["value"];
+                var longLabelName = GetLongLabelName(matchResult.Value, asmLoad);
+
+                resultValue += workValue.Substring(0, matchResult.Index);
+                resultValue += longLabelName;
+                workValue = workValue.Substring(matchResult.Index + matchResult.Length);
+            }
+            resultValue += workValue;
+
+            return resultValue;
+        }
+        */
     }
 }

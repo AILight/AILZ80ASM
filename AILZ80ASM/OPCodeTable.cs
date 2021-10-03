@@ -548,7 +548,7 @@ namespace AILZ80ASM
 
         private static bool IsNumber8(string source)
         {
-            if (IsAllRegister(source))
+            if (IsRegister(source))
                 return false;
 
             // ()で囲まれた値は外す
@@ -605,7 +605,7 @@ namespace AILZ80ASM
             };
         }
 
-        private static bool IsAllRegister(string source)
+        public static bool IsRegister(string source)
         {
             return Is8BitRegister(source) ||
                    Is8BitIndexRegister(source) ||
@@ -622,7 +622,6 @@ namespace AILZ80ASM
         {
             return source == "A";
         }
-
 
         private static bool IsHLRegister(string source)
         {

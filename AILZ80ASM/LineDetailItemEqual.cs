@@ -25,18 +25,12 @@ namespace AILZ80ASM
                 var labelName = matched.Groups["label"].Value;
                 var lableValue = matched.Groups["value"].Value.Trim();
 
-                // エラーチェック
-                if (labelName.StartsWith(".") && labelName.EndsWith(":"))
+                var label = new Label(labelName, lableValue, asmLoad);
+                if (label.Invalidate)
                 {
                     throw new ErrorMessageException(Error.ErrorCodeEnum.E0013);
                 }
 
-                if (!labelName.StartsWith("."))
-                {
-                    asmLoad.LabelName = labelName.Replace(":", "");
-                }
-
-                var label = new Label(labelName, lableValue, asmLoad);
                 label.SetValue(asmLoad);
                 asmLoad.AddLabel(label);
 

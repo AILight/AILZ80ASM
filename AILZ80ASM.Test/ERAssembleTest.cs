@@ -55,6 +55,21 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Label()
+        {
+            var errors = Assemble("Label.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            Assert.AreEqual(errors[0].ErrorLineItemMessages.Length, 6);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 0, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 1, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 3, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 4, errors[0].ErrorLineItemMessages);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 5, errors[0].ErrorLineItemMessages);
+        }
+
+        [TestMethod]
         public void TestER_Macro()
         {
             var errors = Assemble("Macro.Z80");

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class LineDetailItemMacro : LineDetailItem
+    public class LineDetailItemMacroDefine : LineDetailItem
     {
         private static readonly string RegexPatternMacroStart = @"^\s*Macro\s+(?<macro_name>[a-zA-Z0-9_]+)($|\s+(?<args>.+)$)";
         private static readonly string RegexPatternMacroEnd = @"^\s*End\s+Macro\s*$";
@@ -15,18 +15,18 @@ namespace AILZ80ASM
         private string[] MacroArgs { get; set; }
         private readonly List<LineItem> MacroLines = new List<LineItem>();
 
-        public LineDetailItemMacro(LineItem lineItem, AsmLoad asmLoad)
+        public LineDetailItemMacroDefine(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        public static LineDetailItemMacro Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemMacroDefine Create(LineItem lineItem, AsmLoad asmLoad)
         {
             var startMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacro asmLoad_LineDetailItemMacro)
+            if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacroDefine asmLoad_LineDetailItemMacro)
             {
                 if (startMatched.Success)
                 {
@@ -54,7 +54,7 @@ namespace AILZ80ASM
 
                     asmLoad_LineDetailItemMacro.MacroLines.Add(lineItem);
                 }
-                return new LineDetailItemMacro(lineItem, asmLoad);
+                return new LineDetailItemMacroDefine(lineItem, asmLoad);
             }
             else
             {
@@ -68,7 +68,7 @@ namespace AILZ80ASM
                         args.AddRange(argsText.Split(',').Select(m => m.Trim()));
                     }
 
-                    var lineDetailItemMacro = new LineDetailItemMacro(lineItem, asmLoad)
+                    var lineDetailItemMacro = new LineDetailItemMacroDefine(lineItem, asmLoad)
                     {
                         MacroName = startMatched.Groups["macro_name"].Value,
                         MacroArgs = args.ToArray(),

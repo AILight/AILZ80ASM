@@ -53,6 +53,18 @@ namespace AILZ80ASM
             }
         }
 
+        public virtual void BuildArgumentLabel()
+        {
+            if (LineDetailExpansionItems == default)
+                return;
+
+            foreach (var label in AsmLoad.LocalLabels.Where(m => m.DataType == Label.DataTypeEnum.ProcessingForArgument))
+            {
+                label.SetArgument();
+            }
+
+        }
+
         public virtual void BuildValueLabel()
         {
             var labels = AsmLoad.AllLables.Where(m => m.DataType == Label.DataTypeEnum.ProcessingForValue);

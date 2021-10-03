@@ -15,9 +15,11 @@ namespace AILZ80ASM
 
         public override void ExpansionItem()
         {
+            // マクロであるか調べる
             this.LineDetailScopeItems = Macro.Expansion(this.LineItem, this.AsmLoad);
             if (this.LineDetailScopeItems != default)
                 return;
+
             // マクロ展開できなかったら通常展開
             this.LineDetailScopeItems = new[]
             {
