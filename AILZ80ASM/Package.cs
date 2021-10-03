@@ -18,9 +18,14 @@ namespace AILZ80ASM
         public ErrorFileInfoMessage[] Warnings => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning).ToArray(), m.FileInfo)).ToArray();
         public ErrorFileInfoMessage[] Infomations => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation).ToArray(), m.FileInfo)).ToArray();
 
-        public Package(FileInfo[] Files)
+        public Package(FileInfo[] files)
         {
-            foreach (var fileInfo in Files)
+            if (files != default && files.Length > 0)
+            {
+                AssembleLoad.GlobalLableName = "main";
+            }
+
+            foreach (var fileInfo in files)
             {
                 FileItems.Add(new FileItem(fileInfo, this));
             }
@@ -30,6 +35,9 @@ namespace AILZ80ASM
 
         public void Assemble()
         {
+            // 値のラベルを処理する
+            BuildValueLabel();
+            
             // 命令を展開する
             ExpansionItem();
 
@@ -42,6 +50,7 @@ namespace AILZ80ASM
             // アドレスラベルを処理する
             BuildAddressLabel();
             BuildValueLabel();
+            BuildArgumentLabel();
 
             // アセンブルを行う
             InternalAssemble();
@@ -119,6 +128,17 @@ namespace AILZ80ASM
         }
 
         /// <summary>
+        /// 引数ラベルを作りこむ
+        /// </summary>
+        private void BuildArgumentLabel()
+        {
+            foreach (var fileItem in FileItems)
+            {
+                fileItem.BuildArgumentLabel();
+            }
+        }
+
+        /// <summary>
         /// アセンブルを実行する
         /// </summary>
         private void InternalAssemble()
@@ -193,7 +213,7 @@ namespace AILZ80ASM
                     var errorCode = lineItem.ErrorMessageException.ErrorCode.ToString();
                     var filePosition = $"{fileItem.FileInfo.Name}({(lineItem.LineItem.LineIndex + 1)})";
 
-                    Console.WriteLine($"{filePosition}: {errorCode} {errorMessage}");
+                    Console.WriteLine($"{filePosition}: error {errorCode}: {errorMessage}");
                     if (lineItem.ErrorMessageException.ErrorFileInfoMessage != default)
                     {
                         InternalOutputError(new[] { lineItem.ErrorMessageException.ErrorFileInfoMessage }, indent + 1);

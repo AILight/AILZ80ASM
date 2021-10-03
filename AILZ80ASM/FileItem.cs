@@ -27,9 +27,6 @@ namespace AILZ80ASM
         {
             string line;
             var lineIndex = 0;
-            var loadFileName = Path.GetFileNameWithoutExtension(FileInfo.Name);
-            
-            Package.AssembleLoad.GlobalLableName = loadFileName.Replace(".", "_");
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
@@ -107,6 +104,20 @@ namespace AILZ80ASM
             }
         }
 
+        public void BuildArgumentLabel()
+        {
+            foreach (var item in Items)
+            {
+                try
+                {
+                    item.BuildArgumentLabel();
+                }
+                catch (ErrorMessageException ex)
+                {
+                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                }
+            }
+        }
 
         public void BuildValueLabel()
         {

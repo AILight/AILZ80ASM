@@ -74,7 +74,7 @@ namespace AILZ80ASM
                     // Macro展開用のAsmLoadを作成する
                     var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
                     var guid = $"{Guid.NewGuid():N}";
-                    macroAsmLoad.GlobalLableName = $"global_{macro.Name}_{guid}";
+                    macroAsmLoad.GlobalLableName = $"macro_{macro.Name}_{guid}";
                     macroAsmLoad.LabelName = $"label_{macro.Name}_{guid}";
 
                     if (!string.IsNullOrEmpty(macroArgs.Trim()))
@@ -88,7 +88,14 @@ namespace AILZ80ASM
                         // 引数の割り当て
                         foreach (var index in Enumerable.Range(0, argValues.Length))
                         {
-                            macroAsmLoad.AddLabel(new Label(macro.Args[index], argValues[index], macroAsmLoad));
+                            var label = new Label(macro.Args[index], argValues[index], macroAsmLoad, asmLoad);
+                            if (label.Invalidate)
+                            {
+                                throw new ErrorMessageException(Error.ErrorCodeEnum.E1005);
+                            }
+                            // 引数で解決できるものは先行で処理する
+                            label.SetArgument();
+                            macroAsmLoad.AddLabel(label);
                         }
                     }
                     // LineItemsを作成

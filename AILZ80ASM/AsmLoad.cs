@@ -78,7 +78,7 @@ namespace AILZ80ASM
 
         public void LoadCloseValidate(IList<ErrorFileInfoMessage> errorMessages)
         {
-            if (this.LineDetailItemForExpandItem is LineDetailItemMacro)
+            if (this.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
             {
                 var errorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1001);
                 errorMessages.Add(new ErrorFileInfoMessage(new[] { new ErrorLineItemMessage(errorMessageException, LineDetailItemForExpandItem.LineItem) }, LineDetailItemForExpandItem.LineItem.FileInfo));

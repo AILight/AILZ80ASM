@@ -43,9 +43,9 @@ namespace AILZ80ASM
 
             if (asmLoad.LineDetailItemForExpandItem != default)
             {
-                if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacro)
+                if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
                 {
-                    lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemMacroDefine.Create(lineItem, asmLoad);
                 }
                 else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeat)
                 {
@@ -69,7 +69,7 @@ namespace AILZ80ASM
             }
             else
             {
-                lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemMacroDefine.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
@@ -121,6 +121,17 @@ namespace AILZ80ASM
             foreach (var item in LineDetailScopeItems)
             {
                 item.BuildAddressLabel();
+            }
+        }
+
+        public virtual void BuildArgumentLabel()
+        {
+            if (LineDetailScopeItems == default)
+                return;
+
+            foreach (var item in LineDetailScopeItems)
+            {
+                item.BuildArgumentLabel();
             }
         }
 

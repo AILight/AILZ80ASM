@@ -81,6 +81,11 @@ namespace AILZ80ASM
             LineDetailItem.BuildAddressLabel();
         }
 
+        public void BuildArgumentLabel()
+        {
+            LineDetailItem.BuildArgumentLabel();
+        }
+
         public void BuildValueLabel()
         {
             LineDetailItem.BuildValueLabel();
@@ -90,5 +95,6 @@ namespace AILZ80ASM
         {
             LineDetailItem.Assemble();
         }
+
     }
 }

@@ -22,7 +22,32 @@ namespace AILZ80ASM
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
-        private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
+        private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
+
+        public static bool IsNumber(string value)
+        {
+            if (Regex.Match(value, RegexPatternHexadecimal).Success)
+            {
+                return true;
+            }
+
+            if (Regex.Match(value, RegexPatternDollarHexadecimal).Success)
+            {
+                return true;
+            }
+
+            if (Regex.Match(value, RegexPatternBinaryNumber).Success)
+            {
+                return true;
+            }
+
+            if (decimal.TryParse(value, out var dammy))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public static byte ConvertToByte(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
@@ -225,13 +250,9 @@ namespace AILZ80ASM
                 }
 
                 // ラベルチェック
-                var label = default(Label);
                 var labels = asmLoad.AllLables.Where(m => m.HasValue).ToArray();
-
-                label ??= labels.Where(m => m.HasValue && string.Compare(m.LongLabelName, matchResultString, true) == 0).FirstOrDefault();
-                label ??= labels.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, matchResultString, true) == 0).FirstOrDefault();
-                label ??= labels.Where(m => m.HasValue && string.Compare(m.GlobalLabelName, globalLabelName, true) == 0 && string.Compare(m.LabelName, lableName, true) == 0 && string.Compare(m.ShortLabelName, matchResultString, true) == 0).FirstOrDefault();
-                label ??= labels.Where(m => m.HasValue && string.Compare(m.MiddleLabelName, matchResultString, true) == 0).FirstOrDefault();
+                var longLabelName = Label.GetLongLabelName(matchResultString, asmLoad);
+                var label = labels.Where(m => m.HasValue && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
 
                 var valueString = "";
                 switch (macroValue)
