@@ -34,7 +34,7 @@ namespace AILZ80ASM
                         var localOutputAddress = AIMath.ConvertToUInt16(op3, lineDetailExpansionItemOperation, asmLoad);
                         if (address.Output > localOutputAddress)
                         {
-                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0009);
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
                         }
 
                         length.Output = localOutputAddress - address.Output;

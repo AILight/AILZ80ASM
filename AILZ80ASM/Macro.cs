@@ -82,7 +82,7 @@ namespace AILZ80ASM
                         var argValues = macroArgs.Split(',').Select(m => m.Trim()).ToArray();
                         if (argValues.Length != macro.Args.Length)
                         {
-                            throw new ErrorMessageException(Error.ErrorCodeEnum.E1004);
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E1004);
                         }
 
                         // 引数の割り当て
@@ -91,7 +91,7 @@ namespace AILZ80ASM
                             var label = new Label(macro.Args[index], argValues[index], macroAsmLoad, asmLoad);
                             if (label.Invalidate)
                             {
-                                throw new ErrorMessageException(Error.ErrorCodeEnum.E1005);
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E1005);
                             }
                             // 引数で解決できるものは先行で処理する
                             label.SetArgument();

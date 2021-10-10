@@ -28,7 +28,7 @@ namespace AILZ80ASM
                 var label = new Label(labelName, lableValue, asmLoad);
                 if (label.Invalidate)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0013);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
                 }
 
                 label.SetValue(asmLoad);

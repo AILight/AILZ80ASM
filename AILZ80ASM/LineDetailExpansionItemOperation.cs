@@ -42,7 +42,7 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0001);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
                 }
             }
 
@@ -52,7 +52,7 @@ namespace AILZ80ASM
             Label = new Label(this, asmLoad);
             if (Label.Invalidate)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0013);
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
             }
         }
 
@@ -85,7 +85,7 @@ namespace AILZ80ASM
                         var operationCode = LineItem.OperationString;
                         if (!string.IsNullOrEmpty(operationCode))
                         {
-                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0001, $"{operationCode}");
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, $"{operationCode}");
                         }
                     }
                 }

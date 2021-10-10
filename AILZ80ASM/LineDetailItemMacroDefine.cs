@@ -30,7 +30,7 @@ namespace AILZ80ASM
             {
                 if (startMatched.Success)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1001);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1001);
                 }
 
                 if (endMatched.Success)
@@ -38,7 +38,11 @@ namespace AILZ80ASM
                     // Macro登録
                     var lineDetailItemMacro = asmLoad_LineDetailItemMacro;
                     var macro = new Macro(lineDetailItemMacro.MacroName, lineDetailItemMacro.MacroArgs, lineDetailItemMacro.MacroLines.ToArray(), asmLoad);
-                    asmLoad.Macros.Add(macro);
+                    if (asmLoad.LineDetailItemForExpandItem.Errors.Count == 0)
+                    {
+                        asmLoad.Macros.Add(macro);
+                    }
+                    asmLoad.Errors.AddRange(asmLoad.LineDetailItemForExpandItem.Errors);
 
                     // 終了
                     asmLoad.LineDetailItemForExpandItem = default;
@@ -49,7 +53,7 @@ namespace AILZ80ASM
                     var lable = Label.GetLabelText(lineItem.OperationString);
                     if (lable.EndsWith(":"))
                     {
-                        throw new ErrorMessageException(Error.ErrorCodeEnum.E1006);
+                        asmLoad.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E1006));
                     }
 
                     asmLoad_LineDetailItemMacro.MacroLines.Add(lineItem);
@@ -74,12 +78,16 @@ namespace AILZ80ASM
                         MacroArgs = args.ToArray(),
                     };
 
-                    // 引数、有効文字チェック
-                    if (!args.All(m => Label.IsArgument(m)))
+                    if (!AIName.ValidateMacroName(lineDetailItemMacro.MacroName))
                     {
-                        lineDetailItemMacro.InternalErrorMessageException = new ErrorMessageException(Error.ErrorCodeEnum.E1005);
+                        lineDetailItemMacro.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E1007));
                     }
 
+                    var errorArgumentNames = args.Where(m => !AIName.ValidateMacroArgument(m));
+                    if (errorArgumentNames.Any())
+                    {
+                        lineDetailItemMacro.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E1005, string.Join(",", errorArgumentNames)));
+                    }
                     asmLoad.LineDetailItemForExpandItem = lineDetailItemMacro;
 
                     return lineDetailItemMacro;
@@ -87,7 +95,7 @@ namespace AILZ80ASM
 
                 if (endMatched.Success)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1002);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1002);
                 }
             }
             return default;

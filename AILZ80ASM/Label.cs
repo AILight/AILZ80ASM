@@ -25,9 +25,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternEquLabel = @"(?<lable>(^\w+)):?";
         private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
         private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
-        private static readonly string RegexPatternArgument = @"(?<argument>(^\w+))";
         private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
-        private static readonly string RegexPatternLabelValidate = @"^(\D+)[a-zA-Z0-9_]+";
 
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
@@ -55,7 +53,7 @@ namespace AILZ80ASM
                 return;
             }
             
-            if (!DeclareLabelValidate(labelName))
+            if (!AIName.DeclareLabelValidate(labelName))
             {
                 DataType = DataTypeEnum.Invalidate;
             }
@@ -113,68 +111,6 @@ namespace AILZ80ASM
             }
         }
 
-        /// <summary>
-        /// 引数のラベルチェック
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static bool IsArgument(string target)
-        {
-            if (string.IsNullOrEmpty(target))
-                return false;
-
-            var matched = Regex.Match(target, RegexPatternArgument, RegexOptions.Singleline);
-            return matched.Success && matched.Groups["argument"].Value == target;
-        }
-
-        public static bool DeclareLabelValidate(string target)
-        {
-            if (target.StartsWith(".") && target.EndsWith(":"))
-            {
-                return false;
-            }
-
-            // ラベルの名称だけを取得
-            if (target.EndsWith("::"))
-            {
-                target = target.Substring(0, target.Length - 2);
-            }
-
-            if (target.EndsWith(":"))
-            {
-                target = target.Substring(0, target.Length - 1);
-            }
-
-            if (target.StartsWith("."))
-            {
-                target = target.Substring(1);
-            }
-
-            if (string.IsNullOrEmpty(target))
-            {
-                return false;
-            }
-
-            // 含まれてはいけない文字の調査
-            if (target.ToArray().Any(m => ":. ".Contains(m)))
-            {
-                return false;
-            }
-
-            // レジスター文字列は利用不可
-            if (OPCodeTable.IsRegister(target.ToUpper()))
-            {
-                return false;
-            }
-
-            if (AIMath.IsNumber(target))
-            {
-                return false;
-            }
-
-            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline).Success;
-        }
-
         public void SetValue(AsmLoad asmLoad)
         {
             if (this.DataType != DataTypeEnum.ProcessingForValue)
@@ -195,6 +131,9 @@ namespace AILZ80ASM
             if (this.DataType != DataTypeEnum.ProcessingForArgument)
                 return;
 
+            if (string.IsNullOrEmpty(ValueString))
+                return;
+
             try
             {
                 Value = AIMath.ConvertToUInt16(ValueString, AsmLoadForArgmument);
@@ -209,6 +148,9 @@ namespace AILZ80ASM
         {
             if (this.DataType != DataTypeEnum.ProcessingForAddress &&
                 this.DataType != DataTypeEnum.ProcessingForValue)
+                return;
+
+            if (string.IsNullOrEmpty(ValueString))
                 return;
 
             try

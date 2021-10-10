@@ -13,8 +13,8 @@ namespace AILZ80ASM
         protected AsmLoad AsmLoad {get;set; }
 
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
-        public byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
-        public ErrorMessageException InternalErrorMessageException { get; set; }
+        public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
+        public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
 
         public LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {

@@ -8,14 +8,13 @@ namespace AILZ80ASM
 {
     public class FileItem
     {
-        private Package Package { get; set; }
+        private AsmLoad AssembleLoad { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
-        public List<ErrorLineItemMessage> ErrorMessages { get; private set; } = new List<ErrorLineItemMessage>();
 
-        public FileItem(FileInfo fileInfo, Package package)
+        public FileItem(FileInfo fileInfo, AsmLoad asmLoad)
         {
-            Package = package;
+            AssembleLoad = asmLoad;
             FileInfo = fileInfo;
 
             using var streamReader = fileInfo.OpenText();
@@ -26,7 +25,7 @@ namespace AILZ80ASM
         private void Read(StreamReader streamReader)
         {
             string line;
-            var lineIndex = 0;
+            var lineIndex = 1;
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
@@ -34,18 +33,12 @@ namespace AILZ80ASM
                 lineIndex++;
                 try
                 {
-                    item.CreateLineDetailItem(Package.AssembleLoad);
+                    item.CreateLineDetailItem(AssembleLoad);
                     Items.Add(item);
-
-                    // 内部エラーを積む
-                    if (item?.LineDetailItem?.InternalErrorMessageException != default)
-                    {
-                        throw item.LineDetailItem.InternalErrorMessageException;
-                    }
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
 
@@ -63,9 +56,9 @@ namespace AILZ80ASM
                 {
                     item.ExpansionItem();
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
         }
@@ -97,9 +90,9 @@ namespace AILZ80ASM
                 {
                     item.BuildAddressLabel();
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
         }
@@ -112,9 +105,9 @@ namespace AILZ80ASM
                 {
                     item.BuildArgumentLabel();
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
         }
@@ -127,9 +120,9 @@ namespace AILZ80ASM
                 {
                     item.BuildValueLabel();
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
         }
@@ -143,9 +136,9 @@ namespace AILZ80ASM
                 {
                     item.Assemble();
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
         }
@@ -158,9 +151,9 @@ namespace AILZ80ASM
                 {
                     item.PreAssemble(ref address);
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new ErrorLineItemMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
         }

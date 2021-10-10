@@ -39,7 +39,7 @@ namespace AILZ80ASM
 
             if (fileSize < 0)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2006);
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2006);
             }    
 
             var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : (int)AIMath.ConvertToUInt32(FileLength, asmLoad);
