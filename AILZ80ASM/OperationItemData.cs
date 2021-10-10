@@ -154,7 +154,7 @@ namespace AILZ80ASM
 
             if (ops.Length == 0 || ops.Length > 2)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0012);
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0012);
             }
             if (ops.Length == 2)
             {

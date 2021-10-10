@@ -25,6 +25,12 @@ macro TestArg a1,			; 引数が不完全
 	ld b, a2
 end macro
 
+macro LD a1, a2		; 使えない名前
+	ld a, a1
+	ld b, a2
+end macro
+
+
 macro NoEnd a1, a2
 	ld a, a1
 	ld b, a2

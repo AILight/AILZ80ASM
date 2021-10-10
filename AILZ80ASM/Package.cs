@@ -12,11 +12,9 @@ namespace AILZ80ASM
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
 
-        private List<ErrorFileInfoMessage> ErrorMessages { get; set; } = new List<ErrorFileInfoMessage>();
-
-        public ErrorFileInfoMessage[] Errors => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Error).ToArray(), m.FileInfo)).ToArray();
-        public ErrorFileInfoMessage[] Warnings => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Warning).ToArray(), m.FileInfo)).ToArray();
-        public ErrorFileInfoMessage[] Infomations => ErrorMessages.Where(m => m.ErrorLineItemMessages.Any(n => Error.GetErrorType(n.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation)).Select(m => new ErrorFileInfoMessage(m.ErrorLineItemMessages.Where(m => Error.GetErrorType(m.ErrorMessageException.ErrorCode) == Error.ErrorTypeEnum.Infomation).ToArray(), m.FileInfo)).ToArray();
+        public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).ToArray();
+        public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
+        public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
 
         public Package(FileInfo[] files)
         {
@@ -27,10 +25,10 @@ namespace AILZ80ASM
 
             foreach (var fileInfo in files)
             {
-                FileItems.Add(new FileItem(fileInfo, this));
+                FileItems.Add(new FileItem(fileInfo, AssembleLoad));
             }
 
-            this.AssembleLoad.LoadCloseValidate(ErrorMessages);
+            this.AssembleLoad.LoadCloseValidate();
         }
 
         public void Assemble()
@@ -54,12 +52,6 @@ namespace AILZ80ASM
 
             // アセンブルを行う
             InternalAssemble();
-
-            // エラーの出力
-            foreach (var fileItem in FileItems)
-            {
-                ErrorMessages.Add(new ErrorFileInfoMessage(fileItem.ErrorMessages.ToArray(), fileItem));
-            }
         }
 
         /// <summary>
@@ -172,7 +164,7 @@ namespace AILZ80ASM
 
         public void OutputError()
         {
-            if (ErrorMessages.Count > 0)
+            if (AssembleLoad.Errors.Count > 0)
             {
                 Console.WriteLine($"");
                 OutputError(Errors, "Error");
@@ -189,36 +181,27 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="fileItemErrorMessages"></param>
         /// <param name="title"></param>
-        public static void OutputError(ErrorFileInfoMessage[] fileItemErrorMessages, string title)
+        public static void OutputError(ErrorLineItem[] errorLineItems, string title)
         {
-            var count = fileItemErrorMessages.Sum(m => m.ErrorLineItemMessages.Length);
-            if (count > 0)
+            if (errorLineItems.Length > 0)
             {
                 Console.WriteLine($"> {title}");
-                InternalOutputError(fileItemErrorMessages, 0);
+                InternalOutputError(errorLineItems);
                 Console.WriteLine();
             }
         }
 
-        private static void InternalOutputError(ErrorFileInfoMessage[] fileItemErrorMessages, int indent)
+        /// <summary>
+        /// エラーの詳細を表示
+        /// </summary>
+        /// <param name="errorLineItems"></param>
+        private static void InternalOutputError(ErrorLineItem[] errorLineItems)
         {
-            foreach (var fileItem in fileItemErrorMessages)
+            foreach (var errorLineItem in errorLineItems)
             {
-                foreach (var lineItem in fileItem.ErrorLineItemMessages)
-                {
-                    var errorMessage = lineItem.ErrorMessageException.Parameters == default ?
-                                        lineItem.ErrorMessageException.Message :
-                                        string.Format(lineItem.ErrorMessageException.Message, lineItem.ErrorMessageException.Parameters);
-
-                    var errorCode = lineItem.ErrorMessageException.ErrorCode.ToString();
-                    var filePosition = $"{fileItem.FileInfo.Name}({(lineItem.LineItem.LineIndex + 1)})";
-
-                    Console.WriteLine($"{filePosition}: error {errorCode}: {errorMessage}");
-                    if (lineItem.ErrorMessageException.ErrorFileInfoMessage != default)
-                    {
-                        InternalOutputError(new[] { lineItem.ErrorMessageException.ErrorFileInfoMessage }, indent + 1);
-                    }
-                }
+                var errorCode = errorLineItem.ErrorCode.ToString();
+                var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}({(errorLineItem.LineItem.LineIndex)})";
+                Console.WriteLine($"{filePosition}: error {errorCode}: {errorLineItem.ErrorMessage}");
             }
         }
     }

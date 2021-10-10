@@ -8,7 +8,7 @@ namespace AILZ80ASM
 {
     public static class OPCodeTable
     {
-        public static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)|_|%]+)*\s*,*\s*(?<op3>.+)*";
+        public static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)|_|%|:]+)*\s*,*\s*(?<op3>.+)*";
         private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>.+)\)";
         private static readonly string RegexPatternIYReg = @"^\(IY\+(?<value>.+)\)";
         private static readonly string RegexPatternAddress = @"^\((?<addr>.+)\)$";
@@ -291,7 +291,7 @@ namespace AILZ80ASM
             if ((op1 == "PUSH" && op2 == "SP" && op3 == "") ||
                 (op1 == "POP" && op2 == "SP" && op3 == ""))
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0001, $"{code}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, $"{code}");
             }
 
             foreach (var opCodeItem in OPCodeItems)
@@ -605,6 +605,21 @@ namespace AILZ80ASM
             };
         }
 
+        /// <summary>
+        /// オペコードが含まれているか
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool IsOPCode(string target)
+        {
+            return OPCodeItems.Select(m => Regex.Match(m.Operation, RegexPatternOP).Groups["op1"].Value).Any(m => string.Compare(m, target, true) == 0);
+        }
+        
+        /// <summary>
+        /// レジスタ名が含まれているか
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public static bool IsRegister(string source)
         {
             return Is8BitRegister(source) ||

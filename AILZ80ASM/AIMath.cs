@@ -74,7 +74,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
             }
 
         }
@@ -171,7 +171,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
             }
         }
 
@@ -186,7 +186,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
             }
         }
 
@@ -342,7 +342,7 @@ namespace AILZ80ASM
 
             if (Regex.Match(workValue, RegexPatternErrorHexadecimal).Success)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
             }
 
             var regexResult = default(Match);
@@ -358,7 +358,7 @@ namespace AILZ80ASM
                 }
                 catch
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 
@@ -384,7 +384,7 @@ namespace AILZ80ASM
 
             if (Regex.Match(workValue, RegexPatternErrorDollarHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
             }
 
             var regexResult = default(Match);
@@ -400,7 +400,7 @@ namespace AILZ80ASM
                 }
                 catch
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 
@@ -427,7 +427,7 @@ namespace AILZ80ASM
 
             if (Regex.Match(workValue, RegexPatternErrorBinaryNumber).Success)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
             }
 
             var regexResult = default(Match);
@@ -443,7 +443,7 @@ namespace AILZ80ASM
                 }
                 catch
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
                 }
                 workValue = workValue.Substring(index + matchResultString.Length);
 

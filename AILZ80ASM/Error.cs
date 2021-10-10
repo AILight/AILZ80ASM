@@ -33,6 +33,7 @@ namespace AILZ80ASM
             E1004,
             E1005,
             E1006,
+            E1007,
 
             E1011,
             E1012,
@@ -74,7 +75,13 @@ namespace AILZ80ASM
 
         public static string GetMessage(ErrorCodeEnum errorCode)
         {
-            return ErrorMessages[errorCode];
+            return GetMessage(errorCode, default);
+        }
+
+        public static string GetMessage(ErrorCodeEnum errorCode, params object[] parameters)
+        {
+            var message = ErrorMessages[errorCode];
+            return parameters == default ? message : string.Format(message, parameters);
         }
 
         private static readonly Dictionary<ErrorCodeEnum, string> ErrorMessages = new Dictionary<ErrorCodeEnum, string>()
@@ -95,9 +102,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1002] = "END MACROが先に見つかりました。",
             [ErrorCodeEnum.E1003] = "MACROが重複登録されていますので、名前解決が出来ません。",
             [ErrorCodeEnum.E1004] = "MACROの引数の数が一致していません。",
-            [ErrorCodeEnum.E1005] = "MACROの引数名が有効ではありません。",
+            [ErrorCodeEnum.E1005] = "MACROの引数名が有効ではありません。{0}",
             [ErrorCodeEnum.E1006] = "MACROでは、ローカルラベル以外は使えません。",
-
+            [ErrorCodeEnum.E1007] = "MACROの名前が有効ではありません。",
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
             [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",

@@ -59,7 +59,7 @@ namespace AILZ80ASM
                 var lable = Label.GetLabelText(lineItem.OperationString);
                 if (lable.EndsWith(":"))
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1014);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1014);
                 }
 
                 repeatLines.Add(lineItem);
@@ -70,7 +70,7 @@ namespace AILZ80ASM
                 // 終了条件チェック
                 if (endMatched.Success)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1012);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1012);
                 }
 
                 // 開始条件チェック
@@ -122,7 +122,7 @@ namespace AILZ80ASM
                         var take = RepeatLines.Count + last;
                         if (take <= 0 || last > 0)
                         {
-                            throw new ErrorMessageException(Error.ErrorCodeEnum.E1013);
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013);
                         }
                         //最終ページ処理
                         lineItems = RepeatLines.Take(take).Select(m =>

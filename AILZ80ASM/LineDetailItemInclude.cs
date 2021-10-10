@@ -16,14 +16,17 @@ namespace AILZ80ASM
 
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
+        public override byte[] Bin => FileType == FileTypeEnum.Text ? FileItem.Bin : base.Bin;
 
-        private Dictionary<LineItem, LineDetailScopeItem[]> DicLineDetailScopeItem { get; set; } = new Dictionary<LineItem, LineDetailScopeItem[]>(); // 逆引き用
         private static readonly string RegexPatternInclude = @"\s*include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
         private FileTypeEnum FileType { get; set; } = FileTypeEnum.Text;
         private string FileStart { get; set; }
         private string FileLength { get; set; }
 
-        public LineDetailItemInclude(LineItem lineItem, FileInfo fileInfo, FileTypeEnum fileType, string fileStart, string fileLength, AsmLoad asmLoad)
+        private FileItem FileItem { get; set; }
+        private LineDetailExpansionItem LineDetailExpansionItem { get; set; }
+
+        private LineDetailItemInclude(LineItem lineItem, FileInfo fileInfo, FileTypeEnum fileType, string fileStart, string fileLength, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
             FileInfo = fileInfo;
@@ -34,50 +37,28 @@ namespace AILZ80ASM
             // ファイルの存在チェック
             if (!fileInfo.Exists)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2002, fileInfo.Name);
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2002, fileInfo.Name);
             }
 
             // 重複読み込みチェック
             if (asmLoad.LoadFiles.Any(m => m.FullName == fileInfo.FullName))
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
             }
 
-            // スタックに読み込みファイルを積む
-            asmLoad.LoadFiles.Push(fileInfo);
-
-            using var streamReader = fileInfo.OpenText();
-
-            var errorLineItemMessages = new List<ErrorLineItemMessage>();
-            var line = default(string);
-            var lineIndex = 0;
-
-            while ((line = streamReader.ReadLine()) != default(string))
+            switch (FileType)
             {
-                var localLineItem = new LineItem(line, lineIndex, fileInfo);
-                lineIndex++;
-                try
-                {
-                    localLineItem.CreateLineDetailItem(asmLoad);
-                    LineItems.Add(localLineItem);
-
-                    // 内部エラーを積む
-                    if (localLineItem?.LineDetailItem?.InternalErrorMessageException != default)
-                    {
-                        throw localLineItem.LineDetailItem.InternalErrorMessageException;
-                    }
-                }
-                catch (ErrorMessageException ex)
-                {
-                    errorLineItemMessages.Add(new ErrorLineItemMessage(ex, localLineItem));
-                }
-            }
-            asmLoad.LoadFiles.Pop();
-
-            // エラーを処理
-            if (errorLineItemMessages.Count > 0)
-            {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2001, new ErrorFileInfoMessage(errorLineItemMessages.ToArray(), FileInfo));
+                case FileTypeEnum.Text:
+                    // スタックに読み込みファイルを積む
+                    asmLoad.LoadFiles.Push(fileInfo);
+                    FileItem = new FileItem(fileInfo, asmLoad);
+                    asmLoad.LoadFiles.Pop();
+                    break;
+                case FileTypeEnum.Binary:
+                    LineDetailExpansionItem = new LineDetailExpansionItemBinaryFile(LineItem, FileInfo, FileStart, FileLength);
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
 
@@ -107,137 +88,93 @@ namespace AILZ80ASM
 
         public override void ExpansionItem()
         {
-            var errorLineItemMessages = new List<ErrorLineItemMessage>();
-
             switch (FileType)
             {
                 case FileTypeEnum.Text:
-                    ExpansionItemForText();
+                    FileItem.ExpansionItem();
                     break;
                 case FileTypeEnum.Binary:
-                    ExpansionItemForBinary();
+                    LineDetailScopeItems = new[] { new LineDetailScopeItem(new LineDetailExpansionItem[] { LineDetailExpansionItem }, AsmLoad) };
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
-
             base.ExpansionItem();
-        }
-
-        private void ExpansionItemForBinary()
-        {
-            var lineDetailExpansionItems = new LineDetailExpansionItem[] { new LineDetailExpansionItemBinaryFile(LineItem, FileInfo, FileStart, FileLength) };
-            LineDetailScopeItems = new[] { new LineDetailScopeItem(lineDetailExpansionItems, AsmLoad) };
-        }
-
-        /// <summary>
-        /// テキスト展開
-        /// </summary>
-        /// <param name="lineDetailScopeItem"></param>
-        /// <param name="errorLineItemMessages"></param>
-        private void ExpansionItemForText()
-        {
-            var lineDetailScopeItem = new List<LineDetailScopeItem>();
-            var errorLineItemMessages = new List<ErrorLineItemMessage>();
-
-            foreach (var lineItem in LineItems)
-            {
-                try
-                {
-                    lineItem.ExpansionItem();
-                    lineDetailScopeItem.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
-                    DicLineDetailScopeItem.Add(lineItem, lineItem.LineDetailItem.LineDetailScopeItems);
-                }
-                catch (ErrorMessageException ex)
-                {
-                    errorLineItemMessages.Add(new ErrorLineItemMessage(ex, lineItem));
-                }
-            }
-
-            LineDetailScopeItems = lineDetailScopeItem.ToArray();
-
-            if (errorLineItemMessages.Count > 0)
-            {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2001, new ErrorFileInfoMessage(errorLineItemMessages.ToArray(), FileInfo));
-            }
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
-            if (LineDetailScopeItems == default)
-                return;
-
-            var errorLineItemMessages = new List<ErrorLineItemMessage>();
-
-            foreach (var item in LineDetailScopeItems)
+            switch (FileType)
             {
-                try
-                {
-                    item.PreAssemble(ref asmAddress);
-                }
-                catch (ErrorMessageException ex)
-                {
-                    var lineItem = DicLineDetailScopeItem.Single(m => m.Value.Any(n => n == item)).Key;
-                    errorLineItemMessages.Add(new ErrorLineItemMessage(ex, lineItem));
-                }
+                case FileTypeEnum.Text:
+                    FileItem.PreAssemble(ref asmAddress);
+                    break;
+                case FileTypeEnum.Binary:
+                    base.PreAssemble(ref asmAddress);
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
+        }
 
-            if (errorLineItemMessages.Count > 0)
+        public override void BuildValueLabel()
+        {
+            switch (FileType)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2001, new ErrorFileInfoMessage(errorLineItemMessages.ToArray(), FileInfo));
+                case FileTypeEnum.Text:
+                    FileItem.BuildValueLabel();
+                    break;
+                case FileTypeEnum.Binary:
+                    base.BuildValueLabel();
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
 
         public override void BuildAddressLabel()
         {
-            if (LineDetailScopeItems == default)
-                return;
-
-            var errorLineItemMessages = new List<ErrorLineItemMessage>();
-
-            foreach (var item in LineDetailScopeItems)
+            switch (FileType)
             {
-                try
-                {
-                    item.BuildAddressLabel();
-                }
-                catch (ErrorMessageException ex)
-                {
-                    var lineItem = DicLineDetailScopeItem.Single(m => m.Value.Any(n => n == item)).Key;
-                    errorLineItemMessages.Add(new ErrorLineItemMessage(ex, lineItem));
-                }
+                case FileTypeEnum.Text:
+                    FileItem.BuildAddressLabel();
+                    break;
+                case FileTypeEnum.Binary:
+                    base.BuildAddressLabel();
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
+        }
 
-            if (errorLineItemMessages.Count > 0)
+        public override void BuildArgumentLabel()
+        {
+            switch (FileType)
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2001, new ErrorFileInfoMessage(errorLineItemMessages.ToArray(), FileInfo));
+                case FileTypeEnum.Text:
+                    FileItem.BuildArgumentLabel();
+                    break;
+                case FileTypeEnum.Binary:
+                    base.BuildArgumentLabel();
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
 
         public override void Assemble()
         {
-            if (LineDetailScopeItems == default)
-                return;
-
-            var errorLineItemMessages = new List<ErrorLineItemMessage>();
-
-            foreach (var item in LineDetailScopeItems)
+            switch (FileType)
             {
-                try
-                {
-                    item.Assemble();
-                }
-                catch (ErrorMessageException ex)
-                {
-                    var lineItem = DicLineDetailScopeItem.Single(m => m.Value.Any(n => n == item)).Key;
-                    errorLineItemMessages.Add(new ErrorLineItemMessage(ex, lineItem));
-                }
-            }
-
-            if (errorLineItemMessages.Count > 0)
-            {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E2001, new ErrorFileInfoMessage(errorLineItemMessages.ToArray(), FileInfo));
+                case FileTypeEnum.Text:
+                    FileItem.Assemble();
+                    break;
+                case FileTypeEnum.Binary:
+                    base.Assemble();
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
         }
     }

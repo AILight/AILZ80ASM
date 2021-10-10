@@ -38,7 +38,7 @@ namespace AILZ80ASM
 
         public override void ExpansionItem()
         {
-            throw new ErrorMessageException(Error.ErrorCodeEnum.E1031, this.Message);
+            throw new ErrorAssembleException(Error.ErrorCodeEnum.E1031, this.Message);
         }
     }
 }

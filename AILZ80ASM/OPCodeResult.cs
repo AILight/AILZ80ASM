@@ -64,7 +64,7 @@ namespace AILZ80ASM
                             var offsetAddress = tmpValue16 - lineDetailExpansionItemOperation.Address.Program - 2;
                             if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                             {
-                                throw new ErrorMessageException(Error.ErrorCodeEnum.E0003, $"指定された値は、{offsetAddress}でした。");
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0003, $"指定された値は、{offsetAddress}でした。");
                             }
                             var e8 = ConvertTo2BaseString(offsetAddress, 8);
                             OPCode = OPCode.Select(m => m.Replace("EEEEEEEE", e8)).ToArray();
@@ -94,7 +94,7 @@ namespace AILZ80ASM
             if ((value > 0 && overString.Contains("1")) ||
                 (value < 0 && overString.Contains("0")) )
             {
-                throw new ErrorMessageException(Error.ErrorCodeEnum.E0002, $"{value:x}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0002, $"{value:x}");
             }
 
             return returnValue.Substring(overString.Length);

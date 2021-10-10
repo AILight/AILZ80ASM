@@ -58,7 +58,7 @@ namespace AILZ80ASM
                     if (asmLoad_LineDetailItemConditional.Conditions.ContainsKey(""))
                     {
                         // Elseが既にある場合
-                        throw new ErrorMessageException(Error.ErrorCodeEnum.E1023);
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E1023);
                     }
 
                     asmLoad_LineDetailItemConditional.ConditionKey = elifMatched.Groups["condition"].Value;
@@ -69,7 +69,7 @@ namespace AILZ80ASM
                     if (asmLoad_LineDetailItemConditional.Conditions.ContainsKey(""))
                     {
                         // Elseが既にある場合
-                        throw new ErrorMessageException(Error.ErrorCodeEnum.E1023);
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E1023);
                     }
 
                     asmLoad_LineDetailItemConditional.ConditionKey = "";
@@ -87,7 +87,7 @@ namespace AILZ80ASM
                 // 終了条件チェック
                 if (endMatched.Success)
                 {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E1022);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1022);
                 }
 
                 // 開始条件チェック
