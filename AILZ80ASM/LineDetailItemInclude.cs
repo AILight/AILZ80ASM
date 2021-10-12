@@ -40,19 +40,10 @@ namespace AILZ80ASM
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2002, fileInfo.Name);
             }
 
-            // 重複読み込みチェック
-            if (asmLoad.LoadFiles.Any(m => m.FullName == fileInfo.FullName))
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
-            }
-
             switch (FileType)
             {
                 case FileTypeEnum.Text:
-                    // スタックに読み込みファイルを積む
-                    asmLoad.LoadFiles.Push(fileInfo);
                     FileItem = new FileItem(fileInfo, asmLoad);
-                    asmLoad.LoadFiles.Pop();
                     break;
                 case FileTypeEnum.Binary:
                     LineDetailExpansionItem = new LineDetailExpansionItemBinaryFile(LineItem, FileInfo, FileStart, FileLength);

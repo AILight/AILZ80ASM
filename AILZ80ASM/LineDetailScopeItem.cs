@@ -38,7 +38,14 @@ namespace AILZ80ASM
         {
             foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
             {
-                lineDetailExpansionItem.PreAssemble(ref asmAddress, AsmLoad);
+                try
+                {
+                    lineDetailExpansionItem.PreAssemble(ref asmAddress, AsmLoad);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AsmLoad.Errors.Add(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
+                }
             }
         }
 

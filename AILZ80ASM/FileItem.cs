@@ -14,12 +14,24 @@ namespace AILZ80ASM
 
         public FileItem(FileInfo fileInfo, AsmLoad asmLoad)
         {
+            // 重複読み込みチェック
+            if (asmLoad.LoadFiles.Any(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity()))
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
+            }
+
+            // スタックに読み込みファイルを積む
+            asmLoad.LoadFiles.Push(fileInfo);
+
             AssembleLoad = asmLoad;
             FileInfo = fileInfo;
 
             using var streamReader = fileInfo.OpenText();
             Read(streamReader);
             streamReader.Close();
+
+            asmLoad.LoadFiles.Pop();
+
         }
 
         private void Read(StreamReader streamReader)
