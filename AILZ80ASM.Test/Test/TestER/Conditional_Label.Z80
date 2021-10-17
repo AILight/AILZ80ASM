@@ -1,0 +1,16 @@
+﻿
+	ORG	$9000
+mode equ 1
+
+lb1: #if mode == 1
+	ld a,1
+	ld b,2
+	ld c,3
+lb2: #elif mode == 2
+	ld d,4
+	ld e,5
+	ld h,6
+	ld l,7
+lb3: #else
+	#error "modeの値が範囲外です。"
+lb4: #endif

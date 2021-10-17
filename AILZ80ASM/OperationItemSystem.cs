@@ -1,18 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class OperationItemSystem : IOperationItem
+    public class OperationItemSystem : OperationItem
     {
+        private byte[] ItemDataBin { get; set; }
+        private AsmLength ItemDataLength { get; set; }
+        public override byte[] Bin => ItemDataBin;
+        public override AsmLength Length => ItemDataLength;
+
         private OperationItemSystem()
         {
 
         }
 
-        public static IOperationItem Parse(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        public new static bool CanCreate(string operation)
+        {
+            var matched = Regex.Match(operation, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var op1 = matched.Groups["op1"].Value.ToUpper();
+            return (new[] { "ORG" }).Any(m => m == op1);
+        }
+
+        public static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemSystem);
             var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
@@ -41,7 +54,7 @@ namespace AILZ80ASM
                         bytes = new byte[length.Output];
                     }
 
-                    returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), Length = length, Bin = bytes };
+                    returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes };
                     break;
                 default:
                     break;
@@ -50,12 +63,7 @@ namespace AILZ80ASM
             return returnValue;
         }
 
-        public byte[] Bin { get; set; }
-
-        public AsmAddress Address { get; set; }
-        public AsmLength Length { get; set; }
-
-        public void Assemble(AsmLoad asmLoad)
+        public override void Assemble(AsmLoad asmLoad)
         {
         }
     }

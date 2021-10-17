@@ -19,7 +19,7 @@ namespace AILZ80ASM
         private readonly List<LineItem> RepeatLines = new List<LineItem>();
         private int RepeatNestedCount { get; set; } = 0;
 
-        public LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
@@ -56,8 +56,7 @@ namespace AILZ80ASM
                 var repeatLines = asmLoad_LineDetailItemRepeat.RepeatLines;
 
                 // ローカルラベル以外は使用禁止
-                var lable = Label.GetLabelText(lineItem.OperationString);
-                if (lable.EndsWith(":"))
+                if (lineItem.LabelString.EndsWith(":"))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1014);
                 }
@@ -144,8 +143,15 @@ namespace AILZ80ASM
 
                     foreach (var lineItem in lineItems)
                     {
-                        lineItem.ExpansionItem();
-                        lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
+                        try
+                        {
+                            lineItem.ExpansionItem();
+                            lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
+                        }
+                        catch (ErrorAssembleException ex)
+                        {
+                            AsmLoad.Errors.Add(new ErrorLineItem(lineItem, ex));
+                        }
                     }
                 }
                 LineDetailScopeItems = lineDetailScopeItems.ToArray();

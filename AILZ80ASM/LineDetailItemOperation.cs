@@ -8,26 +8,23 @@ namespace AILZ80ASM
 {
     public class LineDetailItemOperation : LineDetailItem
     {
-        public LineDetailItemOperation(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemOperation(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
-        }
-
-        public override void ExpansionItem()
-        {
-            // マクロであるか調べる
-            this.LineDetailScopeItems = Macro.Expansion(this.LineItem, this.AsmLoad);
-            if (this.LineDetailScopeItems != default)
-                return;
-
-            // マクロ展開できなかったら通常展開
             this.LineDetailScopeItems = new[]
             {
                 new LineDetailScopeItem(this.LineItem, this.AsmLoad)
             };
-
-            base.ExpansionItem();
         }
 
+        public static LineDetailItem Create(LineItem lineItem, AsmLoad asmLoad)
+        {
+            if (OperationItem.CanCreate(lineItem.OperationString))
+            {
+                return new LineDetailItemOperation(lineItem, asmLoad);
+            }
+
+            return default;
+        }
     }
 }

@@ -34,6 +34,8 @@ namespace AILZ80ASM
             E1005,
             E1006,
             E1007,
+            E1008,
+            E1009,
 
             E1011,
             E1012,
@@ -43,8 +45,10 @@ namespace AILZ80ASM
             E1021,
             E1022,
             E1023,
-            
+            E1024,
+
             E1031,
+            E1032,
 
             E2001,
             E2002,
@@ -52,6 +56,7 @@ namespace AILZ80ASM
             E2004,
             E2005,
             E2006,
+            E2007,
 
             W0001,
             I0001,
@@ -105,6 +110,8 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1005] = "MACROの引数名が有効ではありません。{0}",
             [ErrorCodeEnum.E1006] = "MACROでは、ローカルラベル以外は使えません。",
             [ErrorCodeEnum.E1007] = "MACROの名前が有効ではありません。",
+            [ErrorCodeEnum.E1008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
+            [ErrorCodeEnum.E1009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
             [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",
@@ -115,9 +122,11 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
             [ErrorCodeEnum.E1022] = "#ENDIFが先に見つかりました。",
             [ErrorCodeEnum.E1023] = "#ELSEの後に#ELSIF、#ELSEは設定できません。",
+            [ErrorCodeEnum.E1024] = "#IF、#ELSIF、#ELSE、#ENDIFにラベルは設定できません。",
 
             // エラー
             [ErrorCodeEnum.E1031] = "#ERROR:{0}",
+            [ErrorCodeEnum.E1032] = "#ERRORにラベルは設定できません。",
 
             // Include
             [ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",
@@ -126,6 +135,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E2004] = "Include 開始アドレスの指定が間違っています。",
             [ErrorCodeEnum.E2005] = "Include 長さの指定が間違っています。",
             [ErrorCodeEnum.E2006] = "Include 開始アドレスがファイルの長さを超えています。",
+            [ErrorCodeEnum.E2007] = "Include にはラベルを指定できません。",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"

@@ -11,7 +11,7 @@ namespace AILZ80ASM
         public string LabelText { get; private set; }
         public string InstructionText { get; private set; }
         public string ArgumentText { get; private set; }
-        public IOperationItem OperationItem { get; private set; }
+        public OperationItem OperationItem { get; private set; }
 
         private static readonly string RegexPatternInstruction = @"(?<Instruction>(^[\w\(\)]+))";
 
@@ -20,7 +20,7 @@ namespace AILZ80ASM
         {
             get 
             {
-                return OperationItem == default(IOperationItem) ? Array.Empty<byte>() : OperationItem.Bin;
+                return OperationItem == default(OperationItem) ? Array.Empty<byte>() : OperationItem.Bin;
             } 
         }
 
@@ -28,17 +28,16 @@ namespace AILZ80ASM
             : base(lineItem)
         {
             //ラベルの切り出し
-            LabelText = Label.GetLabelText(lineItem.OperationString);
+            LabelText = lineItem.LabelString;
 
             // 命令の切りだし
-            var tmpInstructionText = lineItem.OperationString.Substring(LabelText.Length).TrimStart();
-            if (!string.IsNullOrEmpty(tmpInstructionText))
+            if (!string.IsNullOrEmpty(lineItem.OperationString))
             {
-                var matchResult = Regex.Match(tmpInstructionText, RegexPatternInstruction, RegexOptions.Singleline);
+                var matchResult = Regex.Match(lineItem.OperationString, RegexPatternInstruction, RegexOptions.Singleline);
                 if (matchResult.Success)
                 {
                     InstructionText = matchResult.Groups["Instruction"].Value;
-                    ArgumentText = tmpInstructionText.Substring(InstructionText.Length).TrimStart();
+                    ArgumentText = lineItem.OperationString.Substring(InstructionText.Length).TrimStart();
                 }
                 else
                 {
@@ -46,7 +45,7 @@ namespace AILZ80ASM
                 }
             }
 
-            OperationItem = default(IOperationItem);
+            OperationItem = default(OperationItem);
 
             // ラベルを処理する
             Label = new Label(this, asmLoad);
@@ -70,12 +69,10 @@ namespace AILZ80ASM
                 else
                 {
                     // 命令を判別する
-                    OperationItem ??= OperationItemOPCode.Parse(this, asmAddress, asmLoad); // OpeCode
-                    OperationItem ??= OperationItemData.Parse(this, asmAddress, asmLoad);   // Data
-                    OperationItem ??= OperationItemSystem.Parse(this, asmAddress, asmLoad);  // System
+                    OperationItem = OperationItem.Create(this, asmAddress, asmLoad);
 
                     // Addressを設定
-                    if (OperationItem != default(IOperationItem))
+                    if (OperationItem != default(OperationItem))
                     {
                         Address = OperationItem.Address;
                         asmAddress = new AsmAddress(OperationItem.Address, OperationItem.Length);

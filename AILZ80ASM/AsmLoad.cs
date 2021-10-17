@@ -27,7 +27,8 @@ namespace AILZ80ASM
             }
         }
         public string LabelName { get; set; }
-        public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include用
+        public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include循環展開チェック用
+        public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
 
         public Label[] AllLables => Labels.Union(LocalLabels).ToArray();
         public List<Label> Labels { get; private set; } = new List<Label>();
@@ -53,6 +54,7 @@ namespace AILZ80ASM
                 GlobalLableName = this.GlobalLableName,
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
+                LoadMacros = this.LoadMacros,
                 Macros = this.Macros,
                 LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
 
@@ -70,6 +72,7 @@ namespace AILZ80ASM
                 GlobalLableName = this.GlobalLableName,
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
+                LoadMacros = this.LoadMacros,
                 Macros = this.Macros,
                 LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
 

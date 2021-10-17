@@ -17,6 +17,7 @@ namespace AILZ80ASM
         public byte[] Bin => LineDetailItem.Bin;
 
         // 展開情報
+        public string LabelString { get; private set; }
         public string OperationString { get; private set; }
         public string CommentString { get; private set; }
         public LineDetailItem LineDetailItem { get; private set; }
@@ -34,15 +35,19 @@ namespace AILZ80ASM
             //展開情報作成
             //コメントを処理する
             var indexCommnet = lineString.IndexOf(';');
+            var operationString = default(string);
+
             if (indexCommnet != -1)
             {
                 CommentString = lineString.Substring(indexCommnet);
-                OperationString = lineString.Substring(0, indexCommnet).TrimEnd();
+                operationString = lineString.Substring(0, indexCommnet).Trim();
             }
             else
             {
-                OperationString = lineString.TrimEnd();
+                operationString = lineString.Trim();
             }
+            LabelString = Label.GetLabelText(operationString);
+            OperationString = operationString.Substring(LabelString.Length).Trim();
         }
 
         public LineItem(LineItem lineItem)
@@ -50,14 +55,15 @@ namespace AILZ80ASM
             FileInfo = lineItem.FileInfo;
             LineString = lineItem.LineString;
             LineIndex = lineItem.LineIndex;
+            LabelString = lineItem.LabelString;
             OperationString = lineItem.OperationString;
             CommentString = lineItem.CommentString;
             LineDetailItem = lineItem.LineDetailItem;
         }
 
-        public void SetLabelForMacro(string labelName)
+        public void SetLabel(string labelName)
         {
-            OperationString = labelName;
+            LabelString = labelName;
         }
 
         public void CreateLineDetailItem(AsmLoad asmLoad)

@@ -12,7 +12,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternError = @"^\s*#ERROR\s+""(?<message>.+)""$";
         public string Message { get; set; }
 
-        public LineDetailItemError(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemError(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
@@ -25,6 +25,12 @@ namespace AILZ80ASM
             // 開始条件チェック
             if (matched.Success)
             {
+                // ラベルが存在していたらエラー
+                if (!string.IsNullOrEmpty(lineItem.LabelString))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1032);
+                }
+
                 var lineDetailItemError = new LineDetailItemError(lineItem, asmLoad)
                 {
                     Message = matched.Groups["message"].Value
