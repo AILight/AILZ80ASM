@@ -16,18 +16,17 @@ namespace AILZ80ASM
         public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
 
-        public LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
+        protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
             LineItem = lineItem;
             // ラベルの処理をする
-            var labelName = Label.GetLabelText(lineItem.OperationString);
-            if (labelName.EndsWith("::"))
+            if (lineItem.LabelString.EndsWith("::"))
             {
-                asmLoad.GlobalLableName = labelName.Substring(0, labelName.Length - 2);
+                asmLoad.GlobalLableName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
             }
-            else if (labelName.EndsWith(":"))
+            else if (lineItem.LabelString.EndsWith(":"))
             {
-                asmLoad.LabelName = labelName.Substring(0, labelName.Length - 1);
+                asmLoad.LabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 1);
             }
 
             AsmLoad = asmLoad.Clone();
@@ -75,7 +74,9 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
-                lineDetailItem ??= new LineDetailItemOperation(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemOperation.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない
             }
             return lineDetailItem;
         }

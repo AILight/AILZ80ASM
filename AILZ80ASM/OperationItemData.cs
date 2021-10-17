@@ -6,14 +6,19 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class OperationItemData : IOperationItem
+    public class OperationItemData : OperationItem
     {
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
         private LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
+        private byte[] ItemDataBin { get; set; }
+        private AsmLength ItemDataLength { get; set; }
         private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
         private static readonly string RegexPatternDataString = @"^\""(?<string>.*)\""$";
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
+
+        public override byte[] Bin => ItemDataBin;
+        public override AsmLength Length => ItemDataLength;
 
         private enum DataTypeEnum
         {
@@ -26,7 +31,14 @@ namespace AILZ80ASM
 
         }
 
-        public static IOperationItem Parse(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        public new static bool CanCreate(string operation)
+        {
+            var matched = Regex.Match(operation, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var op1 = matched.Groups["op1"].Value.ToUpper();
+            return (new[] { "DB", "DW", "DS", "DBS", "DWS" }).Any(m => m == op1);
+        }
+
+        public static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemData);
             var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -86,7 +98,7 @@ namespace AILZ80ASM
                 ValueStrings = ops,
                 DataType = dataType,
                 Address = address,
-                Length = new AsmLength(ops.Length * (int)dataType),
+                ItemDataLength = new AsmLength(ops.Length * (int)dataType),
                 LineDetailExpansionItemOperation = lineDetailExpansionItemOperation
             };
         }
@@ -169,20 +181,14 @@ namespace AILZ80ASM
                 ValueStrings = valuesStrings,
                 DataType = dataType,
                 Address = address,
-                Length = new AsmLength(valuesStrings.Length * (int)dataType),
+                ItemDataLength = new AsmLength(valuesStrings.Length * (int)dataType),
                 LineDetailExpansionItemOperation = lineDetailExpansionItemOperation
             };
 
             return returnValue;
         }
 
-        public byte[] Bin { get; set; }
-
-        public AsmAddress Address { get; set; }
-
-        public AsmLength Length { get; set; }
-
-        public void Assemble(AsmLoad asmLoad)
+        public override void Assemble(AsmLoad asmLoad)
         {
             var byteList = new List<byte>();
             switch (DataType)
@@ -205,12 +211,14 @@ namespace AILZ80ASM
                     throw new InvalidOperationException(nameof(DataType));
             }
 
-            Bin = byteList.ToArray();
+            ItemDataBin = byteList.ToArray();
         }
 
+        /*
         private static bool IsString(string op2, string op3)
         {
             return string.IsNullOrEmpty(op2) && op3.StartsWith("\"") && op3.EndsWith("\"");
         }
+        */
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 
 namespace AILZ80ASM
 {
+    /*
     public interface IOperationItem
     {
         void Assemble(AsmLoad asmLoad);
@@ -12,4 +13,5 @@ namespace AILZ80ASM
         AsmAddress Address { get; }
         AsmLength Length { get;}
     }
+    */
 }

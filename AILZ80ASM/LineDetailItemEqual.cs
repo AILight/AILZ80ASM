@@ -8,10 +8,10 @@ namespace AILZ80ASM
 {
     public class LineDetailItemEqual : LineDetailItem
     {
-        private static readonly string RegexPatternEqual = @"^\s*(?<label>\.?[a-zA-Z0-9_]+:?)\s+equ\s+(?<value>.+)";
+        private static readonly string RegexPatternEqual = @"^equ\s+(?<value>.+)";
         private Label EqualLabel { get; set; }
 
-        public LineDetailItemEqual(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemEqual(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
@@ -22,10 +22,9 @@ namespace AILZ80ASM
             var matched = Regex.Match(lineItem.OperationString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
-                var labelName = matched.Groups["label"].Value;
                 var lableValue = matched.Groups["value"].Value.Trim();
 
-                var label = new Label(labelName, lableValue, asmLoad);
+                var label = new Label(lineItem.LabelString, lableValue, asmLoad);
                 if (label.Invalidate)
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);

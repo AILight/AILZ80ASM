@@ -9,16 +9,16 @@ namespace AILZ80ASM
     public class LineDetailItemConditional : LineDetailItem
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
-        private static readonly string RegexPatternRepeatIf = @"^\s*#IF\s+(?<condition>.+)$";
-        private static readonly string RegexPatternRepeatElIf = @"^\s*#ELIF\s+(?<condition>.+)$";
-        private static readonly string RegexPatternRepeatElse = @"^\s*#ELSE*$";
-        private static readonly string RegexPatternRepeatEnd = @"^\s*#ENDIF\s*$";
+        private static readonly string RegexPatternRepeatIf = @"^#IF\s+(?<condition>.+)$";
+        private static readonly string RegexPatternRepeatElIf = @"^#ELIF\s+(?<condition>.+)$";
+        private static readonly string RegexPatternRepeatElse = @"^#ELSE$";
+        private static readonly string RegexPatternRepeatEnd = @"^#ENDIF$";
 
         private readonly Dictionary<string, List<LineItem>> Conditions = new Dictionary<string, List<LineItem>>();
         private string ConditionKey { get; set; }
         private int ConditionalNestedCount { get; set; } = 0;
 
-        public LineDetailItemConditional(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemConditional(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
@@ -30,6 +30,15 @@ namespace AILZ80ASM
             var elifMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatElIf, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var elseMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatElse, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            // Conditionalでラベルが存在していたらエラー
+            if (ifMatched.Success || elifMatched.Success || elseMatched.Success || endMatched.Success)
+            {
+                if (!string.IsNullOrEmpty(lineItem.LabelString))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1024);
+                }
+            }
 
             // リピート処理中
             if (asmLoad.LineDetailItemForExpandItem is LineDetailItemConditional asmLoad_LineDetailItemConditional)

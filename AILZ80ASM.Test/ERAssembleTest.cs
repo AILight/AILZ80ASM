@@ -28,13 +28,38 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Conditional()
+        {
+            var errors = Assemble("Conditional.Z80");
+            Assert.AreEqual(errors.Length, 4);
+
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1022, 11, "Conditional.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 4, "Conditional.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 9, "Conditional.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 10, "Conditional.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_Conditional_Label()
+        {
+            var errors = Assemble("Conditional_Label.Z80");
+            Assert.AreEqual(errors.Length, 5);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 5, "Conditional_Label.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 9, "Conditional_Label.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 14, "Conditional_Label.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 16, "Conditional_Label.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 15, "Conditional_Label.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Error()
         {
             var errors = Assemble("Error.Z80");
 
-            Assert.AreEqual(errors.Length, 1);
+            Assert.AreEqual(errors.Length, 2);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 2, "Error.Z80", errors);
-            Assert.AreEqual(errors[0].ErrorMessage, "#ERROR:エラーテスト");
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1032, 3, "Error.Z80", errors);
+            Assert.AreEqual(errors[1].ErrorMessage, "#ERROR:エラーテスト");
         }
 
         [TestMethod]
@@ -42,10 +67,11 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Include.Z80");
 
-            Assert.AreEqual(errors.Length, 3);
+            Assert.AreEqual(errors.Length, 4);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E2002, 3, "Include.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E2003, 5, "Include.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 1, "Include_error.z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E2007, 6, "Include.Z80", errors);
         }
 
         [TestMethod]
@@ -74,6 +100,15 @@ namespace AILZ80ASM.Test
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1001, 34, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1004, 3, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1004, 5, "Macro.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_MacroCircularError()
+        {
+            var errors = Assemble("Macro_CircularError.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1008, 12, "Macro_CircularError.Z80", errors);
         }
 
         [TestMethod]

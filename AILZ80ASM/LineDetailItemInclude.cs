@@ -18,7 +18,7 @@ namespace AILZ80ASM
         public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
         public override byte[] Bin => FileType == FileTypeEnum.Text ? FileItem.Bin : base.Bin;
 
-        private static readonly string RegexPatternInclude = @"\s*include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
+        private static readonly string RegexPatternInclude = @"^include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
         private FileTypeEnum FileType { get; set; } = FileTypeEnum.Text;
         private string FileStart { get; set; }
         private string FileLength { get; set; }
@@ -58,6 +58,11 @@ namespace AILZ80ASM
             var matched = Regex.Match(lineItem.OperationString, RegexPatternInclude, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
+                if (!string.IsNullOrEmpty(lineItem.LabelString))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2007);
+                }
+
                 var filename = matched.Groups["Filename"].Value;
                 var fileTypeString = matched.Groups["Filetype"].Value;
                 var startAddressString = matched.Groups["StartAddress"].Value;

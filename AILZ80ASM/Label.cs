@@ -20,11 +20,11 @@ namespace AILZ80ASM
             ADDR,
         }
 
-        private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::";
-        private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):";
+        private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::(\s+|$)";
+        private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):(\s+|$)";
         private static readonly string RegexPatternEquLabel = @"(?<lable>(^\w+)):?";
-        private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))";
-        private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>([\$\w]+))";
+        private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))(\s+|$)";
+        private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>(.+))";
         private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
@@ -249,33 +249,5 @@ namespace AILZ80ASM
 
             return $"{asmLoad.GlobalLableName}:{labelName}";
         }
-
-        /*
-        /// <summary>
-        /// 引数を正規化する
-        /// </summary>
-        /// <param name="argument"></param>
-        /// <param name="asmLoad"></param>
-        /// <returns></returns>
-        public static string GetArgumentNormalization(string argument, AsmLoad asmLoad)
-        {
-            var resultValue = "";
-            var workValue = argument;
-            var regexResult = default(Match);
-
-            while ((regexResult = Regex.Match(workValue, RegexPatternArgumentLabel, RegexOptions.IgnoreCase | RegexOptions.Singleline)).Success)
-            {
-                var matchResult = regexResult.Groups["value"];
-                var longLabelName = GetLongLabelName(matchResult.Value, asmLoad);
-
-                resultValue += workValue.Substring(0, matchResult.Index);
-                resultValue += longLabelName;
-                workValue = workValue.Substring(matchResult.Index + matchResult.Length);
-            }
-            resultValue += workValue;
-
-            return resultValue;
-        }
-        */
     }
 }

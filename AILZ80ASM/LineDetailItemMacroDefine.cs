@@ -15,7 +15,7 @@ namespace AILZ80ASM
         private string[] MacroArgs { get; set; }
         private readonly List<LineItem> MacroLines = new List<LineItem>();
 
-        public LineDetailItemMacroDefine(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemMacroDefine(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
@@ -50,8 +50,7 @@ namespace AILZ80ASM
                 else
                 {
                     // ローカルラベル以外は使用禁止
-                    var lable = Label.GetLabelText(lineItem.OperationString);
-                    if (lable.EndsWith(":"))
+                    if (lineItem.LabelString.EndsWith(":"))
                     {
                         asmLoad.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E1006));
                     }

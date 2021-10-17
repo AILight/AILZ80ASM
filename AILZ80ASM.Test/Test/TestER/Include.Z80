@@ -3,3 +3,4 @@
 	include ".\Test\TestER\Include1.z80"		; ファイル無し
 	include ".\Test\TestER\Include_error.z80"	; アセンブルエラー
 	include ".\Test\TestER\Include.z80"			; 循環エラー
+LB:	include ".\Test\TestER\Include.z80"			; インクルードにはラベルが付けられない

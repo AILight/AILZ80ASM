@@ -4,10 +4,13 @@ using System.Text;
 
 namespace AILZ80ASM
 {
-    public class OperationItemOPCode : IOperationItem
+    public class OperationItemOPCode : OperationItem
     {
         private OPCodeResult OPCodeResult { get; set; }
         private LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
+
+        public override byte[] Bin => OPCodeResult.ToBin();
+        public override AsmLength Length => new AsmLength(OPCodeResult.OPCode.Length);
 
         private OperationItemOPCode(OPCodeResult opCodeResult, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)
         {
@@ -16,7 +19,24 @@ namespace AILZ80ASM
             Address = address;
         }
 
-        public static IOperationItem Parse(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        public new static bool CanCreate(string operation)
+        {
+            if (string.IsNullOrEmpty(operation))
+            {
+                //空文字もOperationItemOPCodeとして処理をする
+                return true;
+            }
+
+            var opCodeResult = OPCodeTable.GetOPCodeItem(operation);
+            if (opCodeResult != default)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemOPCode);
             var code = $"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}";
@@ -32,14 +52,10 @@ namespace AILZ80ASM
             return returnValue;
         }
 
-        public void Assemble(AsmLoad asmLoad)
+        public override void Assemble(AsmLoad asmLoad)
         {
             OPCodeResult.Assemble(LineDetailExpansionItemOperation, asmLoad);
         }
 
-        public byte[] Bin => OPCodeResult.ToBin();
-
-        public AsmAddress Address { get; set; }
-        public AsmLength Length => new AsmLength(OPCodeResult.OPCode.Length);
     }
 }

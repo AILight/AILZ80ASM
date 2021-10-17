@@ -51,9 +51,9 @@ end macro
 
 macro MACRO_IN_MACRO VRAM_ADDRESS, a11, a22
 
-	VRAMSET VRAM_ADDRESS
+	MAIN:VRAMSET VRAM_ADDRESS
 
-	TestArg a11, a22
+	main:TestArg a11, a22
 
 end macro
 
