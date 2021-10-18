@@ -90,7 +90,7 @@ namespace AILZ80ASM
         {
             if (asmLoad.LoadMacros.Any(m => this == m))
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E1008);
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E3008);
             }
 
             var lineDetailScopeItems = new List<LineDetailScopeItem>();
@@ -112,7 +112,7 @@ namespace AILZ80ASM
             {
                 if (arguments.Length != this.Args.Length)
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1004);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E3004);
                 }
 
                 // 引数の割り当て
@@ -121,7 +121,7 @@ namespace AILZ80ASM
                     var label = new Label(this.Args[index], arguments[index], macroAsmLoad, asmLoad);
                     if (label.Invalidate)
                     {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E1005);
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
                     }
                     // 引数で解決できるものは先行で処理する
                     label.SetArgument();

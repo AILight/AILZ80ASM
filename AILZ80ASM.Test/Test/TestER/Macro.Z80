@@ -3,6 +3,15 @@
 		TestArg1 1			; 引数不一致
 		TESTARG1 1, 2
 		TestArg1 1, 2, 3	; 引数不一致
+		ABC
+
+MACRO ABC
+		ld a,1
+END MACRO
+
+MACRO ABC
+		ld b,1
+END MACRO
 
 MACRO ALLLD
 		ld a,1

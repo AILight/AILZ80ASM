@@ -26,16 +26,7 @@ namespace AILZ80ASM
             E0009,
             E0012,
             E0013,
-
-            E1001,
-            E1002,
-            E1003,
-            E1004,
-            E1005,
-            E1006,
-            E1007,
-            E1008,
-            E1009,
+            E0014,
 
             E1011,
             E1012,
@@ -57,6 +48,17 @@ namespace AILZ80ASM
             E2005,
             E2006,
             E2007,
+            // マクロ
+            E3001,
+            E3002,
+            E3003,
+            E3004,
+            E3005,
+            E3006,
+            E3007,
+            E3008,
+            E3009,
+            E3010,
 
             W0001,
             I0001,
@@ -102,16 +104,8 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
             [ErrorCodeEnum.E0012] = "データの指定が間違っています。",
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
-            // マクロ
-            [ErrorCodeEnum.E1001] = "MACROに対応するEND MACROが見つかりませんでした。",
-            [ErrorCodeEnum.E1002] = "END MACROが先に見つかりました。",
-            [ErrorCodeEnum.E1003] = "MACROが重複登録されていますので、名前解決が出来ません。",
-            [ErrorCodeEnum.E1004] = "MACROの引数の数が一致していません。",
-            [ErrorCodeEnum.E1005] = "MACROの引数名が有効ではありません。{0}",
-            [ErrorCodeEnum.E1006] = "MACROでは、ローカルラベル以外は使えません。",
-            [ErrorCodeEnum.E1007] = "MACROの名前が有効ではありません。",
-            [ErrorCodeEnum.E1008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
-            [ErrorCodeEnum.E1009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
+            [ErrorCodeEnum.E0014] = "同名のラベルが既に指定されています。",
+
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
             [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",
@@ -136,6 +130,17 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E2005] = "Include 長さの指定が間違っています。",
             [ErrorCodeEnum.E2006] = "Include 開始アドレスがファイルの長さを超えています。",
             [ErrorCodeEnum.E2007] = "Include にはラベルを指定できません。",
+            // マクロ
+            [ErrorCodeEnum.E3001] = "MACROに対応するEND MACROが見つかりませんでした。",
+            [ErrorCodeEnum.E3002] = "END MACROが先に見つかりました。",
+            [ErrorCodeEnum.E3003] = "MACROが重複登録されていますので、名前解決が出来ません。",
+            [ErrorCodeEnum.E3004] = "MACROの引数の数が一致していません。",
+            [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。{0}",
+            [ErrorCodeEnum.E3006] = "MACROでは、ローカルラベル以外は使えません。",
+            [ErrorCodeEnum.E3007] = "MACROの名前が有効ではありません。",
+            [ErrorCodeEnum.E3008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
+            [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
+            [ErrorCodeEnum.E3010] = "同名のマクロが既に指定されています。",
 
             [ErrorCodeEnum.W0001] = "未定義",
             [ErrorCodeEnum.I0001] = "未定義"
