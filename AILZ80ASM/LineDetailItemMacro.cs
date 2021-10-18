@@ -40,7 +40,7 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1009, foundItem.Macro.FullName);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E3009, foundItem.Macro.FullName);
                 }
             }
 

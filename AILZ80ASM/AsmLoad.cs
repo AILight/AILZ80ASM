@@ -86,7 +86,7 @@ namespace AILZ80ASM
         {
             if (this.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
             {
-                this.Errors.Add(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1001));
+                this.Errors.Add(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E3001));
             }
 
             if (this.LineDetailItemForExpandItem is LineDetailItemRepeat)
@@ -102,6 +102,11 @@ namespace AILZ80ASM
 
         public void AddLabel(Label label)
         {
+            if (this.AllLables.Any(m => m.LongLabelName == label.LongLabelName))
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014);
+            }
+
             switch (ScopeMode)
             {
                 case ScopeModeEnum.Global:
