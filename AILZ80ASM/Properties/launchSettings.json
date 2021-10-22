@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "-i .\\Game\\Main.z80 .\\Game\\Char.z80 .\\Game\\ROM.z80 -o .\\Game\\Main.o"
+      "commandLineArgs": "-i .\\Game\\Main.z80 .\\Game\\Char.z80 .\\Game\\ROM.z80 -o .\\Game\\Main.o -s  .\\Game\\Main.sym"
     }
   }
 }

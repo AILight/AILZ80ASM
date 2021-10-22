@@ -125,6 +125,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_MacroInsideAssembleError()
+        {
+            var errors = Assemble("Macro_InsideAssembleError.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 8, "Macro_InsideAssembleError.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Repeat()
         {
             var errors = Assemble("Repeat.Z80");
@@ -140,7 +149,7 @@ namespace AILZ80ASM.Test
         {
             if (!errors.Any(m => m.ErrorCode == errorCode && m.LineItem.LineIndex == lineIndex && m.LineItem.FileInfo.Name == fileName))
             {
-                Assert.Fail($"エラーが見つかりませんでした。　ErrorCode:{errorCode} LineIndex:{lineIndex}");
+                Assert.Fail($"指定のエラーが見つかりませんでした。　ErrorCode:{errorCode} LineIndex:{lineIndex}");
             }
         }
     }

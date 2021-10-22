@@ -56,7 +56,7 @@ namespace AILZ80ASM.Test
 
             if (package.Errors.Length == 0)
             {
-                package.Save(assebledStream);
+                package.SaveBin(assebledStream);
             }
 
             return package.Errors;

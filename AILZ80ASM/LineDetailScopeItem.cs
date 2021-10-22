@@ -89,7 +89,14 @@ namespace AILZ80ASM
 
             foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
             {
-                lineDetailExpansionItem.Assemble(AsmLoad);
+                try
+                {
+                    lineDetailExpansionItem.Assemble(AsmLoad);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AsmLoad.Errors.Add(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
+                }
             }
         }
 
