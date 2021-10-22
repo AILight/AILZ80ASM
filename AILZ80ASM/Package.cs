@@ -141,24 +141,64 @@ namespace AILZ80ASM
             }
         }
 
-        public void Save(FileInfo output)
+        public void SaveBin(FileInfo output)
         {
             using var fileStream = output.OpenWrite();
 
-            Save(fileStream);
+            SaveBin(fileStream);
 
             fileStream.Close();
         }
 
-        public void Save(Stream stream)
+        public void SaveBin(Stream stream)
         {
             foreach (var item in FileItems)
             {
-                var bin = item.Bin;
-                if (bin.Length > 0)
-                {
-                    stream.Write(bin, 0, bin.Length);
-                }
+                item.SaveBin(stream);
+            }
+        }
+
+        public void SaveSymbol(FileInfo symbol)
+        {
+            using var fileStream = symbol.OpenWrite();
+
+            SaveSymbol(fileStream);
+
+            fileStream.Close();
+        }
+
+        public void SaveSymbol(Stream stream)
+        {
+            using var streamWriter = new StreamWriter(stream);
+
+            foreach (var label in AssembleLoad.AllLables.Where(m => m.HasValue))
+            {
+                streamWriter.WriteLine($"{label.Value:X4} {label.LabelName}");
+            }
+            foreach (var label in AssembleLoad.AllLables.Where(m => m.HasValue))
+            {
+                streamWriter.WriteLine($"{label.Value:X4} {label.LongLabelName}");
+            }
+        }
+
+        public void SaveList(FileInfo list)
+        {
+            using var fileStream = list.OpenWrite();
+
+            SaveList(fileStream);
+
+            fileStream.Close();
+        }
+
+        public void SaveList(Stream stream)
+        {
+            using var streamWriter = new StreamWriter(stream);
+
+            streamWriter.WriteLine($"{new string(' ', 24)}{ProductInfo.ProductLongName}");
+
+            foreach (var item in FileItems)
+            {
+                item.SaveList(stream);
             }
         }
 

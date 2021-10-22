@@ -96,7 +96,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
             [ErrorCodeEnum.E0003] = "相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。",
-            [ErrorCodeEnum.E0004] = "演算に失敗しました。{0}",
+            [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。{0}",
             [ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
             [ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
             [ErrorCodeEnum.E0007] = "8進数の変換に失敗しました。",

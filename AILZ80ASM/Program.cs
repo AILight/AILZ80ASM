@@ -12,16 +12,30 @@ namespace AILZ80ASM
         {
             var rootCommand = new RootCommand(
               description: "AILight Z80 Assember.");
+            
             var inputOption = new Option(
               aliases: new string[] { "--input", "-i" }
               , description: "アセンブリ対象のファイルをカンマ区切りで指定します。")
                 { Argument = new Argument<FileInfo[]>() };
             rootCommand.AddOption(inputOption);
+
             var outputOption = new Option(
               aliases: new string[] { "--output", "-o" }
               , description: "出力ファイルを指定します。")
                 { Argument = new Argument<FileInfo>() };
             rootCommand.AddOption(outputOption);
+
+            var symbolOption = new Option(
+              aliases: new string[] { "--symbol", "-s" }
+              , description: "シンボルファイルを指定します。")
+                { Argument = new Argument<FileInfo>(), IsRequired = false };
+            rootCommand.AddOption(symbolOption);
+
+            var listOption = new Option(
+              aliases: new string[] { "--list", "-l" }
+              , description: "リストファイルを指定します。")
+                { Argument = new Argument<FileInfo>(), IsRequired = false };
+            rootCommand.AddOption(listOption);
 
             try
             {
@@ -29,7 +43,7 @@ namespace AILZ80ASM
 
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
                 rootCommand.Handler =
-                  CommandHandler.Create<FileInfo[], FileInfo>(Assember);
+                  CommandHandler.Create<FileInfo[], FileInfo, FileInfo, FileInfo>(Assember);
 
                 return await rootCommand.InvokeAsync(args);
             }
@@ -46,7 +60,7 @@ namespace AILZ80ASM
         /// <param name="input"></param>
         /// <param name="output"></param>
         static public void Assember(
-          FileInfo[] input, FileInfo output)
+          FileInfo[] input, FileInfo output, FileInfo symbol, FileInfo list)
         {
             try
             {
@@ -66,10 +80,18 @@ namespace AILZ80ASM
                     package.Assemble();
                     if (package.Errors.Length == 0)
                     {
-                        package.Save(output);
+                        package.SaveBin(output);
                     }
                 }
                 package.OutputError();
+                if (symbol != default)
+                {
+                    package.SaveSymbol(symbol);
+                }
+                if (list != default)
+                {
+                    package.SaveList(list);
+                }
             }
             catch (Exception ex)
             {
@@ -79,8 +101,8 @@ namespace AILZ80ASM
 
         private static void OutputStart()
         {
-            Console.WriteLine($"*** AILZ80ASM *** Z-80 Assembler, .NET Core version {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
-            Console.WriteLine($"Copyright (C) {DateTime.Today.Year:0} by M.Ishino (AILight)");
+            Console.WriteLine(ProductInfo.ProductLongName);
+            Console.WriteLine(ProductInfo.Copyright);
         }
     }
 }

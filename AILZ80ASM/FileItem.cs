@@ -170,5 +170,28 @@ namespace AILZ80ASM
             }
         }
 
+        /// <summary>
+        /// バイナリーを保存
+        /// </summary>
+        /// <param name="stream"></param>
+        public void SaveBin(Stream stream)
+        {
+            var bin = this.Bin;
+            if (bin.Length > 0)
+            {
+                stream.Write(bin, 0, bin.Length);
+            }
+
+        }
+
+        /// <summary>
+        /// リストファイルを保存
+        /// </summary>
+        /// <param name="stream"></param>
+        public void SaveList(Stream stream)
+        {
+            using var streamWriter = new StreamWriter(stream);
+
+        }
     }
 }
