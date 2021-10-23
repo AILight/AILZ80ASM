@@ -102,5 +102,9 @@ namespace AILZ80ASM
             LineDetailItem.Assemble();
         }
 
+        public void SaveList(StreamWriter streamWriter)
+        {
+            LineDetailItem.SaveList(streamWriter);
+        }
     }
 }

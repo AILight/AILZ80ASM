@@ -83,17 +83,15 @@ namespace AILZ80ASM
 
         private static void ProcessAsmLoad(LineItem lineItem, AsmLoad asmLoad)
         {
-            var labelMatched = Regex.Match(lineItem.OperationString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (labelMatched.Success)
+            if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
-                var label = labelMatched.Groups["label"].Value;
-                if (label.EndsWith("::"))
+                if (lineItem.LabelString.EndsWith("::"))
                 {
-                    asmLoad.GlobalLableName = label.Substring(0, label.Length - 2);
+                    asmLoad.GlobalLableName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
                 }
-                else if (label.EndsWith(":"))
+                else if (lineItem.LabelString.EndsWith(":"))
                 {
-                    asmLoad.LabelName = label.Substring(0, label.Length - 1);
+                    asmLoad.LabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 1);
                 }
             }
         }
@@ -156,6 +154,21 @@ namespace AILZ80ASM
             foreach (var item in LineDetailScopeItems)
             {
                 item.Assemble();
+            }
+        }
+
+        public virtual void SaveList(StreamWriter streamWriter)
+        {
+            // 仮コード
+            if (LineDetailScopeItems != default && LineDetailScopeItems.Length == 1 &&
+                LineDetailScopeItems[0].LineDetailExpansionItems != default && LineDetailScopeItems[0].LineDetailExpansionItems.Length == 1)
+            {
+                var item = LineDetailScopeItems[0].LineDetailExpansionItems[0];
+                streamWriter.WriteLineItem(item.Address, item.Bin, "", LineItem);
+            }
+            else
+            {
+                streamWriter.WriteLineItem(LineItem);
             }
         }
 

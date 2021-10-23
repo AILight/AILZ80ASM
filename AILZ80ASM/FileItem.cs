@@ -188,10 +188,16 @@ namespace AILZ80ASM
         /// リストファイルを保存
         /// </summary>
         /// <param name="stream"></param>
-        public void SaveList(Stream stream)
+        public void SaveList(StreamWriter streamWriter)
         {
-            using var streamWriter = new StreamWriter(stream);
+            streamWriter.WriteLineFileInfoBOF(FileInfo);
 
+            foreach (var item in Items)
+            {
+                item.SaveList(streamWriter);
+            }
+            
+            streamWriter.WriteLineFileInfoEOF(FileInfo);
         }
     }
 }

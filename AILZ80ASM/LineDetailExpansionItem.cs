@@ -36,7 +36,11 @@ namespace AILZ80ASM
             Label?.SetValueAndAddress(Address, asmLoad);
         }
 
-        public virtual void Assemble( AsmLoad asmLoad)
+        public virtual void Assemble(AsmLoad asmLoad)
+        {
+        }
+
+        public virtual void SaveList(StreamWriter streamWriter)
         {
         }
     }

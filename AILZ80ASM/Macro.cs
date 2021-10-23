@@ -106,7 +106,6 @@ namespace AILZ80ASM
             var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
             var guid = $"{Guid.NewGuid():N}";
             macroAsmLoad.GlobalLableName = $"macro_{this.Name}_{guid}";
-            macroAsmLoad.LabelName = $"label_{this.Name}_{guid}";
 
             if (arguments.Length > 0)
             {
@@ -128,6 +127,8 @@ namespace AILZ80ASM
                     macroAsmLoad.AddLabel(label);
                 }
             }
+            macroAsmLoad.LabelName = $"label_{this.Name}_{guid}";
+
             // LineItemsを作成
             var lineItems = this.LineItems.Select(m =>
                 {

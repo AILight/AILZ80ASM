@@ -100,5 +100,15 @@ namespace AILZ80ASM
             }
         }
 
+        public virtual void SaveList(StreamWriter streamWriter)
+        {
+            if (LineDetailExpansionItems == default)
+                return;
+
+            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            {
+                lineDetailExpansionItem.SaveList(streamWriter);
+            }
+        }
     }
 }

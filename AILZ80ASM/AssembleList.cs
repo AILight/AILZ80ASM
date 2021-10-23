@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AILZ80ASM
@@ -11,23 +12,47 @@ namespace AILZ80ASM
     {
         //private static int AddressLength = 8
 
-        /*
-        public static async Task WriteFileInfoAsync(this StreamWriter streamWriter, FileItem fileItem)
+        public static void WriteLineFileInfoBOF(this StreamWriter streamWriter, FileInfo fileInfo)
         {
+            streamWriter.WriteLineString($"BOF:{fileInfo.Name}");
         }
 
-        private static async Task WriteTextAsync(string text    , StreamWriter streamWriter)
+        public static void WriteLineFileInfoEOF(this StreamWriter streamWriter, FileInfo fileInfo)
         {
-
+            streamWriter.WriteLineString($"EOF:{fileInfo.Name}");
         }
 
-        private static async Task WriteAsync(AsmAddress asmAdddress, byte[] bin, string source, StreamWriter streamWriter)
+        public static void WriteLineItem(this StreamWriter streamWriter, LineItem lineItem)
         {
-            var address = $"{asmAdddress.Output:X8} {asmAdddress.Program:X4}";
-            var binString = string.Concat(bin.Select(m => $"{m:X2}"));
-
-            await streamWriter.WriteLineAsync(address, )
+            streamWriter.WriteLineString(lineItem.LineString);
         }
-        */
+
+        public static void WriteLineString(this StreamWriter streamWriter, string target)
+        {
+            streamWriter.WriteLineInternal("", "", "", "", target);
+        }
+
+        public static void WriteLineItem(this StreamWriter streamWriter, AsmAddress asmAdddress, byte[] bin, string status, LineItem lineItem)
+        {
+            streamWriter.WriteLineInternal($"{asmAdddress.Output:X6}", $"{asmAdddress.Program:X4}", string.Concat(bin.Select(m => $"{m:X2}")), status, lineItem.LineString);
+        }
+
+        private static void WriteLineInternal(this StreamWriter streamWriter, string address1, string address2, string binary, string status, string source)
+        {
+            foreach (var item in Regex.Split(binary, @"(?<=\G.{16})(?!$)"))
+            {
+                address1 = address1.PadLeft(6);
+                address2 = address2.PadLeft(4);
+                status = status.PadLeft(3);
+                var binaryString = item.PadRight(16);
+
+                streamWriter.WriteLine($"{address1} {address2} {binaryString}{status} {source}");
+                // クリアする
+                address1 = "";
+                address2 = "";
+                status = "";
+                source = "";
+            }
+        }
     }
 }
