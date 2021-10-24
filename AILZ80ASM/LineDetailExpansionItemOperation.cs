@@ -24,6 +24,14 @@ namespace AILZ80ASM
             } 
         }
 
+        public override AsmList List
+        { 
+            get
+            {
+                return OperationItem == default(OperationItem) ? AsmList.CreateLineItem(this.LineItem) : OperationItem.List;
+            }
+        }
+
         public LineDetailExpansionItemOperation(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem)
         {

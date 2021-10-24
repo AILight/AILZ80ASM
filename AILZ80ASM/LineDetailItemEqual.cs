@@ -9,7 +9,17 @@ namespace AILZ80ASM
     public class LineDetailItemEqual : LineDetailItem
     {
         private static readonly string RegexPatternEqual = @"^equ\s+(?<value>.+)";
-        private Label EqualLabel { get; set; }
+        private Label EquLabel { get; set; }
+        public override AsmList[] Lists
+        {
+            get 
+            {
+                return new []
+                {
+                    AsmList.CreateLineItemEqual(EquLabel, this.LineItem)
+                };
+            }
+        }
 
         private LineDetailItemEqual(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -33,7 +43,7 @@ namespace AILZ80ASM
                 label.SetValue(asmLoad);
                 asmLoad.AddLabel(label);
 
-                return new LineDetailItemEqual(lineItem, asmLoad);
+                return new LineDetailItemEqual(lineItem, asmLoad) { EquLabel = label };
             }
 
             return default;
@@ -45,7 +55,7 @@ namespace AILZ80ASM
             {
                 new LineDetailScopeItem(AsmLoad)
                 {
-                    LineDetailExpansionItems = new [] { new LineDetailExpansionItem(this.LineItem) { Label = EqualLabel } }
+                    LineDetailExpansionItems = new [] { new LineDetailExpansionItem(this.LineItem) }
                 }
             };
 

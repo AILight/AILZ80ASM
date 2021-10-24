@@ -194,7 +194,7 @@ namespace AILZ80ASM
 
         public void SaveList(StreamWriter streamWriter)
         {
-            streamWriter.WriteLineString($"{ProductInfo.ProductLongName}");
+            streamWriter.WriteLine(AsmList.CreateSource($"{ProductInfo.ProductLongName}").ToString());
 
             foreach (var item in FileItems)
             {

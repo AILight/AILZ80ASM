@@ -12,6 +12,7 @@ namespace AILZ80ASM
 
         public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
         public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();
+        public AsmList[] Lists => LineDetailExpansionItems.Select(m => m.List).ToArray();
 
         public LineDetailScopeItem(AsmLoad asmLoad)
         {
@@ -97,17 +98,6 @@ namespace AILZ80ASM
                 {
                     AsmLoad.Errors.Add(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
                 }
-            }
-        }
-
-        public virtual void SaveList(StreamWriter streamWriter)
-        {
-            if (LineDetailExpansionItems == default)
-                return;
-
-            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
-            {
-                lineDetailExpansionItem.SaveList(streamWriter);
             }
         }
     }

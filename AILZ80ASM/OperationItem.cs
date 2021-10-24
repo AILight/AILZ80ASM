@@ -15,7 +15,17 @@ namespace AILZ80ASM
 
         public AsmAddress Address { get; protected set; }
 
+        public LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
+
         public virtual byte[] Bin => throw new NotImplementedException();
+
+        public virtual AsmList List
+        {
+            get
+            {
+                return AsmList.CreateLineItem(Address, Bin, "", LineDetailExpansionItemOperation.LineItem);
+            }
+        }
 
         public virtual AsmLength Length => throw new NotImplementedException();
 

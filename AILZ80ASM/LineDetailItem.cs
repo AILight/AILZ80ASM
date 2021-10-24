@@ -8,12 +8,13 @@ namespace AILZ80ASM
 {
     public abstract class LineDetailItem
     {
-        private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
+        //private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
         public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad {get;set; }
 
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
+        public virtual AsmList[] Lists => LineDetailScopeItems == default ? Array.Empty<AsmList>() : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
 
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
@@ -156,21 +157,5 @@ namespace AILZ80ASM
                 item.Assemble();
             }
         }
-
-        public virtual void SaveList(StreamWriter streamWriter)
-        {
-            // 仮コード
-            if (LineDetailScopeItems != default && LineDetailScopeItems.Length == 1 &&
-                LineDetailScopeItems[0].LineDetailExpansionItems != default && LineDetailScopeItems[0].LineDetailExpansionItems.Length == 1)
-            {
-                var item = LineDetailScopeItems[0].LineDetailExpansionItems[0];
-                streamWriter.WriteLineItem(item.Address, item.Bin, "", LineItem);
-            }
-            else
-            {
-                streamWriter.WriteLineItem(LineItem);
-            }
-        }
-
     }
 }

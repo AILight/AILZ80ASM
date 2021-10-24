@@ -11,6 +11,13 @@ namespace AILZ80ASM
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
         public override byte[] Bin => ItemDataBin;
+        public override AsmList List
+        {
+            get
+            {
+                return AsmList.CreateLineItemORG(Address, Length, LineDetailExpansionItemOperation.LineItem);
+            }
+        }
         public override AsmLength Length => ItemDataLength;
 
         private OperationItemSystem()
@@ -54,7 +61,7 @@ namespace AILZ80ASM
                         bytes = new byte[length.Output];
                     }
 
-                    returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes };
+                    returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
                     break;
                 default:
                     break;

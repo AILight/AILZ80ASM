@@ -10,7 +10,6 @@ namespace AILZ80ASM
     {
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
-        private LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
         private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
@@ -18,6 +17,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
 
         public override byte[] Bin => ItemDataBin;
+
         public override AsmLength Length => ItemDataLength;
 
         private enum DataTypeEnum
@@ -213,12 +213,5 @@ namespace AILZ80ASM
 
             ItemDataBin = byteList.ToArray();
         }
-
-        /*
-        private static bool IsString(string op2, string op3)
-        {
-            return string.IsNullOrEmpty(op2) && op3.StartsWith("\"") && op3.EndsWith("\"");
-        }
-        */
     }
 }
