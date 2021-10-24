@@ -94,6 +94,21 @@ namespace AILZ80ASM
             }
         }
 
+        public AsmList[] Lists
+        {
+            get
+            {
+                var lists = new List<AsmList>();
+
+                foreach (var item in Items)
+                {
+                    lists.AddRange(item.Lists);
+                }
+
+                return lists.ToArray();
+            }
+        }
+
         public void BuildAddressLabel()
         {
             foreach (var item in Items)
@@ -188,10 +203,16 @@ namespace AILZ80ASM
         /// リストファイルを保存
         /// </summary>
         /// <param name="stream"></param>
-        public void SaveList(Stream stream)
+        public void SaveList(StreamWriter streamWriter)
         {
-            using var streamWriter = new StreamWriter(stream);
+            streamWriter.WriteLine(AsmList.CreateFileInfoBOF(FileInfo).ToString());
 
+            foreach (var list in this.Lists)
+            {
+                streamWriter.WriteLine(list.ToString());
+            }
+
+            streamWriter.WriteLine(AsmList.CreateFileInfoEOF(FileInfo).ToString());
         }
     }
 }

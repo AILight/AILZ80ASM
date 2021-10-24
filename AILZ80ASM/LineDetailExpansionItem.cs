@@ -26,6 +26,14 @@ namespace AILZ80ASM
             }
         }
 
+        public virtual AsmList List
+        {
+            get
+            {
+                return default(AsmList);
+            }
+        }
+
         public virtual void PreAssemble(ref AsmAddress asmAddress, AsmLoad asmLoad)
         {
             Address = asmAddress;
@@ -36,7 +44,7 @@ namespace AILZ80ASM
             Label?.SetValueAndAddress(Address, asmLoad);
         }
 
-        public virtual void Assemble( AsmLoad asmLoad)
+        public virtual void Assemble(AsmLoad asmLoad)
         {
         }
     }

@@ -13,7 +13,7 @@ ADDR:
 	REPEAT_TEST
 	MACRO_IN_MACRO ADDR, 0, 1
 	READ_LABEL
-	REPEAT_JR
+	REPEAT_JR 3
 
 MACRO ALLLD
 	ld a,1
@@ -64,9 +64,12 @@ macro READ_LABEL
 
 end macro
 
-macro REPEAT_JR
+macro REPEAT_JR TEST
 
+	ld	a, TEST
 	jr nz, .lp
+	
+	MAIN:READ_LABEL
 
 REPEAT 2
         xor     a	

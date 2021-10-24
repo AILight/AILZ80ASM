@@ -7,9 +7,15 @@ namespace AILZ80ASM
     public class OperationItemOPCode : OperationItem
     {
         private OPCodeResult OPCodeResult { get; set; }
-        private LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
 
         public override byte[] Bin => OPCodeResult.ToBin();
+        public override AsmList List
+        {
+            get
+            {
+                return AsmList.CreateLineItem(Address, Bin, OPCodeResult.T == 0 ? "" : OPCodeResult.T.ToString(), LineDetailExpansionItemOperation.LineItem);
+            }
+        }
         public override AsmLength Length => new AsmLength(OPCodeResult.OPCode.Length);
 
         private OperationItemOPCode(OPCodeResult opCodeResult, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)

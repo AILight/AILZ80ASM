@@ -15,13 +15,13 @@ namespace AILZ80ASM
         public string LineString { get; private set; }
         public int LineIndex { get; private set; }
         public byte[] Bin => LineDetailItem.Bin;
+        public AsmList[] Lists => LineDetailItem.Lists;
 
         // 展開情報
         public string LabelString { get; private set; }
         public string OperationString { get; private set; }
         public string CommentString { get; private set; }
         public LineDetailItem LineDetailItem { get; private set; }
-
 
         public LineItem(string lineString, int lineIndex, FileInfo fileInfo)
         {
@@ -101,6 +101,5 @@ namespace AILZ80ASM
         {
             LineDetailItem.Assemble();
         }
-
     }
 }

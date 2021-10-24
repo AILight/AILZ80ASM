@@ -8,12 +8,13 @@ namespace AILZ80ASM
 {
     public abstract class LineDetailItem
     {
-        private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
+        //private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
         public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad {get;set; }
 
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
+        public virtual AsmList[] Lists => LineDetailScopeItems == default ? Array.Empty<AsmList>() : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
 
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
@@ -83,17 +84,15 @@ namespace AILZ80ASM
 
         private static void ProcessAsmLoad(LineItem lineItem, AsmLoad asmLoad)
         {
-            var labelMatched = Regex.Match(lineItem.OperationString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (labelMatched.Success)
+            if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
-                var label = labelMatched.Groups["label"].Value;
-                if (label.EndsWith("::"))
+                if (lineItem.LabelString.EndsWith("::"))
                 {
-                    asmLoad.GlobalLableName = label.Substring(0, label.Length - 2);
+                    asmLoad.GlobalLableName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
                 }
-                else if (label.EndsWith(":"))
+                else if (lineItem.LabelString.EndsWith(":"))
                 {
-                    asmLoad.LabelName = label.Substring(0, label.Length - 1);
+                    asmLoad.LabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 1);
                 }
             }
         }
@@ -158,6 +157,5 @@ namespace AILZ80ASM
                 item.Assemble();
             }
         }
-
     }
 }
