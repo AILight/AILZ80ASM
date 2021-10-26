@@ -20,11 +20,11 @@ namespace AILZ80ASM
             ADDR,
         }
 
-        private static readonly string RegexPatternGlobalLabel = @"(?<lable>(^\w+))::(\s+|$)";
-        private static readonly string RegexPatternLabel = @"(?<lable>(^\w+)):(\s+|$)";
-        private static readonly string RegexPatternEquLabel = @"(?<lable>(^\w+)):?";
-        private static readonly string RegexPatternSubLabel = @"(?<lable>(^\.\w+))(\s+|$)";
-        private static readonly string RegexPatternValueLable = @"(?<lable>(^\w+))\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternGlobalLabel = @"(?<label>(^\w+))::(\s+|$)";
+        private static readonly string RegexPatternLabel = @"(?<label>(^\w+)):(\s+|$)";
+        private static readonly string RegexPatternEquLabel = @"(?<label>(^\w+)):?";
+        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.\w+))(\s+|$)";
+        private static readonly string RegexPatternValueLabel = @"(?<label>(^\w+))\s+equ\s+(?<value>(.+))";
         private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
@@ -44,7 +44,7 @@ namespace AILZ80ASM
 
         public Label(string labelName, string valueString, AsmLoad asmLoad)
         {
-            GlobalLabelName = asmLoad.GlobalLableName;
+            GlobalLabelName = asmLoad.GlobalLabelName;
             LabelName = asmLoad.LabelName;
             DataType = DataTypeEnum.None;
 
@@ -61,29 +61,29 @@ namespace AILZ80ASM
             {
                 DataType = DataTypeEnum.ProcessingForValue;
 
-                var matchedGlobalLable = Regex.Match(labelName, RegexPatternGlobalLabel, RegexOptions.Singleline);
-                if (matchedGlobalLable.Success)
+                var matchedGlobalLabel = Regex.Match(labelName, RegexPatternGlobalLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matchedGlobalLabel.Success)
                 {
                     // グローバルラベル
-                    GlobalLabelName = matchedGlobalLable.Groups["lable"].Value;
-                    asmLoad.GlobalLableName = GlobalLabelName;
+                    GlobalLabelName = matchedGlobalLabel.Groups["label"].Value;
+                    asmLoad.GlobalLabelName = GlobalLabelName;
                 }
                 else
                 {
                     // valueStringが空の場合、通常ラベル、値が設定されている場合にはEquLabel
-                    var matchedLable = Regex.Match(labelName,string.IsNullOrEmpty(valueString) ? RegexPatternLabel : RegexPatternEquLabel, RegexOptions.Singleline);
-                    if (matchedLable.Success)
+                    var matchedLabel = Regex.Match(labelName,string.IsNullOrEmpty(valueString) ? RegexPatternLabel : RegexPatternEquLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                    if (matchedLabel.Success)
                     {
                         // ラベル
-                        LabelName = matchedLable.Groups["lable"].Value;
+                        LabelName = matchedLabel.Groups["label"].Value;
                         asmLoad.LabelName = LabelName;
                     }
                     else
                     {
-                        var matchedSubLable = Regex.Match(labelName, RegexPatternSubLabel, RegexOptions.Singleline);
-                        if (matchedSubLable.Success)
+                        var matchedSubLabel = Regex.Match(labelName, RegexPatternSubLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                        if (matchedSubLabel.Success)
                         {
-                            SubLabelName = matchedSubLable.Groups["lable"].Value.Substring(1);
+                            SubLabelName = matchedSubLabel.Groups["label"].Value.Substring(1);
                         }
                     }
                 }
@@ -116,13 +116,10 @@ namespace AILZ80ASM
             if (this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
-            try
+            if (AIMath.TryParse<UInt16>(ValueString, GlobalLabelName, LabelName, asmLoad, out var value))
             {
-                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, asmLoad);
+                Value = value;
                 this.DataType = DataTypeEnum.Value;
-            }
-            catch
-            {
             }
         }
 
@@ -134,13 +131,10 @@ namespace AILZ80ASM
             if (string.IsNullOrEmpty(ValueString))
                 return;
 
-            try
+            if (AIMath.TryParse<UInt16>(ValueString, AsmLoadForArgmument, out var value))
             {
-                Value = AIMath.ConvertToUInt16(ValueString, AsmLoadForArgmument);
+                Value = value;
                 this.DataType = DataTypeEnum.Value;
-            }
-            catch
-            {
             }
         }
 
@@ -153,13 +147,10 @@ namespace AILZ80ASM
             if (string.IsNullOrEmpty(ValueString))
                 return;
 
-            try
+            if (AIMath.TryParse<UInt16>(ValueString, GlobalLabelName, LabelName, asmLoad, address, out var value))
             {
-                Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, asmLoad);
+                Value = value;
                 this.DataType = DataTypeEnum.Value;
-            }
-            catch
-            {
             }
         }
 
@@ -191,7 +182,10 @@ namespace AILZ80ASM
                 case DataTypeEnum.ADDR:
                     break;
                 case DataTypeEnum.Value:
-                    Value = AIMath.ConvertToUInt16(ValueString, GlobalLabelName, LabelName, address, asmLoad);
+                    if (AIMath.TryParse<UInt16>(ValueString, GlobalLabelName, LabelName, asmLoad, address, out var value))
+                    {
+                        Value = value;
+                    }
                     break;
                 default:
                     break;
@@ -201,25 +195,25 @@ namespace AILZ80ASM
         
         public static string GetLabelText(string lineString)
         {
-            var matchedGlobalLable = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline);
-            if (matchedGlobalLable.Success)
+            var matchedGlobalLabel = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedGlobalLabel.Success)
             {
-                return matchedGlobalLable.Groups["lable"].Value + "::";
+                return matchedGlobalLabel.Groups["label"].Value + "::";
             }
-            var matchedLable = Regex.Match(lineString, RegexPatternLabel, RegexOptions.Singleline);
-            if (matchedLable.Success)
+            var matchedLabel = Regex.Match(lineString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedLabel.Success)
             {
-                return matchedLable.Groups["lable"].Value + ":";
+                return matchedLabel.Groups["label"].Value + ":";
             }
-            var matchedSubLable = Regex.Match(lineString, RegexPatternSubLabel, RegexOptions.Singleline);
-            if (matchedSubLable.Success)
+            var matchedSubLabel = Regex.Match(lineString, RegexPatternSubLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedSubLabel.Success)
             {
-                return matchedSubLable.Groups["lable"].Value;
+                return matchedSubLabel.Groups["label"].Value;
             }
-            var matchedValueLable = Regex.Match(lineString, RegexPatternValueLable, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (matchedValueLable.Success)
+            var matchedValueLabel = Regex.Match(lineString, RegexPatternValueLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedValueLabel.Success)
             {
-                return matchedValueLable.Groups["lable"].Value;
+                return matchedValueLabel.Groups["label"].Value;
             }
 
             return "";
@@ -244,10 +238,10 @@ namespace AILZ80ASM
             var dotIndex = labelName.IndexOf(".");
             if (dotIndex == 0)
             {
-                return $"{asmLoad.GlobalLableName}:{asmLoad.LabelName}{labelName}";
+                return $"{asmLoad.GlobalLabelName}:{asmLoad.LabelName}{labelName}";
             }
 
-            return $"{asmLoad.GlobalLableName}:{labelName}";
+            return $"{asmLoad.GlobalLabelName}:{labelName}";
         }
     }
 }

@@ -34,7 +34,7 @@ namespace AILZ80ASM
             base.PreAssemble(ref asmAddress, asmLoad);
 
             var fileSize = (int)FileInfo.Length;
-            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : (int)AIMath.ConvertToUInt32(FileStart, asmLoad);
+            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : (int)AIMath.ConvertTo<UInt32>(FileStart, asmLoad);
             fileSize -= fileStart;
 
             if (fileSize < 0)
@@ -42,7 +42,7 @@ namespace AILZ80ASM
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2006);
             }    
 
-            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : (int)AIMath.ConvertToUInt32(FileLength, asmLoad);
+            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : (int)AIMath.ConvertTo<UInt32>(FileLength, asmLoad);
             if (readLength > fileSize)
             {
                 readLength = fileSize;

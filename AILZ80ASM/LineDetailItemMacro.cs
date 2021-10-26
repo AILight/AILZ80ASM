@@ -10,6 +10,27 @@ namespace AILZ80ASM
     {
         private Macro Macro { get; set; }
         private string[] Argmuments { get; set; }
+        public override AsmList[] Lists
+        {
+            get
+            {
+                var lists = new List<AsmList>();
+                lists.Add(AsmList.CreateLineItem(LineItem));
+
+                foreach (var item in this.LineDetailScopeItems)
+                {
+                    lists.AddRange(item.Lists);
+                }
+
+                // 先頭行は抜かす
+                foreach (var item in lists.Skip(1))
+                {
+                    item.PushNestedCodeType(AsmList.NestedCodeTypeEnum.Macro);
+                }
+
+                return lists.ToArray();
+            }
+        }
 
         private LineDetailItemMacro(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)

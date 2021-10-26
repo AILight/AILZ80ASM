@@ -32,9 +32,9 @@ namespace AILZ80ASM
             var matched = Regex.Match(lineItem.OperationString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
-                var lableValue = matched.Groups["value"].Value.Trim();
+                var labelValue = matched.Groups["value"].Value.Trim();
 
-                var label = new Label(lineItem.LabelString, lableValue, asmLoad);
+                var label = new Label(lineItem.LabelString, labelValue, asmLoad);
                 if (label.Invalidate)
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);

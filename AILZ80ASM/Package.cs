@@ -20,7 +20,7 @@ namespace AILZ80ASM
         {
             if (files != default && files.Length > 0)
             {
-                AssembleLoad.GlobalLableName = "main";
+                AssembleLoad.GlobalLabelName = "main";
             }
 
             foreach (var fileInfo in files)
@@ -39,7 +39,7 @@ namespace AILZ80ASM
             // 命令を展開する
             ExpansionItem();
 
-            // 値のラベルを処理する
+            // 命令展開後に値のラベルを処理する
             BuildValueLabel();
 
             // プレアセンブル
@@ -87,13 +87,13 @@ namespace AILZ80ASM
 
             do
             {
-                labelCount = AssembleLoad.AllLables.Count(m => m.HasValue);
-                foreach (var label in AssembleLoad.AllLables.Where(m => !m.HasValue))
+                labelCount = AssembleLoad.AllLabels.Count(m => m.HasValue);
+                foreach (var label in AssembleLoad.AllLabels.Where(m => !m.HasValue))
                 {
                     label.SetValue(AssembleLoad);
                 }
 
-            } while (labelCount != AssembleLoad.AllLables.Count(m => m.HasValue));
+            } while (labelCount != AssembleLoad.AllLabels.Count(m => m.HasValue));
 
             foreach (var fileItem in FileItems)
             {
@@ -110,13 +110,13 @@ namespace AILZ80ASM
 
             do
             {
-                labelCount = AssembleLoad.AllLables.Count(m => m.HasValue);
+                labelCount = AssembleLoad.AllLabels.Count(m => m.HasValue);
                 foreach (var fileItem in FileItems)
                 {
                     fileItem.BuildAddressLabel();
                 }
 
-            } while (labelCount != AssembleLoad.AllLables.Count(m => m.HasValue));
+            } while (labelCount != AssembleLoad.AllLabels.Count(m => m.HasValue));
         }
 
         /// <summary>
@@ -171,11 +171,11 @@ namespace AILZ80ASM
         {
             using var streamWriter = new StreamWriter(stream);
 
-            foreach (var label in AssembleLoad.AllLables.Where(m => m.HasValue))
+            foreach (var label in AssembleLoad.AllLabels.Where(m => m.HasValue))
             {
                 streamWriter.WriteLine($"{label.Value:X4} {label.LabelName}");
             }
-            foreach (var label in AssembleLoad.AllLables.Where(m => m.HasValue))
+            foreach (var label in AssembleLoad.AllLabels.Where(m => m.HasValue))
             {
                 streamWriter.WriteLine($"{label.Value:X4} {label.LongLabelName}");
             }

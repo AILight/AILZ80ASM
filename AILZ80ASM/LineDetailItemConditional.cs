@@ -125,9 +125,9 @@ namespace AILZ80ASM
             // リピート数が設定されているものを処理する
             foreach (var condition in Conditions.Keys)
             {
-                try
+                //try
                 {
-                    if (string.IsNullOrEmpty(condition) || AIMath.ConvertToBoolean(condition, AsmLoad))
+                    if (string.IsNullOrEmpty(condition) || AIMath.ConvertTo<bool>(condition, AsmLoad))
                     {
                         var lineItems = default(LineItem[]);
                         var lineDetailScopeItems = new List<LineDetailScopeItem>();
@@ -148,7 +148,7 @@ namespace AILZ80ASM
                         break;
                     }
                 }
-                catch
+                //catch
                 { 
                 }
             }

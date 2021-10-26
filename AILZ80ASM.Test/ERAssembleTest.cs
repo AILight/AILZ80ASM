@@ -139,10 +139,10 @@ namespace AILZ80ASM.Test
             var errors = Assemble("Repeat.Z80");
 
             Assert.AreEqual(errors.Length, 4);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E1011, 18, "Repeat.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1014, 7, "Repeat.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1015, 14, "Repeat.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1012, 16, "Repeat.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 14, "Repeat.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E1011, 18, "Repeat.Z80", errors);
         }
 
         private static void AssertErrorItemMessage(Error.ErrorCodeEnum errorCode, int lineIndex, string fileName, ErrorLineItem[] errors)

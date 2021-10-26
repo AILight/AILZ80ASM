@@ -41,7 +41,7 @@ namespace AILZ80ASM
             // 命令の切りだし
             if (!string.IsNullOrEmpty(lineItem.OperationString))
             {
-                var matchResult = Regex.Match(lineItem.OperationString, RegexPatternInstruction, RegexOptions.Singleline);
+                var matchResult = Regex.Match(lineItem.OperationString, RegexPatternInstruction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 if (matchResult.Success)
                 {
                     InstructionText = matchResult.Groups["Instruction"].Value;

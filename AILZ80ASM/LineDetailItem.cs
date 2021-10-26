@@ -23,7 +23,7 @@ namespace AILZ80ASM
             // ラベルの処理をする
             if (lineItem.LabelString.EndsWith("::"))
             {
-                asmLoad.GlobalLableName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
+                asmLoad.GlobalLabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
             }
             else if (lineItem.LabelString.EndsWith(":"))
             {
@@ -88,7 +88,7 @@ namespace AILZ80ASM
             {
                 if (lineItem.LabelString.EndsWith("::"))
                 {
-                    asmLoad.GlobalLableName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
+                    asmLoad.GlobalLabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
                 }
                 else if (lineItem.LabelString.EndsWith(":"))
                 {
