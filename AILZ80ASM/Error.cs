@@ -32,6 +32,7 @@ namespace AILZ80ASM
             E1012,
             E1013,
             E1014,
+            E1015,
 
             E1021,
             E1022,
@@ -111,6 +112,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",
             [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。",
             [ErrorCodeEnum.E1014] = "REPEATでは、ローカルラベルしか使えません。",
+            [ErrorCodeEnum.E1015] = "REPEATに指定した値が不正です。",
 
             // コンディショナル
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",

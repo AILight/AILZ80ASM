@@ -46,21 +46,21 @@ namespace AILZ80ASM
                 {
                     case ValueTypeEnum.IndexOffset:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue8 = AIMath.ConvertTo<byte>(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
                             var indexOffset = ConvertTo2BaseString(tmpValue8, 8);
                             OPCode = OPCode.Select(m => m.Replace("IIIIIIII", indexOffset)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.Value8:
                         {
-                            var tmpValue8 = AIMath.ConvertToByte(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue8 = AIMath.ConvertTo<byte>(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
                             var value8 = ConvertTo2BaseString(tmpValue8, 8);
                             OPCode = OPCode.Select(m => m.Replace("NNNNNNNN", value8)).ToArray();
                         }
                         break;
                     case ValueTypeEnum.e8:
                         {
-                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
                             var offsetAddress = tmpValue16 - lineDetailExpansionItemOperation.Address.Program - 2;
                             if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                             {
@@ -72,7 +72,7 @@ namespace AILZ80ASM
                         break;
                     case ValueTypeEnum.Value16:
                         {
-                            var tmpValue16 = AIMath.ConvertToUInt16(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(opCodeLabel.ValueString, lineDetailExpansionItemOperation, asmLoad);
                             var tmpValue16String = ConvertTo2BaseString(tmpValue16, 16);
                             var value16 = new[] { "", "" };
                             value16[0] = tmpValue16String.Substring(0, 8);

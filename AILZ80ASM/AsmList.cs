@@ -10,10 +10,17 @@ namespace AILZ80ASM
 {
     public class AsmList
     {
+        public enum NestedCodeTypeEnum
+        {
+            Macro,
+            Repeat,
+        }
+
         public UInt32? OutputAddress { get; set; }
         public UInt16? ProgramAddress { get; set; }
         public byte[] Bin { get; set; }
         public string Status { get; set; }
+        public Stack<NestedCodeTypeEnum> NestedCodeTypes { get; set; }
         public string Source { get; set; }
 
         private AsmList()
@@ -76,6 +83,7 @@ namespace AILZ80ASM
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
             var address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
             var binary = Bin != default ? string.Concat(Bin.Select(m => $"{m:X2}")) : "";
+            var codeType = "";
             var status = this.Status;
             var source = this.Source;
             if (this.Bin != default && this.Bin.Length > 16)
@@ -86,6 +94,10 @@ namespace AILZ80ASM
                     binary = $"{startBin:X2} LEN:{this.Bin.Length}";
                 }
             }
+            if (NestedCodeTypes != default && NestedCodeTypes.Count > 0)
+            {
+                codeType = "+";
+            }
 
             var results = new List<string>();
 
@@ -93,10 +105,11 @@ namespace AILZ80ASM
             {
                 address1 = address1.PadLeft(6);
                 address2 = address2.PadLeft(4);
-                status = status.PadLeft(3);
+                status = status.PadLeft(2);
+                codeType = codeType.PadLeft(1);
                 var binaryString = item.PadRight(16);
 
-                results.Add($"{address1} {address2} {binaryString}{status} {source}");
+                results.Add($"{address1} {address2} {binaryString}{status} {codeType}{source}");
                 // クリアする
                 address1 = "";
                 address2 = "";
@@ -105,5 +118,20 @@ namespace AILZ80ASM
             }
             return string.Join(Environment.NewLine, results);
         }
+
+        /// <summary>
+        /// 展開されるコードのタイプを設定
+        /// </summary>
+        /// <param name="codeType"></param>
+        public void PushNestedCodeType(NestedCodeTypeEnum nestedCodeTypeEnum)
+        {
+            if (NestedCodeTypes == default)
+            {
+                NestedCodeTypes = new Stack<NestedCodeTypeEnum>();
+            }
+
+            NestedCodeTypes.Push(nestedCodeTypeEnum);
+        }
+
     }
 }

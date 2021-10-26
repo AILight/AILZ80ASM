@@ -71,7 +71,7 @@ namespace AILZ80ASM
                 var fileInfo = new FileInfo(filename);
                 var fileType = LineDetailItemInclude.FileTypeEnum.Text;
 
-                if ((new[] { "B", "Binary" }).Any(m => string.Compare(m, fileTypeString, StringComparison.OrdinalIgnoreCase) == 0))
+                if ((new[] { "B", "Binary" }).Any(m => string.Compare(m, fileTypeString, true) == 0))
                 {
                     fileType = LineDetailItemInclude.FileTypeEnum.Binary;
                 }

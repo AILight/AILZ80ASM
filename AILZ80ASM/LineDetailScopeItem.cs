@@ -75,7 +75,7 @@ namespace AILZ80ASM
 
         public virtual void BuildValueLabel()
         {
-            var labels = AsmLoad.AllLables.Where(m => m.DataType == Label.DataTypeEnum.ProcessingForValue);
+            var labels = AsmLoad.AllLabels.Where(m => m.DataType == Label.DataTypeEnum.ProcessingForValue);
 
             foreach (var label in labels)
             {

@@ -80,7 +80,7 @@ namespace AILZ80ASM
             }
 
             // レジスター文字列は利用不可
-            if (OPCodeTable.IsRegister(target.ToUpper()))
+            if (OPCodeTable.IsRegister(target))
             {
                 return false;
             }
@@ -90,7 +90,7 @@ namespace AILZ80ASM
                 return false;
             }
 
-            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline).Success;
+            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
 
     }

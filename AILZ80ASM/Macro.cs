@@ -19,7 +19,7 @@ namespace AILZ80ASM
 
         public Macro(string macroName, string[] args, LineItem[] lineItems, AsmLoad asmLoad)
         {
-            this.GlobalLabelName = asmLoad.GlobalLableName;
+            this.GlobalLabelName = asmLoad.GlobalLabelName;
             this.Name = macroName;
 
             Args = args;
@@ -105,7 +105,7 @@ namespace AILZ80ASM
             // Macro展開用のAsmLoadを作成する
             var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
             var guid = $"{Guid.NewGuid():N}";
-            macroAsmLoad.GlobalLableName = $"macro_{this.Name}_{guid}";
+            macroAsmLoad.GlobalLabelName = $"macro_{this.Name}_{guid}";
 
             if (arguments.Length > 0)
             {
@@ -130,7 +130,7 @@ namespace AILZ80ASM
             macroAsmLoad.LabelName = $"label_{this.Name}_{guid}";
 
             // LineItemsを作成
-            var lineItems = this.LineItems.Select(m =>
+            var lineItems = this.LineItems.Skip(1).SkipLast(1).Select(m =>
                 {
                     var lineItem = new LineItem(m);
                     lineItem.CreateLineDetailItem(macroAsmLoad);
@@ -172,7 +172,7 @@ namespace AILZ80ASM
                 return macroName;
             }
 
-            return $"{asmLoad.GlobalLableName}:{macroName}";
+            return $"{asmLoad.GlobalLabelName}:{macroName}";
         }
     }
 }

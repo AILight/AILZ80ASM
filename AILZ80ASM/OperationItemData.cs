@@ -34,8 +34,8 @@ namespace AILZ80ASM
         public new static bool CanCreate(string operation)
         {
             var matched = Regex.Match(operation, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var op1 = matched.Groups["op1"].Value.ToUpper();
-            return (new[] { "DB", "DW", "DS", "DBS", "DWS" }).Any(m => m == op1);
+            var op1 = matched.Groups["op1"].Value;
+            return (new[] { "DB", "DW", "DS", "DBS", "DWS" }).Any(m => string.Compare(m, op1, true) == 0);
         }
 
         public static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
@@ -43,10 +43,10 @@ namespace AILZ80ASM
             var returnValue = default(OperationItemData);
             var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            var op1 = matched.Groups["op1"].Value.ToUpper();
+            var op1 = matched.Groups["op1"].Value;
             var op2 = matched.Groups["op2"].Value;
 
-            switch (op1)
+            switch (op1.ToUpper())
             {
                 case "DB":
                     returnValue = DBDW(DataTypeEnum.db, op2, lineDetailExpansionItemOperation, address, asmLoad);
@@ -123,8 +123,8 @@ namespace AILZ80ASM
                 var operation = matchFunction.Groups["operation"].Value.Trim();
 
                 //ループの展開
-                var startValue = (int)AIMath.ConvertToUInt16(start, lineDetailExpansionItemOperation, asmLoad);
-                var endValue = (int)AIMath.ConvertToUInt16(end, lineDetailExpansionItemOperation, asmLoad);
+                var startValue = (int)AIMath.ConvertTo<UInt16>(start, lineDetailExpansionItemOperation, asmLoad);
+                var endValue = (int)AIMath.ConvertTo<UInt16>(end, lineDetailExpansionItemOperation, asmLoad);
                 var stepValue = startValue < endValue ? 1 : -1;
                 var loopCount = (endValue - startValue) * stepValue;
                 var currentValue = startValue;
@@ -196,7 +196,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.dw:
                     foreach (var valueString in ValueStrings)
                     {
-                        var value = AIMath.ConvertToUInt16(valueString, LineDetailExpansionItemOperation, asmLoad);
+                        var value = AIMath.ConvertTo<UInt16>(valueString, LineDetailExpansionItemOperation, asmLoad);
                         byteList.Add((byte)(value % 256));
                         byteList.Add((byte)(value / 256));
                     }
@@ -204,7 +204,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.db:
                     foreach (var valueString in ValueStrings)
                     {
-                        byteList.Add((byte)AIMath.ConvertToUInt16(valueString, LineDetailExpansionItemOperation, asmLoad));
+                        byteList.Add((byte)AIMath.ConvertTo<UInt16>(valueString, LineDetailExpansionItemOperation, asmLoad));
                     }
                     break;
                 default:

@@ -42,6 +42,8 @@ namespace AILZ80ASM
                     // リピートが終了
                     if (asmLoad_LineDetailItemRepeat.RepeatNestedCount == 0)
                     {
+                        asmLoad_LineDetailItemRepeat.RepeatLines.Add(lineItem);
+
                         asmLoad.LineDetailItemForExpandItem = default;
                         return new LineDetailItemRepeat(lineItem, asmLoad);
                     }
@@ -81,6 +83,7 @@ namespace AILZ80ASM
                         RepeatLastLabel = startMatched.Groups["last_arg"].Value,
                         RepeatNestedCount = 1
                     };
+                    lineDetailItemRepeat.RepeatLines.Add(lineItem);
                     asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
@@ -92,9 +95,14 @@ namespace AILZ80ASM
                         RepeatCountLabel = startSimpleMatched.Groups["count"].Value,
                         RepeatNestedCount = 1
                     };
+                    lineDetailItemRepeat.RepeatLines.Add(lineItem);
                     asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
+                }
+                else if (string.Compare(lineItem.OperationString, "REPEAT") == 0)
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1015);
                 }
             }
 
@@ -104,11 +112,12 @@ namespace AILZ80ASM
         public override void ExpansionItem()
         {
             // リピート数が設定されているものを処理する
-            if (!string.IsNullOrEmpty(RepeatCountLabel))
+            if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
             {
                 var lineDetailScopeItems = new List<LineDetailScopeItem>();
-                var count = AIMath.ConvertToUInt16(RepeatCountLabel, this.AsmLoad);
-                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertToUInt16(RepeatLastLabel, this.AsmLoad);
+                var count = AIMath.ConvertTo<UInt16>(RepeatCountLabel, this.AsmLoad);
+                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertTo<UInt16>(RepeatLastLabel, this.AsmLoad);
+                var repeatLines = RepeatLines.Skip(1).SkipLast(1);
 
                 foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
@@ -118,13 +127,13 @@ namespace AILZ80ASM
 
                     if (repeatCounter == count)
                     {
-                        var take = RepeatLines.Count + last;
+                        var take = repeatLines.Count() + last;
                         if (take <= 0 || last > 0)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013);
                         }
                         //最終ページ処理
-                        lineItems = RepeatLines.Take(take).Select(m =>
+                        lineItems = repeatLines.Take(take).Select(m =>
                         {
                             var lineItem = new LineItem(m);
                             lineItem.CreateLineDetailItem(localAsmLoad);
@@ -133,7 +142,7 @@ namespace AILZ80ASM
                     }
                     else
                     {
-                        lineItems = RepeatLines.Select(m =>
+                        lineItems = repeatLines.Select(m =>
                         {
                             var lineItem = new LineItem(m);
                             lineItem.CreateLineDetailItem(localAsmLoad);

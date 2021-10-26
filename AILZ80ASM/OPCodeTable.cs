@@ -281,29 +281,30 @@ namespace AILZ80ASM
 
         public static OPCodeResult GetOPCodeItem(string code)
         {
-            var matched = Regex.Match(code, RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(code, RegexPatternOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            var op1 = matched.Groups["op1"].Value.ToUpper();
-            var op2 = matched.Groups["op2"].Value.ToUpper();
-            var op3 = matched.Groups["op3"].Value.ToUpper();
+            var op1 = matched.Groups["op1"].Value;
+            var op2 = matched.Groups["op2"].Value;
+            var op3 = matched.Groups["op3"].Value;
 
             // 無効命令
-            if ((op1 == "PUSH" && op2 == "SP" && op3 == "") ||
-                (op1 == "POP" && op2 == "SP" && op3 == ""))
+            if (InvalidOpCode(op1, op2, op3))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, $"{code}");
             }
 
+            // オペコードを探す
             foreach (var opCodeItem in OPCodeItems)
             {
-                var matchedOp = Regex.Match(opCodeItem.Operation, RegexPatternOP, RegexOptions.Singleline);
+                var matchedOp = Regex.Match(opCodeItem.Operation, RegexPatternOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 var tableOp1 = matchedOp.Groups["op1"].Value;
                 var tableOp2 = matchedOp.Groups["op2"].Value;
                 var tableOp3 = matchedOp.Groups["op3"].Value;
 
-                if (op1 == tableOp1)
+                if (string.Compare(op1, tableOp1, true) == 0)
                 {
-                    if (op2 == tableOp2 && op3 == tableOp3)
+                    if (string.Compare(op2, tableOp2, true) == 0 &&
+                        string.Compare(op3, tableOp3, true) == 0)
                     {
                         return new OPCodeResult(opCodeItem);
                     }
@@ -472,7 +473,7 @@ namespace AILZ80ASM
                         return false;
 
                     {
-                        var matchedAddr = Regex.Match(arg, RegexPatternAddress);
+                        var matchedAddr = Regex.Match(arg, RegexPatternAddress, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                         var value = matchedAddr.Groups["addr"].Value;
                         opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value16, value));
                     }
@@ -497,7 +498,7 @@ namespace AILZ80ASM
                         return false;
 
                     {
-                        var matchedIndex = Regex.Match(arg, RegexPatternIXReg);
+                        var matchedIndex = Regex.Match(arg, RegexPatternIXReg, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                         var value = matchedIndex.Groups["value"].Value;
                         opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.IndexOffset, value));
                     }
@@ -506,7 +507,7 @@ namespace AILZ80ASM
                     if (!IsAddrIYPlusDRegister(arg))
                         return false;
                     {
-                        var matchedIndex = Regex.Match(arg, RegexPatternIYReg);
+                        var matchedIndex = Regex.Match(arg, RegexPatternIYReg, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                         var value = matchedIndex.Groups["value"].Value;
                         opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.IndexOffset, value));
                     }
@@ -516,18 +517,18 @@ namespace AILZ80ASM
                         return false;
 
                     {
-                        var matchedAddr = Regex.Match(arg, RegexPatternAddress);
+                        var matchedAddr = Regex.Match(arg, RegexPatternAddress, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                         var value = matchedAddr.Groups["addr"].Value;
                         opCodeLabelList.Add(new OPCodeLabel(OPCodeLabel.ValueTypeEnum.Value8, value));
                     }
 
                     break;
                 case "(C)":
-                    return arg == tableOp;
+                    return string.Compare(arg, tableOp, true) == 0;
                 case "":
-                    return arg == tableOp;
+                    return string.Compare(arg, tableOp, true) == 0;
                 default:
-                    return arg == tableOp;
+                    return string.Compare(arg, tableOp, true) == 0;
             }
             return true;
         }
@@ -539,7 +540,7 @@ namespace AILZ80ASM
 
         private static bool IsAddrNumber16(string source)
         {
-            var matched = Regex.Match(source, RegexPatternAddress);
+            var matched = Regex.Match(source, RegexPatternAddress, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (!matched.Success)
                 return false;
 
@@ -560,7 +561,7 @@ namespace AILZ80ASM
 
         private static bool IsPortNumber(string source)
         {
-            return Regex.IsMatch(source, RegexPatternAddress) && source != "(C)";
+            return Regex.IsMatch(source, RegexPatternAddress, RegexOptions.Singleline | RegexOptions.IgnoreCase) && string.Compare(source, "(C)", true) != 0;
         }
 
         private static bool IsNumber3Bit(string source)
@@ -582,7 +583,7 @@ namespace AILZ80ASM
 
         private static bool IsNumberRst(string source)
         {
-            return source switch
+            return source.ToUpper() switch
             {
                 "00H" or "08H" or "10H" or "18H" or "20H" or "28H" or "30H" or "38H" => true,
                 _ => false,
@@ -591,7 +592,7 @@ namespace AILZ80ASM
 
         private static string GetNumberRst(string source)
         {
-            return source switch
+            return source.ToUpper() switch
             {
                 "00H" => "000",
                 "08H" => "001",
@@ -612,7 +613,7 @@ namespace AILZ80ASM
         /// <returns></returns>
         public static bool IsOPCode(string target)
         {
-            return OPCodeItems.Select(m => Regex.Match(m.Operation, RegexPatternOP).Groups["op1"].Value).Any(m => string.Compare(m, target, true) == 0);
+            return OPCodeItems.Select(m => Regex.Match(m.Operation, RegexPatternOP, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["op1"].Value).Any(m => string.Compare(m, target, true) == 0);
         }
         
         /// <summary>
@@ -635,112 +636,114 @@ namespace AILZ80ASM
 
         private static bool IsAccumulatorRegister(string source)
         {
-            return source == "A";
+            return string.Compare(source, "A", true) == 0;
         }
 
         private static bool IsHLRegister(string source)
         {
-            return source == "HL";
+            return string.Compare(source, "HL", true) == 0;
         }
 
         private static bool IsBCRegister(string source)
         {
-            return source == "BC";
+            return string.Compare(source, "BC", true) == 0;
         }
 
         private static bool IsDERegister(string source)
         {
-            return source == "DE";
+            return string.Compare(source, "DE", true) == 0;
         }
 
         private static bool IsIXRegister(string source)
         {
-            return source == "IX";
+            return string.Compare(source, "IX", true) == 0;
         }
 
         private static bool IsIXHLRegister(string source)
         {
-            return source == "IXH" || source == "IXL";
+            return string.Compare(source, "IXH", true) == 0 || 
+                   string.Compare(source, "IXL", true) == 0;
         }
 
         private static bool IsIYRegister(string source)
         {
-            return source == "IY";
+            return string.Compare(source, "IY", true) == 0;
         }
 
         private static bool IsIYHLRegister(string source)
         {
-            return source == "IYH" || source == "IYL";
+            return string.Compare(source, "IYH", true) == 0 || 
+                   string.Compare(source, "IYL", true) == 0;
         }
 
         private static bool Is8BitRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(A|B|C|D|E|H|L)$");
+            return Regex.IsMatch(source, @"^(A|B|C|D|E|H|L)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool Is8BitSmallRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(A|B|C|D|E|)$");
+            return Regex.IsMatch(source, @"^(A|B|C|D|E|)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool Is8BitIndexRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(IXH|IXL|IYH|IYL)$");
+            return Regex.IsMatch(source, @"^(IXH|IXL|IYH|IYL)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool Is16BitRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(BC|DE|HL|SP)$");
+            return Regex.IsMatch(source, @"^(BC|DE|HL|SP)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool Is16BitSmallRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(BC|DE|SP)$");
+            return Regex.IsMatch(source, @"^(BC|DE|SP)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool Is16BitIndexRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(IX|IY)$");
+            return Regex.IsMatch(source, @"^(IX|IY)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool IsAddrIXPlusDRegister(string source)
         {
-            return Regex.IsMatch(source, RegexPatternIXReg);
+            return Regex.IsMatch(source, RegexPatternIXReg, RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool IsAddrIYPlusDRegister(string source)
         {
-            return Regex.IsMatch(source, RegexPatternIYReg);
+            return Regex.IsMatch(source, RegexPatternIYReg, RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool IsAddrHLRegister(string source)
         {
-            return source == "(HL)";
+            return string.Compare(source, "(HL)", true) == 0;
         }
 
         private static bool IsAddrBCRegister(string source)
         {
-            return source == "(BC)";
+            return string.Compare(source, "(BC)", true) == 0;
         }
 
         private static bool IsAddrDERegister(string source)
         {
-            return source == "(DE)";
+            return string.Compare(source, "(DE)", true) == 0;
         }
 
         private static bool IsAddrIXRegister(string source)
         {
-            return source == "(IX)";
+            return string.Compare(source, "(IX)", true) == 0;
         }
 
         private static bool IsAddrIYRegister(string source)
         {
-            return source == "(IY)";
+            return string.Compare(source, "(IY)", true) == 0;
         }
 
         private static bool IsAddrRegister(string source)
         {
-            return Regex.IsMatch(source, @"^(\(BC\)|\(DE\)|\(HL\)|\(SP\))$");
+            return Regex.IsMatch(source, @"^(\(BC\)|\(DE\)|\(HL\)|\(SP\))$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool IsAddrIndexRegister(string source)
@@ -750,42 +753,52 @@ namespace AILZ80ASM
 
         private static bool IsInterruptRegister(string source)
         {
-            return source == "I";
+            return string.Compare(source, "I", true) == 0;
         }
 
         private static bool IsRefreshRegister(string source)
         {
-            return source == "R";
+            return string.Compare(source, "R", true) == 0;
         }
 
         private static bool IsSPRegister(string source)
         {
-            return source == "SP";
+            return string.Compare(source, "SP", true) == 0;
         }
 
         private static bool IsPCRegister(string source)
         {
-            return source == "PC";
+            return string.Compare(source, "PC", true) == 0;
         }
 
         private static bool IsConditionSymbol(string source)
         {
-            return Regex.IsMatch(source, @"^(NZ|Z|NC|C|PO|PE|P|M)$");
+            return Regex.IsMatch(source, @"^(NZ|Z|NC|C|PO|PE|P|M)$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         private static bool IsJPOpecode(string source)
         {
-            return source == "JP";
+            return string.Compare(source, "JP", true) == 0;
         }
 
         private static bool IsCALLOpecode(string source)
         {
-            return source == "CALL";
+            return string.Compare(source, "CALL", true) == 0;
+        }
+
+        private static bool IsPUSHOpecode(string source)
+        {
+            return string.Compare(source, "PUSH", true) == 0;
+        }
+
+        private static bool IsPOPOpecode(string source)
+        {
+            return string.Compare(source, "POP", true) == 0;
         }
 
         private static string GetDDDSSS(string source)
         {
-            return source switch
+            return source.ToUpper() switch
             {
                 "A" => "111",
                 "B" => "000",
@@ -800,7 +813,7 @@ namespace AILZ80ASM
 
         private static string GetDDDSSS_IXHL(string source)
         {
-            return source switch
+            return source.ToUpper() switch
             {
                 "IXH" => "100",
                 "IXL" => "101",
@@ -810,7 +823,7 @@ namespace AILZ80ASM
 
         private static string GetDDDSSS_IYHL(string source)
         {
-            return source switch
+            return source.ToUpper() switch
             {
                 "IYH" => "100",
                 "IYL" => "101",
@@ -820,7 +833,7 @@ namespace AILZ80ASM
 
         private static string GetRP(string source)
         {
-            return source switch
+            return source.ToUpper() switch
             {
                 "BC" => "00",
                 "DE" => "01",
@@ -832,7 +845,7 @@ namespace AILZ80ASM
 
         private static string GetCCC(string source)
         {
-            return source switch
+            return source.ToUpper() switch
             {
                 "NZ" => "000",
                 "Z" => "001",
@@ -844,6 +857,30 @@ namespace AILZ80ASM
                 "M" => "111",
                 _ => throw new Exception($"レジスタの指定が間違っています。{source}"),
             };
+        }
+
+        /// <summary>
+        /// 無効命令をチェック
+        /// </summary>
+        /// <param name="op1"></param>
+        /// <param name="op2"></param>
+        /// <param name="op3"></param>
+        /// <returns></returns>
+        private static bool InvalidOpCode(string op1, string op2, string op3)
+        {
+            // PUSH SP
+            if (IsPUSHOpecode(op1) && IsSPRegister(op2) && string.IsNullOrEmpty(op3))
+            {
+                return true;
+            }
+
+            // POP SP
+            if (IsPOPOpecode(op1) && IsSPRegister(op2) && string.IsNullOrEmpty(op3))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

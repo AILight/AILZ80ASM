@@ -16,13 +16,13 @@ namespace AILZ80ASM
         }
         private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
 
-        private string _GlobalLableName;
-        public string GlobalLableName 
+        private string _GlobalLabelName;
+        public string GlobalLabelName 
         {
-            get { return _GlobalLableName; }
+            get { return _GlobalLabelName; }
             set
             {
-                _GlobalLableName = value;
+                _GlobalLabelName = value;
                 LabelName = "";
             }
         }
@@ -30,7 +30,7 @@ namespace AILZ80ASM
         public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include循環展開チェック用
         public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
 
-        public Label[] AllLables => Labels.Union(LocalLabels).ToArray();
+        public Label[] AllLabels => Labels.Union(LocalLabels).ToArray();
         public List<Label> Labels { get; private set; } = new List<Label>();
         public List<Label> LocalLabels { get; private set; } = new List<Label>();
         public List<Macro> Macros { get; private set; } = new List<Macro>();
@@ -51,7 +51,7 @@ namespace AILZ80ASM
             return new AsmLoad
             {
                 ScopeMode = this.ScopeMode,
-                GlobalLableName = this.GlobalLableName,
+                GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
@@ -69,7 +69,7 @@ namespace AILZ80ASM
             return new AsmLoad
             {
                 ScopeMode = scopeMode,
-                GlobalLableName = this.GlobalLableName,
+                GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
@@ -102,7 +102,7 @@ namespace AILZ80ASM
 
         public void AddLabel(Label label)
         {
-            if (this.AllLables.Any(m => m.LongLabelName == label.LongLabelName))
+            if (this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014);
             }

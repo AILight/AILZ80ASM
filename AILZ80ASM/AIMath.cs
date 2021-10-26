@@ -23,20 +23,27 @@ namespace AILZ80ASM
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
+        private static readonly string RegexPatternFormuraChar = @"\d|\+|\-|\*|\/|\%|\~|\(|\)|!|=|\<|\>|\s|\&|\|";
+        private static readonly string[] InvalidFormuras = new[] { "<>", "><", "===", "=>", "<=", ")(",
+                                                                  "**", "*+", "*-", "*%",
+                                                                  "+*", "++", "+-", "+%",
+                                                                  "-*", "-+", "--", "-%",
+                                                                  "%*", "%+", "%-", "%%",
+        };
 
         public static bool IsNumber(string value)
         {
-            if (Regex.Match(value, RegexPatternHexadecimal).Success)
+            if (Regex.Match(value, RegexPatternHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 return true;
             }
 
-            if (Regex.Match(value, RegexPatternDollarHexadecimal).Success)
+            if (Regex.Match(value, RegexPatternDollarHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 return true;
             }
 
-            if (Regex.Match(value, RegexPatternBinaryNumber).Success)
+            if (Regex.Match(value, RegexPatternBinaryNumber, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 return true;
             }
@@ -49,14 +56,15 @@ namespace AILZ80ASM
             return false;
         }
 
+        /*
         public static byte ConvertToByte(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
             return ConvertToByte(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
         }
 
-        public static byte ConvertToByte(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
+        public static byte ConvertToByte(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
+            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
 
             try
             {
@@ -78,6 +86,226 @@ namespace AILZ80ASM
             }
 
         }
+        */
+
+        /// <summary>
+        /// 使えない演算子をチェック
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private static bool IsInvalidFormulaChar(string target)
+        {
+            if (InvalidFormuras.Any(m => target.Contains(m)))
+            {
+                return true;
+            }
+
+            return !string.IsNullOrEmpty(Regex.Replace(target.Replace(" ", ""), RegexPatternFormuraChar, "", 
+                                        RegexOptions.Singleline | RegexOptions.IgnoreCase));
+        }
+
+        /// <summary>
+        /// int方を指定の型に変換する
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static T InternalConvertNormalization<T>(int value)
+            where T: struct
+        {
+            if (typeof(T) == typeof(UInt32))
+            {
+                if (value < 0)
+                {
+                    return (T)(object)Convert.ToUInt32(UInt32.MaxValue + value + 1);
+                }
+                else
+                {
+                    return (T)(object)Convert.ToUInt32(value & UInt32.MaxValue);
+                }
+            }
+            else if (typeof(T) == typeof(UInt16))
+            {
+                if (value < 0)
+                {
+                    return (T)(object)Convert.ToUInt16(UInt16.MaxValue + value + 1);
+                }
+                else
+                {
+                    return (T)(object)Convert.ToUInt16(value & UInt16.MaxValue);
+                }
+            }
+            else if (typeof(T) == typeof(byte))
+            {
+                if (value < 0)
+                {
+                    return (T)(object)Convert.ToByte(byte.MaxValue + value + 1);
+                }
+                else
+                {
+                    return (T)(object)Convert.ToByte(value & byte.MaxValue);
+                }
+            }
+            else
+            {
+                throw new ArgumentException(nameof(value));
+            }
+        }
+
+        /// <summary>
+        /// 文字列を計算する
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static T InternalCalculation<T>(string value)
+            where T: struct
+        {
+            if (typeof(T) == typeof(bool))
+            {
+                var nCalcExpression = new NCalc.Expression(value);
+                var calcedValue = nCalcExpression.ToLambda<T>().Invoke();
+
+                return calcedValue;
+            }
+            else if (typeof(T) == typeof(UInt32) || 
+                     typeof(T) == typeof(UInt16) ||
+                     typeof(T) == typeof(byte))
+            {
+                var nCalcExpression = new NCalc.Expression(value);
+                var calcedValue = nCalcExpression.ToLambda<int>().Invoke();
+                var normaledValue = InternalConvertNormalization<T>(calcedValue);
+
+                return normaledValue;
+            }
+            else
+            {
+                throw new ArgumentException(nameof(T));
+            }
+        }
+
+        /// <summary>
+        /// 演算可能かを判断し、可能なら演算をする
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="globalLabelName"></param>
+        /// <param name="labelName"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="resultValue"></param>
+        /// <returns></returns>
+        public static bool InternalTryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress, out T resultValue)
+            where T : struct
+        {
+            var tmpValue = default(string);
+
+            if (asmAddress.HasValue)
+            {
+                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad, asmAddress.Value);
+            }
+            else
+            {
+                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
+            }
+
+            // 計算不能かを判断
+            if (IsInvalidFormulaChar(tmpValue))
+            {
+                resultValue = default(T);
+                return false;
+            }
+
+            try
+            {
+                resultValue = InternalCalculation<T>(tmpValue);
+                return true;
+            }
+            catch
+            {
+                resultValue = default(T);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// コンバートを行う
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="globalLabelName"></param>
+        /// <param name="labelName"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <returns></returns>
+        private static T InternalConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress)
+            where T : struct
+        {
+            if (InternalTryParse<T>(value, globalLabelName, labelName, asmLoad, asmAddress, out var resultValue))
+            {
+                return resultValue;
+            }
+            else
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}");
+            }
+        }
+
+
+        public static bool TryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress asmAddress, out T resultValue)
+            where T : struct
+        {
+            return InternalTryParse(value, globalLabelName, labelName, asmLoad, asmAddress, out resultValue);
+        }
+
+        public static bool TryParse<T>(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, AsmAddress asmAddress, out T resultValue)
+            where T : struct
+        {
+            return TryParse<T>(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, asmLoad, asmAddress, out resultValue);
+        }
+
+        public static bool TryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, out T resultValue)
+            where T : struct
+        {
+            return InternalTryParse(value, globalLabelName, labelName, asmLoad, default(AsmAddress?), out resultValue);
+        }
+
+        public static bool TryParse<T>(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, out T resultValue)
+            where T : struct
+        {
+            return TryParse<T>(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, asmLoad, out resultValue);
+        }
+
+        public static bool TryParse<T>(string value, AsmLoad asmLoad, out T resultValue)
+            where T : struct
+        {
+            return TryParse<T>(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad, out resultValue);
+        }
+
+        public static T ConvertTo<T>(string value, AsmLoad asmLoad)
+            where T : struct
+        {
+            return ConvertTo<T>(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
+        }
+
+        public static T ConvertTo<T>(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
+            where T : struct
+        {
+            return ConvertTo<T>(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, asmLoad, lineDetailExpansionItemOperation.Address);
+        }
+
+        public static T ConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
+            where T : struct
+        {
+            return InternalConvertTo<T>(value, globalLabelName, labelName, asmLoad, default(AsmAddress?));
+        }
+
+        public static T ConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress asmAddress)
+            where T : struct
+        {
+            return InternalConvertTo<T>(value, globalLabelName, labelName, asmLoad, asmAddress);
+        }
+
+        /*
 
         public static UInt16 ConvertToUInt16(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
         {
@@ -86,19 +314,19 @@ namespace AILZ80ASM
 
         public static UInt16 ConvertToUInt16(string value, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad);
+            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
             return InternalConvertToUInt16(value, tmpValue);
         }
 
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
+        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, asmLoad);
+            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
             return InternalConvertToUInt16(value, tmpValue);
         }
 
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
+        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
+            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
             return InternalConvertToUInt16(value, tmpValue);
         }
 
@@ -109,19 +337,19 @@ namespace AILZ80ASM
 
         public static UInt32 ConvertToUInt32(string value, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad);
+            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
             return InternalConvertToUInt32(value, tmpValue);
         }
 
-        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
+        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, asmLoad);
+            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
             return InternalConvertToUInt32(value, tmpValue);
         }
 
-        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
+        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
+            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
             return InternalConvertToUInt32(value, tmpValue);
         }
 
@@ -132,19 +360,19 @@ namespace AILZ80ASM
 
         public static bool ConvertToBoolean(string value, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLableName, asmLoad.LabelName, asmLoad);
+            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
             return InternalConvertToBoolean(value, tmpValue);
         }
 
-        public static bool ConvertToBoolean(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
+        public static bool ConvertToBoolean(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, asmLoad);
+            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
             return InternalConvertToBoolean(value, tmpValue);
         }
 
-        public static bool ConvertToBoolean(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
+        public static bool ConvertToBoolean(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
         {
-            var tmpValue = ReplaceAll(value, globalLabelName, lableName, address, asmLoad);
+            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
             return InternalConvertToBoolean(value, tmpValue);
         }
 
@@ -174,7 +402,7 @@ namespace AILZ80ASM
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
             }
         }
-
+        
         private static bool InternalConvertToBoolean(string value, string tmpValue)
         {
             try
@@ -189,8 +417,9 @@ namespace AILZ80ASM
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
             }
         }
+        */
 
-        private static string ReplaceAll(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
+        private static string ReplaceAll(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
         {
             //16進数の置き換え
             value = Replace16Number(value);
@@ -199,12 +428,12 @@ namespace AILZ80ASM
             value = ReplaceBinaryNumber(value);
 
             // ラベルの置き換え
-            value = ReplaceLabel(value, globalLabelName, lableName, asmLoad);
+            value = ReplaceLabel(value, globalLabelName, labelName, asmLoad);
             
             return value;
         }
 
-        private static string ReplaceAll(string value, string globalLabelName, string lableName, AsmAddress address, AsmLoad asmLoad)
+        private static string ReplaceAll(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress address)
         {
             //16進数の置き換え
             value = Replace16NumberAndCurrentAddress(value, address);
@@ -213,7 +442,7 @@ namespace AILZ80ASM
             value = ReplaceBinaryNumber(value);
 
             // ラベルの置き換え
-            value = ReplaceLabel(value, globalLabelName, lableName, asmLoad);
+            value = ReplaceLabel(value, globalLabelName, labelName, asmLoad);
 
             return value;
         }
@@ -223,16 +452,16 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="value"></param>
         /// <param name="globalLabelName"></param>
-        /// <param name="lableName"></param>
-        /// <param name="lables"></param>
-        private static string ReplaceLabel(string value, string globalLabelName, string lableName, AsmLoad asmLoad)
+        /// <param name="labelName"></param>
+        /// <param name="labels"></param>
+        private static string ReplaceLabel(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
         {
             var resultValue = "";
             var workValue = value;
             var limitCounter = 0;
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternLabel)).Success && limitCounter < 10000)
+            while ((regexResult = Regex.Match(workValue, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
             {
                 var macroValue = MacroValueEnum.None;
 
@@ -250,7 +479,7 @@ namespace AILZ80ASM
                 }
 
                 // ラベルチェック
-                var labels = asmLoad.AllLables.Where(m => m.HasValue).ToArray();
+                var labels = asmLoad.AllLabels.Where(m => m.HasValue).ToArray();
                 var longLabelName = Label.GetLongLabelName(matchResultString, asmLoad);
                 var label = labels.Where(m => m.HasValue && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
 
@@ -288,7 +517,7 @@ namespace AILZ80ASM
                 resultValue += valueString;
                 workValue = workValue.Substring(index + matchResultString.Length);
 
-                regexResult = Regex.Match(workValue, RegexPatternLabel);
+                regexResult = Regex.Match(workValue, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 limitCounter++;
             }
             resultValue += workValue;
@@ -332,15 +561,15 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="value"></param>
         /// <param name="globalLabelName"></param>
-        /// <param name="lableName"></param>
-        /// <param name="lables"></param>
+        /// <param name="labelName"></param>
+        /// <param name="labels"></param>
         private static string ReplaceHexadecimal(string value)
         {
             var resultValue = "";
             var workValue = value;
             var limitCounter = 0;
 
-            if (Regex.Match(workValue, RegexPatternErrorHexadecimal).Success)
+            if (Regex.Match(workValue, RegexPatternErrorHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
             }
@@ -374,8 +603,8 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="value"></param>
         /// <param name="globalLabelName"></param>
-        /// <param name="lableName"></param>
-        /// <param name="lables"></param>
+        /// <param name="labelName"></param>
+        /// <param name="labels"></param>
         private static string ReplaceDollarHexadecimal(string value)
         {
             var resultValue = "";
@@ -417,15 +646,15 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="value"></param>
         /// <param name="globalLabelName"></param>
-        /// <param name="lableName"></param>
-        /// <param name="lables"></param>
+        /// <param name="labelName"></param>
+        /// <param name="labels"></param>
         public static string ReplaceBinaryNumber(string value)
         {
             var resultValue = "";
             var workValue = value;
             var limitCounter = 0;
 
-            if (Regex.Match(workValue, RegexPatternErrorBinaryNumber).Success)
+            if (Regex.Match(workValue, RegexPatternErrorBinaryNumber, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
             }
@@ -439,7 +668,13 @@ namespace AILZ80ASM
                 resultValue += workValue.Substring(0, index);
                 try
                 {
-                    resultValue += Convert.ToInt32(matchResultString.ToUpper().Replace("_", "").Replace("%", "").Replace("B", ""), 2).ToString("0");
+                    var target = matchResultString;
+                    foreach (var item in "_%Bb".ToArray())
+                    {
+                        target = target.Replace(item.ToString(), "");
+                    }
+
+                    resultValue += Convert.ToInt32(target, 2).ToString("0");
                 }
                 catch
                 {
