@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Reflection;
 
 namespace AILZ80ASM.Test

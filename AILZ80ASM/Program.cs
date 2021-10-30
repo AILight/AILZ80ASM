@@ -12,29 +12,29 @@ namespace AILZ80ASM
         {
             var rootCommand = new RootCommand(
               description: "AILight Z80 Assember.");
-            
+
             var inputOption = new Option(
               aliases: new string[] { "--input", "-i" }
               , description: "アセンブリ対象のファイルをカンマ区切りで指定します。")
-                { Argument = new Argument<FileInfo[]>() };
+            { Argument = new Argument<FileInfo[]>() };
             rootCommand.AddOption(inputOption);
 
             var outputOption = new Option(
               aliases: new string[] { "--output", "-o" }
               , description: "出力ファイルを指定します。")
-                { Argument = new Argument<FileInfo>() };
+            { Argument = new Argument<FileInfo>() };
             rootCommand.AddOption(outputOption);
 
             var symbolOption = new Option(
               aliases: new string[] { "--symbol", "-s" }
               , description: "シンボルファイルを指定します。")
-                { Argument = new Argument<FileInfo>(), IsRequired = false };
+            { Argument = new Argument<FileInfo>(), IsRequired = false };
             rootCommand.AddOption(symbolOption);
 
             var listOption = new Option(
               aliases: new string[] { "--list", "-l" }
               , description: "リストファイルを指定します。")
-                { Argument = new Argument<FileInfo>(), IsRequired = false };
+            { Argument = new Argument<FileInfo>(), IsRequired = false };
             rootCommand.AddOption(listOption);
 
             try

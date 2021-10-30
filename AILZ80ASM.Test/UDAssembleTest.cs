@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Reflection;
 
 namespace AILZ80ASM.Test
@@ -7,7 +6,7 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class UDAssembleTest
     {
-        
+
         [TestMethod]
         public void TestUD_AO()
         {

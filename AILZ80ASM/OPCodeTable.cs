@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -339,7 +338,7 @@ namespace AILZ80ASM
             return null;
         }
 
-        private static bool ProcessMark (string op, string arg, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, IList<OPCodeLabel> opCodeLabelList)
+        private static bool ProcessMark(string op, string arg, int index, string tableOp, ref string dddd, ref string ssss, ref string rp, ref string bbb, ref string ccc, ref string ttt, IList<OPCodeLabel> opCodeLabelList)
         {
             switch (tableOp)
             {
@@ -407,7 +406,7 @@ namespace AILZ80ASM
                 case "rs":
                     if (!Is8BitSmallRegister(arg))
                         return false;
-                    
+
                     if (index == 0)
                     {
                         dddd = GetDDDSSS(arg);
@@ -615,7 +614,7 @@ namespace AILZ80ASM
         {
             return OPCodeItems.Select(m => Regex.Match(m.Operation, RegexPatternOP, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["op1"].Value).Any(m => string.Compare(m, target, true) == 0);
         }
-        
+
         /// <summary>
         /// レジスタ名が含まれているか
         /// </summary>
@@ -661,7 +660,7 @@ namespace AILZ80ASM
 
         private static bool IsIXHLRegister(string source)
         {
-            return string.Compare(source, "IXH", true) == 0 || 
+            return string.Compare(source, "IXH", true) == 0 ||
                    string.Compare(source, "IXL", true) == 0;
         }
 
@@ -672,7 +671,7 @@ namespace AILZ80ASM
 
         private static bool IsIYHLRegister(string source)
         {
-            return string.Compare(source, "IYH", true) == 0 || 
+            return string.Compare(source, "IYH", true) == 0 ||
                    string.Compare(source, "IYL", true) == 0;
         }
 

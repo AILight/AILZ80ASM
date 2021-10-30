@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AILZ80ASM
 {
@@ -24,7 +22,7 @@ namespace AILZ80ASM
         public string Source { get; set; }
 
         private AsmList()
-        { 
+        {
         }
 
         public static AsmList CreateFileInfoBOF(FileInfo fileInfo)

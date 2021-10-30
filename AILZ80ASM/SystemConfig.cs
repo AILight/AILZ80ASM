@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AILZ80ASM
+﻿namespace AILZ80ASM
 {
     public class SystemConfig
     {

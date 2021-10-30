@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
@@ -23,7 +22,29 @@ namespace AILZ80ASM
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
-        private static readonly string RegexPatternFormuraChar = @"\d|\+|\-|\*|\/|\%|\~|\(|\)|!|=|\<|\>|\s|\&|\|";
+        private static readonly string RegexPatternDigit = @"^(\+|\-|)(\d+)$";
+        private static readonly string RegexPatternFormuraAndDigit = @"^(\d+|\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\?|\:)";
+        private static readonly string RegexPatternFormuraChar = @"^(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\?|\:)";
+        private static readonly Dictionary<string, int> FormuraPriority = new Dictionary<string, int>()
+        {
+            [")"] = 1,
+            ["!"] = 2,  ["~"] = 2, // 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
+            ["*"] = 3,  ["/"] = 3, ["%"] = 3,
+            ["+"] = 4,  ["-"] = 4,
+            ["<<"] = 5, [">>"] = 5,
+            ["<"] = 6,  [">"] = 6, ["<="] = 6, [">="] = 6,
+            ["=="] = 7, ["!="] = 7,
+            ["&"] = 8,
+            ["^"] = 9,
+            ["|"] = 10,
+            ["&&"] = 11,
+            ["||"] = 12,
+            ["?"] = 14, [":"] = 13,
+            ["("] = 15,
+
+        };
+
+        private static readonly string RegexPatternFormuraChar1 = @"\d|\+|\-|\*|\/|\%|\~|\(|\)|!|=|\<|\>|\s|\&|\|";
         private static readonly string[] InvalidFormuras = new[] { "<>", "><", "===", "=>", "<=", ")(",
                                                                   "**", "*+", "*-", "*%",
                                                                   "+*", "++", "+-", "+%",
@@ -100,7 +121,7 @@ namespace AILZ80ASM
                 return true;
             }
 
-            return !string.IsNullOrEmpty(Regex.Replace(target.Replace(" ", ""), RegexPatternFormuraChar, "", 
+            return !string.IsNullOrEmpty(Regex.Replace(target.Replace(" ", ""), RegexPatternFormuraChar1, "",
                                         RegexOptions.Singleline | RegexOptions.IgnoreCase));
         }
 
@@ -111,7 +132,7 @@ namespace AILZ80ASM
         /// <param name="value"></param>
         /// <returns></returns>
         private static T InternalConvertNormalization<T>(int value)
-            where T: struct
+            where T : struct
         {
             if (typeof(T) == typeof(UInt32))
             {
@@ -159,7 +180,7 @@ namespace AILZ80ASM
         /// <param name="value"></param>
         /// <returns></returns>
         private static T InternalCalculation<T>(string value)
-            where T: struct
+            where T : struct
         {
             if (typeof(T) == typeof(bool))
             {
@@ -168,7 +189,7 @@ namespace AILZ80ASM
 
                 return calcedValue;
             }
-            else if (typeof(T) == typeof(UInt32) || 
+            else if (typeof(T) == typeof(UInt32) ||
                      typeof(T) == typeof(UInt16) ||
                      typeof(T) == typeof(byte))
             {
@@ -305,120 +326,6 @@ namespace AILZ80ASM
             return InternalConvertTo<T>(value, globalLabelName, labelName, asmLoad, asmAddress);
         }
 
-        /*
-
-        public static UInt16 ConvertToUInt16(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            return ConvertToUInt16(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
-        }
-
-        public static UInt16 ConvertToUInt16(string value, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
-            return InternalConvertToUInt16(value, tmpValue);
-        }
-
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            return InternalConvertToUInt16(value, tmpValue);
-        }
-
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
-            return InternalConvertToUInt16(value, tmpValue);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            return ConvertToUInt32(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
-            return InternalConvertToUInt32(value, tmpValue);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            return InternalConvertToUInt32(value, tmpValue);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
-            return InternalConvertToUInt32(value, tmpValue);
-        }
-
-        public static bool ConvertToBoolean(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            return ConvertToBoolean(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
-        }
-
-        public static bool ConvertToBoolean(string value, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
-            return InternalConvertToBoolean(value, tmpValue);
-        }
-
-        public static bool ConvertToBoolean(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            return InternalConvertToBoolean(value, tmpValue);
-        }
-
-        public static bool ConvertToBoolean(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
-            return InternalConvertToBoolean(value, tmpValue);
-        }
-
-        private static UInt16 InternalConvertToUInt16(string value, string tmpValue)
-        {
-            return (UInt16)InternalConvertToUInt32(value, tmpValue);
-        }
-
-        private static UInt32 InternalConvertToUInt32(string value, string tmpValue)
-        {
-            try
-            {
-                var nCalcExpression = new NCalc.Expression(tmpValue);
-                var calcedValue = nCalcExpression.ToLambda<int>().Invoke();
-
-                if (calcedValue < 0)
-                {
-                    return (UInt32)(UInt32.MaxValue + calcedValue + 1);
-                }
-                else
-                {
-                    return (UInt32)calcedValue;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
-            }
-        }
-        
-        private static bool InternalConvertToBoolean(string value, string tmpValue)
-        {
-            try
-            {
-                var nCalcExpression = new NCalc.Expression(tmpValue);
-                var calcedValue = nCalcExpression.ToLambda<bool>().Invoke();
-
-                return calcedValue;
-            }
-            catch (Exception ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
-            }
-        }
-        */
-
         private static string ReplaceAll(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
         {
             //16進数の置き換え
@@ -429,7 +336,7 @@ namespace AILZ80ASM
 
             // ラベルの置き換え
             value = ReplaceLabel(value, globalLabelName, labelName, asmLoad);
-            
+
             return value;
         }
 
@@ -687,6 +594,223 @@ namespace AILZ80ASM
             resultValue += workValue;
 
             return resultValue;
+        }
+
+        public static int Calc<T>(string value)
+        {
+            var terms = CalcParse(value);
+            var rpns = CalcReversePolish(terms);
+            var calc = Calculation(rpns);
+
+            return calc;
+        }
+
+        private static int Calculation(string[] rpns)
+        {
+            var stack = new Stack<int>();
+
+            foreach (var item in rpns)
+            {
+                if (Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    if (int.TryParse(item, out var result))
+                    {
+                        stack.Push(result);
+                    }
+                    else
+                    {
+                        throw new Exception("数値に変換できませんでした。");
+                    }
+                }
+                else
+                {
+                    if (stack.Count < 2)
+                    {
+                        throw new Exception("演算に失敗しました。");
+                    }
+
+                    var lastValue = stack.Pop();
+                    var firstValue = stack.Pop();
+
+                    switch (item)
+                    {
+                        case "+":
+                            stack.Push(firstValue + lastValue);
+                            break;
+                        case "-":
+                            stack.Push(firstValue - lastValue);
+                            break;
+                        case "*":
+                            stack.Push(firstValue * lastValue);
+                            break;
+                        case "/":
+                            stack.Push(firstValue / lastValue);
+                            break;
+                        case "%":
+                            stack.Push(firstValue % lastValue);
+                            break;
+                        case "<<":
+                            stack.Push(firstValue << lastValue);
+                            break;
+                        case ">>":
+                            stack.Push(firstValue >> lastValue);
+                            break;
+                        case ">":
+                            stack.Push(firstValue > lastValue ? -1 : 0);
+                            break;
+                        case ">=":
+                            stack.Push(firstValue >= lastValue ? -1 : 0);
+                            break;
+                        case "<":
+                            stack.Push(firstValue < lastValue ? -1 : 0);
+                            break;
+                        case "<=":
+                            stack.Push(firstValue <= lastValue ? -1 : 0);
+                            break;
+                        case "==":
+                            stack.Push(firstValue == lastValue ? -1 : 0);
+                            break;
+                        case "!=":
+                            stack.Push(firstValue != lastValue ? -1 : 0);
+                            break;
+                        case "&":
+                            stack.Push(firstValue & lastValue);
+                            break;
+                        case "^":
+                            stack.Push(firstValue ^ lastValue);
+                            break;
+                        case "|":
+                            stack.Push(firstValue ^ lastValue);
+                            break;
+                            /*
+                        case "&&":
+                            stack.Push(firstValue && lastValue);
+                            break;
+                        case "||":
+                            stack.Push(firstValue || lastValue);
+                            break;
+                            */
+                        default:
+                            throw new Exception("無効な演算子です。");
+                    }
+                }
+            }
+
+            return stack.Pop();
+        }
+
+        private static string[] CalcParse(string value)
+        {
+            var terms = new List<string>();
+            var tmpValue = value.Trim();
+
+            // 数値と演算子に分解する
+            while (!string.IsNullOrEmpty(tmpValue))
+            {
+                var matched = Regex.Match(tmpValue, RegexPatternFormuraAndDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matched.Success)
+                {
+                    terms.Add(matched.Value);
+                    tmpValue = tmpValue.Substring(matched.Length).TrimStart();
+                }
+                else
+                {
+                    throw new Exception("演算に使えない文字が検出されました。");
+                }
+            }
+
+            var result = new List<string>();
+            var sign = "";
+            // 単項演算子を結合する
+            foreach (var index in Enumerable.Range(0, terms.Count))
+            {
+                var tmpString = terms[index];
+                if (tmpString == "+" || tmpString == "-")
+                {
+                    if (index == 0 || Regex.Match(terms[index - 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                    {
+                        sign = tmpString;
+                        continue;
+                    }
+                }
+                result.Add(sign + tmpString);
+                sign = "";
+            }
+            if (!string.IsNullOrEmpty(sign))
+            {
+                result.Add(sign);
+            }
+
+            // 演算子、数値が連続しているものがないか確認をする
+            var checkValues = result.Where(m => m != "(" && m != ")").ToArray();
+            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+            {
+                if (Regex.Match(checkValues[index + 0], RegexPatternDigit,RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                    Regex.Match(checkValues[index + 1], RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    throw new Exception("数値と数値の間には演算子が必要です");
+                }
+
+                if (Regex.Match(checkValues[index + 0], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                    Regex.Match(checkValues[index + 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    throw new Exception("演算子が連続で指定されています。");
+                }
+
+            }
+
+            return result.ToArray();
+        }
+
+        public static string[] CalcReversePolish(string[] terms)
+        {
+            var result = new List<string>();
+            var formura = new Stack<string>();
+
+            foreach (var item in terms)
+            {
+                var matched = Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matched.Success)
+                {
+                    result.Add(item);
+                }
+                else
+                {
+                    while (true)
+                    {
+                        if (item == ")")
+                        {
+                            while (formura.Count > 0 && formura.Peek() != "(")
+                            {
+                                result.Add(formura.Pop());
+                            }
+                            if (formura.Count == 0)
+                            {
+                                throw new Exception("括弧の数が不一致です");
+                            }
+                            formura.Pop();
+                            break;
+                        }
+                        else if (formura.Count == 0 || item == "(" || FormuraPriority[formura.Peek()] > FormuraPriority[item])
+                        {
+                            formura.Push(item);
+                            break;
+                        }
+                        else
+                        {
+                            result.Add(formura.Pop());
+                        }
+                    }
+                }
+            }
+
+            result.AddRange(formura);
+            if (result.Any(m => m == "("))
+            {
+                throw new Exception("括弧の数が不一致です");
+            }
+
+            return result.ToArray();
         }
     }
 }
