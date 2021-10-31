@@ -23,8 +23,8 @@ namespace AILZ80ASM
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
         private static readonly string RegexPatternDigit = @"^(\+|\-|)(\d+)$";
-        private static readonly string RegexPatternFormuraAndDigit = @"^(\d+|\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\?|\:)";
-        private static readonly string RegexPatternFormuraChar = @"^(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\?|\:)";
+        private static readonly string RegexPatternFormuraAndDigit = @"^(\d+|\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)";
+        private static readonly string RegexPatternFormuraChar = @"^(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)";
         private static readonly Dictionary<string, int> FormuraPriority = new Dictionary<string, int>()
         {
             [")"] = 1,
@@ -596,18 +596,20 @@ namespace AILZ80ASM
             return resultValue;
         }
 
-        public static int Calc<T>(string value)
+        public static T Calc<T>(string value)
+            where T : struct
         {
             var terms = CalcParse(value);
             var rpns = CalcReversePolish(terms);
-            var calc = Calculation(rpns);
+            var calc = Calculation<T>(rpns);
 
             return calc;
         }
 
-        private static int Calculation(string[] rpns)
+        private static T Calculation<T>(string[] rpns)
+            where T : struct
         {
-            var stack = new Stack<int>();
+            var stack = new Stack<object>();
 
             foreach (var item in rpns)
             {
@@ -629,74 +631,124 @@ namespace AILZ80ASM
                         throw new Exception("演算に失敗しました。");
                     }
 
-                    var lastValue = stack.Pop();
-                    var firstValue = stack.Pop();
-
                     switch (item)
                     {
                         case "+":
-                            stack.Push(firstValue + lastValue);
-                            break;
                         case "-":
-                            stack.Push(firstValue - lastValue);
-                            break;
                         case "*":
-                            stack.Push(firstValue * lastValue);
-                            break;
                         case "/":
-                            stack.Push(firstValue / lastValue);
-                            break;
                         case "%":
-                            stack.Push(firstValue % lastValue);
-                            break;
                         case "<<":
-                            stack.Push(firstValue << lastValue);
-                            break;
                         case ">>":
-                            stack.Push(firstValue >> lastValue);
-                            break;
                         case ">":
-                            stack.Push(firstValue > lastValue ? -1 : 0);
-                            break;
                         case ">=":
-                            stack.Push(firstValue >= lastValue ? -1 : 0);
-                            break;
                         case "<":
-                            stack.Push(firstValue < lastValue ? -1 : 0);
-                            break;
                         case "<=":
-                            stack.Push(firstValue <= lastValue ? -1 : 0);
-                            break;
                         case "==":
-                            stack.Push(firstValue == lastValue ? -1 : 0);
-                            break;
                         case "!=":
-                            stack.Push(firstValue != lastValue ? -1 : 0);
-                            break;
                         case "&":
-                            stack.Push(firstValue & lastValue);
-                            break;
                         case "^":
-                            stack.Push(firstValue ^ lastValue);
-                            break;
                         case "|":
-                            stack.Push(firstValue ^ lastValue);
+                            {
+                                var lastValue = (int)stack.Pop();
+                                var firstValue = (int)stack.Pop();
+                                switch (item)
+                                {
+                                    case "+":
+                                        stack.Push(firstValue + lastValue);
+                                        break;
+                                    case "-":
+                                        stack.Push(firstValue - lastValue);
+                                        break;
+                                    case "*":
+                                        stack.Push(firstValue * lastValue);
+                                        break;
+                                    case "/":
+                                        stack.Push(firstValue / lastValue);
+                                        break;
+                                    case "%":
+                                        stack.Push(firstValue % lastValue);
+                                        break;
+                                    case "<<":
+                                        stack.Push(firstValue << lastValue);
+                                        break;
+                                    case ">>":
+                                        stack.Push(firstValue >> lastValue);
+                                        break;
+                                    case ">":
+                                        stack.Push(firstValue > lastValue);
+                                        break;
+                                    case ">=":
+                                        stack.Push(firstValue >= lastValue);
+                                        break;
+                                    case "<":
+                                        stack.Push(firstValue < lastValue);
+                                        break;
+                                    case "<=":
+                                        stack.Push(firstValue <= lastValue);
+                                        break;
+                                    case "==":
+                                        stack.Push(firstValue == lastValue);
+                                        break;
+                                    case "!=":
+                                        stack.Push(firstValue != lastValue);
+                                        break;
+                                    case "&":
+                                        stack.Push(firstValue & lastValue);
+                                        break;
+                                    case "^":
+                                        stack.Push(firstValue ^ lastValue);
+                                        break;
+                                    case "|":
+                                        stack.Push(firstValue | lastValue);
+                                        break;
+                                    default:
+                                        throw new NotImplementedException();
+                                }
+                            }
                             break;
-                            /*
                         case "&&":
-                            stack.Push(firstValue && lastValue);
-                            break;
                         case "||":
-                            stack.Push(firstValue || lastValue);
+                            {
+                                var lastValue = (bool)stack.Pop();
+                                var firstValue = (bool)stack.Pop();
+
+                                switch (item)
+                                {
+                                    case "&&":
+                                        stack.Push(firstValue && lastValue);
+                                        break;
+                                    case "||":
+                                        stack.Push(firstValue || lastValue);
+                                        break;
+                                    default:
+                                        throw new NotImplementedException();
+                                }
+                            }
                             break;
-                            */
-                        default:
-                            throw new Exception("無効な演算子です。");
+                        case ":":
+                            break;
+                        case "?":
+                            {
+                                var falseValue = stack.Pop();
+                                var trueValue = stack.Pop();
+                                var conditionValue = (bool)stack.Pop();
+                                if (conditionValue)
+                                {
+                                    stack.Push(trueValue);
+                                }
+                                else
+                                {
+                                    stack.Push(falseValue);
+                                }
+                            }
+                            break;
+
                     }
                 }
             }
 
-            return stack.Pop();
+            return CalcNormalization<T>(stack.Pop());
         }
 
         private static string[] CalcParse(string value)
@@ -727,7 +779,7 @@ namespace AILZ80ASM
                 var tmpString = terms[index];
                 if (tmpString == "+" || tmpString == "-")
                 {
-                    if (index == 0 || Regex.Match(terms[index - 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                    if (index == 0 || terms[index - 1] != ")" && Regex.Match(terms[index - 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
                     {
                         sign = tmpString;
                         continue;
@@ -756,13 +808,11 @@ namespace AILZ80ASM
                 {
                     throw new Exception("演算子が連続で指定されています。");
                 }
-
             }
-
             return result.ToArray();
         }
 
-        public static string[] CalcReversePolish(string[] terms)
+        private static string[] CalcReversePolish(string[] terms)
         {
             var result = new List<string>();
             var formura = new Stack<string>();
@@ -810,7 +860,77 @@ namespace AILZ80ASM
                 throw new Exception("括弧の数が不一致です");
             }
 
+            // 三項演算子のチェック
+            var checkValues = result.ToArray();
+            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+            {
+                if ((checkValues[index + 0] == ":" && checkValues[index + 1] != "?") ||
+                    (checkValues[index + 0] != ":" && checkValues[index + 1] == "?"))
+                {
+                    throw new Exception("三項演算子の使い方が間違っています。");
+                }
+            }
+
             return result.ToArray();
+        }
+
+        /// <summary>
+        /// 指定の型に変換する
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static T CalcNormalization<T>(object value)
+            where T : struct
+        {
+            if (value is int intValue)
+            {
+                if (typeof(T) == typeof(UInt32))
+                {
+                    if (intValue < 0)
+                    {
+                        return (T)(object)Convert.ToUInt32(UInt32.MaxValue + intValue + 1);
+                    }
+                    else
+                    {
+                        return (T)(object)Convert.ToUInt32(intValue & UInt32.MaxValue);
+                    }
+                }
+                else if (typeof(T) == typeof(UInt16))
+                {
+                    if (intValue < 0)
+                    {
+                        return (T)(object)Convert.ToUInt16(UInt16.MaxValue + intValue + 1);
+                    }
+                    else
+                    {
+                        return (T)(object)Convert.ToUInt16(intValue & UInt16.MaxValue);
+                    }
+                }
+                else if (typeof(T) == typeof(byte))
+                {
+                    if (intValue < 0)
+                    {
+                        return (T)(object)Convert.ToByte(byte.MaxValue + intValue + 1);
+                    }
+                    else
+                    {
+                        return (T)(object)Convert.ToByte(intValue & byte.MaxValue);
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException(nameof(intValue));
+                }
+            }
+            else if (typeof(T) == typeof(bool) && value is bool boolValue)
+            {
+                return (T)(object)boolValue;
+            }
+            else
+            {
+                throw new ArgumentException(nameof(value));
+            }
         }
     }
 }
