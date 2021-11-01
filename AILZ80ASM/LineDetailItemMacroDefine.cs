@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -16,7 +15,7 @@ namespace AILZ80ASM
         private readonly List<LineItem> MacroLines = new List<LineItem>();
         public override AsmList[] Lists
         {
-            get 
+            get
             {
                 var lists = new List<AsmList>();
                 foreach (var item in MacroLines)
@@ -74,7 +73,7 @@ namespace AILZ80ASM
                     // 終了
                     asmLoad.LineDetailItemForExpandItem = default;
                 }
-                
+
                 return new LineDetailItemMacroDefine(lineItem, asmLoad);
             }
             else

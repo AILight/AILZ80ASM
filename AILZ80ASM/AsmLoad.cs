@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AILZ80ASM
 {
@@ -17,7 +15,7 @@ namespace AILZ80ASM
         private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
 
         private string _GlobalLabelName;
-        public string GlobalLabelName 
+        public string GlobalLabelName
         {
             get { return _GlobalLabelName; }
             set

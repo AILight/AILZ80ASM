@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
@@ -172,7 +171,7 @@ namespace AILZ80ASM
             {
                 valueString = ops[1];
             }
-            
+
             var count = Convert.ToInt32(AIMath.Replace16Number(ops[0]));
             var valuesStrings = Enumerable.Range(0, count).Select(_ => valueString).ToArray();
 

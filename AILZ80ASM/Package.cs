@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace AILZ80ASM
 {
     public class Package
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
-        public AsmLoad AssembleLoad { get; private set; }  = new AsmLoad();
+        public AsmLoad AssembleLoad { get; private set; } = new AsmLoad();
 
         public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).ToArray();
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
@@ -35,7 +33,7 @@ namespace AILZ80ASM
         {
             // 値のラベルを処理する
             BuildValueLabel();
-            
+
             // 命令を展開する
             ExpansionItem();
 

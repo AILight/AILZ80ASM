@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
@@ -39,7 +36,7 @@ namespace AILZ80ASM
 
         public static LineDetailItem Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            if (string.IsNullOrEmpty( lineItem.OperationString))
+            if (string.IsNullOrEmpty(lineItem.OperationString))
             {
                 return default;
             }

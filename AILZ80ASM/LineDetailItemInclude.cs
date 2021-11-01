@@ -78,7 +78,7 @@ namespace AILZ80ASM
 
                 return new LineDetailItemInclude(lineItem, fileInfo, fileType, startAddressString, lengthString, asmLoad);
             }
-            
+
             return default;
         }
 

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
@@ -15,10 +12,10 @@ namespace AILZ80ASM
         private byte[] _Bin;
         public override byte[] Bin
         {
-            get 
+            get
             {
                 return _Bin;
-            } 
+            }
         }
 
         public LineDetailExpansionItemBinaryFile(LineItem lineItem, FileInfo fileInfo, string start, string length)
@@ -40,7 +37,7 @@ namespace AILZ80ASM
             if (fileSize < 0)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2006);
-            }    
+            }
 
             var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : (int)AIMath.ConvertTo<UInt32>(FileLength, asmLoad);
             if (readLength > fileSize)

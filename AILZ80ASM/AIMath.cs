@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
@@ -23,12 +22,26 @@ namespace AILZ80ASM
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
         private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
         private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
-        private static readonly string RegexPatternFormuraChar = @"\d|\+|\-|\*|\/|\%|\~|\(|\)|!|=|\<|\>|\s|\&|\|";
-        private static readonly string[] InvalidFormuras = new[] { "<>", "><", "===", "=>", "<=", ")(",
-                                                                  "**", "*+", "*-", "*%",
-                                                                  "+*", "++", "+-", "+%",
-                                                                  "-*", "-+", "--", "-%",
-                                                                  "%*", "%+", "%-", "%%",
+        private static readonly string RegexPatternDigit = @"^(\+|\-|)(\d+)$";
+        private static readonly string RegexPatternFormuraAndDigit = @"^(\d+|\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)";
+        private static readonly string RegexPatternFormuraChar = @"^(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)$";
+        private static readonly Dictionary<string, int> FormuraPriority = new Dictionary<string, int>()
+        {
+            [")"] = 1,
+            ["!"] = 2,  ["~"] = 2, // 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
+            ["*"] = 3,  ["/"] = 3, ["%"] = 3,
+            ["+"] = 4,  ["-"] = 4,
+            ["<<"] = 5, [">>"] = 5,
+            ["<"] = 6,  [">"] = 6, ["<="] = 6, [">="] = 6,
+            ["=="] = 7, ["!="] = 7,
+            ["&"] = 8,
+            ["^"] = 9,
+            ["|"] = 10,
+            ["&&"] = 11,
+            ["||"] = 12,
+            ["?"] = 14, [":"] = 13,
+            ["("] = 15,
+
         };
 
         public static bool IsNumber(string value)
@@ -55,201 +68,6 @@ namespace AILZ80ASM
 
             return false;
         }
-
-        /*
-        public static byte ConvertToByte(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            return ConvertToByte(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
-        }
-
-        public static byte ConvertToByte(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
-
-            try
-            {
-                var nCalcExpression = new NCalc.Expression(tmpValue);
-                var calcedValue = nCalcExpression.ToLambda<int>().Invoke();
-
-                if (calcedValue < 0)
-                {
-                    return (byte)(byte.MaxValue + calcedValue + 1);
-                }
-                else
-                {
-                    return (byte)calcedValue;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
-            }
-
-        }
-        */
-
-        /// <summary>
-        /// 使えない演算子をチェック
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        private static bool IsInvalidFormulaChar(string target)
-        {
-            if (InvalidFormuras.Any(m => target.Contains(m)))
-            {
-                return true;
-            }
-
-            return !string.IsNullOrEmpty(Regex.Replace(target.Replace(" ", ""), RegexPatternFormuraChar, "", 
-                                        RegexOptions.Singleline | RegexOptions.IgnoreCase));
-        }
-
-        /// <summary>
-        /// int方を指定の型に変換する
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private static T InternalConvertNormalization<T>(int value)
-            where T: struct
-        {
-            if (typeof(T) == typeof(UInt32))
-            {
-                if (value < 0)
-                {
-                    return (T)(object)Convert.ToUInt32(UInt32.MaxValue + value + 1);
-                }
-                else
-                {
-                    return (T)(object)Convert.ToUInt32(value & UInt32.MaxValue);
-                }
-            }
-            else if (typeof(T) == typeof(UInt16))
-            {
-                if (value < 0)
-                {
-                    return (T)(object)Convert.ToUInt16(UInt16.MaxValue + value + 1);
-                }
-                else
-                {
-                    return (T)(object)Convert.ToUInt16(value & UInt16.MaxValue);
-                }
-            }
-            else if (typeof(T) == typeof(byte))
-            {
-                if (value < 0)
-                {
-                    return (T)(object)Convert.ToByte(byte.MaxValue + value + 1);
-                }
-                else
-                {
-                    return (T)(object)Convert.ToByte(value & byte.MaxValue);
-                }
-            }
-            else
-            {
-                throw new ArgumentException(nameof(value));
-            }
-        }
-
-        /// <summary>
-        /// 文字列を計算する
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private static T InternalCalculation<T>(string value)
-            where T: struct
-        {
-            if (typeof(T) == typeof(bool))
-            {
-                var nCalcExpression = new NCalc.Expression(value);
-                var calcedValue = nCalcExpression.ToLambda<T>().Invoke();
-
-                return calcedValue;
-            }
-            else if (typeof(T) == typeof(UInt32) || 
-                     typeof(T) == typeof(UInt16) ||
-                     typeof(T) == typeof(byte))
-            {
-                var nCalcExpression = new NCalc.Expression(value);
-                var calcedValue = nCalcExpression.ToLambda<int>().Invoke();
-                var normaledValue = InternalConvertNormalization<T>(calcedValue);
-
-                return normaledValue;
-            }
-            else
-            {
-                throw new ArgumentException(nameof(T));
-            }
-        }
-
-        /// <summary>
-        /// 演算可能かを判断し、可能なら演算をする
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
-        /// <param name="asmLoad"></param>
-        /// <param name="resultValue"></param>
-        /// <returns></returns>
-        public static bool InternalTryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress, out T resultValue)
-            where T : struct
-        {
-            var tmpValue = default(string);
-
-            if (asmAddress.HasValue)
-            {
-                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad, asmAddress.Value);
-            }
-            else
-            {
-                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            }
-
-            // 計算不能かを判断
-            if (IsInvalidFormulaChar(tmpValue))
-            {
-                resultValue = default(T);
-                return false;
-            }
-
-            try
-            {
-                resultValue = InternalCalculation<T>(tmpValue);
-                return true;
-            }
-            catch
-            {
-                resultValue = default(T);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// コンバートを行う
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
-        /// <param name="asmLoad"></param>
-        /// <param name="asmAddress"></param>
-        /// <returns></returns>
-        private static T InternalConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress)
-            where T : struct
-        {
-            if (InternalTryParse<T>(value, globalLabelName, labelName, asmLoad, asmAddress, out var resultValue))
-            {
-                return resultValue;
-            }
-            else
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}");
-            }
-        }
-
 
         public static bool TryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress asmAddress, out T resultValue)
             where T : struct
@@ -305,120 +123,6 @@ namespace AILZ80ASM
             return InternalConvertTo<T>(value, globalLabelName, labelName, asmLoad, asmAddress);
         }
 
-        /*
-
-        public static UInt16 ConvertToUInt16(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            return ConvertToUInt16(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
-        }
-
-        public static UInt16 ConvertToUInt16(string value, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
-            return InternalConvertToUInt16(value, tmpValue);
-        }
-
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            return InternalConvertToUInt16(value, tmpValue);
-        }
-
-        public static UInt16 ConvertToUInt16(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
-            return InternalConvertToUInt16(value, tmpValue);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            return ConvertToUInt32(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
-            return InternalConvertToUInt32(value, tmpValue);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            return InternalConvertToUInt32(value, tmpValue);
-        }
-
-        public static UInt32 ConvertToUInt32(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
-            return InternalConvertToUInt32(value, tmpValue);
-        }
-
-        public static bool ConvertToBoolean(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-        {
-            return ConvertToBoolean(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, lineDetailExpansionItemOperation.Address, asmLoad);
-        }
-
-        public static bool ConvertToBoolean(string value, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
-            return InternalConvertToBoolean(value, tmpValue);
-        }
-
-        public static bool ConvertToBoolean(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            return InternalConvertToBoolean(value, tmpValue);
-        }
-
-        public static bool ConvertToBoolean(string value, string globalLabelName, string labelName, AsmAddress address, AsmLoad asmLoad)
-        {
-            var tmpValue = ReplaceAll(value, globalLabelName, labelName, address, asmLoad);
-            return InternalConvertToBoolean(value, tmpValue);
-        }
-
-        private static UInt16 InternalConvertToUInt16(string value, string tmpValue)
-        {
-            return (UInt16)InternalConvertToUInt32(value, tmpValue);
-        }
-
-        private static UInt32 InternalConvertToUInt32(string value, string tmpValue)
-        {
-            try
-            {
-                var nCalcExpression = new NCalc.Expression(tmpValue);
-                var calcedValue = nCalcExpression.ToLambda<int>().Invoke();
-
-                if (calcedValue < 0)
-                {
-                    return (UInt32)(UInt32.MaxValue + calcedValue + 1);
-                }
-                else
-                {
-                    return (UInt32)calcedValue;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
-            }
-        }
-        
-        private static bool InternalConvertToBoolean(string value, string tmpValue)
-        {
-            try
-            {
-                var nCalcExpression = new NCalc.Expression(tmpValue);
-                var calcedValue = nCalcExpression.ToLambda<bool>().Invoke();
-
-                return calcedValue;
-            }
-            catch (Exception ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex, $"演算対象：{value}");
-            }
-        }
-        */
-
         private static string ReplaceAll(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
         {
             //16進数の置き換え
@@ -429,7 +133,7 @@ namespace AILZ80ASM
 
             // ラベルの置き換え
             value = ReplaceLabel(value, globalLabelName, labelName, asmLoad);
-            
+
             return value;
         }
 
@@ -687,6 +391,465 @@ namespace AILZ80ASM
             resultValue += workValue;
 
             return resultValue;
+        }
+
+        /// <summary>
+        /// 式の文字列から演算を行う
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T Calculation<T>(string target)
+            where T : struct
+        {
+            var terms = CalculationParse(target);
+            var rvpns = CalculationMakeReversePolish(terms);
+            var value = CalculationByReversePolish<T>(rvpns);
+
+            return value;
+        }
+
+        /// <summary>
+        /// 式を分解する
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static string[] CalculationParse(string value)
+        {
+            var terms = new List<string>();
+            var tmpValue = value.Trim();
+
+            // 数値と演算子に分解する
+            while (!string.IsNullOrEmpty(tmpValue))
+            {
+                var matched = Regex.Match(tmpValue, RegexPatternFormuraAndDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matched.Success)
+                {
+                    terms.Add(matched.Value);
+                    tmpValue = tmpValue.Substring(matched.Length).TrimStart();
+                }
+                else
+                {
+                    throw new Exception("演算に使えない文字が検出されました。");
+                }
+            }
+
+            var result = new List<string>();
+            var sign = "";
+            // 単項演算子を結合する
+            foreach (var index in Enumerable.Range(0, terms.Count))
+            {
+                var tmpString = terms[index];
+                if (tmpString == "+" || tmpString == "-")
+                {
+                    if (index == 0 || terms[index - 1] != ")" && Regex.Match(terms[index - 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                    {
+                        sign = tmpString;
+                        continue;
+                    }
+                }
+                result.Add(sign + tmpString);
+                sign = "";
+            }
+            if (!string.IsNullOrEmpty(sign))
+            {
+                result.Add(sign);
+            }
+
+            // 演算子、数値が連続しているものがないか確認をする
+            var checkValues = result.Where(m => m != "(" && m != ")").ToArray();
+            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+            {
+                if (Regex.Match(checkValues[index + 0], RegexPatternDigit,RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                    Regex.Match(checkValues[index + 1], RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    throw new Exception("数値と数値の間には演算子が必要です");
+                }
+
+                if (Regex.Match(checkValues[index + 0], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                    Regex.Match(checkValues[index + 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    throw new Exception("演算子が連続で指定されています。");
+                }
+            }
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// 逆ポーランド記法に変換する
+        /// </summary>
+        /// <param name="terms"></param>
+        /// <returns></returns>
+        private static string[] CalculationMakeReversePolish(string[] terms)
+        {
+            var result = new List<string>();
+            var formura = new Stack<string>();
+
+            foreach (var item in terms)
+            {
+                var matched = Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matched.Success)
+                {
+                    result.Add(item);
+                }
+                else
+                {
+                    while (true)
+                    {
+                        if (item == ")")
+                        {
+                            while (formura.Count > 0 && formura.Peek() != "(")
+                            {
+                                result.Add(formura.Pop());
+                            }
+                            if (formura.Count == 0)
+                            {
+                                throw new Exception("括弧の数が不一致です");
+                            }
+                            formura.Pop();
+                            break;
+                        }
+                        else if (formura.Count == 0 || item == "(" || FormuraPriority[formura.Peek()] > FormuraPriority[item])
+                        {
+                            formura.Push(item);
+                            break;
+                        }
+                        else
+                        {
+                            result.Add(formura.Pop());
+                        }
+                    }
+                }
+            }
+
+            result.AddRange(formura);
+            if (result.Any(m => m == "("))
+            {
+                throw new Exception("括弧の数が不一致です");
+            }
+
+            // 三項演算子のチェック
+            var checkValues = result.ToArray();
+            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+            {
+                if ((checkValues[index + 0] == ":" && checkValues[index + 1] != "?") ||
+                    (checkValues[index + 0] != ":" && checkValues[index + 1] == "?"))
+                {
+                    throw new Exception("三項演算子の使い方が間違っています。");
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// 逆ポーランド記法から演算を行う
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rpns"></param>
+        /// <returns></returns>
+        private static T CalculationByReversePolish<T>(string[] rpns)
+            where T : struct
+        {
+            var stack = new Stack<object>();
+
+            foreach (var item in rpns)
+            {
+                if (Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    if (int.TryParse(item, out var result))
+                    {
+                        stack.Push(result);
+                    }
+                    else
+                    {
+                        throw new Exception("数値に変換できませんでした。");
+                    }
+                }
+                else
+                {
+                    switch (item)
+                    {
+                        case "+":
+                        case "-":
+                        case "*":
+                        case "/":
+                        case "%":
+                        case "<<":
+                        case ">>":
+                        case ">":
+                        case ">=":
+                        case "<":
+                        case "<=":
+                        case "==":
+                        case "!=":
+                        case "&":
+                        case "^":
+                        case "|":
+                            {
+                                if (stack.Count < 2)
+                                {
+                                    throw new Exception("演算に失敗しました。");
+                                }
+
+                                var lastValue = (int)stack.Pop();
+                                var firstValue = (int)stack.Pop();
+                                switch (item)
+                                {
+                                    case "+":
+                                        stack.Push(firstValue + lastValue);
+                                        break;
+                                    case "-":
+                                        stack.Push(firstValue - lastValue);
+                                        break;
+                                    case "*":
+                                        stack.Push(firstValue * lastValue);
+                                        break;
+                                    case "/":
+                                        stack.Push(firstValue / lastValue);
+                                        break;
+                                    case "%":
+                                        stack.Push(firstValue % lastValue);
+                                        break;
+                                    case "<<":
+                                        stack.Push(firstValue << lastValue);
+                                        break;
+                                    case ">>":
+                                        stack.Push(firstValue >> lastValue);
+                                        break;
+                                    case ">":
+                                        stack.Push(firstValue > lastValue);
+                                        break;
+                                    case ">=":
+                                        stack.Push(firstValue >= lastValue);
+                                        break;
+                                    case "<":
+                                        stack.Push(firstValue < lastValue);
+                                        break;
+                                    case "<=":
+                                        stack.Push(firstValue <= lastValue);
+                                        break;
+                                    case "==":
+                                        stack.Push(firstValue == lastValue);
+                                        break;
+                                    case "!=":
+                                        stack.Push(firstValue != lastValue);
+                                        break;
+                                    case "&":
+                                        stack.Push(firstValue & lastValue);
+                                        break;
+                                    case "^":
+                                        stack.Push(firstValue ^ lastValue);
+                                        break;
+                                    case "|":
+                                        stack.Push(firstValue | lastValue);
+                                        break;
+                                    default:
+                                        throw new NotImplementedException();
+                                }
+                            }
+                            break;
+                        case "&&":
+                        case "||":
+                            {
+                                if (stack.Count < 2)
+                                {
+                                    throw new Exception("演算に失敗しました。");
+                                }
+
+                                var lastValue = (bool)stack.Pop();
+                                var firstValue = (bool)stack.Pop();
+
+                                switch (item)
+                                {
+                                    case "&&":
+                                        stack.Push(firstValue && lastValue);
+                                        break;
+                                    case "||":
+                                        stack.Push(firstValue || lastValue);
+                                        break;
+                                    default:
+                                        throw new NotImplementedException();
+                                }
+                            }
+                            break;
+                        case "!":
+                            {
+                                if (stack.Count < 1)
+                                {
+                                    throw new Exception("演算に失敗しました。");
+                                }
+
+                                var firstValue = stack.Pop();
+                                if (firstValue is bool boolValue)
+                                {
+                                    stack.Push(!boolValue);
+                                }
+                                else if (firstValue is int intValue)
+                                {
+                                    stack.Push(~intValue);
+                                }
+                            }
+                            break;
+                        case "~":
+                            {
+                                if (stack.Count < 1)
+                                {
+                                    throw new Exception("演算に失敗しました。");
+                                }
+
+                                var firstValue = (int)stack.Pop();
+                                stack.Push(~firstValue);
+                            }
+                            break;
+                        case ":": 
+                            // 三項演算子の記号、?で処理するのでここは無処理
+                            break;
+                        case "?":
+                            {
+                                if (stack.Count < 3)
+                                {
+                                    throw new Exception("演算に失敗しました。");
+                                }
+
+                                var falseValue = stack.Pop();
+                                var trueValue = stack.Pop();
+                                var conditionValue = (bool)stack.Pop();
+                                if (conditionValue)
+                                {
+                                    stack.Push(trueValue);
+                                }
+                                else
+                                {
+                                    stack.Push(falseValue);
+                                }
+                            }
+                            break;
+
+                    }
+                }
+            }
+
+            return CalculationNormalization<T>(stack.Pop());
+        }
+
+        /// <summary>
+        /// 指定の型に変換する
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static T CalculationNormalization<T>(object value)
+            where T : struct
+        {
+            if (value is int intValue)
+            {
+                if (typeof(T) == typeof(UInt32))
+                {
+                    if (intValue < 0)
+                    {
+                        return (T)(object)Convert.ToUInt32(UInt32.MaxValue + intValue + 1);
+                    }
+                    else
+                    {
+                        return (T)(object)Convert.ToUInt32(intValue & UInt32.MaxValue);
+                    }
+                }
+                else if (typeof(T) == typeof(UInt16))
+                {
+                    if (intValue < 0)
+                    {
+                        return (T)(object)Convert.ToUInt16(UInt16.MaxValue + intValue + 1);
+                    }
+                    else
+                    {
+                        return (T)(object)Convert.ToUInt16(intValue & UInt16.MaxValue);
+                    }
+                }
+                else if (typeof(T) == typeof(byte))
+                {
+                    if (intValue < 0)
+                    {
+                        return (T)(object)Convert.ToByte(byte.MaxValue + intValue + 1);
+                    }
+                    else
+                    {
+                        return (T)(object)Convert.ToByte(intValue & byte.MaxValue);
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException(nameof(intValue));
+                }
+            }
+            else if (typeof(T) == typeof(bool) && value is bool boolValue)
+            {
+                return (T)(object)boolValue;
+            }
+            else
+            {
+                throw new ArgumentException(nameof(value));
+            }
+        }
+
+        
+        /// <summary>
+        /// 演算可能かを判断し、可能なら演算をする
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="globalLabelName"></param>
+        /// <param name="labelName"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="resultValue"></param>
+        /// <returns></returns>
+        private static bool InternalTryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress, out T resultValue)
+            where T : struct
+        {
+            var tmpValue = default(string);
+
+            if (asmAddress.HasValue)
+            {
+                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad, asmAddress.Value);
+            }
+            else
+            {
+                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
+            }
+
+            try
+            {
+                resultValue = Calculation<T>(tmpValue);
+                return true;
+            }
+            catch
+            {
+                resultValue = default(T);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// コンバートを行う
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="globalLabelName"></param>
+        /// <param name="labelName"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <returns></returns>
+        private static T InternalConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress)
+            where T : struct
+        {
+            if (InternalTryParse<T>(value, globalLabelName, labelName, asmLoad, asmAddress, out var resultValue))
+            {
+                return resultValue;
+            }
+            else
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{value}");
+            }
         }
     }
 }

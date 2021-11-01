@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
@@ -10,7 +8,7 @@ namespace AILZ80ASM
     {
         //private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
         public LineItem LineItem { get; private set; }
-        protected AsmLoad AsmLoad {get;set; }
+        protected AsmLoad AsmLoad { get; set; }
 
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
@@ -99,7 +97,7 @@ namespace AILZ80ASM
 
         public virtual void ExpansionItem()
         {
-            
+
         }
 
         public virtual void PreAssemble(ref AsmAddress asmAddress)

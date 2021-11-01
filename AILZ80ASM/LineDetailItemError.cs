@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
@@ -21,7 +17,7 @@ namespace AILZ80ASM
         public static LineDetailItemError Create(LineItem lineItem, AsmLoad asmLoad)
         {
             var matched = Regex.Match(lineItem.OperationString, RegexPatternError, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            
+
             // 開始条件チェック
             if (matched.Success)
             {

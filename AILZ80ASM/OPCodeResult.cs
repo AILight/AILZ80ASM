@@ -92,7 +92,7 @@ namespace AILZ80ASM
             var returnValue = Convert.ToString(value, 2).PadLeft(length, '0'); ;
             var overString = returnValue.Substring(0, returnValue.Length - length);
             if ((value > 0 && overString.Contains("1")) ||
-                (value < 0 && overString.Contains("0")) )
+                (value < 0 && overString.Contains("0")))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0002, $"{value:x}");
             }

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
     public class LineDetailScopeItem
     {
-        protected AsmLoad AsmLoad {get;set; }
+        protected AsmLoad AsmLoad { get; set; }
 
         public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
         public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();

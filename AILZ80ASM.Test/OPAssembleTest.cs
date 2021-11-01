@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System.Reflection;
 
 namespace AILZ80ASM.Test
@@ -24,7 +23,7 @@ namespace AILZ80ASM.Test
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
-        
+
         [TestMethod]
         public void TestOP_ADD_16BitR_16BitR()
         {
@@ -174,7 +173,7 @@ namespace AILZ80ASM.Test
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
-        
+
         [TestMethod]
         public void TestOP_LD_Address_8BitN()
         {
@@ -271,7 +270,7 @@ namespace AILZ80ASM.Test
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
 
-         [TestMethod]
+        [TestMethod]
         public void TestOP_XOR_All()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
