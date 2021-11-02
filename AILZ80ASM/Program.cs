@@ -1,57 +1,79 @@
 ﻿using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
+using AILZ80ASM.CommandLine;
 
 namespace AILZ80ASM
 {
     class Program
     {
-        public static async Task<int> Main(params string[] args)
+        public static int Main(params string[] args)
         {
             var rootCommand = new RootCommand(
               description: "AILight Z80 Assember.");
 
-            var inputOption = new Option(
-              aliases: new string[] { "--input", "-i" }
-              , description: "アセンブリ対象のファイルをカンマ区切りで指定します。")
-            { Argument = new Argument<FileInfo[]>() };
-            rootCommand.AddOption(inputOption);
+            rootCommand.AddOption(new Option<FileInfo[]>(
+                name: "input",
+                aliases: new string[] { "-i", "--input" },
+                description: "アセンブリ対象のファイルをスペース区切りで指定します。",
+                required: true));
 
-            var outputOption = new Option(
-              aliases: new string[] { "--output", "-o" }
-              , description: "出力ファイルを指定します。")
-            { Argument = new Argument<FileInfo>() };
-            rootCommand.AddOption(outputOption);
+            rootCommand.AddOption(new Option<FileInfo>(
+                name: "output",
+                aliases: new string[] { "-o", "--output" },
+                description: "出力ファイルを指定します。",
+                required: true));
 
-            var symbolOption = new Option(
-              aliases: new string[] { "--symbol", "-s" }
-              , description: "シンボルファイルを指定します。")
-            { Argument = new Argument<FileInfo>(), IsRequired = false };
-            rootCommand.AddOption(symbolOption);
+            rootCommand.AddOption(new Option<FileInfo>(
+                name: "symbol",
+                aliases: new string[] { "-s", "--symbol"  },
+                description: "シンボルファイルを指定します。",
+                required: false));
 
-            var listOption = new Option(
-              aliases: new string[] { "--list", "-l" }
-              , description: "リストファイルを指定します。")
-            { Argument = new Argument<FileInfo>(), IsRequired = false };
-            rootCommand.AddOption(listOption);
+            rootCommand.AddOption(new Option<FileInfo>(
+                name: "list",
+                aliases: new string[] { "-l", "--list" },
+                description: "リストファイルを指定します。",
+                required: false));
+
+            rootCommand.AddOption(new Option<bool>(
+                name: "version",
+                aliases: new string[] { "-v", "--version" },
+                description: "バージョンを表示します。",
+                required: false,
+                optionFunc: () => { return System.Environment.Version.ToString(); }));
+
+            rootCommand.AddOption(new Option<bool>(
+                name: "version",
+                aliases: new string[] { "-?", "-h", "--help" },
+                description: "バージョンを表示します。",
+                required: false,
+                optionFunc: () => { return rootCommand.HelpMessage; }));
 
             try
             {
                 OutputStart();
 
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
-                rootCommand.Handler =
-                  CommandHandler.Create<FileInfo[], FileInfo, FileInfo, FileInfo>(Assember);
+                if (rootCommand.Parse(args))
+                {
+                    return Assember(rootCommand.GetValue<FileInfo[]>("input"),
+                                    rootCommand.GetValue<FileInfo>("output"),
+                                    rootCommand.GetValue<FileInfo>("symbol"),
+                                    rootCommand.GetValue<FileInfo>("list")) ? 0 : 1;
+                }
+                else
+                {
+                    Console.WriteLine(rootCommand.ParseMessage);
 
-                return await rootCommand.InvokeAsync(args);
+                    return 2;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return 3;
             }
-            return await Task.FromResult(1);
         }
 
         /// <summary>
@@ -59,12 +81,12 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="input"></param>
         /// <param name="output"></param>
-        static public void Assember(
-          FileInfo[] input, FileInfo output, FileInfo symbol, FileInfo list)
+        static public bool Assember(
+                FileInfo[] input, FileInfo output, FileInfo symbol, FileInfo list)
         {
             try
             {
-                if (input == default)
+                if (input == default || input.Length == 0)
                 {
                     throw new ArgumentException($"入力ファイルが指定されていません");
                 }
@@ -96,13 +118,16 @@ namespace AILZ80ASM
             catch (Exception ex)
             {
                 Console.WriteLine($"Error:{ex.Message}");
+                return false;
             }
+            return true;
         }
 
         private static void OutputStart()
         {
             Console.WriteLine(ProductInfo.ProductLongName);
             Console.WriteLine(ProductInfo.Copyright);
+            Console.WriteLine("");
         }
     }
 }
