@@ -8,7 +8,7 @@
 
         }
 
-        public static LineDetailItemInvalid Create(LineItem ineItem, AsmLoad asmLoad)
+        public static LineDetailItemInvalid Create(LineItem lineItem, AsmLoad asmLoad)
         {
             throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
         }

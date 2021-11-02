@@ -83,8 +83,6 @@ namespace AILZ80ASM.CommandLine
                         throw new Exception($"{option.Name}は必須項目です。値を指定する必要があります。");
                     }
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -92,7 +90,6 @@ namespace AILZ80ASM.CommandLine
                 return false;
             }
 
-            //ここでパースする
             return true;
             
         }
