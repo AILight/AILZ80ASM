@@ -30,7 +30,7 @@ namespace AILZ80ASM
             return (new[] { "ORG" }).Any(m => string.Compare(m, op1, true) == 0);
         }
 
-        public static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemSystem);
             var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
