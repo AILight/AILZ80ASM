@@ -1,0 +1,22 @@
+﻿	RL b,(ix+$11)
+	RL c,(ix+$22)
+	RL d,(ix+$33)
+	RL e,(ix+$44)
+	RL h,(ix+$55)
+	RL l,(ix+$66)
+	RL a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	RL b,(iy+$11)
+	RL c,(iy+$22)
+	RL d,(iy+$33)
+	RL e,(iy+$44)
+	RL h,(iy+$55)
+	RL l,(iy+$66)
+	RL a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP

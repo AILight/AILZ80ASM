@@ -1,0 +1,10 @@
+﻿	sll b
+	sll c
+	sll d
+	sll e
+	sll h
+	sll l
+	sll (hl)
+	sll a
+	sll (ix+$10)
+	sll (iy+$30)

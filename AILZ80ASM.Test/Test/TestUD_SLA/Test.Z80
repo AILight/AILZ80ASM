@@ -1,0 +1,22 @@
+﻿	SLA b,(ix+$11)
+	SLA c,(ix+$22)
+	SLA d,(ix+$33)
+	SLA e,(ix+$44)
+	SLA h,(ix+$55)
+	SLA l,(ix+$66)
+	SLA a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	SLA b,(iy+$11)
+	SLA c,(iy+$22)
+	SLA d,(iy+$33)
+	SLA e,(iy+$44)
+	SLA h,(iy+$55)
+	SLA l,(iy+$66)
+	SLA a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP

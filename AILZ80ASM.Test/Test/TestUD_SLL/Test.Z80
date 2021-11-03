@@ -1,0 +1,22 @@
+﻿	SLL b,(ix+$11)
+	SLL c,(ix+$22)
+	SLL d,(ix+$33)
+	SLL e,(ix+$44)
+	SLL h,(ix+$55)
+	SLL l,(ix+$66)
+	SLL a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	SLL b,(iy+$11)
+	SLL c,(iy+$22)
+	SLL d,(iy+$33)
+	SLL e,(iy+$44)
+	SLL h,(iy+$55)
+	SLL l,(iy+$66)
+	SLL a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP

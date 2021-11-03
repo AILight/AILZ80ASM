@@ -1,0 +1,8 @@
+﻿	SET B,  0, (IX+ 7)
+	SET C,  1, (IX+ 6)
+	SET D,  2, (IX+ 5)
+	SET E,  3, (IX+ 4)
+	SET H,  4, (IX+ 3)
+	SET L,  5, (IX+ 2)
+	SET A,  6, (IX+ 1)
+	SET A,  7, (IX+ 0)

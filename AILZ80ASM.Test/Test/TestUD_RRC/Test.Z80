@@ -1,0 +1,22 @@
+﻿	RRC b,(ix+$11)
+	RRC c,(ix+$22)
+	RRC d,(ix+$33)
+	RRC e,(ix+$44)
+	RRC h,(ix+$55)
+	RRC l,(ix+$66)
+	RRC a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	RRC b,(iy+$11)
+	RRC c,(iy+$22)
+	RRC d,(iy+$33)
+	RRC e,(iy+$44)
+	RRC h,(iy+$55)
+	RRC l,(iy+$66)
+	RRC a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP

@@ -12,6 +12,26 @@ namespace AILZ80ASM.Test
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
+        [TestMethod]
+        public void TestUD_BIT_RES()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_BIT_SET()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_CB_SLL()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_IN_And_OUT()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
 
         [TestMethod]
         public void TestUD_INC_And_DEC()
@@ -21,6 +41,46 @@ namespace AILZ80ASM.Test
 
         [TestMethod]
         public void TestUD_LD()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_RL()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_RLC()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_RR()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_RRC()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_SLA()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_SRA()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_SLL()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+        [TestMethod]
+        public void TestUD_SRL()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
