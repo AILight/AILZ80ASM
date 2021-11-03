@@ -86,10 +86,15 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "RLC (HL)", OPCode = new[] { "11001011", "00000110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RLC (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RLC (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "RLC r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00000DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "RLC r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00000DDD" }, M = 6, T = 23, UnDocumented = true },
                 new OPCodeItem { Operation = "RL r", OPCode = new[] { "11001011", "00010DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "RL (HL)", OPCode = new[] { "11001011", "00010110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RL (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RL (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "RL  r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "RL  r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
+                
                 // 右ローテート
                 new OPCodeItem { Operation = "RRCA", OPCode = new[] { "00001111" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "RRA", OPCode = new[] { "00011111" }, M = 1, T = 4 },
@@ -97,24 +102,44 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "RRC (HL)", OPCode = new[] { "11001011", "00001110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RRC (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RRC (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "RRC r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00001DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "RRC r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00001DDD" }, M = 6, T = 23, UnDocumented = true },
                 new OPCodeItem { Operation = "RR r", OPCode = new[] { "11001011", "00011DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "RR (HL)", OPCode = new[] { "11001011", "00011110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RR (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00011110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RR (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00011110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "RR r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00011DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "RR r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00011DDD" }, M = 6, T = 23, UnDocumented = true },
+
+
                 // 左シフト
                 new OPCodeItem { Operation = "SLA r", OPCode = new[] { "11001011", "00100DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "SLA (HL)", OPCode = new[] { "11001011", "00100110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "SLA (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00100110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "SLA (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00100110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "SLA r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00100DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "SLA r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00100DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "SLL r", OPCode = new[] { "11001011", "00110DDD" }, M = 2, T = 8, UnDocumented = true },
+                new OPCodeItem { Operation = "SLL (HL)", OPCode = new[] { "11001011", "00110110" }, M = 4, T = 15, UnDocumented = true },
+                new OPCodeItem { Operation = "SLL (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00110110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "SLL (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00110110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "SLL r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00110DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "SLL r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00110DDD" }, M = 6, T = 23, UnDocumented = true },
+
                 // 右シフト
                 new OPCodeItem { Operation = "SRA r", OPCode = new[] { "11001011", "00101DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "SRA (HL)", OPCode = new[] { "11001011", "00101110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "SRA (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00101110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "SRA (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00101110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "SRA r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00101DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "SRA r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00101DDD" }, M = 6, T = 23, UnDocumented = true },
                 new OPCodeItem { Operation = "SRL r", OPCode = new[] { "11001011", "00111DDD" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "SRL (HL)", OPCode = new[] { "11001011", "00111110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "SRL (IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00111110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "SRL (IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00111110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "SRL r,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00111DDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "SRL r,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00111DDD" }, M = 6, T = 23, UnDocumented = true },
+
                 // 8ビットの加算
                 new OPCodeItem { Operation = "ADD A,r", OPCode = new[] { "10000SSS" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "ADD A,n", OPCode = new[] { "11000110", "NNNNNNNN" }, M = 2, T = 7 },
@@ -213,10 +238,15 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "SET b,(HL)", OPCode = new[] { "11001011", "11BBB110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "SET b,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "11BBB110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "SET b,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "11BBB110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "SET r,b,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "11BBBDDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "SET r,b,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "11BBBDDD" }, M = 6, T = 23, UnDocumented = true },
                 new OPCodeItem { Operation = "RES b,r", OPCode = new[] { "11001011", "10BBBSSS" }, M = 2, T = 8 },
                 new OPCodeItem { Operation = "RES b,(HL)", OPCode = new[] { "11001011", "10BBB110" }, M = 4, T = 15 },
                 new OPCodeItem { Operation = "RES b,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "10BBB110" }, M = 6, T = 23 },
                 new OPCodeItem { Operation = "RES b,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "10BBB110" }, M = 6, T = 23 },
+                new OPCodeItem { Operation = "RES r,b,(IX+d)", OPCode = new[] { "11011101", "11001011", "IIIIIIII", "10BBBDDD" }, M = 6, T = 23, UnDocumented = true },
+                new OPCodeItem { Operation = "RES r,b,(IY+d)", OPCode = new[] { "11111101", "11001011", "IIIIIIII", "10BBBDDD" }, M = 6, T = 23, UnDocumented = true },
+
                 // サーチ
                 new OPCodeItem { Operation = "CPI", OPCode = new[] { "11101101", "10100001" }, M = 4, T = 16 },
                 new OPCodeItem { Operation = "CPIR", OPCode = new[] { "11101101", "10110001" }, M = 0, T = 0 },
@@ -265,6 +295,8 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "INIR", OPCode = new[] { "11101101", "10110010" }, M = 0, T = 0 },
                 new OPCodeItem { Operation = "IND", OPCode = new[] { "11101101", "10101010" }, M = 4, T = 16 },
                 new OPCodeItem { Operation = "INDR", OPCode = new[] { "11101101", "10111010" }, M = 0, T = 0 },
+                new OPCodeItem { Operation = "IN F,(C)", OPCode = new[] { "11101101", "01110000" }, M = 3, T = 12, UnDocumented = true },
+                new OPCodeItem { Operation = "IN (C)", OPCode = new[] { "11101101", "01110000" }, M = 3, T = 12, UnDocumented = true },
                 // CPU 制御命令:動作・出力
                 new OPCodeItem { Operation = "OUT (n),A", OPCode = new[] { "11010011", "NNNNNNNN" }, M = 3, T = 11 },
                 new OPCodeItem { Operation = "OUT (C),r", OPCode = new[] { "11101101", "01SSS001" }, M = 3, T = 12 },
@@ -272,6 +304,7 @@ namespace AILZ80ASM
                 new OPCodeItem { Operation = "OTIR", OPCode = new[] { "11101101", "10110011" }, M = 0, T = 0 },
                 new OPCodeItem { Operation = "OUTD", OPCode = new[] { "11101101", "10101011" }, M = 4, T = 16 },
                 new OPCodeItem { Operation = "OTDR", OPCode = new[] { "11101101", "10111011" }, M = 0, T = 0 },
+                new OPCodeItem { Operation = "OUT (C),0", OPCode = new[] { "11101101", "01110001" }, M = 3, T = 12, UnDocumented = true },
                 // CPU 制御命令:二進化十進 (BCD) 用命令
                 new OPCodeItem { Operation = "DAA", OPCode = new[] { "00100111" }, M = 1, T = 4 },
                 new OPCodeItem { Operation = "RLD", OPCode = new[] { "11101101", "01101111" }, M = 5, T = 18 },

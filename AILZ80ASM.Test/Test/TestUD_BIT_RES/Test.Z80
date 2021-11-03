@@ -1,0 +1,8 @@
+﻿	RES B,  0, (IX+ 7)
+	RES C,  1, (IX+ 6)
+	RES D,  2, (IX+ 5)
+	RES E,  3, (IX+ 4)
+	RES H,  4, (IX+ 3)
+	RES L,  5, (IX+ 2)
+	RES A,  6, (IX+ 1)
+	RES A,  7, (IX+ 0)
