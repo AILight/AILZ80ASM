@@ -17,7 +17,6 @@ namespace AILZ80ASM.Instructions
         public bool AccumulatorExtra { get; set; }
         public bool UnDocumented { get; set; }
         private string[] RegexPatterns { get; set; }
-        //private static readonly string RegexPatternOperation = @"^(\w.|,|\+|\(|\))";
 
         public void MakeDataSet(char[] splitChars, InstructionRegister[] instructionRegisters)
         {
@@ -70,16 +69,8 @@ namespace AILZ80ASM.Instructions
                 result += "$";
 
                 patternList.Add(result);
-
-                /*
-                var items = mnemonic.Split(splitChars);
-                foreach (var item in items)
-                {
-                    var instructionRegister = instructionRegisters.FirstOrDefault(m => m.MnemonicRegisterName == item);
-
-                }
-                */
             }
+            RegexPatterns = patternList.ToArray();
         }
 
 
