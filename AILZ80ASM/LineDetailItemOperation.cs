@@ -13,7 +13,7 @@
 
         public static LineDetailItem Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            if (OperationItem.CanCreate(lineItem.OperationString))
+            if (OperationItem.CanCreate(lineItem.OperationString, asmLoad))
             {
                 return new LineDetailItemOperation(lineItem, asmLoad);
             }

@@ -1,6 +1,7 @@
 ﻿namespace AILZ80ASM
 {
-    public class OperationItemOPCode : OperationItem
+    public class OperationItemOPCode<T> : OperationItem
+        where T : Instructions.ISA, new()
     {
         private OPCodeResult OPCodeResult { get; set; }
 
@@ -29,6 +30,7 @@
                 return true;
             }
 
+            var cpu = new T() { Instruction = operation };
             var opCodeResult = OPCodeTable.GetOPCodeItem(operation);
             if (opCodeResult != default)
             {
@@ -40,14 +42,17 @@
 
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
-            var returnValue = default(OperationItemOPCode);
+            var returnValue = default(OperationItemOPCode<T>);
             var code = $"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}";
             if (!string.IsNullOrEmpty(code))
             {
+                var aa = new T() { Instruction = code };
+                aa.PreAssemble();
+
                 var opCodeResult = OPCodeTable.GetOPCodeItem(code);
                 if (opCodeResult != default(OPCodeResult))
                 {
-                    returnValue = new OperationItemOPCode(opCodeResult, lineDetailExpansionItemOperation, address);
+                    returnValue = new OperationItemOPCode<T>(opCodeResult, lineDetailExpansionItemOperation, address);
                 }
             }
 

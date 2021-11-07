@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.Instructions;
+using System;
 
 namespace AILZ80ASM
 {
@@ -26,11 +27,18 @@ namespace AILZ80ASM
         public virtual AsmLength Length => throw new NotImplementedException();
 
 
-        public static bool CanCreate(string operation)
+        public static bool CanCreate(string operation, AsmLoad asmLoad)
         {
             var can = false;
-            can = can || OperationItemOPCode.CanCreate(operation); // OpeCode
-            can = can || OperationItemData.CanCreate(operation);   // Data
+            switch (asmLoad.AssembleISA)
+            {
+                case AsmISA.Z80:
+                    can = can || OperationItemOPCode<Z80>.CanCreate(operation); // OpeCode
+                    can = can || OperationItemData<Z80>.CanCreate(operation);   // Data
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
             can = can || OperationItemSystem.CanCreate(operation); // System
 
             return can;
@@ -42,8 +50,15 @@ namespace AILZ80ASM
             var operationItem = default(OperationItem);
 
             // 命令を判別する
-            operationItem ??= OperationItemOPCode.Create(lineDetailExpansionItemOperation, address, asmLoad); // OpeCode
-            operationItem ??= OperationItemData.Create(lineDetailExpansionItemOperation, address, asmLoad);   // Data
+            switch (asmLoad.AssembleISA)
+            {
+                case AsmISA.Z80:
+                    operationItem ??= OperationItemOPCode<Z80>.Create(lineDetailExpansionItemOperation, address, asmLoad); // OpeCode
+                    operationItem ??= OperationItemData<Z80>.Create(lineDetailExpansionItemOperation, address, asmLoad);   // Data
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
             operationItem ??= OperationItemSystem.Create(lineDetailExpansionItemOperation, address, asmLoad);  // System
 
             return operationItem;
