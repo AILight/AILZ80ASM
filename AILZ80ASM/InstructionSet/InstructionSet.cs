@@ -10,6 +10,8 @@ namespace AILZ80ASM.Instructions
     public class InstructionSet
     {
         public char[] SplitChars { get; set; }
+        public string[] Brackets { get; set; }
+        public string[] RegisterNames { get; set; }
         public InstructionRegister[] InstructionRegisters { get; set; }
         public InstructionItem[] InstructionItems { get; set; }
 
@@ -17,7 +19,7 @@ namespace AILZ80ASM.Instructions
         {
             foreach (var item in InstructionItems)
             {
-                item.MakeDataSet(SplitChars, InstructionRegisters);
+                item.MakeDataSet(SplitChars, Brackets, InstructionRegisters);
             }
         }
     }

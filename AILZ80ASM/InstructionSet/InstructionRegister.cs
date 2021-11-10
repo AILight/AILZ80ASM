@@ -22,5 +22,6 @@ namespace AILZ80ASM.Instructions
         public string MnemonicBitName { get; set; }
         public InstructionRegisterModeEnum InstructionRegisterMode { get; set; }
         public InstructionRegisterItem[] InstructionRegisterItems { get; set; }
+        public string[] ExclusionItems { get; set; }
     }
 }

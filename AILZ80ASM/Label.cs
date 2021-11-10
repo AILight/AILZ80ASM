@@ -49,7 +49,7 @@ namespace AILZ80ASM
                 return;
             }
 
-            if (!AIName.DeclareLabelValidate(labelName))
+            if (!AIName.DeclareLabelValidate(labelName, asmLoad))
             {
                 DataType = DataTypeEnum.Invalidate;
             }
@@ -89,7 +89,7 @@ namespace AILZ80ASM
         }
 
         public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-            : this(lineDetailExpansionItemOperation.LabelText, "", asmLoad)
+            : this(lineDetailExpansionItemOperation.LineItem.LabelString, "", asmLoad)
         {
             if (this.DataType == DataTypeEnum.ProcessingForValue)
             {

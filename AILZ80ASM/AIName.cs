@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
@@ -7,7 +8,7 @@ namespace AILZ80ASM
     {
         private static readonly string RegexPatternLabelValidate = @"^(\D+)[a-zA-Z0-9_]+";
 
-        public static bool DeclareLabelValidate(string target)
+        public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
         {
             if (target.StartsWith(".") && target.EndsWith(":"))
             {
@@ -35,7 +36,7 @@ namespace AILZ80ASM
                 return false;
             }
 
-            return ValidateName(target);
+            return ValidateName(target, asmLoad);
         }
 
         /// <summary>
@@ -43,15 +44,12 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static bool ValidateMacroName(string target)
+        public static bool ValidateMacroName(string target, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(target))
                 return false;
 
-            if (OPCodeTable.IsOPCode(target))
-                return false;
-
-            return ValidateName(target);
+            return ValidateName(target, asmLoad);
         }
 
         /// <summary>
@@ -59,15 +57,15 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static bool ValidateMacroArgument(string target)
+        public static bool ValidateMacroArgument(string target, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(target))
                 return false;
 
-            return ValidateName(target);
+            return ValidateName(target, asmLoad);
         }
 
-        private static bool ValidateName(string target)
+        private static bool ValidateName(string target, AsmLoad asmLoad)
         {
             // 含まれてはいけない文字の調査
             if (target.ToArray().Any(m => ":. ".Contains(m)))
@@ -76,9 +74,17 @@ namespace AILZ80ASM
             }
 
             // レジスター文字列は利用不可
-            if (OPCodeTable.IsRegister(target))
+            switch (asmLoad.AssembleISA)
             {
-                return false;
+                case AsmISA.Z80:
+                    var z80 = new Instructions.Z80();
+                    if (z80.IsMatchRegisterName(target))
+                    {
+                        return false;
+                    }
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
 
             if (AIMath.IsNumber(target))

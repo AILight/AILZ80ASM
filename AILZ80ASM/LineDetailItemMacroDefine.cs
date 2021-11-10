@@ -95,12 +95,12 @@ namespace AILZ80ASM
                     };
                     lineDetailItemMacro.MacroLines.Add(lineItem);
 
-                    if (!AIName.ValidateMacroName(lineDetailItemMacro.MacroName))
+                    if (!AIName.ValidateMacroName(lineDetailItemMacro.MacroName, asmLoad))
                     {
                         lineDetailItemMacro.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3007));
                     }
 
-                    var errorArgumentNames = args.Where(m => !AIName.ValidateMacroArgument(m));
+                    var errorArgumentNames = args.Where(m => !AIName.ValidateMacroArgument(m, asmLoad));
                     if (errorArgumentNames.Any())
                     {
                         lineDetailItemMacro.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3005, string.Join(",", errorArgumentNames)));

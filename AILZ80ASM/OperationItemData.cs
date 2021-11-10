@@ -31,7 +31,7 @@ namespace AILZ80ASM
 
         }
 
-        public new static bool CanCreate(string operation)
+        public static bool CanCreate(string operation)
         {
             var matched = Regex.Match(operation, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var op1 = matched.Groups["op1"].Value;
@@ -41,7 +41,7 @@ namespace AILZ80ASM
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemData<T>);
-            var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = Regex.Match(lineDetailExpansionItemOperation.LineItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             var op1 = matched.Groups["op1"].Value;
             var op2 = matched.Groups["op2"].Value;

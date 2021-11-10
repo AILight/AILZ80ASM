@@ -3,26 +3,26 @@
     public class OperationItemOPCode<T> : OperationItem
         where T : Instructions.ISA, new()
     {
-        private OPCodeResult OPCodeResult { get; set; }
+        private T ISA { get; set; }
 
-        public override byte[] Bin => OPCodeResult.ToBin();
+        public override byte[] Bin => ISA.ToBin();
         public override AsmList List
         {
             get
             {
-                return AsmList.CreateLineItem(Address, Bin, OPCodeResult.T == 0 ? "" : OPCodeResult.T.ToString(), LineDetailExpansionItemOperation.LineItem);
+                return AsmList.CreateLineItem(Address, Bin, ISA.InstructionItem.T == 0 ? "" : ISA.InstructionItem.T.ToString(), LineDetailExpansionItemOperation.LineItem);
             }
         }
-        public override AsmLength Length => new AsmLength(OPCodeResult.OPCode.Length);
+        public override AsmLength Length => new AsmLength(ISA.OPCodeLength);
 
-        private OperationItemOPCode(OPCodeResult opCodeResult, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)
+        private OperationItemOPCode(T isa, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)
         {
-            OPCodeResult = opCodeResult;
+            ISA = isa;
             LineDetailExpansionItemOperation = lineDetailExpansionItemOperation;
             Address = address;
         }
 
-        public new static bool CanCreate(string operation)
+        public static bool CanCreate(string operation)
         {
             if (string.IsNullOrEmpty(operation))
             {
@@ -30,9 +30,8 @@
                 return true;
             }
 
-            var cpu = new T() { Instruction = operation };
-            var opCodeResult = OPCodeTable.GetOPCodeItem(operation);
-            if (opCodeResult != default)
+            var isa = new T() { Instruction = operation };
+            if (isa.PreAssemble())
             {
                 return true;
             }
@@ -43,16 +42,13 @@
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemOPCode<T>);
-            var code = $"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}";
+            var code = lineDetailExpansionItemOperation.LineItem.OperationString;
             if (!string.IsNullOrEmpty(code))
             {
-                var aa = new T() { Instruction = code };
-                aa.PreAssemble();
-
-                var opCodeResult = OPCodeTable.GetOPCodeItem(code);
-                if (opCodeResult != default(OPCodeResult))
+                var isa = new T() { Instruction = code };
+                if (isa.PreAssemble())
                 {
-                    returnValue = new OperationItemOPCode<T>(opCodeResult, lineDetailExpansionItemOperation, address);
+                    returnValue = new OperationItemOPCode<T>(isa, lineDetailExpansionItemOperation, address);
                 }
             }
 
@@ -61,7 +57,7 @@
 
         public override void Assemble(AsmLoad asmLoad)
         {
-            OPCodeResult.Assemble(LineDetailExpansionItemOperation, asmLoad);
+            ISA.Assemble(LineDetailExpansionItemOperation, asmLoad);
         }
 
     }

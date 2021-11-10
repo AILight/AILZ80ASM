@@ -6,6 +6,8 @@ namespace AILZ80ASM
 {
     public class OperationItemSystem : OperationItem
     {
+        private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)|_|%|:]+)*\s*,*\s*(?<op3>.+)*";
+
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
         public override byte[] Bin => ItemDataBin;
@@ -25,7 +27,7 @@ namespace AILZ80ASM
 
         public new static bool CanCreate(string operation)
         {
-            var matched = Regex.Match(operation, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(operation, RegexPatternOP, RegexOptions.Singleline);
             var op1 = matched.Groups["op1"].Value;
             return (new[] { "ORG" }).Any(m => string.Compare(m, op1, true) == 0);
         }
@@ -33,7 +35,7 @@ namespace AILZ80ASM
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemSystem);
-            var matched = Regex.Match($"{lineDetailExpansionItemOperation.InstructionText} {lineDetailExpansionItemOperation.ArgumentText}", OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(lineDetailExpansionItemOperation.LineItem.OperationString, RegexPatternOP, RegexOptions.Singleline);
 
             var op1 = matched.Groups["op1"].Value;
             var op2 = matched.Groups["op2"].Value;

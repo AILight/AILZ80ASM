@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public static class OPCodeTable
+    public static class OPCodeTable1
     {
         public static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)|_|%|:]+)*\s*,*\s*(?<op3>.+)*";
         private static readonly string RegexPatternIXReg = @"^\(IX\+(?<value>.+)\)";

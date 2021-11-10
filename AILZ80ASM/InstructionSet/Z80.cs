@@ -8,9 +8,12 @@ namespace AILZ80ASM.Instructions
 {
     public class Z80 : ISA
     {
+        private static readonly string[] RegisterNames = new[] { "A", "B", "C", "D", "E", "H", "L", "I", "F", "R", "IXH", "IXL", "IYH", "IYL", "AF", "BC", "DE", "HL", "SP", "IX", "IY" };
         private static readonly InstructionSet Z80InstructionSet = new()
         {
-            SplitChars = new[] { ' ', ',' },
+            SplitChars = new[] { ' ', ',', '+' },
+            Brackets = new[] { "()" },
+            RegisterNames = RegisterNames,
             InstructionRegisters = new[]
             {
                 new InstructionRegister
@@ -167,36 +170,41 @@ namespace AILZ80ASM.Instructions
                     MnemonicRegisterName = "n",
                     MnemonicBitName = "NNNNNNNN",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value8Bit,
+                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "nn",
                     MnemonicBitName = "HHHHHHHH,LLLLLLLL",
-                    InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value8Bit,
+                    InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value16Bit,
+                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "d",
                     MnemonicBitName = "IIIIIIII",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value8Bit,
+                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "b",
                     MnemonicBitName = "BBB",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value3Bit,
+                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "e",
                     MnemonicBitName = "EEEEEEEE",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.RelativeAddress8Bit,
+                    ExclusionItems = RegisterNames
                 },
             },
             InstructionItems = new []
             {
                 // 8ビットの転送命令
-                new InstructionItem { Mnemonics = new[]{ "LD r1,r2" }, OPCode = new[]{ "01DDDSSS" }, M = 1, T = 4 },
+                new InstructionItem { Mnemonics = new[] { "LD r1,r2" }, OPCode = new[]{ "01DDDSSS" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "LD r1,n" }, OPCode = new[] { "00DDD110", "NNNNNNNN" }, M = 2, T = 7 },
                 new InstructionItem { Mnemonics = new[] { "LD r1,(HL)" }, OPCode = new[] { "01DDD110" }, M = 2, T = 7 },
                 new InstructionItem { Mnemonics = new[] { "LD r1,(IX+d)" }, OPCode = new[] { "11011101", "01DDD110", "IIIIIIII" }, M = 5, T = 19 },
@@ -273,8 +281,8 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "RL (HL)" }, OPCode = new[] { "11001011", "00010110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RL (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RL (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "RL  r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "RL  r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RL r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RL r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
                 
                 // 右ローテート
                 new InstructionItem { Mnemonics = new[] { "RRCA" }, OPCode = new[] { "00001111" }, M = 1, T = 4 },
@@ -397,15 +405,15 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "OR (HL)" }, OPCode = new[] { "10110110" }, M = 2, T = 7 },
                 new InstructionItem { Mnemonics = new[] { "OR (IX+d)" }, OPCode = new[] { "11011101", "10110110", "IIIIIIII" }, M = 5, T = 19 },
                 new InstructionItem { Mnemonics = new[] { "OR (IY+d)" }, OPCode = new[] { "11111101", "10110110", "IIIIIIII" }, M = 5, T = 19 },
-                new InstructionItem { Mnemonics = new[] { "OR ixr1" }, OPCode = new[] { "11011101", "10110SSS" }, M = 2, T = 10, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "OR iyr1" }, OPCode = new[] { "11111101", "10110SSS" }, M = 2, T = 10, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "XOR r1" }, OPCode = new[] { "10101SSS" }, M = 1, T = 4 },
+                new InstructionItem { Mnemonics = new[] { "OR ixr2" }, OPCode = new[] { "11011101", "10110SSS" }, M = 2, T = 10, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "OR iyr2" }, OPCode = new[] { "11111101", "10110SSS" }, M = 2, T = 10, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "XOR r2" }, OPCode = new[] { "10101SSS" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "XOR n" }, OPCode = new[] { "11101110", "NNNNNNNN" }, M = 2, T = 7 },
                 new InstructionItem { Mnemonics = new[] { "XOR (HL)" }, OPCode = new[] { "10101110" }, M = 2, T = 7 },
                 new InstructionItem { Mnemonics = new[] { "XOR (IX+d)" }, OPCode = new[] { "11011101", "10101110", "IIIIIIII" }, M = 5, T = 19 },
                 new InstructionItem { Mnemonics = new[] { "XOR (IY+d)" }, OPCode = new[] { "11111101", "10101110", "IIIIIIII" }, M = 5, T = 19 },
-                new InstructionItem { Mnemonics = new[] { "XOR ixr1" }, OPCode = new[] { "11011101", "10101SSS" }, M = 2, T = 10, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "XOR iyr1" }, OPCode = new[] { "11111101", "10101SSS" }, M = 2, T = 10, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "XOR ixr2" }, OPCode = new[] { "11011101", "10101SSS" }, M = 2, T = 10, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "XOR iyr2" }, OPCode = new[] { "11111101", "10101SSS" }, M = 2, T = 10, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "CPL" }, OPCode = new[] { "00101111" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "NEG" }, OPCode = new[] { "11101101", "01000100" }, M = 2, T = 8 },
                 // ビット操作
@@ -495,12 +503,15 @@ namespace AILZ80ASM.Instructions
         };
 
         
+        static Z80()
+        {
+            Z80InstructionSet.MakeDataSet();
+        }
+
         public Z80()
         {
             Endianness = EndiannessEnum.LittleEndian;
             InstructionSet = Z80InstructionSet;
-
-            InstructionSet.MakeDataSet();
         }
     }
 }
