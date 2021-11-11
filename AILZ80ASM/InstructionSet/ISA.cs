@@ -34,12 +34,23 @@ namespace AILZ80ASM.Instructions
         /// <summary>
         /// レジスター名と一致するか？
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="target"></param>
         /// <returns></returns>
-        public bool IsMatchRegisterName(string name)
+        public bool IsMatchRegisterName(string target)
         {
-            return InstructionSet.RegisterNames.Where(m => string.Compare(m, name) == 0).Any();
+            return InstructionSet.RegisterNames.Where(m => string.Compare(m, target, true) == 0).Any();
         }
+
+        /// <summary>
+        /// 命令名と一致するか？
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        internal bool IsMatchInstructionName(string target)
+        {
+            return InstructionSet.InstructionNames.Where(m => string.Compare(m, target, true) == 0).Any();
+        }
+
 
         /// <summary>
         /// プレアセンブルを行う
@@ -48,57 +59,64 @@ namespace AILZ80ASM.Instructions
         public virtual bool PreAssemble()
         {
             InternalInstruction = Instruction;
-            foreach (var item in InstructionSet.InstructionItems)
+            if (InternalInstruction.Length > 0)
             {
-                var matched = item.Match(InternalInstruction);
-                if (matched.Success)
+                var startChar = InternalInstruction[0];
+                if (InstructionSet.InstructionDic.ContainsKey(startChar))
                 {
-                    var success = true;
-
-                    // 除外キーワードを調査
-                    foreach (var key in matched.Groups.Keys)
+                    foreach (var item in InstructionSet.InstructionDic[startChar])
                     {
-                        var instructionRegister = this.InstructionSet.InstructionRegisters.FirstOrDefault(m => m.MnemonicRegisterName == key);
-                        if (instructionRegister != default)
+                        var matched = item.Match(InternalInstruction);
+                        if (matched.Success)
                         {
-                            var value = matched.Groups[key].Value;
-                            if (instructionRegister.ExclusionItems != default && instructionRegister.ExclusionItems.Any(m => string.Compare(m, value, true) == 0))
+                            var success = true;
+
+                            // 除外キーワードを調査
+                            foreach (var key in matched.Groups.Keys)
                             {
-                                success = false;
-                                break;
+                                var instructionRegister = this.InstructionSet.InstructionRegisters.FirstOrDefault(m => m.MnemonicRegisterName == key);
+                                if (instructionRegister != default)
+                                {
+                                    var value = matched.Groups[key].Value;
+                                    if (instructionRegister.ExclusionItems != default && instructionRegister.ExclusionItems.Any(m => string.Compare(m, value, true) == 0))
+                                    {
+                                        success = false;
+                                        break;
+                                    }
+
+                                    switch (instructionRegister.InstructionRegisterMode)
+                                    {
+                                        case InstructionRegister.InstructionRegisterModeEnum.Register:
+                                            // 何もしない
+                                            break;
+                                        case InstructionRegister.InstructionRegisterModeEnum.RelativeAddress8Bit:
+                                        case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
+                                        case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
+                                        case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
+                                            // Bracketsで囲まれていたら値ではない
+                                            foreach (var bracket in this.InstructionSet.Brackets)
+                                            {
+                                                if (value.StartsWith(bracket[0]) && value.EndsWith(bracket[1]))
+                                                {
+                                                    success = false;
+                                                    break;
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            throw new InvalidOperationException();
+                                    }
+                                }
                             }
 
-                            switch (instructionRegister.InstructionRegisterMode)
+                            if (success)
                             {
-                                case InstructionRegister.InstructionRegisterModeEnum.Register:
-                                    // 何もしない
-                                    break;
-                                case InstructionRegister.InstructionRegisterModeEnum.RelativeAddress8Bit:
-                                case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
-                                case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
-                                case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
-                                    // Bracketsで囲まれていたら値ではない
-                                    foreach (var bracket in this.InstructionSet.Brackets)
-                                    {
-                                        if (value.StartsWith(bracket[0]) && value.EndsWith(bracket[1]))
-                                        {
-                                            success = false;
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    throw new InvalidOperationException();
+                                PreAssembleMatched = matched;
+                                PreAssembleMatchedInstructionItem = item;
+                                AssembledOPCodes = item.OPCode.Select(m => new string(m)).ToArray();
+                                return true;
                             }
                         }
-                    }
-
-                    if (success)
-                    {
-                        PreAssembleMatched = matched;
-                        PreAssembleMatchedInstructionItem = item;
-                        AssembledOPCodes = item.OPCode.Select(m => new string(m)).ToArray();
-                        return true;
                     }
                 }
             }

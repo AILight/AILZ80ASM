@@ -6,3 +6,12 @@
 	RES L,  5, (IX+ 2)
 	RES A,  6, (IX+ 1)
 	RES A,  7, (IX+ 0)
+
+	RES B,  0, (IY+ 7)
+	RES C,  1, (IY+ 6)
+	RES D,  2, (IY+ 5)
+	RES E,  3, (IY+ 4)
+	RES H,  4, (IY+ 3)
+	RES L,  5, (IY+ 2)
+	RES A,  6, (IY+ 1)
+	RES A,  7, (IY+ 0)

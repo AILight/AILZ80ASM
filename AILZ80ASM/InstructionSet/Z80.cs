@@ -502,7 +502,6 @@ namespace AILZ80ASM.Instructions
             }
         };
 
-        
         static Z80()
         {
             Z80InstructionSet.MakeDataSet();

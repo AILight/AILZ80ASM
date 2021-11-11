@@ -6,3 +6,12 @@
 	SET L,  5, (IX+ 2)
 	SET A,  6, (IX+ 1)
 	SET A,  7, (IX+ 0)
+
+	SET B,  0, (IY+ 7)
+	SET C,  1, (IY+ 6)
+	SET D,  2, (IY+ 5)
+	SET E,  3, (IY+ 4)
+	SET H,  4, (IY+ 3)
+	SET L,  5, (IY+ 2)
+	SET A,  6, (IY+ 1)
+	SET A,  7, (IY+ 0)

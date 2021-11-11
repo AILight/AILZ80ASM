@@ -20,38 +20,18 @@ namespace AILZ80ASM.Instructions
         private string[] RegexPatterns { get; set; }
         internal InstructionRegister[] InstructionRegisters { get; set; }
 
-        public void MakeDataSet(char[] splitChars, string[] brackets, InstructionRegister[] instructionRegisters)
+        public string[] MakeDataSet(char[] splitChars, string[] brackets, InstructionRegister[] instructionRegisters)
         {
             var patternList = new List<string>();
+            var instructionNameList = new List<string>();
+
             var instructionRegisterList = new List<InstructionRegister>();
-            //var numberArgumentPattern = "\\w\\d\\s\\-" + string.Concat("!~*/%+<>=&^|?:$_".ToArray().Select(m => Regex.Escape(m.ToString())));
 
             foreach (var mnemonic in Mnemonics)
             {
                 var result = "^";
                 var tmpMnemonic = mnemonic;
-
-
-                /*
-                // 括弧の除外を設定
-                var leftExclusionBranketPattern = "";
-                var rightExclusionBranketPattern = "";
-                foreach (var bracket in brackets)
-                {
-#if DEBUG
-                    if (bracket.Length != 2)
-                    {
-                        throw new InvalidOperationException("Brankeの文字長は2です");
-                    }
-#endif
-                    if (tmpMnemonic.IndexOf(bracket[0]) == -1 || tmpMnemonic.IndexOf(bracket[1]) == -1)
-                    {
-                        leftExclusionBranketPattern += $"[^{Regex.Escape(bracket[0].ToString())}]";
-                        rightExclusionBranketPattern += $"[^{Regex.Escape(bracket[1].ToString())}]";
-                    }
-                }
-                */
-
+                var mnemonicName = "";
 
                 do
                 {
@@ -59,6 +39,10 @@ namespace AILZ80ASM.Instructions
                     // 文字列を切り出し
                     var target = tmpMnemonic.Substring(0, index == -1 ? tmpMnemonic.Length : index);
                     var searchRegister = target;
+                    if (string.IsNullOrEmpty(mnemonicName))
+                    {
+                        mnemonicName = target;
+                    }
 
                     // 括弧検索
                     var leftBranketPattern = "";
@@ -127,9 +111,22 @@ namespace AILZ80ASM.Instructions
                 result += "$";
 
                 patternList.Add(result);
+                if (!string.IsNullOrEmpty(mnemonicName))
+                {
+                    instructionNameList.Add(mnemonicName);
+                }
+                else
+                {
+#if DEBUG
+                    throw new InvalidOperationException("命令名が取得できませんでした。");
+#endif
+                }
+
             }
             RegexPatterns = patternList.ToArray();
             InstructionRegisters = instructionRegisterList.Distinct().ToArray();
+
+            return instructionNameList.ToArray();
         }
 
 

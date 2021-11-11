@@ -73,12 +73,16 @@ namespace AILZ80ASM
                 return false;
             }
 
-            // レジスター文字列は利用不可
+            // レジスター文字列、命令の文字列は利用不可
             switch (asmLoad.AssembleISA)
             {
                 case AsmISA.Z80:
                     var z80 = new Instructions.Z80();
                     if (z80.IsMatchRegisterName(target))
+                    {
+                        return false;
+                    }
+                    if (z80.IsMatchInstructionName(target))
                     {
                         return false;
                     }
