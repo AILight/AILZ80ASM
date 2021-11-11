@@ -25,11 +25,11 @@ namespace AILZ80ASM
 
         }
 
-        public new static bool CanCreate(string operation)
+        public static bool CanCreate(string operation)
         {
             var matched = Regex.Match(operation, RegexPatternOP, RegexOptions.Singleline);
             var op1 = matched.Groups["op1"].Value;
-            return (new[] { "ORG" }).Any(m => string.Compare(m, op1, true) == 0);
+            return (new[] { "ORG", "ALIGN" }).Any(m => string.Compare(m, op1, true) == 0);
         }
 
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
@@ -44,24 +44,46 @@ namespace AILZ80ASM
             switch (op1.ToUpper())
             {
                 case "ORG":
-                    var programAddress = AIMath.ConvertTo<UInt16>(op2, lineDetailExpansionItemOperation, asmLoad);
-                    var bytes = Array.Empty<byte>();
-                    var outputAddress = address.Output;
-                    var length = new AsmLength(0);
-
-                    if (!string.IsNullOrEmpty(op3))
                     {
-                        var localOutputAddress = AIMath.ConvertTo<UInt16>(op3, lineDetailExpansionItemOperation, asmLoad);
-                        if (address.Output > localOutputAddress)
+                        var programAddress = AIMath.ConvertTo<UInt16>(op2, lineDetailExpansionItemOperation, asmLoad);
+                        var bytes = Array.Empty<byte>();
+                        var outputAddress = address.Output;
+                        var length = new AsmLength(0);
+
+                        if (!string.IsNullOrEmpty(op3))
                         {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+                            var localOutputAddress = AIMath.ConvertTo<UInt16>(op3, lineDetailExpansionItemOperation, asmLoad);
+                            if (address.Output > localOutputAddress)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+                            }
+
+                            length.Output = localOutputAddress - address.Output;
+                            bytes = new byte[length.Output];
                         }
 
-                        length.Output = localOutputAddress - address.Output;
-                        bytes = new byte[length.Output];
+                        returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
                     }
+                    break;
+                case "ALIGN":
+                    {
+                        var align = AIMath.ConvertTo<UInt16>(op2, lineDetailExpansionItemOperation, asmLoad);
+                        if ((align & (align - 1)) != 0)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
+                        }
 
-                    returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
+                        var offset = align - (address.Program % align);
+                        var length = new AsmLength(offset);
+                        var bytes = new byte[length.Output];
+                        if (!string.IsNullOrEmpty(op3))
+                        {
+                            var value = AIMath.ConvertTo<byte>(op3, lineDetailExpansionItemOperation, asmLoad);
+                            bytes = bytes.Select(m => value).ToArray();
+                        }
+
+                        returnValue = new OperationItemSystem { Address = address, ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
+                    }
                     break;
                 default:
                     break;
