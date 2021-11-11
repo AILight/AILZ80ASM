@@ -1,0 +1,6 @@
+﻿	org $8000
+	LD	A, 0
+	ALIGN 256
+	LD	A, 1
+	ALIGN 256, $AA
+	LD	A, 2

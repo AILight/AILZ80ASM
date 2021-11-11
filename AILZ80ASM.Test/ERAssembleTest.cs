@@ -28,6 +28,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Align()
+        {
+            var errors = Assemble("Align.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 3, "Align.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Conditional()
         {
             var errors = Assemble("Conditional.Z80");

@@ -25,6 +25,7 @@ namespace AILZ80ASM
             E0012,
             E0013,
             E0014,
+            E0015,
 
             E1011,
             E1012,
@@ -104,6 +105,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0012] = "データの指定が間違っています。",
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
             [ErrorCodeEnum.E0014] = "同名のラベルが既に指定されています。",
+            [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",

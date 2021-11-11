@@ -1,0 +1,4 @@
+﻿	org $8000
+	LD	A, 0
+	ALIGN 255
+	LD	A, 0
