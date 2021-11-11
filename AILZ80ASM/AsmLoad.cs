@@ -33,6 +33,7 @@ namespace AILZ80ASM
         public List<Label> LocalLabels { get; private set; } = new List<Label>();
         public List<Macro> Macros { get; private set; } = new List<Macro>();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
+        public AsmISA AssembleISA { get; set; }
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
 
@@ -58,7 +59,8 @@ namespace AILZ80ASM
 
                 Labels = this.Labels,
                 LocalLabels = this.LocalLabels,
-                Errors = this.Errors
+                Errors = this.Errors,
+                AssembleISA = this.AssembleISA
             };
         }
 
@@ -76,7 +78,8 @@ namespace AILZ80ASM
 
                 Labels = this.Labels,
                 LocalLabels = scopeMode == ScopeModeEnum.Global ? this.LocalLabels : new List<Label>(),
-                Errors = this.Errors
+                Errors = this.Errors,
+                AssembleISA = this.AssembleISA
             };
         }
 

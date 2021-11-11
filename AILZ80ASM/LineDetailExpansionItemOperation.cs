@@ -5,13 +5,7 @@ namespace AILZ80ASM
 {
     public class LineDetailExpansionItemOperation : LineDetailExpansionItem
     {
-        public string LabelText { get; private set; }
-        public string InstructionText { get; private set; }
-        public string ArgumentText { get; private set; }
         public OperationItem OperationItem { get; private set; }
-
-        private static readonly string RegexPatternInstruction = @"(?<Instruction>(^[\w\(\)]+))";
-
 
         public override byte[] Bin
         {
@@ -32,24 +26,6 @@ namespace AILZ80ASM
         public LineDetailExpansionItemOperation(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem)
         {
-            //ラベルの切り出し
-            LabelText = lineItem.LabelString;
-
-            // 命令の切りだし
-            if (!string.IsNullOrEmpty(lineItem.OperationString))
-            {
-                var matchResult = Regex.Match(lineItem.OperationString, RegexPatternInstruction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                if (matchResult.Success)
-                {
-                    InstructionText = matchResult.Groups["Instruction"].Value;
-                    ArgumentText = lineItem.OperationString.Substring(InstructionText.Length).TrimStart();
-                }
-                else
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
-                }
-            }
-
             OperationItem = default(OperationItem);
 
             // ラベルを処理する
@@ -67,7 +43,7 @@ namespace AILZ80ASM
             // ビルド済みの場合処理しない
             if (!IsAssembled)
             {
-                if (string.IsNullOrEmpty(InstructionText))
+                if (string.IsNullOrEmpty(this.LineItem.OperationString))
                 {
                     IsAssembled = true;
                 }

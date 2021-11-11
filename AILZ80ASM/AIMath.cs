@@ -25,7 +25,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternDigit = @"^(\+|\-|)(\d+)$";
         private static readonly string RegexPatternFormuraAndDigit = @"^(\d+|\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)";
         private static readonly string RegexPatternFormuraChar = @"^(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)$";
-        private static readonly Dictionary<string, int> FormuraPriority = new Dictionary<string, int>()
+        private static readonly Dictionary<string, int> FormuraPriority = new()
         {
             [")"] = 1,
             ["!"] = 2,  ["~"] = 2, // 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
