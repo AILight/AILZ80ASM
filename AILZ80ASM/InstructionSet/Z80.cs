@@ -11,7 +11,7 @@ namespace AILZ80ASM.Instructions
         private static readonly string[] RegisterNames = new[] { "A", "B", "C", "D", "E", "H", "L", "I", "F", "R", "IXH", "IXL", "IYH", "IYL", "AF", "BC", "DE", "HL", "SP", "IX", "IY" };
         private static readonly InstructionSet Z80InstructionSet = new()
         {
-            SplitChars = new[] { ' ', ',', '+' },
+            SplitChars = new[] { ' ', ',' , '+' },
             Brackets = new[] { "()" },
             RegisterNames = RegisterNames,
             InstructionRegisters = new[]
