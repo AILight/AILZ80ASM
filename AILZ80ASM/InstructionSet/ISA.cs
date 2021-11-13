@@ -166,16 +166,24 @@ namespace AILZ80ASM.Instructions
                         break;
                     case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
                         {
-                            var tmpValue3 = AIMath.ConvertTo<byte>(value, lineDetailExpansionItemOperation, asmLoad);
-                            var value3 = ConvertTo2BaseString(tmpValue3, 3);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, lineDetailExpansionItemOperation, asmLoad);
+                            var value3 = ConvertTo2BaseString(tmpValue16, 3);
                             replaceDic.Add(instructionRegister.MnemonicBitName, value3);
+                            if (tmpValue16 > 7)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0016, $"指定された値は、{tmpValue16}でした。");
+                            }
                         }
                         break;
                     case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
                         {
-                            var tmpValue8 = AIMath.ConvertTo<byte>(value, lineDetailExpansionItemOperation, asmLoad);
-                            var value8 = ConvertTo2BaseString(tmpValue8, 8);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, lineDetailExpansionItemOperation, asmLoad);
+                            var value8 = ConvertTo2BaseString(tmpValue16 & 0xFF, 8);
                             replaceDic.Add(instructionRegister.MnemonicBitName, value8);
+                            if (tmpValue16 > 255)
+                            {
+                                asmLoad.Errors.Add(new ErrorLineItem(lineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0001, tmpValue16));
+                            }
                         }
                         break;
                     case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:

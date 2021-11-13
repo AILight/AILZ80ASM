@@ -26,6 +26,7 @@ namespace AILZ80ASM
             E0013,
             E0014,
             E0015,
+            E0016,
 
             E1011,
             E1012,
@@ -95,7 +96,7 @@ namespace AILZ80ASM
         {
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
-            [ErrorCodeEnum.E0003] = "相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。",
+            [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{byte.MinValue}～{byte.MaxValue}までです。",
             [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。{0}",
             [ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
             [ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
@@ -106,6 +107,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
             [ErrorCodeEnum.E0014] = "同名のラベルが既に指定されています。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
+            [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。{0}",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
@@ -144,7 +146,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
             [ErrorCodeEnum.E3010] = "同名のマクロが既に指定されています。",
 
-            [ErrorCodeEnum.W0001] = "未定義",
+            [ErrorCodeEnum.W0001] = "1バイトの指定場所に、{0}が設定されています。1バイトに丸められます。",
+
+
             [ErrorCodeEnum.I0001] = "未定義"
         };
     }

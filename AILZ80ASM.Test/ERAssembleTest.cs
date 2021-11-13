@@ -142,6 +142,19 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_MissingOperandError()
+        {
+            var errors = Assemble("MissingOperand.Z80");
+
+            var maxLine = 16;
+            Assert.AreEqual(errors.Length, maxLine);
+            foreach (var index in Enumerable.Range(1, maxLine))
+            {
+                AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, maxLine, "MissingOperand.Z80", errors);
+            }
+        }
+
+        [TestMethod]
         public void TestER_Repeat()
         {
             var errors = Assemble("Repeat.Z80");

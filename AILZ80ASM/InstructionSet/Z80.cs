@@ -11,15 +11,28 @@ namespace AILZ80ASM.Instructions
         private static readonly string[] RegisterNames = new[] { "A", "B", "C", "D", "E", "H", "L", "I", "F", "R", "IXH", "IXL", "IYH", "IYL", "AF", "BC", "DE", "HL", "SP", "IX", "IY" };
         private static readonly InstructionSet Z80InstructionSet = new()
         {
-            SplitChars = new[] { ' ', ',', '+' },
+            SplitChars = new[] { ' ', ',' , '+' },
             Brackets = new[] { "()" },
             RegisterNames = RegisterNames,
             InstructionRegisters = new[]
             {
                 new InstructionRegister
                 {
-                    MnemonicRegisterName = "rs",
+                    MnemonicRegisterName = "rs1",
                     MnemonicBitName = "DDD",
+                    InstructionRegisterItems = new[]
+                    {
+                        new InstructionRegisterItem { RegisterName = "A", BitCode = "111" },
+                        new InstructionRegisterItem { RegisterName = "B", BitCode = "000" },
+                        new InstructionRegisterItem { RegisterName = "C", BitCode = "001" },
+                        new InstructionRegisterItem { RegisterName = "D", BitCode = "010" },
+                        new InstructionRegisterItem { RegisterName = "E", BitCode = "011" },
+                    }
+                },
+                new InstructionRegister
+                {
+                    MnemonicRegisterName = "rs2",
+                    MnemonicBitName = "SSS",
                     InstructionRegisterItems = new[]
                     {
                         new InstructionRegisterItem { RegisterName = "A", BitCode = "111" },
@@ -225,11 +238,11 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "LD I,A" }, OPCode = new[] { "11101101", "01000111" }, M = 2, T = 9 },
                 new InstructionItem { Mnemonics = new[] { "LD A,R" }, OPCode = new[] { "11101101", "01011111" }, M = 2, T = 9 },
                 new InstructionItem { Mnemonics = new[] { "LD R,A" }, OPCode = new[] { "11101101", "01001111" }, M = 2, T = 9 },
-                new InstructionItem { Mnemonics = new[] { "LD ixr1,r2" }, OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "LD rs,ixr2" }, OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "LD ixr1,rs2" }, OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "LD rs1,ixr2" }, OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "LD ixr1,n" }, OPCode = new[] { "11011101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "LD iyr1,r2" }, OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "LD rs,iyr2" }, OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "LD iyr1,rs2" }, OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "LD rs1,iyr2" }, OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "LD iyr1,n" }, OPCode = new[] { "11111101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented = true },
 
                 // 16ビットの転送命令
@@ -275,14 +288,14 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "RLC (HL)" }, OPCode = new[] { "11001011", "00000110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RLC (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RLC (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "RLC r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00000DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "RLC r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00000DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RLC r1,(IX+d)", "RLC (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00000DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RLC r1,(IY+d)", "RLC (IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00000DDD" }, M = 6, T = 23, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "RL r1" }, OPCode = new[] { "11001011", "00010DDD" }, M = 2, T = 8 },
                 new InstructionItem { Mnemonics = new[] { "RL (HL)" }, OPCode = new[] { "11001011", "00010110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RL (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RL (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "RL r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "RL r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RL r1,(IX+d)", "RL (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RL r1,(IY+d)", "RL (IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00010DDD" }, M = 6, T = 23, UnDocumented = true },
                 
                 // 右ローテート
                 new InstructionItem { Mnemonics = new[] { "RRCA" }, OPCode = new[] { "00001111" }, M = 1, T = 4 },
@@ -291,14 +304,14 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "RRC (HL)" }, OPCode = new[] { "11001011", "00001110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RRC (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RRC (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "RRC r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00001DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "RRC r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00001DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RRC r1,(IX+d)", "RRC (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00001DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RRC r1,(IY+d)", "RRC (IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00001DDD" }, M = 6, T = 23, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "RR r1" }, OPCode = new[] { "11001011", "00011DDD" }, M = 2, T = 8 },
                 new InstructionItem { Mnemonics = new[] { "RR (HL)" }, OPCode = new[] { "11001011", "00011110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RR (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00011110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RR (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00011110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "RR r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00011DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "RR r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00011DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RR r1,(IX+d)", "RR (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00011DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RR r1,(IY+d)", "RR (IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00011DDD" }, M = 6, T = 23, UnDocumented = true },
 
 
                 // 左シフト
@@ -306,28 +319,28 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "SLA (HL)" }, OPCode = new[] { "11001011", "00100110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "SLA (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00100110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "SLA (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00100110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "SLA r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00100DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "SLA r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00100DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SLA r1,(IX+d)", "SLA (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00100DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SLA r1,(IY+d)", "SLA (IY+d),r1"}, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00100DDD" }, M = 6, T = 23, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "SLL r1" }, OPCode = new[] { "11001011", "00110DDD" }, M = 2, T = 8, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "SLL (HL)" }, OPCode = new[] { "11001011", "00110110" }, M = 4, T = 15, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "SLL (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00110110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "SLL (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00110110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "SLL r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00110DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "SLL r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00110DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SLL r1,(IX+d)", "SLL (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00110DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SLL r1,(IY+d)", "SLL (IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00110DDD" }, M = 6, T = 23, UnDocumented = true },
 
                 // 右シフト
                 new InstructionItem { Mnemonics = new[] { "SRA r1" }, OPCode = new[] { "11001011", "00101DDD" }, M = 2, T = 8 },
                 new InstructionItem { Mnemonics = new[] { "SRA (HL)" }, OPCode = new[] { "11001011", "00101110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "SRA (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00101110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "SRA (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00101110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "SRA r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00101DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "SRA r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00101DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SRA r1,(IX+d)", "SRA (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00101DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SRA r1,(IY+d)", "SRA (IY+d),r1"}, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00101DDD" }, M = 6, T = 23, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "SRL r1" }, OPCode = new[] { "11001011", "00111DDD" }, M = 2, T = 8 },
                 new InstructionItem { Mnemonics = new[] { "SRL (HL)" }, OPCode = new[] { "11001011", "00111110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "SRL (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00111110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "SRL (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00111110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "SRL r1,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00111DDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "SRL r1,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00111DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SRL r1,(IX+d)", "SRL (IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00111DDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SRL r1,(IY+d)", "SRL (IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00111DDD" }, M = 6, T = 23, UnDocumented = true },
 
                 // 8ビットの加算
                 new InstructionItem { Mnemonics = new[] { "ADD A,r2" }, OPCode = new[] { "10000SSS" }, M = 1, T = 4 },
@@ -427,14 +440,14 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "SET b,(HL)" }, OPCode = new[] { "11001011", "11BBB110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "SET b,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "11BBB110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "SET b,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "11BBB110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "SET r1,b,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "11BBBDDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "SET r1,b,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "11BBBDDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SET r1,b,(IX+d)", "SET b,(IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "11BBBDDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "SET r1,b,(IY+d)", "SET b,(IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "11BBBDDD" }, M = 6, T = 23, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "RES b,r2" }, OPCode = new[] { "11001011", "10BBBSSS" }, M = 2, T = 8 },
                 new InstructionItem { Mnemonics = new[] { "RES b,(HL)" }, OPCode = new[] { "11001011", "10BBB110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RES b,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "10BBB110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RES b,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "10BBB110" }, M = 6, T = 23 },
-                new InstructionItem { Mnemonics = new[] { "RES r1,b,(IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "10BBBDDD" }, M = 6, T = 23, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "RES r1,b,(IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "10BBBDDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RES r1,b,(IX+d)", "RES b,(IX+d),r1" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "10BBBDDD" }, M = 6, T = 23, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "RES r1,b,(IY+d)", "RES b,(IY+d),r1" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "10BBBDDD" }, M = 6, T = 23, UnDocumented = true },
 
                 // サーチ
                 new InstructionItem { Mnemonics = new[] { "CPI" }, OPCode = new[] { "11101101", "10100001" }, M = 4, T = 16 },
@@ -484,8 +497,7 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "INIR" }, OPCode = new[] { "11101101", "10110010" }, M = 0, T = 0 },
                 new InstructionItem { Mnemonics = new[] { "IND" }, OPCode = new[] { "11101101", "10101010" }, M = 4, T = 16 },
                 new InstructionItem { Mnemonics = new[] { "INDR" }, OPCode = new[] { "11101101", "10111010" }, M = 0, T = 0 },
-                new InstructionItem { Mnemonics = new[] { "IN F,(C)" }, OPCode = new[] { "11101101", "01110000" }, M = 3, T = 12, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "IN (C)" }, OPCode = new[] { "11101101", "01110000" }, M = 3, T = 12, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "IN (C)", "IN F,(C)" }, OPCode = new[] { "11101101", "01110000" }, M = 3, T = 12, UnDocumented = true },
                 // CPU 制御命令:動作・出力
                 new InstructionItem { Mnemonics = new[] { "OUT (n),A" }, OPCode = new[] { "11010011", "NNNNNNNN" }, M = 3, T = 11 },
                 new InstructionItem { Mnemonics = new[] { "OUT (C),r2" }, OPCode = new[] { "11101101", "01SSS001" }, M = 3, T = 12 },

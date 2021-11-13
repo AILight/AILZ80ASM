@@ -82,7 +82,7 @@ namespace AILZ80ASM.Instructions
                         var matchPattern = instructionRegister.InstructionRegisterMode switch
                         {
                             InstructionRegisterModeEnum.Register => string.Join('|', instructionRegister.InstructionRegisterItems.Select(m => m.RegisterName)),
-                            _ => $"[^" + string.Concat(splitChars.Where(m => m != ' ')) + "]+"
+                            _ => $"[^" + string.Concat(splitChars.Where(m => m != ' ' && m != '+')) + "]+"
                             //_ => $"([{numberArgumentPattern}][{numberArgumentPattern}\\(\\)]*)"
                         };
                         var registerMatchPattern = $"(?<{instructionRegister.MnemonicRegisterName}>{matchPattern})";

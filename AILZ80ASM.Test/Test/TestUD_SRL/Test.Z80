@@ -20,3 +20,26 @@
 	NOP
 	NOP
 	NOP
+
+	SRL (ix+$11),b
+	SRL (ix+$22),c
+	SRL (ix+$33),d
+	SRL (ix+$44),e
+	SRL (ix+$55),h
+	SRL (ix+$66),l
+	SRL (ix+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
+	SRL (iy+$11),b
+	SRL (iy+$22),c
+	SRL (iy+$33),d
+	SRL (iy+$44),e
+	SRL (iy+$55),h
+	SRL (iy+$66),l
+	SRL (iy+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
