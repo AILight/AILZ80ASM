@@ -141,6 +141,7 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 #### MACRO <マクロ名> [<引数1>, <引数2>]　～ END MACRO
 - MACROからEND MACROまでがマクロとして定義されます
 - 引数に付けた名前がマクロ内で利用できます
+- マクロの中から外の要素を参照するには、ネームスペースを含めた名前にする必要があります。[サンプル](https://github.com/AILight/AILZ80ASM/blob/034672f506f5253b74824598faf35fdbc5000c99/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80#L55)
 ```
 ARG1	equ 2
 .Three  equ 3
