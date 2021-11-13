@@ -102,20 +102,37 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 ```
 #### DB <式>, [<式>]
 - <式>の1バイト値を設定します
+
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L4)
+
 #### DB [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
 - ネストも可能
 - 例：DB [Y=0..2:[X=0..4:Y*8+X]]
+
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
+
 #### DW <式>, [<式>]
 - <式>の2バイト値を設定します
+
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L5)
+
 #### DW [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
 - ネストも可能
 - 例：DW [Y=24..0:$8000 + Y * $140]
+
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
+
 #### DS <式>, [<式2>] 及び DBS <式>, [<式2>]
 - <式>のバイト数、0で埋めます。<式2>を設定するとその値で埋めます
+
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
+
 #### DWS <式>, [<式2>]
 - <式>の２バイト数、0で埋めます。<式2>を設定するとその値で埋めます
+
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L11)
 
 ## マクロ
 #### MACRO <マクロ名> [<引数1>, <引数2>]　～ END MACRO
@@ -144,6 +161,8 @@ MACRO TestArg a1, a2
 END MACRO
 ```
 
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80)
+
 #### REPEAT <式1> [LAST <式2>]　～ END REPEAT
 - 式1に設定した値の回数分をREPEATの中に記述してある命令を展開します
 - 式2には、最終の展開時に削除したい命令数を負の値で設定します
@@ -161,6 +180,8 @@ REPEAT 8 LAST -1
 END REPEAT
 ```
 
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Repeat/Test.Z80)
+
 ## 条件付きアセンブル
 5つの命令を使用して、条件付きアセンブルを制御します
 - #IF: 条件付きアセンブルを開始します。コードは、指定された条件がTRUEの時にアセンブル対象になります。
@@ -177,3 +198,5 @@ END REPEAT
 	#error "modeの値が範囲外です。"
 #endif
 ```
+
+[サンプル]()
