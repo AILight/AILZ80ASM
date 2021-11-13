@@ -1,0 +1,27 @@
+﻿ARG1	equ 2
+.Three  equ 3
+VRAM_ADDRESS	equ $8001
+
+	ORG	$9000
+	ALLLDArg EQU 1
+	
+	ALLLD 2
+	ALLLD ALLLDArg
+	;ALLLD 3
+
+MACRO ALLLD mode
+
+#if mode == 1
+	ld a,1
+	ld b,2
+	ld c,3
+#elif mode == 2
+	ld d,4
+	ld e,5
+	ld h,6
+	ld l,7
+#else
+	#error "modeの値が範囲外です。"
+#endif
+
+END MACRO

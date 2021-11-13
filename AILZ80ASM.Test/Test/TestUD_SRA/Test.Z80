@@ -1,0 +1,45 @@
+﻿	SRA b,(ix+$11)
+	SRA c,(ix+$22)
+	SRA d,(ix+$33)
+	SRA e,(ix+$44)
+	SRA h,(ix+$55)
+	SRA l,(ix+$66)
+	SRA a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	SRA b,(iy+$11)
+	SRA c,(iy+$22)
+	SRA d,(iy+$33)
+	SRA e,(iy+$44)
+	SRA h,(iy+$55)
+	SRA l,(iy+$66)
+	SRA a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+
+	SRA (ix+$11),b
+	SRA (ix+$22),c
+	SRA (ix+$33),d
+	SRA (ix+$44),e
+	SRA (ix+$55),h
+	SRA (ix+$66),l
+	SRA (ix+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
+	SRA (iy+$11),b
+	SRA (iy+$22),c
+	SRA (iy+$33),d
+	SRA (iy+$44),e
+	SRA (iy+$55),h
+	SRA (iy+$66),l
+	SRA (iy+$77),a
+	NOP
+	NOP
+	NOP
+	NOP

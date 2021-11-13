@@ -1,0 +1,35 @@
+﻿	RES B,  0, (IX+ 7)
+	RES C,  1, (IX+ 6)
+	RES D,  2, (IX+ 5)
+	RES E,  3, (IX+ 4)
+	RES H,  4, (IX+ 3)
+	RES L,  5, (IX+ 2)
+	RES A,  6, (IX+ 1)
+	RES A,  7, (IX+ 0)
+
+	RES B,  0, (IY+ 7)
+	RES C,  1, (IY+ 6)
+	RES D,  2, (IY+ 5)
+	RES E,  3, (IY+ 4)
+	RES H,  4, (IY+ 3)
+	RES L,  5, (IY+ 2)
+	RES A,  6, (IY+ 1)
+	RES A,  7, (IY+ 0)
+
+	RES 0, (IX+ 7), B  
+	RES 1, (IX+ 6), C  
+	RES 2, (IX+ 5), D  
+	RES 3, (IX+ 4), E  
+	RES 4, (IX+ 3), H  
+	RES 5, (IX+ 2), L  
+	RES 6, (IX+ 1), A  
+	RES 7, (IX+ 0), A  
+
+	RES 0, (IY+ 7), B  
+	RES 1, (IY+ 6), C  
+	RES 2, (IY+ 5), D  
+	RES 3, (IY+ 4), E  
+	RES 4, (IY+ 3), H  
+	RES 5, (IY+ 2), L  
+	RES 6, (IY+ 1), A  
+	RES 7, (IY+ 0), A  

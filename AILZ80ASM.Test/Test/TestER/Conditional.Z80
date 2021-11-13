@@ -1,0 +1,11 @@
+﻿
+	ORG	$9000
+
+#elif mode == 2
+	ld d,4
+	ld e,5
+	ld h,6
+	ld l,7
+#else
+	#error "modeの値が範囲外です。"
+#endif

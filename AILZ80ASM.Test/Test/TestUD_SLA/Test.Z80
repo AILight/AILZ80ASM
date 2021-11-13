@@ -1,0 +1,45 @@
+﻿	SLA b,(ix+$11)
+	SLA c,(ix+$22)
+	SLA d,(ix+$33)
+	SLA e,(ix+$44)
+	SLA h,(ix+$55)
+	SLA l,(ix+$66)
+	SLA a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	SLA b,(iy+$11)
+	SLA c,(iy+$22)
+	SLA d,(iy+$33)
+	SLA e,(iy+$44)
+	SLA h,(iy+$55)
+	SLA l,(iy+$66)
+	SLA a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+
+	SLA (ix+$11),b
+	SLA (ix+$22),c
+	SLA (ix+$33),d
+	SLA (ix+$44),e
+	SLA (ix+$55),h
+	SLA (ix+$66),l
+	SLA (ix+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
+	SLA (iy+$11),b
+	SLA (iy+$22),c
+	SLA (iy+$33),d
+	SLA (iy+$44),e
+	SLA (iy+$55),h
+	SLA (iy+$66),l
+	SLA (iy+$77),a
+	NOP
+	NOP
+	NOP
+	NOP

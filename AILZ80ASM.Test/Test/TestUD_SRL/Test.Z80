@@ -1,0 +1,45 @@
+﻿	SRL b,(ix+$11)
+	SRL c,(ix+$22)
+	SRL d,(ix+$33)
+	SRL e,(ix+$44)
+	SRL h,(ix+$55)
+	SRL l,(ix+$66)
+	SRL a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	SRL b,(iy+$11)
+	SRL c,(iy+$22)
+	SRL d,(iy+$33)
+	SRL e,(iy+$44)
+	SRL h,(iy+$55)
+	SRL l,(iy+$66)
+	SRL a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+
+	SRL (ix+$11),b
+	SRL (ix+$22),c
+	SRL (ix+$33),d
+	SRL (ix+$44),e
+	SRL (ix+$55),h
+	SRL (ix+$66),l
+	SRL (ix+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
+	SRL (iy+$11),b
+	SRL (iy+$22),c
+	SRL (iy+$33),d
+	SRL (iy+$44),e
+	SRL (iy+$55),h
+	SRL (iy+$66),l
+	SRL (iy+$77),a
+	NOP
+	NOP
+	NOP
+	NOP

@@ -1,45 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AILZ80ASM
+﻿namespace AILZ80ASM
 {
-    public class OperationItemOPCode : IOperationItem
+    public class OperationItemOPCode<T> : OperationItem
+        where T : Instructions.ISA, new()
     {
-        private OPCodeResult OPCodeResult { get; set; }
-        private LineItem LineItem { get; set; }
+        private T ISA { get; set; }
 
-        private OperationItemOPCode(OPCodeResult opCodeResult, LineItem lineItem, AsmAddress address)
+        public override byte[] Bin => ISA.ToBin();
+        public override AsmList List
         {
-            OPCodeResult = opCodeResult;
-            LineItem = lineItem;
+            get
+            {
+                return AsmList.CreateLineItem(Address, Bin, ISA.InstructionItem.T == 0 ? "" : ISA.InstructionItem.T.ToString(), LineDetailExpansionItemOperation.LineItem);
+            }
+        }
+        public override AsmLength Length => new AsmLength(ISA.OPCodeLength);
+
+        private OperationItemOPCode(T isa, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)
+        {
+            ISA = isa;
+            LineDetailExpansionItemOperation = lineDetailExpansionItemOperation;
             Address = address;
         }
 
-        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
+        public static bool CanCreate(string operation)
         {
-            var returnValue = default(OperationItemOPCode);
-            var code = lineItem.Label.OperationCodeWithoutLabel;
+            if (string.IsNullOrEmpty(operation))
+            {
+                //空文字もOperationItemOPCodeとして処理をする
+                return true;
+            }
+
+            var isa = new T() { Instruction = operation };
+            if (isa.PreAssemble())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        {
+            var returnValue = default(OperationItemOPCode<T>);
+            var code = lineDetailExpansionItemOperation.LineItem.OperationString;
             if (!string.IsNullOrEmpty(code))
             {
-                var opCodeResult = OPCodeTable.GetOPCodeItem(code);
-                if (opCodeResult != default(OPCodeResult))
+                var isa = new T() { Instruction = code };
+                if (isa.PreAssemble())
                 {
-                    returnValue = new OperationItemOPCode(opCodeResult, lineItem, address);
+                    returnValue = new OperationItemOPCode<T>(isa, lineDetailExpansionItemOperation, address);
                 }
             }
 
             return returnValue;
         }
 
-        public void Assemble(Label[] labels)
+        public override void Assemble(AsmLoad asmLoad)
         {
-            OPCodeResult.Assemble(LineItem, labels);
+            ISA.Assemble(LineDetailExpansionItemOperation, asmLoad);
         }
 
-        public byte[] Bin => OPCodeResult.ToBin();
-
-        public AsmAddress Address { get; set; }
-        public AsmLength Length => new AsmLength(OPCodeResult.OPCode.Length);
     }
 }

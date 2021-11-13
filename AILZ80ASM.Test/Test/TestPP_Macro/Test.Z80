@@ -1,0 +1,82 @@
+﻿ARG1	equ 2
+.Three  equ 3
+VRAM_ADDRESS	equ $8001
+
+	ORG	$9000
+	
+	ALLLD
+ADDR:
+	TestArg 0, 1
+	TestArg ARG1, ARG1.Three
+	VRAMSET VRAM_ADDRESS
+	VRAMSET ADDR
+	REPEAT_TEST
+	MACRO_IN_MACRO ADDR, 0, 1
+	READ_LABEL
+	REPEAT_JR 3
+
+MACRO ALLLD
+	ld a,1
+	ld b,2
+	ld c,3
+	ld d,4
+	ld e,5
+	ld h,6
+	ld l,7
+END MACRO
+
+macro TestArg a1, a2
+	ld a, a1
+	ld b, a2
+end macro
+
+macro VRAMSET VRAM_ADDRESS
+
+	ld H, VRAM_ADDRESS.@H
+	ld L, VRAM_ADDRESS.@L
+
+end macro
+
+macro REPEAT_TEST
+
+REPEAT 2
+        xor     a	
+END REPEAT
+
+REPEAT 3 LAST - 1
+	ld a,1
+	ld b,2
+END REPEAT
+
+end macro
+
+macro MACRO_IN_MACRO VRAM_ADDRESS, a11, a22
+
+	MAIN:VRAMSET VRAM_ADDRESS
+
+	main:TestArg a11, a22
+
+end macro
+
+macro READ_LABEL
+
+	ld hl, MAIN:ADDR
+
+end macro
+
+macro REPEAT_JR TEST
+
+	ld	a, TEST
+	jr nz, .lp
+	
+	MAIN:READ_LABEL
+
+REPEAT 2
+        xor     a	
+END REPEAT
+
+	ld a, 0
+
+.lp
+
+end macro

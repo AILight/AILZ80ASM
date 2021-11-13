@@ -1,53 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace AILZ80ASM
 {
     public class FileItem
     {
-        private Package Package { get; set; }
-
-        public string LoadFileName {get ; private set;}
+        private AsmLoad AssembleLoad { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
-        public string WorkGlobalLabelName { get; set; }
-        public string WorkLabelName { get; set; }
-        public List<LineItemErrorMessage> ErrorMessages { get; private set; } = new List<LineItemErrorMessage>();
 
-        public FileItem(FileInfo fileInfo, Package package)
+        public FileItem(FileInfo fileInfo, AsmLoad asmLoad)
         {
-            Package = package;
+            // 重複読み込みチェック
+            if (asmLoad.LoadFiles.Any(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity()))
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
+            }
+
+            // スタックに読み込みファイルを積む
+            asmLoad.LoadFiles.Push(fileInfo);
+
+            AssembleLoad = asmLoad;
             FileInfo = fileInfo;
 
             using var streamReader = fileInfo.OpenText();
             Read(streamReader);
             streamReader.Close();
-        }
 
-        public FileItem(StreamReader streamReader)
-        {
-            Read(streamReader);
+            asmLoad.LoadFiles.Pop();
+
         }
 
         private void Read(StreamReader streamReader)
         {
             string line;
-            var lineIndex = 0;
-            LoadFileName = Path.GetFileNameWithoutExtension(FileInfo.Name);
-            WorkGlobalLabelName = LoadFileName.Replace(".", "_");
-            WorkLabelName = "";
+            var lineIndex = 1;
 
             while ((line = streamReader.ReadLine()) != default(string))
             {
-                var item = new LineItem(line, lineIndex, this);
-                Items.Add(item);
-
+                var item = new LineItem(line, lineIndex, FileInfo);
                 lineIndex++;
+                try
+                {
+                    item.CreateLineDetailItem(AssembleLoad);
+                    Items.Add(item);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
             }
 
         }
+
+        /// <summary>
+        /// マクロその他命令の展開
+        /// </summary>
+        /// <param name="macros"></param>
+        public void ExpansionItem()
+        {
+            foreach (var item in Items)
+            {
+                try
+                {
+                    item.ExpansionItem();
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
+            }
+        }
+
 
         public byte[] Bin
         {
@@ -67,6 +92,82 @@ namespace AILZ80ASM
             }
         }
 
+        public AsmList[] Lists
+        {
+            get
+            {
+                var lists = new List<AsmList>();
+
+                foreach (var item in Items)
+                {
+                    lists.AddRange(item.Lists);
+                }
+
+                return lists.ToArray();
+            }
+        }
+
+        public void BuildAddressLabel()
+        {
+            foreach (var item in Items)
+            {
+                try
+                {
+                    item.BuildAddressLabel();
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
+            }
+        }
+
+        public void BuildArgumentLabel()
+        {
+            foreach (var item in Items)
+            {
+                try
+                {
+                    item.BuildArgumentLabel();
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
+            }
+        }
+
+        public void BuildValueLabel()
+        {
+            foreach (var item in Items)
+            {
+                try
+                {
+                    item.BuildValueLabel();
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
+            }
+        }
+
+        public void Assemble()
+        {
+            // アセンブルを実行する
+            foreach (var item in Items)
+            {
+                try
+                {
+                    item.Assemble();
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
+            }
+        }
+
         public void PreAssemble(ref AsmAddress address)
         {
             foreach (var item in Items)
@@ -75,43 +176,41 @@ namespace AILZ80ASM
                 {
                     item.PreAssemble(ref address);
                 }
-                catch (ErrorMessageException ex)
+                catch (ErrorAssembleException ex)
                 {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
             }
         }
 
-        public void SetValueLabel(Label[] labels)
+        /// <summary>
+        /// バイナリーを保存
+        /// </summary>
+        /// <param name="stream"></param>
+        public void SaveBin(Stream stream)
         {
-            foreach (var item in Items)
+            var bin = this.Bin;
+            if (bin.Length > 0)
             {
-                try
-                {
-                    item.SetValueLabel(labels);
-                }
-                catch (ErrorMessageException ex)
-                {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
-                }
+                stream.Write(bin, 0, bin.Length);
             }
+
         }
 
-        public void Assemble(Label[] labels)
+        /// <summary>
+        /// リストファイルを保存
+        /// </summary>
+        /// <param name="stream"></param>
+        public void SaveList(StreamWriter streamWriter)
         {
-            // アセンブルを実行する
-            foreach (var item in Items)
-            {
-                try
-                {
-                    item.Assemble(labels);
-                }
-                catch (ErrorMessageException ex)
-                {
-                    ErrorMessages.Add(new LineItemErrorMessage(ex, item));
-                }
-            }
-        }
+            streamWriter.WriteLine(AsmList.CreateFileInfoBOF(FileInfo).ToString());
 
+            foreach (var list in this.Lists)
+            {
+                streamWriter.WriteLine(list.ToString());
+            }
+
+            streamWriter.WriteLine(AsmList.CreateFileInfoEOF(FileInfo).ToString());
+        }
     }
 }

@@ -1,0 +1,45 @@
+﻿	RLC b,(ix+$11)
+	RLC c,(ix+$22)
+	RLC d,(ix+$33)
+	RLC e,(ix+$44)
+	RLC h,(ix+$55)
+	RLC l,(ix+$66)
+	RLC a,(ix+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+	RLC b,(iy+$11)
+	RLC c,(iy+$22)
+	RLC d,(iy+$33)
+	RLC e,(iy+$44)
+	RLC h,(iy+$55)
+	RLC l,(iy+$66)
+	RLC a,(iy+$77)
+	NOP
+	NOP
+	NOP
+	NOP
+
+	RLC (ix+$11),b
+	RLC (ix+$22),c
+	RLC (ix+$33),d
+	RLC (ix+$44),e
+	RLC (ix+$55),h
+	RLC (ix+$66),l
+	RLC (ix+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
+	RLC (iy+$11),b
+	RLC (iy+$22),c
+	RLC (iy+$33),d
+	RLC (iy+$44),e
+	RLC (iy+$55),h
+	RLC (iy+$66),l
+	RLC (iy+$77),a
+	NOP
+	NOP
+	NOP
+	NOP

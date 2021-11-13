@@ -1,49 +1,89 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class OperationItemSystem : IOperationItem
+    public class OperationItemSystem : OperationItem
     {
+        private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)|_|%|:]+)*\s*,*\s*(?<op3>.+)*";
+
+        private byte[] ItemDataBin { get; set; }
+        private AsmLength ItemDataLength { get; set; }
+        public override byte[] Bin => ItemDataBin;
+        public override AsmList List
+        {
+            get
+            {
+                return AsmList.CreateLineItemORG(Address, Length, LineDetailExpansionItemOperation.LineItem);
+            }
+        }
+        public override AsmLength Length => ItemDataLength;
+
         private OperationItemSystem()
         {
 
         }
 
-        public static IOperationItem Parse(LineItem lineItem, AsmAddress address)
+        public static bool CanCreate(string operation)
+        {
+            var matched = Regex.Match(operation, RegexPatternOP, RegexOptions.Singleline);
+            var op1 = matched.Groups["op1"].Value;
+            return (new[] { "ORG", "ALIGN" }).Any(m => string.Compare(m, op1, true) == 0);
+        }
+
+        public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemSystem);
-            var matched = Regex.Match(lineItem.Label.OperationCodeWithoutLabel, OPCodeTable.RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(lineDetailExpansionItemOperation.LineItem.OperationString, RegexPatternOP, RegexOptions.Singleline);
 
-            var op1 = matched.Groups["op1"].Value.ToUpper();
-            var op2 = matched.Groups["op2"].Value.ToUpper();
-            var op3 = matched.Groups["op3"].Value.ToUpper();
+            var op1 = matched.Groups["op1"].Value;
+            var op2 = matched.Groups["op2"].Value;
+            var op3 = matched.Groups["op3"].Value;
 
-            switch (op1)
+            switch (op1.ToUpper())
             {
                 case "ORG":
-                    op2 = AIMath.Replace16NumberAndCurrentAddress(op2, address);
-                    var programAddress = Convert.ToUInt16(op2);
-                    op3 = AIMath.Replace16Number(op3);
-                    var bytes = new byte[] { };
-                    var outputAddress = address.Output;
-                    var length = new AsmLength(0);
-
-                    if (!string.IsNullOrEmpty(op3))
                     {
-                        var localOutputAddress = Convert.ToUInt32(op3);
-                        if (address.Output > localOutputAddress)
+                        var programAddress = AIMath.ConvertTo<UInt16>(op2, lineDetailExpansionItemOperation, asmLoad);
+                        var bytes = Array.Empty<byte>();
+                        var outputAddress = address.Output;
+                        var length = new AsmLength(0);
+
+                        if (!string.IsNullOrEmpty(op3))
                         {
-                            throw new ErrorMessageException(Error.ErrorCodeEnum.E0009);
+                            var localOutputAddress = AIMath.ConvertTo<UInt16>(op3, lineDetailExpansionItemOperation, asmLoad);
+                            if (address.Output > localOutputAddress)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+                            }
+
+                            length.Output = localOutputAddress - address.Output;
+                            bytes = new byte[length.Output];
                         }
 
-                        length.Output = localOutputAddress - address.Output;
-                        bytes = new byte[length.Output];
+                        returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
                     }
+                    break;
+                case "ALIGN":
+                    {
+                        var align = AIMath.ConvertTo<UInt16>(op2, lineDetailExpansionItemOperation, asmLoad);
+                        if ((align & (align - 1)) != 0)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
+                        }
 
-                    returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), Length = length, Bin = bytes };
+                        var offset = align - (address.Program % align);
+                        var length = new AsmLength(offset);
+                        var bytes = new byte[length.Output];
+                        if (!string.IsNullOrEmpty(op3))
+                        {
+                            var value = AIMath.ConvertTo<byte>(op3, lineDetailExpansionItemOperation, asmLoad);
+                            bytes = bytes.Select(m => value).ToArray();
+                        }
+
+                        returnValue = new OperationItemSystem { Address = address, ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
+                    }
                     break;
                 default:
                     break;
@@ -52,12 +92,7 @@ namespace AILZ80ASM
             return returnValue;
         }
 
-        public byte[] Bin { get; set; }
-
-        public AsmAddress Address { get; set; }
-        public AsmLength Length { get; set; }
-
-        public void Assemble(Label[] labels)
+        public override void Assemble(AsmLoad asmLoad)
         {
         }
     }

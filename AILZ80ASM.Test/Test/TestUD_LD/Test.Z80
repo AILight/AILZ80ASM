@@ -12,15 +12,11 @@
 	ld ixh,c
 	ld ixh,d
 	ld ixh,e
-	ld ixh,h
-	ld ixh,l
 	ld ixh,a
 	ld ixl,b
 	ld ixl,c
 	ld ixl,d
 	ld ixl,e
-	ld ixl,h
-	ld ixl,l
 	ld ixl,a
 	ld a,iyh
 	ld a,iyl
@@ -36,15 +32,11 @@
 	ld iyh,c
 	ld iyh,d
 	ld iyh,e
-	ld iyh,h
-	ld iyh,l
 	ld iyh,a
 	ld iyl,b
 	ld iyl,c
 	ld iyl,d
 	ld iyl,e
-	ld iyl,h
-	ld iyl,l
 	ld iyl,a
 	ld ixh,1
 	ld ixl,2

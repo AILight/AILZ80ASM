@@ -1,97 +1,101 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.IO;
 
 namespace AILZ80ASM
 {
     public class LineItem
     {
-        private string LineString { get; set; }
-        public int LineIndex { get; private set; }
-        public FileItem FileItem { get; private set; }
-        /* Configクラスへ移行
-        private const int MAX_INCLUDE_NEST = 10;
-        */
+        // ファイル情報
+        public FileInfo FileInfo { get; set; }
 
+        // レコード情報
+        public string LineString { get; private set; }
+        public int LineIndex { get; private set; }
+        public byte[] Bin => LineDetailItem.Bin;
+        public AsmList[] Lists => LineDetailItem.Lists;
+
+        // 展開情報
+        public string LabelString { get; private set; }
         public string OperationString { get; private set; }
         public string CommentString { get; private set; }
-        //public Macro Macro { get; private set; }
-        public Label Label { get; private set; }
-        public IOperationItem OperationItem { get; private set; }
-        public AsmAddress Address { get; private set; }
+        public LineDetailItem LineDetailItem { get; private set; }
 
-
-        public byte[] Bin 
+        public LineItem(string lineString, int lineIndex, FileInfo fileInfo)
         {
-            get 
-            {
-                return OperationItem == default(IOperationItem) ? new byte[] { } : OperationItem.Bin;
-            } 
-        }
+            // ファイル情報
+            FileInfo = fileInfo;
 
-        public LineItem(string lineString, int lineIndex, FileItem fileItem)
-        {
+            // 読み込んだ情報
             LineString = lineString;
             LineIndex = lineIndex;
-            FileItem = fileItem;
 
-            OperationItem = default(IOperationItem);
-
+            //展開情報作成
             //コメントを処理する
             var indexCommnet = lineString.IndexOf(';');
+            var operationString = default(string);
+
             if (indexCommnet != -1)
             {
                 CommentString = lineString.Substring(indexCommnet);
-                lineString = lineString.Substring(0, indexCommnet);
+                operationString = lineString.Substring(0, indexCommnet).Trim();
             }
+            else
+            {
+                operationString = lineString.Trim();
+            }
+            LabelString = Label.GetLabelText(operationString);
+            OperationString = operationString.Substring(LabelString.Length).Trim();
+        }
 
-            //命令を切り出す
-            OperationString = lineString.TrimEnd();
+        public LineItem(LineItem lineItem)
+        {
+            FileInfo = lineItem.FileInfo;
+            LineString = lineItem.LineString;
+            LineIndex = lineItem.LineIndex;
+            LabelString = lineItem.LabelString;
+            OperationString = lineItem.OperationString;
+            CommentString = lineItem.CommentString;
+            LineDetailItem = lineItem.LineDetailItem;
+        }
 
-            // ラベルを処理する
-            Label = new Label(this);
+        public void SetLabel(string labelName)
+        {
+            LabelString = labelName;
+        }
+
+        public void CreateLineDetailItem(AsmLoad asmLoad)
+        {
+            // LineDetailItem作成
+            LineDetailItem = LineDetailItem.CreateLineDetailItem(this, asmLoad);
+        }
+
+        public void ExpansionItem()
+        {
+            LineDetailItem.ExpansionItem();
         }
 
         public void PreAssemble(ref AsmAddress address)
         {
-            // Addressの設定
-            Address = address;
-
-            // 命令を判別する
-            OperationItem = OperationItem ?? OperationItemOPCode.Parse(this, address);　// OpeCode
-            OperationItem = OperationItem ?? OperationItemData.Parse(this, address);　  // Data
-            OperationItem = OperationItem ?? OperationItemInclude.Parse(this, address); // Include
-            OperationItem = OperationItem ?? OperationItemSystem.Parse(this, address);  // System
-
-            // Addressを設定
-            if (OperationItem != default(IOperationItem))
-            {
-                Address = OperationItem.Address;
-                address = new AsmAddress(OperationItem.Address, OperationItem.Length);
-            }
-            else
-            {
-                var operationCode = this.Label.OperationCodeWithoutLabel;
-                if (!string.IsNullOrEmpty(operationCode))
-                {
-                    throw new ErrorMessageException(Error.ErrorCodeEnum.E0001, $"{operationCode}");
-                }
-            }
-
-            // ラベル設定
-            Label.SetAddressLabel(Address);
+            LineDetailItem.PreAssemble(ref address);
         }
 
-        public void SetValueLabel(Label[] labels)
+        public void BuildAddressLabel()
         {
-            Label.SetValueLabel(Address, labels);
+            LineDetailItem.BuildAddressLabel();
         }
 
-        public void Assemble(Label[] labels)
+        public void BuildArgumentLabel()
         {
-            OperationItem?.Assemble(labels);
+            LineDetailItem.BuildArgumentLabel();
+        }
+
+        public void BuildValueLabel()
+        {
+            LineDetailItem.BuildValueLabel();
+        }
+
+        public void Assemble()
+        {
+            LineDetailItem.Assemble();
         }
     }
 }
