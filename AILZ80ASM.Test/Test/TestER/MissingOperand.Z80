@@ -1,0 +1,17 @@
+﻿	LD H, IXh
+	LD L, IXh
+	LD H, IXl
+	LD L, IXl
+	LD H, IYh
+	LD L, IYh
+	LD H, IYl
+	LD L, IYl
+	
+	LD IXh,H
+	LD IXh,L
+	LD IXl,H
+	LD IXl,L
+	LD IYh,H
+	LD IYh,L
+	LD IYl,H
+	LD IYl,L

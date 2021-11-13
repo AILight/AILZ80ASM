@@ -20,3 +20,26 @@
 	NOP
 	NOP
 	NOP
+
+	RL (ix+$11),b
+	RL (ix+$22),c
+	RL (ix+$33),d
+	RL (ix+$44),e
+	RL (ix+$55),h
+	RL (ix+$66),l
+	RL (ix+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
+	RL (iy+$11),b
+	RL (iy+$22),c
+	RL (iy+$33),d
+	RL (iy+$44),e
+	RL (iy+$55),h
+	RL (iy+$66),l
+	RL (iy+$77),a
+	NOP
+	NOP
+	NOP
+	NOP

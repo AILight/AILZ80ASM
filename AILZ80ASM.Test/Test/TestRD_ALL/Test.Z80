@@ -322,16 +322,16 @@ LBF0:
 	LD IXh,C
 	LD IXh,D
 	LD IXh,E
-	LD IXh,H
-	LD IXh,L
+	;LD IXh,H これがない
+	;LD IXh,L これがない
 	LD H,(IX+10)
 	LD IXh,A
 	LD IXl,B
 	LD IXl,C
 	LD IXl,D
 	LD IXl,E
-	LD IXl,H
-	LD IXl,L
+	;LD IXl,H これがない
+	;LD IXl,L これがない
 	LD L,(IX+11)
 	LD IXl,A
 	LD (IX+12),B
@@ -410,16 +410,16 @@ LBF0:
 	LD IYh,C
 	LD IYh,D
 	LD IYh,E
-	LD IYh,H
-	LD IYh,L
+	;LD IYh,H これがない
+	;LD IYh,L これがない
 	LD H,(IY+10)
 	LD IYh,A
 	LD IYl,B
 	LD IYl,C
 	LD IYl,D
 	LD IYl,E
-	LD IYl,H
-	LD IYl,L
+	;LD IYl,H これもない
+	;LD IYl,L これもない
 	LD L,(IY+11)
 	LD IYl,A
 	LD (IY+12),B
@@ -784,70 +784,70 @@ LBF0:
 	SET 7,A
 
 	;ビット操作系(DD CB)
-	RLC B, (IX+1)
-	RLC C, (IX+2)
-	RLC D, (IX+3)
-	RLC E, (IX+4)
-	RLC H, (IX+5)
-	RLC L, (IX+6)
+	RLC (IX+1),B 
+	RLC (IX+2),C 
+	RLC (IX+3),D 
+	RLC (IX+4),E 
+	RLC (IX+5),H 
+	RLC (IX+6),L 
 	RLC (IX+7)
-	RLC A, (IX+8)
-	RRC B, (IX+9)
-	RRC C, (IX+10)
-	RRC D, (IX+11)
-	RRC E, (IX+12)
-	RRC H, (IX+13)
-	RRC L, (IX+14)
+	RLC (IX+8),A 
+	RRC (IX+9),B 
+	RRC (IX+10),C 
+	RRC (IX+11),D 
+	RRC (IX+12),E 
+	RRC (IX+13),H 
+	RRC (IX+14),L 
 	RRC (IX+15)
-	RRC A, (IX+16)
-	RL B, (IX+17)
-	RL C, (IX+18)
-	RL D, (IX+19)
-	RL E, (IX+20)
-	RL H, (IX+21)
-	RL L, (IX+22)
+	RRC (IX+16),A
+	RL (IX+17),B 
+	RL (IX+18),C 
+	RL (IX+19),D 
+	RL (IX+20),E 
+	RL (IX+21),H 
+	RL (IX+22),L 
 	RL (IX+23)
-	RL A, (IX+24)
-	RR B, (IX+25)
-	RR C, (IX+26)
-	RR D, (IX+27)
-	RR E, (IX+28)
-	RR H, (IX+29)
-	RR L, (IX+30)
+	RL (IX+24),A 
+	RR (IX+25),B 
+	RR (IX+26),C 
+	RR (IX+27),D 
+	RR (IX+28),E 
+	RR (IX+29),H 
+	RR (IX+30),L 
 	RR (IX+31)
-	RR A, (IX+32)
-	SLA B, (IX+33)
-	SLA C, (IX+34)
-	SLA D, (IX+35)
-	SLA E, (IX+36)
-	SLA H, (IX+37)
-	SLA L, (IX+38)
+	RR (IX+32),A
+	SLA (IX+33),B 
+	SLA (IX+34),C 
+	SLA (IX+35),D 
+	SLA (IX+36),E 
+	SLA (IX+37),H 
+	SLA (IX+38),L 
 	SLA (IX+39)
-	SLA A, (IX+40)
-	SRA B, (IX+41)
-	SRA C, (IX+42)
-	SRA D, (IX+43)
-	SRA E, (IX+44)
-	SRA H, (IX+45)
-	SRA L, (IX+46)
+	SLA (IX+40),A 
+	SRA (IX+41),B 
+	SRA (IX+42),C 
+	SRA (IX+43),D 
+	SRA (IX+44),E 
+	SRA (IX+45),H 
+	SRA (IX+46),L 
 	SRA (IX+47)
-	SRA A, (IX+48)
-	SLL B, (IX+49)
-	SLL C, (IX+50)
-	SLL D, (IX+51)
-	SLL E, (IX+52)
-	SLL H, (IX+53)
-	SLL L, (IX+54)
+	SRA (IX+48),A 
+	SLL (IX+49),B 
+	SLL (IX+50),C 
+	SLL (IX+51),D 
+	SLL (IX+52),E 
+	SLL (IX+53),H 
+	SLL (IX+54),L 
 	
-	SLL A, (IX+55)
-	SRL B, (IX+56)
-	SRL C, (IX+57)
-	SRL D, (IX+58)
-	SRL E, (IX+59)
-	SRL H, (IX+60)
-	SRL L, (IX+61)
+	SLL (IX+55),A 
+	SRL (IX+56),B 
+	SRL (IX+57),C 
+	SRL (IX+58),D 
+	SRL (IX+59),E 
+	SRL (IX+60),H 
+	SRL (IX+61),L 
 	SRL (IX+62)
-	SRL A, (IX+63)
+	SRL (IX+63),A
 	BIT 0,(IX+64)
 	BIT 1,(IX+65)
 	BIT 2,(IX+66)
@@ -856,200 +856,200 @@ LBF0:
 	BIT 5,(IX+69)
 	BIT 6,(IX+70)
 	BIT 7,(IX+71)
-	RES B, 0, (IX+72)
-	RES C, 0, (IX+73)
-	RES D, 0, (IX+74)
-	RES E, 0, (IX+75)
-	RES H, 0, (IX+76)
-	RES L, 0, (IX+77)
+	RES 0,(IX+72),B 
+	RES 0,(IX+73),C 
+	RES 0,(IX+74),D 
+	RES 0,(IX+75),E 
+	RES 0,(IX+76),H 
+	RES 0,(IX+77),L 
 	RES 0,(IX+78)
-	RES A, 0, (IX+79)
-	RES B, 1, (IX+80)
-	RES C, 1, (IX+81)
-	RES D, 1, (IX+82)
-	RES E, 1, (IX+83)
-	RES H, 1, (IX+84)
-	RES L, 1, (IX+85)
+	RES 0,(IX+79),A 
+	RES 1,(IX+80),B 
+	RES 1,(IX+81),C 
+	RES 1,(IX+82),D 
+	RES 1,(IX+83),E 
+	RES 1,(IX+84),H 
+	RES 1,(IX+85),L 
 	RES 1,(IX+86)
-	RES A, 1, (IX+87)
-	RES B, 2, (IX+88)
-	RES C, 2, (IX+89)
-	RES D, 2, (IX+90)
-	RES E, 2, (IX+91)
-	RES H, 2, (IX+92)
-	RES L, 2, (IX+93)
+	RES 1,(IX+87),A 
+	RES 2,(IX+88),B 
+	RES 2,(IX+89),C 
+	RES 2,(IX+90),D 
+	RES 2,(IX+91),E 
+	RES 2,(IX+92),H 
+	RES 2,(IX+93),L 
 	RES 2,(IX+94)
-	RES A, 2, (IX+95)
-	RES B, 3, (IX+96)
-	RES C, 3, (IX+97)
-	RES D, 3, (IX+98)
-	RES E, 3, (IX+99)
-	RES H, 3, (IX+100)
-	RES L, 3, (IX+101)
+	RES 2,(IX+95),A 
+	RES 3,(IX+96),B 
+	RES 3,(IX+97),C 
+	RES 3,(IX+98),D 
+	RES 3,(IX+99),E 
+	RES 3,(IX+100),H 
+	RES 3,(IX+101),L 
 	RES 3,(IX+102)
-	RES A, 3, (IX+103)
-	RES B, 4, (IX+104)
-	RES C, 4, (IX+105)
-	RES D, 4, (IX+106)
-	RES E, 4, (IX+107)
-	RES H, 4, (IX+108)
-	RES L, 4, (IX+109)
+	RES 3,(IX+103),A 
+	RES 4,(IX+104),B 
+	RES 4,(IX+105),C 
+	RES 4,(IX+106),D 
+	RES 4,(IX+107),E 
+	RES 4,(IX+108),H 
+	RES 4,(IX+109),L 
 	RES 4,(IX+110)
-	RES A, 4, (IX+111)
-	RES B, 5, (IX+112)
-	RES C, 5, (IX+113)
-	RES D, 5, (IX+114)
-	RES E, 5, (IX+115)
-	RES H, 5, (IX+116)
-	RES L, 5, (IX+117)
+	RES 4,(IX+111),A 
+	RES 5,(IX+112),B 
+	RES 5,(IX+113),C 
+	RES 5,(IX+114),D 
+	RES 5,(IX+115),E 
+	RES 5,(IX+116),H 
+	RES 5,(IX+117),L 
 	RES 5,(IX+118)
-	RES A, 5, (IX+119)
-	RES B, 6, (IX+120)
-	RES C, 6, (IX+121)
-	RES D, 6, (IX+122)
-	RES E, 6, (IX+123)
-	RES H, 6, (IX+124)
-	RES L, 6, (IX+125)
+	RES 5,(IX+119),A 
+	RES 6,(IX+120),B 
+	RES 6,(IX+121),C 
+	RES 6,(IX+122),D 
+	RES 6,(IX+123),E 
+	RES 6,(IX+124),H 
+	RES 6,(IX+125),L 
 	RES 6,(IX+126)
-	RES A, 6, (IX+127)
-	RES B, 7, (IX+128)
-	RES C, 7, (IX+129)
-	RES D, 7, (IX+130)
-	RES E, 7, (IX+131)
-	RES H, 7, (IX+132)
-	RES L, 7, (IX+133)
+	RES 6,(IX+127),A 
+	RES 7,(IX+128),B 
+	RES 7,(IX+129),C 
+	RES 7,(IX+130),D 
+	RES 7,(IX+131),E 
+	RES 7,(IX+132),H 
+	RES 7,(IX+133),L 
 	RES 7,(IX+134)
-	RES A, 7, (IX+135)
-	SET B, 0, (IX+136)
-	SET C, 0, (IX+137)
-	SET D, 0, (IX+138)
-	SET E, 0, (IX+139)
-	SET H, 0, (IX+140)
-	SET L, 0, (IX+141)
+	RES 7,(IX+135),A 
+	SET 0,(IX+136),B 
+	SET 0,(IX+137),C 
+	SET 0,(IX+138),D 
+	SET 0,(IX+139),E 
+	SET 0,(IX+140),H 
+	SET 0,(IX+141),L 
 	SET 0,(IX+142)
-	SET A, 0, (IX+143)
-	SET B, 1, (IX+144)
-	SET C, 1, (IX+145)
-	SET D, 1, (IX+146)
-	SET E, 1, (IX+147)
-	SET H, 1, (IX+148)
-	SET L, 1, (IX+149)
+	SET 0,(IX+143),A 
+	SET 1,(IX+144),B 
+	SET 1,(IX+145),C 
+	SET 1,(IX+146),D 
+	SET 1,(IX+147),E 
+	SET 1,(IX+148),H 
+	SET 1,(IX+149),L 
 	SET 1,(IX+150)
-	SET A, 1, (IX+151)
-	SET B, 2, (IX+152)
-	SET C, 2, (IX+153)
-	SET D, 2, (IX+154)
-	SET E, 2, (IX+155)
-	SET H, 2, (IX+156)
-	SET L, 2, (IX+157)
+	SET 1,(IX+151),A 
+	SET 2,(IX+152),B 
+	SET 2,(IX+153),C 
+	SET 2,(IX+154),D 
+	SET 2,(IX+155),E 
+	SET 2,(IX+156),H 
+	SET 2,(IX+157),L 
 	SET 2,(IX+158)
-	SET A, 2, (IX+159)
-	SET B, 3, (IX+160)
-	SET C, 3, (IX+161)
-	SET D, 3, (IX+162)
-	SET E, 3, (IX+163)
-	SET H, 3, (IX+164)
-	SET L, 3, (IX+165)
+	SET 2,(IX+159),A 
+	SET 3,(IX+160),B 
+	SET 3,(IX+161),C 
+	SET 3,(IX+162),D 
+	SET 3,(IX+163),E 
+	SET 3,(IX+164),H 
+	SET 3,(IX+165),L 
 	SET 3,(IX+166)
-	SET A, 3, (IX+167)
-	SET B, 4, (IX+168)
-	SET C, 4, (IX+169)
-	SET D, 4, (IX+170)
-	SET E, 4, (IX+171)
-	SET H, 4, (IX+172)
-	SET L, 4, (IX+173)
+	SET 3,(IX+167),A 
+	SET 4,(IX+168),B 
+	SET 4,(IX+169),C 
+	SET 4,(IX+170),D 
+	SET 4,(IX+171),E 
+	SET 4,(IX+172),H 
+	SET 4,(IX+173),L 
 	SET 4,(IX+174)
-	SET A, 4, (IX+175)
-	SET B, 5, (IX+176)
-	SET C, 5, (IX+177)
-	SET D, 5, (IX+178)
-	SET E, 5, (IX+179)
-	SET H, 5, (IX+180)
-	SET L, 5, (IX+181)
+	SET 4,(IX+175),A 
+	SET 5,(IX+176),B 
+	SET 5,(IX+177),C 
+	SET 5,(IX+178),D 
+	SET 5,(IX+179),E 
+	SET 5,(IX+180),H 
+	SET 5,(IX+181),L 
 	SET 5,(IX+182)
-	SET A, 5, (IX+183)
-	SET B, 6, (IX+184)
-	SET C, 6, (IX+185)
-	SET D, 6, (IX+186)
-	SET E, 6, (IX+187)
-	SET H, 6, (IX+188)
-	SET L, 6, (IX+189)
+	SET 5,(IX+183),A 
+	SET 6,(IX+184),B 
+	SET 6,(IX+185),C 
+	SET 6,(IX+186),D 
+	SET 6,(IX+187),E 
+	SET 6,(IX+188),H 
+	SET 6,(IX+189),L 
 	SET 6,(IX+190)
-	SET A, 6, (IX+190+1)
-	SET B, 7, (IX+190+2)
-	SET C, 7, (IX+190+3)
-	SET D, 7, (IX+190+4)
-	SET E, 7, (IX+190+5)
-	SET H, 7, (IX+190+6)
-	SET L, 7, (IX+190+7)
+	SET 6,(IX+190+1),A 
+	SET 7,(IX+190+2),B 
+	SET 7,(IX+190+3),C 
+	SET 7,(IX+190+4),D 
+	SET 7,(IX+190+5),E 
+	SET 7,(IX+190+6),H 
+	SET 7,(IX+190+7),L 
 	SET 7,(IX+198)
-	SET A, 7, (IX+199)
+	SET 7,(IX+199),A
 
 	;ビット操作系(FD CB)
-	RLC B, (IY+1)
-	RLC C, (IY+2)
-	RLC D, (IY+3)
-	RLC E, (IY+4)
-	RLC H, (IY+5)
-	RLC L, (IY+6)
+	RLC (IY+1),B
+	RLC (IY+2),C
+	RLC (IY+3),D
+	RLC (IY+4),E
+	RLC (IY+5),H
+	RLC (IY+6),L
 	RLC (IY+7)
-	RLC A, (IY+8)
-	RRC B, (IY+9)
-	RRC C, (IY+10)
-	RRC D, (IY+11)
-	RRC E, (IY+12)
-	RRC H, (IY+13)
-	RRC L, (IY+14)
+	RLC (IY+8),A 
+	RRC (IY+9),B 
+	RRC (IY+10),C 
+	RRC (IY+11),D 
+	RRC (IY+12),E 
+	RRC (IY+13),H 
+	RRC (IY+14),L 
 	RRC (IY+15)
-	RRC A, (IY+16)
-	RL B, (IY+17)
-	RL C, (IY+18)
-	RL D, (IY+19)
-	RL E, (IY+20)
-	RL H, (IY+21)
-	RL L, (IY+22)
-	RL (IY+23)
-	RL A, (IY+24)
-	RR B, (IY+25)
-	RR C, (IY+26)
-	RR D, (IY+27)
-	RR E, (IY+28)
-	RR H, (IY+29)
-	RR L, (IY+30)
-	RR (IY+31)
-	RR A, (IY+32)
-	SLA B, (IY+33)
-	SLA C, (IY+34)
-	SLA D, (IY+35)
-	SLA E, (IY+36)
-	SLA H, (IY+37)
-	SLA L, (IY+38)
+	RRC (IY+16),A
+	RL  (IY+17),B 
+	RL  (IY+18),C 
+	RL  (IY+19),D 
+	RL  (IY+20),E 
+	RL  (IY+21),H 
+	RL  (IY+22),L 
+	RL  (IY+23)
+	RL  (IY+24),A
+	RR  (IY+25),B
+	RR  (IY+26),C
+	RR  (IY+27),D
+	RR  (IY+28),E
+	RR  (IY+29),H
+	RR  (IY+30),L
+	RR  (IY+31)
+	RR  (IY+32),A
+	SLA (IY+33),B
+	SLA (IY+34),C
+	SLA (IY+35),D
+	SLA (IY+36),E
+	SLA (IY+37),H
+	SLA (IY+38),L
 	SLA (IY+39)
-	SLA A, (IY+40)
-	SRA B, (IY+41)
-	SRA C, (IY+42)
-	SRA D, (IY+43)
-	SRA E, (IY+44)
-	SRA H, (IY+45)
-	SRA L, (IY+46)
+	SLA (IY+40),A
+	SRA (IY+41),B
+	SRA (IY+42),C
+	SRA (IY+43),D
+	SRA (IY+44),E
+	SRA (IY+45),H
+	SRA (IY+46),L
 	SRA (IY+47)
-	SRA A, (IY+48)
-	SLL B, (IY+49)
-	SLL C, (IY+50)
-	SLL D, (IY+51)
-	SLL E, (IY+52)
-	SLL H, (IY+53)
-	SLL L, (IY+54)
+	SRA (IY+48),A 
+	SLL (IY+49),B 
+	SLL (IY+50),C 
+	SLL (IY+51),D 
+	SLL (IY+52),E 
+	SLL (IY+53),H 
+	SLL (IY+54),L 
 	
-	SLL A, (IY+55)
-	SRL B, (IY+56)
-	SRL C, (IY+57)
-	SRL D, (IY+58)
-	SRL E, (IY+59)
-	SRL H, (IY+60)
-	SRL L, (IY+61)
+	SLL (IY+55),A 
+	SRL (IY+56),B 
+	SRL (IY+57),C 
+	SRL (IY+58),D 
+	SRL (IY+59),E 
+	SRL (IY+60),H 
+	SRL (IY+61),L 
 	SRL (IY+62)
-	SRL A, (IY+63)
+	SRL (IY+63),A 
 	BIT 0,(IY+64)
 	BIT 1,(IY+65)
 	BIT 2,(IY+66)
@@ -1058,131 +1058,131 @@ LBF0:
 	BIT 5,(IY+69)
 	BIT 6,(IY+70)
 	BIT 7,(IY+71)
-	RES B, 0, (IY+72)
-	RES C, 0, (IY+73)
-	RES D, 0, (IY+74)
-	RES E, 0, (IY+75)
-	RES H, 0, (IY+76)
-	RES L, 0, (IY+77)
+	RES 0,(IY+72),B 
+	RES 0,(IY+73),C 
+	RES 0,(IY+74),D 
+	RES 0,(IY+75),E 
+	RES 0,(IY+76),H 
+	RES 0,(IY+77),L 
 	RES 0,(IY+78)
-	RES A, 0, (IY+79)
-	RES B, 1, (IY+80)
-	RES C, 1, (IY+81)
-	RES D, 1, (IY+82)
-	RES E, 1, (IY+83)
-	RES H, 1, (IY+84)
-	RES L, 1, (IY+85)
+	RES 0,(IY+79),A 
+	RES 1,(IY+80),B 
+	RES 1,(IY+81),C 
+	RES 1,(IY+82),D 
+	RES 1,(IY+83),E 
+	RES 1,(IY+84),H 
+	RES 1,(IY+85),L 
 	RES 1,(IY+86)
-	RES A, 1, (IY+87)
-	RES B, 2, (IY+88)
-	RES C, 2, (IY+89)
-	RES D, 2, (IY+90)
-	RES E, 2, (IY+91)
-	RES H, 2, (IY+92)
-	RES L, 2, (IY+93)
+	RES 1,(IY+87),A 
+	RES 2,(IY+88),B 
+	RES 2,(IY+89),C 
+	RES 2,(IY+90),D 
+	RES 2,(IY+91),E 
+	RES 2,(IY+92),H 
+	RES 2,(IY+93),L 
 	RES 2,(IY+94)
-	RES A, 2, (IY+95)
-	RES B, 3, (IY+96)
-	RES C, 3, (IY+97)
-	RES D, 3, (IY+98)
-	RES E, 3, (IY+99)
-	RES H, 3, (IY+100)
-	RES L, 3, (IY+101)
+	RES 2,(IY+95),A 
+	RES 3,(IY+96),B 
+	RES 3,(IY+97),C 
+	RES 3,(IY+98),D 
+	RES 3,(IY+99),E 
+	RES 3,(IY+100),H 
+	RES 3,(IY+101),L 
 	RES 3,(IY+102)
-	RES A, 3, (IY+103)
-	RES B, 4, (IY+104)
-	RES C, 4, (IY+105)
-	RES D, 4, (IY+106)
-	RES E, 4, (IY+107)
-	RES H, 4, (IY+108)
-	RES L, 4, (IY+109)
+	RES 3,(IY+103),A 
+	RES 4,(IY+104),B 
+	RES 4,(IY+105),C 
+	RES 4,(IY+106),D 
+	RES 4,(IY+107),E 
+	RES 4,(IY+108),H 
+	RES 4,(IY+109),L 
 	RES 4,(IY+110)
-	RES A, 4, (IY+111)
-	RES B, 5, (IY+112)
-	RES C, 5, (IY+113)
-	RES D, 5, (IY+114)
-	RES E, 5, (IY+115)
-	RES H, 5, (IY+116)
-	RES L, 5, (IY+117)
+	RES 4,(IY+111),A 
+	RES 5,(IY+112),B 
+	RES 5,(IY+113),C 
+	RES 5,(IY+114),D 
+	RES 5,(IY+115),E 
+	RES 5,(IY+116),H 
+	RES 5,(IY+117),L 
 	RES 5,(IY+118)
-	RES A, 5, (IY+119)
-	RES B, 6, (IY+120)
-	RES C, 6, (IY+121)
-	RES D, 6, (IY+122)
-	RES E, 6, (IY+123)
-	RES H, 6, (IY+124)
-	RES L, 6, (IY+125)
+	RES 5,(IY+119),A 
+	RES 6,(IY+120),B 
+	RES 6,(IY+121),C 
+	RES 6,(IY+122),D 
+	RES 6,(IY+123),E 
+	RES 6,(IY+124),H 
+	RES 6,(IY+125),L 
 	RES 6,(IY+126)
-	RES A, 6, (IY+127)
-	RES B, 7, (IY+128)
-	RES C, 7, (IY+129)
-	RES D, 7, (IY+130)
-	RES E, 7, (IY+131)
-	RES H, 7, (IY+132)
-	RES L, 7, (IY+133)
+	RES 6,(IY+127),A 
+	RES 7,(IY+128),B 
+	RES 7,(IY+129),C 
+	RES 7,(IY+130),D 
+	RES 7,(IY+131),E 
+	RES 7,(IY+132),H 
+	RES 7,(IY+133),L 
 	RES 7,(IY+134)
-	RES A, 7, (IY+135)
-	SET B, 0, (IY+136)
-	SET C, 0, (IY+137)
-	SET D, 0, (IY+138)
-	SET E, 0, (IY+139)
-	SET H, 0, (IY+140)
-	SET L, 0, (IY+141)
+	RES 7,(IY+135),A 
+	SET 0,(IY+136),B 
+	SET 0,(IY+137),C 
+	SET 0,(IY+138),D 
+	SET 0,(IY+139),E 
+	SET 0,(IY+140),H 
+	SET 0,(IY+141),L 
 	SET 0,(IY+142)
-	SET A, 0, (IY+143)
-	SET B, 1, (IY+144)
-	SET C, 1, (IY+145)
-	SET D, 1, (IY+146)
-	SET E, 1, (IY+147)
-	SET H, 1, (IY+148)
-	SET L, 1, (IY+149)
+	SET 0,(IY+143),A 
+	SET 1,(IY+144),B 
+	SET 1,(IY+145),C 
+	SET 1,(IY+146),D 
+	SET 1,(IY+147),E 
+	SET 1,(IY+148),H 
+	SET 1,(IY+149),L 
 	SET 1,(IY+150)
-	SET A, 1, (IY+151)
-	SET B, 2, (IY+152)
-	SET C, 2, (IY+153)
-	SET D, 2, (IY+154)
-	SET E, 2, (IY+155)
-	SET H, 2, (IY+156)
-	SET L, 2, (IY+157)
+	SET 1,(IY+151),A 
+	SET 2,(IY+152),B 
+	SET 2,(IY+153),C 
+	SET 2,(IY+154),D 
+	SET 2,(IY+155),E 
+	SET 2,(IY+156),H 
+	SET 2,(IY+157),L 
 	SET 2,(IY+158)
-	SET A, 2, (IY+159)
-	SET B, 3, (IY+160)
-	SET C, 3, (IY+161)
-	SET D, 3, (IY+162)
-	SET E, 3, (IY+163)
-	SET H, 3, (IY+164)
-	SET L, 3, (IY+165)
+	SET 2,(IY+159),A 
+	SET 3,(IY+160),B 
+	SET 3,(IY+161),C 
+	SET 3,(IY+162),D 
+	SET 3,(IY+163),E 
+	SET 3,(IY+164),H 
+	SET 3,(IY+165),L 
 	SET 3,(IY+166)
-	SET A, 3, (IY+167)
-	SET B, 4, (IY+168)
-	SET C, 4, (IY+169)
-	SET D, 4, (IY+170)
-	SET E, 4, (IY+171)
-	SET H, 4, (IY+172)
-	SET L, 4, (IY+173)
+	SET 3,(IY+167),A 
+	SET 4,(IY+168),B 
+	SET 4,(IY+169),C 
+	SET 4,(IY+170),D 
+	SET 4,(IY+171),E 
+	SET 4,(IY+172),H 
+	SET 4,(IY+173),L 
 	SET 4,(IY+174)
-	SET A, 4, (IY+175)
-	SET B, 5, (IY+176)
-	SET C, 5, (IY+177)
-	SET D, 5, (IY+178)
-	SET E, 5, (IY+179)
-	SET H, 5, (IY+180)
-	SET L, 5, (IY+181)
+	SET 4,(IY+175),A 
+	SET 5,(IY+176),B 
+	SET 5,(IY+177),C 
+	SET 5,(IY+178),D 
+	SET 5,(IY+179),E 
+	SET 5,(IY+180),H 
+	SET 5,(IY+181),L 
 	SET 5,(IY+182)
-	SET A, 5, (IY+183)
-	SET B, 6, (IY+184)
-	SET C, 6, (IY+185)
-	SET D, 6, (IY+186)
-	SET E, 6, (IY+187)
-	SET H, 6, (IY+188)
-	SET L, 6, (IY+189)
+	SET 5,(IY+183),A 
+	SET 6,(IY+184),B 
+	SET 6,(IY+185),C 
+	SET 6,(IY+186),D 
+	SET 6,(IY+187),E 
+	SET 6,(IY+188),H 
+	SET 6,(IY+189),L 
 	SET 6,(IY+190)
-	SET A, 6, (IY+190+1)
-	SET B, 7, (IY+190+2)
-	SET C, 7, (IY+190+3)
-	SET D, 7, (IY+190+4)
-	SET E, 7, (IY+190+5)
-	SET H, 7, (IY+190+6)
-	SET L, 7, (IY+190+7)
+	SET 6,(IY+190+1),A 
+	SET 7,(IY+190+2),B 
+	SET 7,(IY+190+3),C 
+	SET 7,(IY+190+4),D 
+	SET 7,(IY+190+5),E 
+	SET 7,(IY+190+6),H 
+	SET 7,(IY+190+7),L 
 	SET 7,(IY+198)
-	SET A, 7, (IY+199)
+	SET 7,(IY+199),A

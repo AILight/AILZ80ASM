@@ -224,7 +224,7 @@ namespace AILZ80ASM
             if (errorLineItems.Length > 0)
             {
                 Console.WriteLine($"> {title}");
-                InternalOutputError(errorLineItems);
+                InternalOutputError(errorLineItems, title);
                 Console.WriteLine();
             }
         }
@@ -233,13 +233,13 @@ namespace AILZ80ASM
         /// エラーの詳細を表示
         /// </summary>
         /// <param name="errorLineItems"></param>
-        private static void InternalOutputError(ErrorLineItem[] errorLineItems)
+        private static void InternalOutputError(ErrorLineItem[] errorLineItems, string title)
         {
             foreach (var errorLineItem in errorLineItems)
             {
                 var errorCode = errorLineItem.ErrorCode.ToString();
                 var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}({(errorLineItem.LineItem.LineIndex)})";
-                Console.WriteLine($"{filePosition}: error {errorCode}: {errorLineItem.ErrorMessage}");
+                Console.WriteLine($"{filePosition}: {title.ToLower()} {errorCode}: {errorLineItem.ErrorMessage}");
             }
         }
     }

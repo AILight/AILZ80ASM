@@ -20,3 +20,26 @@
 	NOP
 	NOP
 	NOP
+
+	RRC (ix+$11),b
+	RRC (ix+$22),c
+	RRC (ix+$33),d
+	RRC (ix+$44),e
+	RRC (ix+$55),h
+	RRC (ix+$66),l
+	RRC (ix+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
+	RRC (iy+$11),b
+	RRC (iy+$22),c
+	RRC (iy+$33),d
+	RRC (iy+$44),e
+	RRC (iy+$55),h
+	RRC (iy+$66),l
+	RRC (iy+$77),a
+	NOP
+	NOP
+	NOP
+	NOP
