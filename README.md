@@ -199,4 +199,4 @@ END REPEAT
 #endif
 ```
 
-[サンプル]()
+[サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
