@@ -27,10 +27,10 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - [本アセンブラで利用できるニーモニック一覧](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestRD_ALL/Test.Z80)
 
 ## 未定義命令 (Undocumented Instructions) 
-- IXH, IXL, IYH, IYLに対応
+- [IXH, IXL, IYH, IYLに対応](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestUD_LD/Test.Z80)
 - [SLL](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestUD_SLL/Test.Z80)
-- IN F,(C)
-- OUT (C), 0
+- [IN F,(C)](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L1), [IN (C)](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L3)
+- [OUT (C), 0](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L2)
 - [ビット操作](https://github.com/AILight/AILZ80ASM/blob/e445250854525bc124ff6156ee328d085be31028/AILZ80ASM.Test/ReleaseDecision/InstructionSet.z80#L786)
 
 ## ラベル
