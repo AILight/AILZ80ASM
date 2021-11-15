@@ -78,7 +78,7 @@ addr:
 
 ## 即値
 - 2進数、10進数、16進数
-- 2進数：末尾に%を付けます
+- 2進数：末尾に% or bを付けます。また _ を含める事が出来ます。
 - 10進数：何もつけません
 - 16進数：先頭に$もしくは末尾にHを付けます
 
@@ -150,6 +150,23 @@ LB3000:
 ```
 0000 3A 00 10 3A 00 20 00 00 00 00 00 00 00 00 00 00
 0010 3A 00 30
+```
+
+#### <ラベル> EQU <式>
+- 指定したラベルに、<式> の値を持たせます。
+- ローカルラベルで利用することも可能です。
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+
+```
+PORT_A  equ $CC
+.WRITE  equ $01
+.READ   equ $02
+
+	LD A, PORT_A.WRITE
+	OUT (PORT_A), A
+
+	LD A, PORT_B.READ
+	OUT (PORT_A), A
 ```
 
 #### ALIGN <式>, [<式2>]
