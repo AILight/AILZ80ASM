@@ -6,8 +6,6 @@
 trigger:
 - main
 
-pr: none  # no PR triggers
-
 pool:
   vmImage: 'windows-latest'
 
