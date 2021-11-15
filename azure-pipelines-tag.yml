@@ -1,0 +1,79 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+  tags:
+    include:
+      - v*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  tag: $[replace(variables['Build.SourceBranch'], 'refs/tags/', '')]
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: 'AILZ80ASM.Test\AILZ80ASM.Test.csproj'
+    publishTestResults: false
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '-r win-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    projects: 'AILZ80ASM\AILZ80ASM.csproj'
+    zipAfterPublish: false
+    modifyOutputPath: false
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '-r osx-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    projects: 'AILZ80ASM\AILZ80ASM.csproj'
+    zipAfterPublish: false
+    modifyOutputPath: false
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '-r linux-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    projects: 'AILZ80ASM\AILZ80ASM.csproj'
+    zipAfterPublish: false
+    modifyOutputPath: false
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/win-x64/publish/AILZ80ASM.exe'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.win-x64.$(tag).zip'
+    replaceExistingArchive: true
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/osx-x64/publish/AILZ80ASM'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.osx-x64.$(tag).zip'
+    replaceExistingArchive: true
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/linux-x64/publish/AILZ80ASM'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.linux-x64.$(tag).zip'
+    replaceExistingArchive: true
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github.com_AILight'
+    repositoryName: 'AILight/AILZ80ASM'
+    action: 'edit'
+    target: '$(Build.SourceVersion)'
+    tag: '$(tag)'
+    assets:
+      $(Build.ArtifactStagingDirectory)/*.zip
