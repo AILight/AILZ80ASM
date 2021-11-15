@@ -46,7 +46,7 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream)
+        public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, bool testError)
         {
             var package = new Package(Files);
 
@@ -56,7 +56,7 @@ namespace AILZ80ASM.Test
             {
                 package.SaveBin(assebledStream);
             }
-            else
+            else if (!testError)
             {
                 throw new Exception(package.Errors[0].ErrorMessage);
             }
@@ -70,7 +70,7 @@ namespace AILZ80ASM.Test
             using var memoryStream = new MemoryStream();
             using var outputStream = outputFile.OpenRead();
 
-            Lib.Assemble(inputFiles, memoryStream);
+            Lib.Assemble(inputFiles, memoryStream, false);
             memoryStream.Position = 0;
             Lib.AreSame(outputStream, memoryStream);
         }

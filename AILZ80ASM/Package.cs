@@ -238,8 +238,8 @@ namespace AILZ80ASM
             foreach (var errorLineItem in errorLineItems)
             {
                 var errorCode = errorLineItem.ErrorCode.ToString();
-                var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}({(errorLineItem.LineItem.LineIndex)})";
-                Console.WriteLine($"{filePosition}: {title.ToLower()} {errorCode}: {errorLineItem.ErrorMessage}");
+                var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}:{(errorLineItem.LineItem.LineIndex)} ";
+                Console.WriteLine($"{filePosition} {errorCode}: {errorLineItem.ErrorMessage}");
             }
         }
     }
