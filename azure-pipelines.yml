@@ -18,6 +18,11 @@ variables:
 steps:
 - task: DotNetCoreCLI@2
   inputs:
+    command: 'test'
+    projects: 'AILZ80ASM.Test\AILZ80ASM.Test.csproj'
+    publishTestResults: false
+- task: DotNetCoreCLI@2
+  inputs:
     command: 'publish'
     publishWebProjects: false
     arguments: '-r win-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
