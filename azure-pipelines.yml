@@ -13,6 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  tag: 'v0.0.0'
 
 steps:
 - task: DotNetCoreCLI@2
@@ -42,22 +43,22 @@ steps:
     modifyOutputPath: false
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/TestConsoleApp/bin/Release/net5.0/win-x64/publish/TestConsoleApp.exe'
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/win-x64/publish/AILZ80ASM.exe'
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/TestConsoleApp.win-x64.$(tag).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.win-x64.$(tag).zip'
     replaceExistingArchive: true
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/TestConsoleApp/bin/Release/net5.0/osx-x64/publish/TestConsoleApp'
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/osx-x64/publish/AILZ80ASM'
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/TestConsoleApp.osx-x64.$(tag).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.osx-x64.$(tag).zip'
     replaceExistingArchive: true
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/TestConsoleApp/bin/Release/net5.0/linux-x64/publish/TestConsoleApp'
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/linux-x64/publish/AILZ80ASM'
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/TestConsoleApp.linux-x64.$(tag).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.linux-x64.$(tag).zip'
     replaceExistingArchive: true
