@@ -10,8 +10,6 @@ AILZ80ASMは、C#で書かれた.NET Coreの環境で動作するZ80アセンブ
 - 本ソースコードを、Visual Studio 2019でビルドする。
 - 実行形式をダウンロードして利用する。 [ダウンロード](https://github.com/AILight/AILZ80ASM/releases)　（準備中）
 
-
-
 ## 使い方
 AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等> [ <オプション指定文字列:ファイル名等>]
 ```
