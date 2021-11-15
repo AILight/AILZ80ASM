@@ -4,7 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
 trigger:
-- master
+  tags:
+    include:
+      - v*
 
 pool:
   vmImage: 'windows-latest'
@@ -13,7 +15,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  tag: 'v0.0.0'
+  tag: $[replace(variables['Build.SourceBranch'], 'refs/tags/', '')]
 
 steps:
 - task: DotNetCoreCLI@2
@@ -66,3 +68,12 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.linux-x64.$(tag).zip'
     replaceExistingArchive: true
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github.com_AILight'
+    repositoryName: 'AILight/AILZ80ASM'
+    action: 'edit'
+    target: '$(Build.SourceVersion)'
+    tag: '$(tag)'
+    assets:
+      $(Build.ArtifactStagingDirectory)/*.zip
