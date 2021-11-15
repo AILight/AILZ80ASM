@@ -6,7 +6,7 @@ namespace AILZ80ASM
 {
     public class OperationItemSystem : OperationItem
     {
-        private static readonly string RegexPatternOP = @"(?<op1>^\S+)?\s*(?<op2>[A-Z|a-z|0-9|$|\.|\-|\+|\(|\)|_|%|:]+)*\s*,*\s*(?<op3>.+)*";
+        private static readonly string RegexPatternOP = @"^(?<op1>(ORG|ALIGN))\s+(?<op2>[^,]+)\s*,*\s*(?<op3>[^,]*)\s*,*\s*(?<op4>[^,]*)$";
 
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
@@ -27,7 +27,7 @@ namespace AILZ80ASM
 
         public static bool CanCreate(string operation)
         {
-            var matched = Regex.Match(operation, RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(operation, RegexPatternOP, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var op1 = matched.Groups["op1"].Value;
             return (new[] { "ORG", "ALIGN" }).Any(m => string.Compare(m, op1, true) == 0);
         }
@@ -35,11 +35,12 @@ namespace AILZ80ASM
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemSystem);
-            var matched = Regex.Match(lineDetailExpansionItemOperation.LineItem.OperationString, RegexPatternOP, RegexOptions.Singleline);
+            var matched = Regex.Match(lineDetailExpansionItemOperation.LineItem.OperationString, RegexPatternOP, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
             var op1 = matched.Groups["op1"].Value;
             var op2 = matched.Groups["op2"].Value;
             var op3 = matched.Groups["op3"].Value;
+            var op4 = matched.Groups["op4"].Value;
 
             switch (op1.ToUpper())
             {
@@ -60,6 +61,11 @@ namespace AILZ80ASM
 
                             length.Output = localOutputAddress - address.Output;
                             bytes = new byte[length.Output];
+                            if (!string.IsNullOrEmpty(op4))
+                            {
+                                var value = AIMath.ConvertTo<byte>(op4, lineDetailExpansionItemOperation, asmLoad);
+                                bytes = bytes.Select(m => value).ToArray();
+                            }
                         }
 
                         returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };

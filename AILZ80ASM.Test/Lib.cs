@@ -56,6 +56,10 @@ namespace AILZ80ASM.Test
             {
                 package.SaveBin(assebledStream);
             }
+            else
+            {
+                throw new Exception(package.Errors[0].ErrorMessage);
+            }
 
             return package.Errors;
         }

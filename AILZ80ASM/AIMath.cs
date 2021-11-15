@@ -254,7 +254,10 @@ namespace AILZ80ASM
         {
             value = Replace16Number(value);
 
-            // $の値を現在のアドレスに置き換える
+            // $$の値を出力アドレスに置き換える
+            value = value.Replace("$$", $"{address.Output:0}");
+
+            // $の値をプログラムアドレスに置き換える
             value = value.Replace("$", $"{address.Program:0}");
 
             return value;
