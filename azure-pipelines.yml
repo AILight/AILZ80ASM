@@ -15,19 +15,49 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
   inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
+    command: 'test'
+    publishTestResults: false
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '-r win-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    zipAfterPublish: false
+    modifyOutputPath: false
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '-r osx-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    zipAfterPublish: false
+    modifyOutputPath: false
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    arguments: '-r linux-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    zipAfterPublish: false
+    modifyOutputPath: false
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/TestConsoleApp/bin/Release/net5.0/win-x64/publish/TestConsoleApp.exe'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/TestConsoleApp.win-x64.$(tag).zip'
+    replaceExistingArchive: true
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/TestConsoleApp/bin/Release/net5.0/osx-x64/publish/TestConsoleApp'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/TestConsoleApp.osx-x64.$(tag).zip'
+    replaceExistingArchive: true
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/TestConsoleApp/bin/Release/net5.0/linux-x64/publish/TestConsoleApp'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/TestConsoleApp.linux-x64.$(tag).zip'
+    replaceExistingArchive: true
