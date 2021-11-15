@@ -18,13 +18,10 @@ variables:
 steps:
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'test'
-    publishTestResults: false
-- task: DotNetCoreCLI@2
-  inputs:
     command: 'publish'
     publishWebProjects: false
     arguments: '-r win-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    projects: 'AILZ80ASM\AILZ80ASM.csproj'
     zipAfterPublish: false
     modifyOutputPath: false
 - task: DotNetCoreCLI@2
@@ -32,6 +29,7 @@ steps:
     command: 'publish'
     publishWebProjects: false
     arguments: '-r osx-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    projects: 'AILZ80ASM\AILZ80ASM.csproj'
     zipAfterPublish: false
     modifyOutputPath: false
 - task: DotNetCoreCLI@2
@@ -39,6 +37,7 @@ steps:
     command: 'publish'
     publishWebProjects: false
     arguments: '-r linux-x64 -c $(buildConfiguration) /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true'
+    projects: 'AILZ80ASM\AILZ80ASM.csproj'
     zipAfterPublish: false
     modifyOutputPath: false
 - task: ArchiveFiles@2
