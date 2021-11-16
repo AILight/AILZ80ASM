@@ -1,14 +1,15 @@
-# Z80 Assembler 'AILZ80ASM' （まだベータです）
+# Z80 Assembler 'AILZ80ASM' ベータ版
 [![Build Status](https://ailight.visualstudio.com/AILight%20Games/_apis/build/status/AILight.AILZ80ASM_Test?branchName=main)](https://ailight.visualstudio.com/AILight%20Games/_build/latest?definitionId=8&branchName=main)
 
 AILZ80ASMは、C#で書かれた.NET Coreの環境で動作するZ80アセンブラです。
 
 ##### 免責事項
+- 現在、ベータ版です。不具合が残っている可能性がありますので、ご注意ください。
 - ご利用は自己責任でお願いします。利用により損害等が発生したとき、作者は責任をおいかねます。
 
 ## 入手方法 
 - 本ソースコードを、Visual Studio 2019でビルドする。
-- 実行形式をダウンロードして利用する。 [ダウンロード](https://github.com/AILight/AILZ80ASM/releases)　（準備中）
+- 実行形式をダウンロードして利用する。 [ダウンロード](https://github.com/AILight/AILZ80ASM/releases)　
 
 ## 使い方
 AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等> [ <オプション指定文字列:ファイル名等>]
