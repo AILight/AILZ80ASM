@@ -68,7 +68,7 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(errors.Length, 2);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 2, "Error.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E1032, 3, "Error.Z80", errors);
-            Assert.AreEqual(errors[1].ErrorMessage, "#ERROR:ƒGƒ‰[ƒeƒXƒg");
+            Assert.AreEqual(errors[1].ErrorMessage, "#ERROR:ã‚¨ãƒ©ãƒ¼ãƒ†ã‚¹ãƒˆ");
         }
 
         [TestMethod]
@@ -170,7 +170,7 @@ namespace AILZ80ASM.Test
         {
             if (!errors.Any(m => m.ErrorCode == errorCode && m.LineItem.LineIndex == lineIndex && m.LineItem.FileInfo.Name == fileName))
             {
-                Assert.Fail($"w’è‚ÌƒGƒ‰[‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B@ErrorCode:{errorCode} LineIndex:{lineIndex}");
+                Assert.Fail($"æŒ‡å®šã®ã‚¨ãƒ©ãƒ¼ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚ã€€ErrorCode:{errorCode} LineIndex:{lineIndex}");
             }
         }
     }
