@@ -1,5 +1,5 @@
 # Z80 Assembler 'AILZ80ASM' （まだベータです）
-[![Build Status](https://ailight.visualstudio.com/AILight%20Games/_apis/build/status/AILight.AILZ80ASM_Release?branchName=main)](https://ailight.visualstudio.com/AILight%20Games/_build/latest?definitionId=7&branchName=main)
+[![Build Status](https://ailight.visualstudio.com/AILight%20Games/_apis/build/status/AILight.AILZ80ASM_Test?branchName=main)](https://ailight.visualstudio.com/AILight%20Games/_build/latest?definitionId=8&branchName=main)
 
 AILZ80ASMは、C#で書かれた.NET Coreの環境で動作するZ80アセンブラです。
 
