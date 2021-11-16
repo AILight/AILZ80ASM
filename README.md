@@ -166,7 +166,7 @@ PORT_A  equ $CC
 	LD A, PORT_A.WRITE
 	OUT (PORT_A), A
 
-	LD A, PORT_B.READ
+	LD A, PORT_A.READ
 	OUT (PORT_A), A
 ```
 
