@@ -21,10 +21,12 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Address.Z80");
 
-            Assert.AreEqual(errors.Length, 3);
+            Assert.AreEqual(errors.Length, 5);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 8, "Address.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 10, "Address.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 7, "Address.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 12, "Address.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 13, "Address.Z80", errors);
         }
 
         [TestMethod]
@@ -103,17 +105,19 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Macro.Z80");
 
-            Assert.AreEqual(errors.Length, 10);
+            Assert.AreEqual(errors.Length, 12);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 2, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 19, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3005, 32, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 37, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 52, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3004, 3, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3004, 5, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3010, 12, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 43, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 48, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 53, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 58, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 62, "Macro.Z80", errors);
         }
 
         [TestMethod]

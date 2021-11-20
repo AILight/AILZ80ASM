@@ -9,4 +9,7 @@ addr:
 
 a b c:
 
+	FFEEH equ 0
+	0ABC equ 0
+
 	
