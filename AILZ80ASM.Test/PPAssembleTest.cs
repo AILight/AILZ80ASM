@@ -25,6 +25,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestPP_MacroEx()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        
+        }
+        [TestMethod]
         public void TestPP_Repeat()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

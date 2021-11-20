@@ -49,6 +49,10 @@ namespace AILZ80ASM
             if (string.IsNullOrEmpty(target))
                 return false;
 
+            // 先頭に()は使えない
+            if (target.StartsWith("(") || target.StartsWith(")"))
+                return false;
+
             return ValidateName(target, asmLoad);
         }
 
