@@ -49,6 +49,16 @@ MACRO )DEF
 		ld a,1
 END MACRO
 
+; 16進数は使えない
+MACRO FFFFH
+		ld a,1
+END MACRO
+
+; 数値スタートは使えない
+MACRO 0START
+		ld a,1
+END MACRO
+
 macro NoEnd a1, a2
 	ld a, a1
 	ld b, a2
