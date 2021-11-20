@@ -7,7 +7,7 @@ namespace AILZ80ASM
 {
     public class LineDetailItemMacroDefine : LineDetailItem
     {
-        private static readonly string RegexPatternMacroStart = @"^\s*Macro\s+(?<macro_name>[a-zA-Z0-9_]+)($|\s+(?<args>.+)$)";
+        private static readonly string RegexPatternMacroStart = @"^\s*Macro\s+(?<macro_name>[a-zA-Z0-9_()]+)($|\s+(?<args>.+)$)";
         private static readonly string RegexPatternMacroEnd = @"^\s*End\s+Macro\s*$";
 
         private string MacroName { get; set; } = "";

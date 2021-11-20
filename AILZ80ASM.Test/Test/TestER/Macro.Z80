@@ -39,6 +39,15 @@ macro LD a1, a2		; 使えない名前
 	ld b, a2
 end macro
 
+; 先頭が(は使えない
+MACRO (DEF
+		ld a,1
+END MACRO
+
+; 先頭が)は使えない
+MACRO )DEF
+		ld a,1
+END MACRO
 
 macro NoEnd a1, a2
 	ld a, a1

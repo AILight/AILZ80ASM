@@ -124,31 +124,25 @@ namespace AILZ80ASM
             // リピート数が設定されているものを処理する
             foreach (var condition in Conditions.Keys)
             {
-                //try
+                if (string.IsNullOrEmpty(condition) || AIMath.ConvertTo<bool>(condition, AsmLoad))
                 {
-                    if (string.IsNullOrEmpty(condition) || AIMath.ConvertTo<bool>(condition, AsmLoad))
+                    var lineItems = default(LineItem[]);
+                    var lineDetailScopeItems = new List<LineDetailScopeItem>();
+
+                    lineItems = Conditions[condition].Select(m =>
                     {
-                        var lineItems = default(LineItem[]);
-                        var lineDetailScopeItems = new List<LineDetailScopeItem>();
+                        var lineItem = new LineItem(m);
+                        lineItem.CreateLineDetailItem(AsmLoad);
+                        return lineItem;
+                    }).ToArray();
 
-                        lineItems = Conditions[condition].Select(m =>
-                        {
-                            var lineItem = new LineItem(m);
-                            lineItem.CreateLineDetailItem(AsmLoad);
-                            return lineItem;
-                        }).ToArray();
-
-                        foreach (var lineItem in lineItems)
-                        {
-                            lineItem.ExpansionItem();
-                            lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
-                        }
-                        LineDetailScopeItems = lineDetailScopeItems.ToArray();
-                        break;
+                    foreach (var lineItem in lineItems)
+                    {
+                        lineItem.ExpansionItem();
+                        lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
                     }
-                }
-                //catch
-                {
+                    LineDetailScopeItems = lineDetailScopeItems.ToArray();
+                    break;
                 }
             }
 

@@ -14,7 +14,7 @@ namespace AILZ80ASM
         public string[] Args { get; private set; }
         public LineItem[] LineItems { get; private set; }
 
-        private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_:]+)\s*(?<args>.*)$";
+        private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_:()]+)\s*(?<args>.*)$";
 
         public Macro(string macroName, string[] args, LineItem[] lineItems, AsmLoad asmLoad)
         {

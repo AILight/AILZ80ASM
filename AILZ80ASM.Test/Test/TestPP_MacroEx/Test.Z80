@@ -1,0 +1,20 @@
+﻿	ORG	$9000
+	
+ADDR:
+	REGTEST HL
+	REGTEST ADDR
+	ABC(DEF)
+
+; レジスター指定テスト
+MACRO REGTEST target
+#IF target.@Text != "HL"
+    ld hl, target
+#ELSE
+	NOP
+#ENDIF
+END MACRO
+
+; カッコつきマクロテスト
+MACRO ABC(DEF)
+	XOR A
+END MACRO
