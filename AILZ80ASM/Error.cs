@@ -13,6 +13,8 @@ namespace AILZ80ASM
 
         public enum ErrorCodeEnum
         {
+            E0000,
+
             E0001,
             E0002,
             E0003,
@@ -61,6 +63,12 @@ namespace AILZ80ASM
             E3009,
             E3010,
 
+            // ファンクション
+            E4001,
+            E4002,
+            E4003,
+            E4004,
+
             W0001,
             I0001,
         }
@@ -94,6 +102,9 @@ namespace AILZ80ASM
 
         private static readonly Dictionary<ErrorCodeEnum, string> ErrorMessages = new Dictionary<ErrorCodeEnum, string>()
         {
+            // 処理できないエラー
+            [ErrorCodeEnum.E0000] = "処理できないエラー。開発者にお伝えください。{0}",
+
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
             [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{byte.MinValue}～{byte.MaxValue}までです。",
@@ -105,7 +116,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
             [ErrorCodeEnum.E0012] = "データの指定が間違っています。",
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
-            [ErrorCodeEnum.E0014] = "同名のラベルが既に指定されています。",
+            [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
             [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。{0}",
 
@@ -144,7 +155,14 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E3007] = "MACROの名前が有効ではありません。",
             [ErrorCodeEnum.E3008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
             [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
-            [ErrorCodeEnum.E3010] = "同名のマクロが既に指定されています。",
+            [ErrorCodeEnum.E3010] = "同名のMACROが既に定義されています。",
+
+            // ファンクション
+            [ErrorCodeEnum.E4001] = "同名のFunctionが既に定義されています。",
+            [ErrorCodeEnum.E4002] = "MACROの名前が有効ではありません。",
+            [ErrorCodeEnum.E4003] = "Functionが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
+            [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
+
 
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、{0}が設定されています。1バイトに丸められます。",
 

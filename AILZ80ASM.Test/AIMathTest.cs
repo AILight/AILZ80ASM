@@ -9,7 +9,19 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void IsNumber()
         {
+            Assert.IsTrue(AIMath.IsNumber("01"));
             Assert.IsTrue(AIMath.IsNumber("123"));
+            Assert.IsTrue(AIMath.IsNumber("FFFH"));
+            Assert.IsTrue(AIMath.IsNumber("0FFFH"));
+            Assert.IsTrue(AIMath.IsNumber("%0000_1111"));
+            Assert.IsTrue(AIMath.IsNumber("0000_1111b"));
+            Assert.IsTrue(AIMath.IsNumber("$FFFF"));
+
+            Assert.IsFalse(AIMath.IsNumber("O123"));
+            Assert.IsFalse(AIMath.IsNumber("FFF"));
+            Assert.IsFalse(AIMath.IsNumber("0000_1111%"));
+            Assert.IsFalse(AIMath.IsNumber("0000_1111"));
+            Assert.IsFalse(AIMath.IsNumber("0FFF"));
         }
 
         [TestMethod]

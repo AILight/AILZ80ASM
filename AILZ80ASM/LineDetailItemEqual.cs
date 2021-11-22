@@ -6,6 +6,7 @@ namespace AILZ80ASM
     {
         private static readonly string RegexPatternEqual = @"^equ\s+(?<value>.+)";
         private Label EquLabel { get; set; }
+        private AsmAddress AsmAddress { get; set; }
         public override AsmList[] Lists
         {
             get
@@ -56,6 +57,21 @@ namespace AILZ80ASM
             };
 
             base.ExpansionItem();
+        }
+
+        public override void PreAssemble(ref AsmAddress asmAddress)
+        {
+            AsmAddress = asmAddress;
+
+            base.PreAssemble(ref asmAddress);
+        }
+
+        public override void BuildAddressLabel()
+        {
+            if (!EquLabel.HasValue)
+            {
+                EquLabel.SetValueAndAddress(AsmAddress, AsmLoad);
+            }
         }
     }
 }

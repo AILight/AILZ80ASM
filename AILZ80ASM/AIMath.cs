@@ -13,10 +13,12 @@ namespace AILZ80ASM
             None,
             High,
             Low,
+            Text,
         }
 
         private static readonly string RegexPatternErrorHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>(H[0-9A-Fa-f]+H))(?<end>(\s+)|($))";
-        private static readonly string RegexPatternHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>([0-9A-Fa-f]+H))(?<end>(\s+)|($))";
+        private static readonly string RegexPatternHexadecimal_H = @"(?<start>([\s|,]+)|(^))(?<value>([0-9A-Fa-f]+H))(?<end>(\s+)|($))";
+        private static readonly string RegexPatternHexadecimal_X = @"(?<start>([\s|,]+)|(^))(?<value>(0x[0-9A-Fa-f]+))(?<end>(\s+)|($))";
         private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
@@ -46,7 +48,11 @@ namespace AILZ80ASM
 
         public static bool IsNumber(string value)
         {
-            if (Regex.Match(value, RegexPatternHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            if (Regex.Match(value, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            {
+                return true;
+            }
+            if (Regex.Match(value, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 return true;
             }
@@ -171,27 +177,48 @@ namespace AILZ80ASM
 
                 var matchResultString = regexResult.Groups["value"].Value;
                 var index = workValue.IndexOf(matchResultString);
-                if (matchResultString.EndsWith(".@H", StringComparison.OrdinalIgnoreCase))
+                var optionIndex = matchResultString.IndexOf(".@");
+                var option = "";
+                if (optionIndex > 0)
                 {
-                    macroValue = MacroValueEnum.High;
-                    matchResultString = matchResultString.Substring(0, matchResultString.Length - 3);
-                }
-                else if (matchResultString.EndsWith(".@L", StringComparison.OrdinalIgnoreCase))
-                {
-                    macroValue = MacroValueEnum.Low;
-                    matchResultString = matchResultString.Substring(0, matchResultString.Length - 3);
+                    option = matchResultString.Substring(optionIndex);
+                    matchResultString = matchResultString.Substring(0, optionIndex);
+                    if (string.Compare(option, ".@H", true) == 0 ||
+                        string.Compare(option, ".@HIGH", true) == 0)
+                    {
+                        macroValue = MacroValueEnum.High;
+                    }
+                    else if (string.Compare(option, ".@L", true) == 0 ||
+                             string.Compare(option, ".@LOW", true) == 0)
+                    {
+                        macroValue = MacroValueEnum.Low;
+                    }
+                    else if (string.Compare(option, ".@T", true) == 0 ||
+                             string.Compare(option, ".@TEXT", true) == 0)
+                    {
+                        macroValue = MacroValueEnum.Text;
+                    }
                 }
 
                 // ラベルチェック
-                var labels = asmLoad.AllLabels.Where(m => m.HasValue).ToArray();
+                var labels = default(Label[]);
+                if (macroValue == MacroValueEnum.Text)
+                {
+                    labels = asmLoad.AllLabels.ToArray();
+                }
+                else
+                {
+                    labels = asmLoad.AllLabels.Where(m => m.HasValue).ToArray();
+                }
+
                 var longLabelName = Label.GetLongLabelName(matchResultString, asmLoad);
-                var label = labels.Where(m => m.HasValue && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+                var label = labels.Where(m => string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+                matchResultString += option; // optionを元に戻す
 
                 var valueString = "";
                 switch (macroValue)
                 {
                     case MacroValueEnum.High:
-                        matchResultString += ".@H";
                         if (label == default)
                         {
                             valueString = matchResultString;
@@ -202,7 +229,6 @@ namespace AILZ80ASM
                         }
                         break;
                     case MacroValueEnum.Low:
-                        matchResultString += ".@L";
                         if (label == default)
                         {
                             valueString = matchResultString;
@@ -211,6 +237,9 @@ namespace AILZ80ASM
                         {
                             valueString = ((int)(label.Value % 256)).ToString("0");
                         }
+                        break;
+                    case MacroValueEnum.Text:
+                        valueString = $"\"{label.ValueString}\"";
                         break;
                     default:
                         valueString = label?.Value.ToString("0") ?? matchResultString;
@@ -282,7 +311,8 @@ namespace AILZ80ASM
             }
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
+            // 後ろH
+            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
             {
                 var matchResultString = regexResult.Groups["value"].Value;
                 var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
@@ -291,6 +321,29 @@ namespace AILZ80ASM
                 try
                 {
                     resultValue += Convert.ToInt32(matchResultString.Substring(0, matchResultString.Length - 1), 16).ToString("0");
+                }
+                catch
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
+                }
+                workValue = workValue.Substring(index + matchResultString.Length);
+
+                limitCounter++;
+            }
+            resultValue += workValue;
+
+            workValue = resultValue;
+            resultValue = "";
+            // 前0x
+            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
+            {
+                var matchResultString = regexResult.Groups["value"].Value;
+                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
+
+                resultValue += workValue.Substring(0, index);
+                try
+                {
+                    resultValue += Convert.ToInt32(matchResultString.Substring(2, matchResultString.Length - 2), 16).ToString("0");
                 }
                 catch
                 {
@@ -431,6 +484,25 @@ namespace AILZ80ASM
                     terms.Add(matched.Value);
                     tmpValue = tmpValue.Substring(matched.Length).TrimStart();
                 }
+                else if (tmpValue.StartsWith("\""))
+                {
+                    var endIndex = tmpValue.IndexOf("\"", 1);
+                    var escapeIndex = tmpValue.IndexOf("\\", 1);
+                    while (endIndex != -1 && escapeIndex != -1 && endIndex - 1 == escapeIndex)
+                    {
+                        endIndex = tmpValue.IndexOf("\"", endIndex + 1);
+                        escapeIndex = tmpValue.IndexOf("\\", endIndex + 1);
+                    }
+                    if (endIndex == -1)
+                    {
+                        throw new Exception("演算に使えない文字が検出されました。");
+                    }
+                    else
+                    {
+                        terms.Add(tmpValue.Substring(0, endIndex + 1));
+                        tmpValue = tmpValue.Substring(endIndex + 1).TrimStart();
+                    }
+                }
                 else
                 {
                     throw new Exception("演算に使えない文字が検出されました。");
@@ -491,7 +563,7 @@ namespace AILZ80ASM
             foreach (var item in terms)
             {
                 var matched = Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                if (matched.Success)
+                if (matched.Success || (item.StartsWith("\"") && item.EndsWith("\"")))
                 {
                     result.Add(item);
                 }
@@ -569,6 +641,10 @@ namespace AILZ80ASM
                         throw new Exception("数値に変換できませんでした。");
                     }
                 }
+                else if (item.StartsWith("\"") && item.EndsWith("\""))
+                {
+                    stack.Push(item.Substring(1, item.Length - 2));
+                }
                 else
                 {
                     switch (item)
@@ -595,61 +671,89 @@ namespace AILZ80ASM
                                     throw new Exception("演算に失敗しました。");
                                 }
 
-                                var lastValue = (int)stack.Pop();
-                                var firstValue = (int)stack.Pop();
-                                switch (item)
+                                var lastPopValue = stack.Pop();
+                                var firstPopValue = stack.Pop();
+
+                                if (lastPopValue is int lastValue &&
+                                    firstPopValue is int firstValue)
                                 {
-                                    case "+":
-                                        stack.Push(firstValue + lastValue);
-                                        break;
-                                    case "-":
-                                        stack.Push(firstValue - lastValue);
-                                        break;
-                                    case "*":
-                                        stack.Push(firstValue * lastValue);
-                                        break;
-                                    case "/":
-                                        stack.Push(firstValue / lastValue);
-                                        break;
-                                    case "%":
-                                        stack.Push(firstValue % lastValue);
-                                        break;
-                                    case "<<":
-                                        stack.Push(firstValue << lastValue);
-                                        break;
-                                    case ">>":
-                                        stack.Push(firstValue >> lastValue);
-                                        break;
-                                    case ">":
-                                        stack.Push(firstValue > lastValue);
-                                        break;
-                                    case ">=":
-                                        stack.Push(firstValue >= lastValue);
-                                        break;
-                                    case "<":
-                                        stack.Push(firstValue < lastValue);
-                                        break;
-                                    case "<=":
-                                        stack.Push(firstValue <= lastValue);
-                                        break;
-                                    case "==":
-                                        stack.Push(firstValue == lastValue);
-                                        break;
-                                    case "!=":
-                                        stack.Push(firstValue != lastValue);
-                                        break;
-                                    case "&":
-                                        stack.Push(firstValue & lastValue);
-                                        break;
-                                    case "^":
-                                        stack.Push(firstValue ^ lastValue);
-                                        break;
-                                    case "|":
-                                        stack.Push(firstValue | lastValue);
-                                        break;
-                                    default:
-                                        throw new NotImplementedException();
+                                    switch (item)
+                                    {
+                                        case "+":
+                                            stack.Push(firstValue + lastValue);
+                                            break;
+                                        case "-":
+                                            stack.Push(firstValue - lastValue);
+                                            break;
+                                        case "*":
+                                            stack.Push(firstValue * lastValue);
+                                            break;
+                                        case "/":
+                                            stack.Push(firstValue / lastValue);
+                                            break;
+                                        case "%":
+                                            stack.Push(firstValue % lastValue);
+                                            break;
+                                        case "<<":
+                                            stack.Push(firstValue << lastValue);
+                                            break;
+                                        case ">>":
+                                            stack.Push(firstValue >> lastValue);
+                                            break;
+                                        case ">":
+                                            stack.Push(firstValue > lastValue);
+                                            break;
+                                        case ">=":
+                                            stack.Push(firstValue >= lastValue);
+                                            break;
+                                        case "<":
+                                            stack.Push(firstValue < lastValue);
+                                            break;
+                                        case "<=":
+                                            stack.Push(firstValue <= lastValue);
+                                            break;
+                                        case "==":
+                                            stack.Push(firstValue == lastValue);
+                                            break;
+                                        case "!=":
+                                            stack.Push(firstValue != lastValue);
+                                            break;
+                                        case "&":
+                                            stack.Push(firstValue & lastValue);
+                                            break;
+                                        case "^":
+                                            stack.Push(firstValue ^ lastValue);
+                                            break;
+                                        case "|":
+                                            stack.Push(firstValue | lastValue);
+                                            break;
+                                        default:
+                                            throw new NotImplementedException();
+                                    }
+                                }else if (lastPopValue is string lastStringValue &&
+                                          firstPopValue is string firstStringValue)
+                                {
+                                    switch (item)
+                                    {
+                                        case "+":
+                                            stack.Push(firstStringValue + lastStringValue);
+                                            break;
+                                        case "==":
+                                            stack.Push(string.Compare(firstStringValue, lastStringValue, true) == 0);
+                                            break;
+                                        case "!=":
+                                            stack.Push(string.Compare(firstStringValue, lastStringValue, true) != 0);
+                                            break;
+                                        default:
+                                            throw new NotImplementedException();
+                                    }
                                 }
+                                else
+                                {
+                                    throw new Exception($"演算に使う値の型が一致していません。{lastPopValue}{item}{firstPopValue}");
+                                }
+
+
                             }
                             break;
                         case "&&":
@@ -747,7 +851,11 @@ namespace AILZ80ASM
         {
             if (value is int intValue)
             {
-                if (typeof(T) == typeof(UInt32))
+                if (typeof(T) == typeof(int))
+                {
+                    return (T)(object)intValue;
+                }
+                else if (typeof(T) == typeof(UInt32))
                 {
                     if (intValue < 0)
                     {

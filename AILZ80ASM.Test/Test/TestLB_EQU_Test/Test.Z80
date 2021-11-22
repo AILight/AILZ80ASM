@@ -7,6 +7,9 @@
 	GREEN_C equ 0000_0100b
 	PORT_A equ $CC
 	.SET_DATA equ $01
+	TEST_ADDR1 equ  FFEEH
+	TEST_ADDR2 equ 0FFEEH
+	TEST_ADDR3 equ 0xF8F1
 
 	LD HL, GREEN_ADDR
 	LD DE, $
@@ -16,5 +19,35 @@
 	LD C, GREEN_ADDR.@L
 	LD A, PORT_A.SET_DATA
 	OUT (PORT_A), A
+	LD HL, TEST_ADDR1
+	LD HL, TEST_ADDR2
+	LD HL, TEST_ADDR3
+	NOP
+	NOP
+	NOP
+ForwardLabel:
+	LD (.stack), SP
+	NOP
+.stack	equ $ + 1
+	LD	 SP, 0
 
-	
+LocalLabel:
+.C	equ	0
+.CP	equ	1
+.D	equ	2
+.DP	equ	3
+.E	equ	4
+.F	equ	5
+.FP	equ	6
+.G	equ	7
+.GP	equ	8
+.A	equ	9
+.AP	equ	10
+.B	equ	11
+
+	NOP
+AtmarkTest: dw .@1, .@2, .@3
+	NOP
+.@1	db 1, 2, 3
+.@2	db 4, 5, 6
+.@3	db 7, 8, 9

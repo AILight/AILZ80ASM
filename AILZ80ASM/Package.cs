@@ -141,6 +141,7 @@ namespace AILZ80ASM
 
         public void SaveBin(FileInfo output)
         {
+            output.Delete();
             using var fileStream = output.OpenWrite();
 
             SaveBin(fileStream);

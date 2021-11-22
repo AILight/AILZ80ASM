@@ -29,9 +29,12 @@ namespace AILZ80ASM
         public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
 
         public Label[] AllLabels => Labels.Union(LocalLabels).ToArray();
+        public Function[] AllFunctions => Functions.Union(LocalFunctions).ToArray();
         public List<Label> Labels { get; private set; } = new List<Label>();
         public List<Label> LocalLabels { get; private set; } = new List<Label>();
         public List<Macro> Macros { get; private set; } = new List<Macro>();
+        public List<Function> Functions { get; private set; } = new List<Function>();
+        public List<Function> LocalFunctions { get; private set; } = new List<Function>();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
         public AsmISA AssembleISA { get; set; }
 
@@ -59,6 +62,11 @@ namespace AILZ80ASM
 
                 Labels = this.Labels,
                 LocalLabels = this.LocalLabels,
+
+                Functions = this.Functions,
+                LocalFunctions = this.LocalFunctions,
+
+
                 Errors = this.Errors,
                 AssembleISA = this.AssembleISA
             };
@@ -78,6 +86,10 @@ namespace AILZ80ASM
 
                 Labels = this.Labels,
                 LocalLabels = scopeMode == ScopeModeEnum.Global ? this.LocalLabels : new List<Label>(),
+
+                Functions = this.Functions,
+                LocalFunctions = scopeMode == ScopeModeEnum.Global ? this.LocalFunctions : new List<Function>(),
+
                 Errors = this.Errors,
                 AssembleISA = this.AssembleISA
             };
@@ -115,6 +127,26 @@ namespace AILZ80ASM
                     break;
                 case ScopeModeEnum.Local:
                     LocalLabels.Add(label);
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        public void AddFunction(Function function)
+        {
+            if (this.AllFunctions.Any(m => string.Compare(m.FullName, function.FullName, true) == 0))
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E4001);
+            }
+
+            switch (ScopeMode)
+            {
+                case ScopeModeEnum.Global:
+                    Functions.Add(function);
+                    break;
+                case ScopeModeEnum.Local:
+                    LocalFunctions.Add(function);
                     break;
                 default:
                     throw new InvalidOperationException();

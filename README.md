@@ -64,9 +64,11 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - <ローカルラベル名>
 
 #### ラベルの機能
-- .@Hをラベルに追加すると、上位1バイトを取得
-- .@Lをラベルに追加すると、下位1バイトを取得
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+- .@H をラベルに追加すると、上位1バイトを取得 （.@HIGH でも可能）
+- .@L をラベルに追加すると、下位1バイトを取得 （.@LOW  でも可能）
+- .@T をラベルに追加すると、ラベルに指定した名前を文字列として取得 （.@TEXT でも可能）
+- [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+- [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/74dd29bfbceda9c986ed50fe651b0c0d89127637/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
 
 #### ラベル指定サンプル
 ```
@@ -85,7 +87,7 @@ addr:
 - 2進数、10進数、16進数
 - 2進数：末尾に% or bを付けます。また _ を含める事が出来ます。
 - 10進数：何もつけません
-- 16進数：先頭に$もしくは末尾にHを付けます
+- 16進数：先頭に$ or 0x もしくは末尾にHを付けます
 
 ## ロケーションカウンタ
 - $  は、現在のプログラム・ロケーションカウンタを参照することができます
@@ -226,6 +228,7 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 #### MACRO <マクロ名> [<引数1>, <引数2>]　～ END MACRO
 - MACROからEND MACROまでがマクロとして定義されます
 - 引数に付けた名前がマクロ内で利用できます
+- マクロ名に()を含める事が出来ます。ただし先頭に付ける事は出来ません
 - マクロの中から外の要素を参照するには、ネームスペースを含めた名前にする必要があります。[サンプル](https://github.com/AILight/AILZ80ASM/blob/034672f506f5253b74824598faf35fdbc5000c99/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80#L55)
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80)
 ```

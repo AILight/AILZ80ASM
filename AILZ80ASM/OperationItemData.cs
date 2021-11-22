@@ -56,10 +56,10 @@ namespace AILZ80ASM
                     break;
                 case "DS":
                 case "DBS":
-                    returnValue = DBDWS(DataTypeEnum.db, op2, lineDetailExpansionItemOperation, address);
+                    returnValue = DBDWS(DataTypeEnum.db, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 case "DWS":
-                    returnValue = DBDWS(DataTypeEnum.dw, op2, lineDetailExpansionItemOperation, address);
+                    returnValue = DBDWS(DataTypeEnum.dw, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 default:
                     break;
@@ -123,8 +123,8 @@ namespace AILZ80ASM
                 var operation = matchFunction.Groups["operation"].Value.Trim();
 
                 //ループの展開
-                var startValue = (int)AIMath.ConvertTo<UInt16>(start, lineDetailExpansionItemOperation, asmLoad);
-                var endValue = (int)AIMath.ConvertTo<UInt16>(end, lineDetailExpansionItemOperation, asmLoad);
+                var startValue = AIMath.ConvertTo<int>(start, lineDetailExpansionItemOperation, asmLoad);
+                var endValue = AIMath.ConvertTo<int>(end, lineDetailExpansionItemOperation, asmLoad);
                 var stepValue = startValue < endValue ? 1 : -1;
                 var loopCount = (endValue - startValue) * stepValue;
                 var currentValue = startValue;
@@ -158,7 +158,7 @@ namespace AILZ80ASM
         /// <param name="lineExpansionItem"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static OperationItemData<T> DBDWS(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)
+        private static OperationItemData<T> DBDWS(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemData<T>);
             var ops = op2.Split(',');
@@ -173,7 +173,7 @@ namespace AILZ80ASM
                 valueString = ops[1];
             }
 
-            var count = Convert.ToInt32(AIMath.Replace16Number(ops[0]));
+            var count = AIMath.ConvertTo<int>(ops[0], asmLoad);
             var valuesStrings = Enumerable.Range(0, count).Select(_ => valueString).ToArray();
 
             returnValue = new OperationItemData<T>()
