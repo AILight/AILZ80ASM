@@ -19,7 +19,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternGlobalLabel = @"(?<label>(^\w+))::(\s+|$)";
         private static readonly string RegexPatternLabel = @"(?<label>(^\w+)):(\s+|$)";
         private static readonly string RegexPatternEquLabel = @"(?<label>(^\w+)):?";
-        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.\w+))(\s+|$)";
+        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[@\w]+))(\s+|$)";
         private static readonly string RegexPatternValueLabel = @"(?<label>(^\w+))\s+equ\s+(?<value>(.+))";
         private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
 

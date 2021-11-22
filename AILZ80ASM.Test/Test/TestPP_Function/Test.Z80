@@ -1,0 +1,9 @@
+﻿	ORG	$9000
+
+	LD A, (IX+FUNC(J+K,FUNC(L+M,N)))
+	RES B, FUNC(J+K,L+M), (IX+FUNC(N+O,P+Q))
+	LD A, ABS(-1)
+	LD B, ABS(1)
+
+
+Function ABS(value) => value < 0 ? value * 1 : value

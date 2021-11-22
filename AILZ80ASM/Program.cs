@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 using AILZ80ASM.CommandLine;
 
 namespace AILZ80ASM
@@ -79,24 +79,29 @@ namespace AILZ80ASM
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="inputs"></param>
         /// <param name="output"></param>
         static public bool Assember(
-                FileInfo[] input, FileInfo output, FileInfo symbol, FileInfo list)
+                FileInfo[] inputs, FileInfo output, FileInfo symbol, FileInfo list)
         {
             try
             {
-                if (input == default || input.Length == 0)
+                if (inputs == default || inputs.Length == 0)
                 {
-                    throw new ArgumentException($"入力ファイルが指定されていません");
+                    throw new ArgumentException($"入力ファイルが指定されていません。");
                 }
 
                 if (output == default)
                 {
-                    throw new ArgumentException($"出力ファイルが指定されていません");
+                    throw new ArgumentException($"出力ファイルが指定されていません。");
                 }
 
-                var package = new Package(input);
+                if (inputs.Any(m => m.FullName == output.FullName))
+                {
+                    throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {output.Name}");
+                }
+
+                var package = new Package(inputs);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
