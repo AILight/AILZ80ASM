@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -50,6 +51,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
+                catch (Exception ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                }
             }
 
         }
@@ -70,6 +75,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
+                catch (Exception ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                }
             }
         }
 
@@ -82,9 +91,16 @@ namespace AILZ80ASM
 
                 foreach (var item in Items)
                 {
-                    if (item.Bin != default(byte[]))
+                    try
                     {
-                        bytes.AddRange(item.Bin);
+                        if (item.Bin != default(byte[]))
+                        {
+                            bytes.AddRange(item.Bin);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                     }
                 }
 
@@ -100,7 +116,14 @@ namespace AILZ80ASM
 
                 foreach (var item in Items)
                 {
-                    lists.AddRange(item.Lists);
+                    try
+                    {
+                        lists.AddRange(item.Lists);
+                    }
+                    catch (Exception ex)
+                    {
+                        AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                    }
                 }
 
                 return lists.ToArray();
@@ -119,6 +142,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
+                catch (Exception ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                }
             }
         }
 
@@ -134,6 +161,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
+                catch (Exception ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                }
             }
         }
 
@@ -148,6 +179,10 @@ namespace AILZ80ASM
                 catch (ErrorAssembleException ex)
                 {
                     AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
+                catch (Exception ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
         }
@@ -165,6 +200,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
                 }
+                catch (Exception ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                }
             }
         }
 
@@ -179,6 +218,10 @@ namespace AILZ80ASM
                 catch (ErrorAssembleException ex)
                 {
                     AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                }
+                catch (Exception ex)
+                {
+                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
         }

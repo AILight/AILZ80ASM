@@ -17,7 +17,8 @@ namespace AILZ80ASM
         }
 
         private static readonly string RegexPatternErrorHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>(H[0-9A-Fa-f]+H))(?<end>(\s+)|($))";
-        private static readonly string RegexPatternHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>([0-9A-Fa-f]+H))(?<end>(\s+)|($))";
+        private static readonly string RegexPatternHexadecimal_H = @"(?<start>([\s|,]+)|(^))(?<value>([0-9A-Fa-f]+H))(?<end>(\s+)|($))";
+        private static readonly string RegexPatternHexadecimal_X = @"(?<start>([\s|,]+)|(^))(?<value>(0x[0-9A-Fa-f]+))(?<end>(\s+)|($))";
         private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
         private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
         private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
@@ -47,7 +48,11 @@ namespace AILZ80ASM
 
         public static bool IsNumber(string value)
         {
-            if (Regex.Match(value, RegexPatternHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            if (Regex.Match(value, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            {
+                return true;
+            }
+            if (Regex.Match(value, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 return true;
             }
@@ -174,7 +179,7 @@ namespace AILZ80ASM
                 var index = workValue.IndexOf(matchResultString);
                 var optionIndex = matchResultString.IndexOf(".@");
                 var option = "";
-                if (optionIndex != -1)
+                if (optionIndex > 0)
                 {
                     option = matchResultString.Substring(optionIndex);
                     matchResultString = matchResultString.Substring(0, optionIndex);
@@ -306,7 +311,8 @@ namespace AILZ80ASM
             }
 
             var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
+            // 後ろH
+            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
             {
                 var matchResultString = regexResult.Groups["value"].Value;
                 var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
@@ -315,6 +321,29 @@ namespace AILZ80ASM
                 try
                 {
                     resultValue += Convert.ToInt32(matchResultString.Substring(0, matchResultString.Length - 1), 16).ToString("0");
+                }
+                catch
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
+                }
+                workValue = workValue.Substring(index + matchResultString.Length);
+
+                limitCounter++;
+            }
+            resultValue += workValue;
+
+            workValue = resultValue;
+            resultValue = "";
+            // 前0x
+            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
+            {
+                var matchResultString = regexResult.Groups["value"].Value;
+                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
+
+                resultValue += workValue.Substring(0, index);
+                try
+                {
+                    resultValue += Convert.ToInt32(matchResultString.Substring(2, matchResultString.Length - 2), 16).ToString("0");
                 }
                 catch
                 {
@@ -822,7 +851,11 @@ namespace AILZ80ASM
         {
             if (value is int intValue)
             {
-                if (typeof(T) == typeof(UInt32))
+                if (typeof(T) == typeof(int))
+                {
+                    return (T)(object)intValue;
+                }
+                else if (typeof(T) == typeof(UInt32))
                 {
                     if (intValue < 0)
                     {

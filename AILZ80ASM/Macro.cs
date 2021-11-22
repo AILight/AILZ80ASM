@@ -37,7 +37,7 @@ namespace AILZ80ASM
 
                 try
                 {
-                    macroName = Macro.GetLognMacroName(macroName, asmLoad);
+                    macroName = Macro.GetLongMacroName(macroName, asmLoad);
                     macro = asmLoad.Macros.Where(m => string.Compare(m.FullName, macroName, true) == 0).SingleOrDefault();
                 }
                 catch
@@ -164,7 +164,7 @@ namespace AILZ80ASM
         /// <param name="labelName"></param>
         /// <param name="asmLoad"></param>
         /// <returns></returns>
-        public static string GetLognMacroName(string macroName, AsmLoad asmLoad)
+        public static string GetLongMacroName(string macroName, AsmLoad asmLoad)
         {
             if (macroName.IndexOf(":") > 0)
             {
