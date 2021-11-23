@@ -18,7 +18,8 @@ namespace AILZ80ASM
         {
             if (files != default && files.Length > 0)
             {
-                AssembleLoad.GlobalLabelName = "main";
+                var label = new Label("NS_Main", AssembleLoad);
+                AssembleLoad.AddLabel(label);
             }
 
             foreach (var fileInfo in files)

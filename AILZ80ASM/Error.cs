@@ -29,6 +29,8 @@ namespace AILZ80ASM
             E0014,
             E0015,
             E0016,
+            E0017,
+            E0018,
 
             E1011,
             E1012,
@@ -119,6 +121,8 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
             [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。{0}",
+            [ErrorCodeEnum.E0017] = "ラベル名と同じネームスペース名は付ける事が出来ません。{0}",
+            [ErrorCodeEnum.E0018] = "ネームスペース名と同じラベル名は付ける事が出来ません。{0}",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",

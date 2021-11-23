@@ -17,6 +17,13 @@ namespace AILZ80ASM
             ADDR,
         }
 
+        public enum LabelLevelEnum
+        {
+            GlobalLabel,
+            Label,
+            SubLabel,
+        }
+
         private static readonly string RegexPatternGlobalLabel = @"(?<label>(^\w+))::(\s+|$)";
         private static readonly string RegexPatternLabel = @"(?<label>(^\w+)):(\s+|$)";
         private static readonly string RegexPatternEquLabel = @"(?<label>(^\w+)):?";
@@ -37,7 +44,14 @@ namespace AILZ80ASM
         public string ValueString { get; private set; }
 
         public DataTypeEnum DataType { get; private set; }
+        public LabelLevelEnum LabelLevel { get; private set; }
+
         public AsmLoad AsmLoadForArgmument { get; private set; }
+
+        public Label(string labelName, AsmLoad asmLoad)
+            : this(labelName, "", asmLoad)
+        {
+        }
 
         public Label(string labelName, string valueString, AsmLoad asmLoad)
         {
@@ -64,6 +78,7 @@ namespace AILZ80ASM
                     // グローバルラベル
                     GlobalLabelName = matchedGlobalLabel.Groups["label"].Value;
                     asmLoad.GlobalLabelName = GlobalLabelName;
+                    LabelLevel = LabelLevelEnum.GlobalLabel;
                 }
                 else
                 {
@@ -74,6 +89,8 @@ namespace AILZ80ASM
                         // ラベル
                         LabelName = matchedLabel.Groups["label"].Value;
                         asmLoad.LabelName = LabelName;
+                        LabelLevel = LabelLevelEnum.Label;
+
                     }
                     else
                     {
@@ -81,6 +98,7 @@ namespace AILZ80ASM
                         if (matchedSubLabel.Success)
                         {
                             SubLabelName = matchedSubLabel.Groups["label"].Value.Substring(1);
+                            LabelLevel = LabelLevelEnum.SubLabel;
                         }
                     }
                 }

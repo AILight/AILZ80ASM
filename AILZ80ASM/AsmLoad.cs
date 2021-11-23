@@ -115,10 +115,36 @@ namespace AILZ80ASM
 
         public void AddLabel(Label label)
         {
-            if (this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
+            // 同一名のラベル
+            if (label.LabelLevel != Label.LabelLevelEnum.GlobalLabel &&
+                this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014);
             }
+            // グローバルラベルとの比較
+            switch (label.LabelLevel)
+            {
+                case Label.LabelLevelEnum.GlobalLabel:
+                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.Label &&
+                        string.Compare(m.LabelName, label.GlobalLabelName, true) == 0))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
+                    }
+                    break;
+                case Label.LabelLevelEnum.Label:
+                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.GlobalLabel &&
+                        string.Compare(m.GlobalLabelName, label.LabelName, true) == 0))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
+                    }
+                    break;
+                case Label.LabelLevelEnum.SubLabel:
+                    // 何もしない
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+
 
             switch (ScopeMode)
             {

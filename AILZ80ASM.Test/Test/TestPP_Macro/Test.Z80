@@ -1,9 +1,9 @@
-﻿ARG1	equ 2
+﻿MAIN::
+ARG1	equ 2
 .Three  equ 3
 VRAM_ADDRESS	equ $8001
 
 	ORG	$9000
-MAIN::
 	
 	ALLLD
 ADDR:
