@@ -46,14 +46,14 @@ namespace AILZ80ASM
             {
                 case "ORG":
                     {
-                        var programAddress = AIMath.ConvertTo<UInt16>(op2, lineDetailExpansionItemOperation, asmLoad);
+                        var programAddress = AIMath.ConvertTo<UInt16>(op2, asmLoad, lineDetailExpansionItemOperation.Address);
                         var bytes = Array.Empty<byte>();
                         var outputAddress = address.Output;
                         var length = new AsmLength(0);
 
                         if (!string.IsNullOrEmpty(op3))
                         {
-                            var localOutputAddress = AIMath.ConvertTo<UInt16>(op3, lineDetailExpansionItemOperation, asmLoad);
+                            var localOutputAddress = AIMath.ConvertTo<UInt16>(op3, asmLoad, lineDetailExpansionItemOperation.Address);
                             if (address.Output > localOutputAddress)
                             {
                                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
@@ -63,7 +63,7 @@ namespace AILZ80ASM
                             bytes = new byte[length.Output];
                             if (!string.IsNullOrEmpty(op4))
                             {
-                                var value = AIMath.ConvertTo<byte>(op4, lineDetailExpansionItemOperation, asmLoad);
+                                var value = AIMath.ConvertTo<byte>(op4, asmLoad, lineDetailExpansionItemOperation.Address);
                                 bytes = bytes.Select(m => value).ToArray();
                             }
                         }
@@ -73,7 +73,7 @@ namespace AILZ80ASM
                     break;
                 case "ALIGN":
                     {
-                        var align = AIMath.ConvertTo<UInt16>(op2, lineDetailExpansionItemOperation, asmLoad);
+                        var align = AIMath.ConvertTo<UInt16>(op2, asmLoad, lineDetailExpansionItemOperation.Address);
                         if ((align & (align - 1)) != 0)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
@@ -84,7 +84,7 @@ namespace AILZ80ASM
                         var bytes = new byte[length.Output];
                         if (!string.IsNullOrEmpty(op3))
                         {
-                            var value = AIMath.ConvertTo<byte>(op3, lineDetailExpansionItemOperation, asmLoad);
+                            var value = AIMath.ConvertTo<byte>(op3, asmLoad, lineDetailExpansionItemOperation.Address);
                             bytes = bytes.Select(m => value).ToArray();
                         }
 

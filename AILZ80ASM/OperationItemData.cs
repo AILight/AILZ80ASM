@@ -123,8 +123,8 @@ namespace AILZ80ASM
                 var operation = matchFunction.Groups["operation"].Value.Trim();
 
                 //ループの展開
-                var startValue = AIMath.ConvertTo<int>(start, lineDetailExpansionItemOperation, asmLoad);
-                var endValue = AIMath.ConvertTo<int>(end, lineDetailExpansionItemOperation, asmLoad);
+                var startValue = AIMath.ConvertTo<int>(start, asmLoad, lineDetailExpansionItemOperation.Address);
+                var endValue = AIMath.ConvertTo<int>(end, asmLoad, lineDetailExpansionItemOperation.Address);
                 var stepValue = startValue < endValue ? 1 : -1;
                 var loopCount = (endValue - startValue) * stepValue;
                 var currentValue = startValue;
@@ -197,7 +197,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.dw:
                     foreach (var valueString in ValueStrings)
                     {
-                        var value = AIMath.ConvertTo<UInt16>(valueString, LineDetailExpansionItemOperation, asmLoad);
+                        var value = AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address);
                         switch (isa.Endianness)
                         {
                             case Instructions.ISA.EndiannessEnum.LittleEndian:
@@ -217,7 +217,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.db:
                     foreach (var valueString in ValueStrings)
                     {
-                        byteList.Add((byte)AIMath.ConvertTo<UInt16>(valueString, LineDetailExpansionItemOperation, asmLoad));
+                        byteList.Add((byte)AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address));
                     }
                     break;
                 default:

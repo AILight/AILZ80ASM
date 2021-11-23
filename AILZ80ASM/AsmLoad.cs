@@ -152,5 +152,23 @@ namespace AILZ80ASM
                     throw new InvalidOperationException();
             }
         }
+
+        public Label FindLabel(string target)
+        {
+            return FindLabel(target, true);
+        }
+
+        public Label FindLabel(string target, bool hasValue)
+        {
+            var longLabelName = Label.GetLongLabelName(target, this);
+            var label = AllLabels.Where(m => (m.HasValue || !hasValue) && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+
+            return label;
+        }
+
+        public Function FindFunction(string target)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -154,7 +154,7 @@ namespace AILZ80ASM.Instructions
                         break;
                     case InstructionRegister.InstructionRegisterModeEnum.RelativeAddress8Bit:
                         {
-                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, asmLoad, lineDetailExpansionItemOperation.Address);
                             var offsetAddress = tmpValue16 - lineDetailExpansionItemOperation.Address.Program - 2;
                             if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                             {
@@ -166,7 +166,7 @@ namespace AILZ80ASM.Instructions
                         break;
                     case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
                         {
-                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, asmLoad, lineDetailExpansionItemOperation.Address);
                             var value3 = ConvertTo2BaseString(tmpValue16, 3);
                             replaceDic.Add(instructionRegister.MnemonicBitName, value3);
                             if (tmpValue16 > 7)
@@ -177,7 +177,7 @@ namespace AILZ80ASM.Instructions
                         break;
                     case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
                         {
-                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, asmLoad, lineDetailExpansionItemOperation.Address);
                             var value8 = ConvertTo2BaseString(tmpValue16 & 0xFF, 8);
                             replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                             if (tmpValue16 > 255)
@@ -188,7 +188,7 @@ namespace AILZ80ASM.Instructions
                         break;
                     case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
                         {
-                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, lineDetailExpansionItemOperation, asmLoad);
+                            var tmpValue16 = AIMath.ConvertTo<UInt16>(value, asmLoad, lineDetailExpansionItemOperation.Address);
                             var tmpValue16String = ConvertTo2BaseString(tmpValue16, 16);
                             var value16 = new[] { "", "" };
                             var mnemonicBitNames = instructionRegister.MnemonicBitName.Split(",");
@@ -217,7 +217,7 @@ namespace AILZ80ASM.Instructions
 
         private static string ConvertTo2BaseString(int value, int length)
         {
-            var returnValue = Convert.ToString(value, 2).PadLeft(length, '0'); ;
+            var returnValue = Convert.ToString(value, 2).PadLeft(length, '0');
             var overString = returnValue.Substring(0, returnValue.Length - length);
             if ((value > 0 && overString.Contains("1")) ||
                 (value < 0 && overString.Contains("0")))

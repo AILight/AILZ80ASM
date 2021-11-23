@@ -16,18 +16,15 @@ namespace AILZ80ASM
             Text,
         }
 
-        private static readonly string RegexPatternErrorHexadecimal = @"(?<start>([\s|,]+)|(^))(?<value>(H[0-9A-Fa-f]+H))(?<end>(\s+)|($))";
-        private static readonly string RegexPatternHexadecimal_H = @"(?<start>([\s|,]+)|(^))(?<value>([0-9A-Fa-f]+H))(?<end>(\s+)|($))";
-        private static readonly string RegexPatternHexadecimal_X = @"(?<start>([\s|,]+)|(^))(?<value>(0x[0-9A-Fa-f]+))(?<end>(\s+)|($))";
-        private static readonly string RegexPatternErrorDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+\$))(?<end>\s?)";
-        private static readonly string RegexPatternDollarHexadecimal = @"(?<start>\s?)(?<value>(\$[0-9A-Fa-f]+))(?<end>\s?)";
-        private static readonly string RegexPatternErrorBinaryNumber = @"(?<start>\s?)(?<value>(%[01]+%))(?<end>\s?)";
-        private static readonly string RegexPatternBinaryNumber = @"(?<start>\s?)(?<value>(^%[01_]+)|(^[01_]+B))(?<end>\s?)";
-        private static readonly string RegexPatternLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
+        private static readonly string RegexPatternHexadecimal_H =   @"^(?<value>([0-9A-Fa-f_]+))H$";
+        private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f_]+))$";
+        private static readonly string RegexPatternHexadecimal_D = @"^\$(?<value>([0-9A-Fa-f_]+))$";
+        private static readonly string RegexPatternOctal_O = @"^(?<value>([0-7_]+))O$";
+        private static readonly string RegexPatternBinaryNumber_B = @"^(?<value>([01_]+))B$";
+        private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
         private static readonly string RegexPatternDigit = @"^(\+|\-|)(\d+)$";
-        private static readonly string RegexPatternFormuraAndDigit = @"^(\d+|\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)";
-        private static readonly string RegexPatternFormuraChar = @"^(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:)$";
-        private static readonly Dictionary<string, int> FormuraPriority = new()
+        private static readonly string RegexPatternFormulaChar = @"(?<formula>(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:))";
+        private static readonly Dictionary<string, int> FormulaPriority = new()
         {
             [")"] = 1,
             ["!"] = 2,  ["~"] = 2, // 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
@@ -57,17 +54,27 @@ namespace AILZ80ASM
                 return true;
             }
 
-            if (Regex.Match(value, RegexPatternDollarHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            if (Regex.Match(value, RegexPatternHexadecimal_D, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            {
+                return true;
+            }
+            
+            if (Regex.Match(value, RegexPatternOctal_O, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 return true;
             }
 
-            if (Regex.Match(value, RegexPatternBinaryNumber, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            if (Regex.Match(value, RegexPatternBinaryNumber_B, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
             {
                 return true;
             }
 
-            if (decimal.TryParse(value, out var dammy))
+            if (Regex.Match(value, RegexPatternBinaryNumber_P, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+            {
+                return true;
+            }
+
+            if (decimal.TryParse(value, out var _))
             {
                 return true;
             }
@@ -75,378 +82,40 @@ namespace AILZ80ASM
             return false;
         }
 
-        public static bool TryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress asmAddress, out T resultValue)
+        public static bool TryParse<T>(string value, out T resultValue)
             where T : struct
         {
-            return InternalTryParse(value, globalLabelName, labelName, asmLoad, asmAddress, out resultValue);
-        }
-
-        public static bool TryParse<T>(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, AsmAddress asmAddress, out T resultValue)
-            where T : struct
-        {
-            return TryParse<T>(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, asmLoad, asmAddress, out resultValue);
-        }
-
-        public static bool TryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, out T resultValue)
-            where T : struct
-        {
-            return InternalTryParse(value, globalLabelName, labelName, asmLoad, default(AsmAddress?), out resultValue);
-        }
-
-        public static bool TryParse<T>(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, out T resultValue)
-            where T : struct
-        {
-            return TryParse<T>(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, asmLoad, out resultValue);
+            return InternalTryParse(value, default(AsmLoad), default(AsmAddress?), out resultValue);
         }
 
         public static bool TryParse<T>(string value, AsmLoad asmLoad, out T resultValue)
             where T : struct
         {
-            return TryParse<T>(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad, out resultValue);
+            return InternalTryParse(value, asmLoad, default(AsmAddress?), out resultValue);
+        }
+
+        public static bool TryParse<T>(string value, AsmLoad asmLoad, AsmAddress? asmAddress, out T resultValue)
+            where T : struct
+        {
+            return InternalTryParse(value, asmLoad, asmAddress, out resultValue);
+        }
+
+        public static T ConvertTo<T>(string value)
+            where T : struct
+        {
+            return ConvertTo<T>(value, default(AsmLoad), default(AsmAddress?));
         }
 
         public static T ConvertTo<T>(string value, AsmLoad asmLoad)
             where T : struct
         {
-            return ConvertTo<T>(value, asmLoad.GlobalLabelName, asmLoad.LabelName, asmLoad);
+            return ConvertTo<T>(value, asmLoad, default(AsmAddress?));
         }
 
-        public static T ConvertTo<T>(string value, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
+        public static T ConvertTo<T>(string value, AsmLoad asmLoad, AsmAddress? asmAddress)
             where T : struct
         {
-            return ConvertTo<T>(value, lineDetailExpansionItemOperation.Label.GlobalLabelName, lineDetailExpansionItemOperation.Label.LabelName, asmLoad, lineDetailExpansionItemOperation.Address);
-        }
-
-        public static T ConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-            where T : struct
-        {
-            return InternalConvertTo<T>(value, globalLabelName, labelName, asmLoad, default(AsmAddress?));
-        }
-
-        public static T ConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress asmAddress)
-            where T : struct
-        {
-            return InternalConvertTo<T>(value, globalLabelName, labelName, asmLoad, asmAddress);
-        }
-
-        private static string ReplaceAll(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            //16進数の置き換え
-            value = Replace16Number(value);
-
-            //2進数の置き換え
-            value = ReplaceBinaryNumber(value);
-
-            // ラベルの置き換え
-            value = ReplaceLabel(value, globalLabelName, labelName, asmLoad);
-
-            return value;
-        }
-
-        private static string ReplaceAll(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress address)
-        {
-            //16進数の置き換え
-            value = Replace16NumberAndCurrentAddress(value, address);
-
-            //2進数の置き換え
-            value = ReplaceBinaryNumber(value);
-
-            // ラベルの置き換え
-            value = ReplaceLabel(value, globalLabelName, labelName, asmLoad);
-
-            return value;
-        }
-
-        /// <summary>
-        /// ラベル判別
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
-        /// <param name="labels"></param>
-        private static string ReplaceLabel(string value, string globalLabelName, string labelName, AsmLoad asmLoad)
-        {
-            var resultValue = "";
-            var workValue = value;
-            var limitCounter = 0;
-
-            var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
-            {
-                var macroValue = MacroValueEnum.None;
-
-                var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString);
-                var optionIndex = matchResultString.IndexOf(".@");
-                var option = "";
-                if (optionIndex > 0)
-                {
-                    option = matchResultString.Substring(optionIndex);
-                    matchResultString = matchResultString.Substring(0, optionIndex);
-                    if (string.Compare(option, ".@H", true) == 0 ||
-                        string.Compare(option, ".@HIGH", true) == 0)
-                    {
-                        macroValue = MacroValueEnum.High;
-                    }
-                    else if (string.Compare(option, ".@L", true) == 0 ||
-                             string.Compare(option, ".@LOW", true) == 0)
-                    {
-                        macroValue = MacroValueEnum.Low;
-                    }
-                    else if (string.Compare(option, ".@T", true) == 0 ||
-                             string.Compare(option, ".@TEXT", true) == 0)
-                    {
-                        macroValue = MacroValueEnum.Text;
-                    }
-                }
-
-                // ラベルチェック
-                var labels = default(Label[]);
-                if (macroValue == MacroValueEnum.Text)
-                {
-                    labels = asmLoad.AllLabels.ToArray();
-                }
-                else
-                {
-                    labels = asmLoad.AllLabels.Where(m => m.HasValue).ToArray();
-                }
-
-                var longLabelName = Label.GetLongLabelName(matchResultString, asmLoad);
-                var label = labels.Where(m => string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
-                matchResultString += option; // optionを元に戻す
-
-                var valueString = "";
-                switch (macroValue)
-                {
-                    case MacroValueEnum.High:
-                        if (label == default)
-                        {
-                            valueString = matchResultString;
-                        }
-                        else
-                        {
-                            valueString = ((int)(label.Value / 256)).ToString("0");
-                        }
-                        break;
-                    case MacroValueEnum.Low:
-                        if (label == default)
-                        {
-                            valueString = matchResultString;
-                        }
-                        else
-                        {
-                            valueString = ((int)(label.Value % 256)).ToString("0");
-                        }
-                        break;
-                    case MacroValueEnum.Text:
-                        valueString = $"\"{label.ValueString}\"";
-                        break;
-                    default:
-                        valueString = label?.Value.ToString("0") ?? matchResultString;
-                        break;
-                }
-
-                resultValue += workValue.Substring(0, index);
-                resultValue += valueString;
-                workValue = workValue.Substring(index + matchResultString.Length);
-
-                regexResult = Regex.Match(workValue, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                limitCounter++;
-            }
-            resultValue += workValue;
-
-            return resultValue;
-        }
-
-
-        /// <summary>
-        /// 16進数の変換
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        public static string Replace16Number(string value)
-        {
-            value = ReplaceHexadecimal(value);
-            value = ReplaceDollarHexadecimal(value);
-
-            return value;
-        }
-
-        /// <summary>
-        /// 16進数の変換
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        public static string Replace16NumberAndCurrentAddress(string value, AsmAddress address)
-        {
-            value = Replace16Number(value);
-
-            // $$の値を出力アドレスに置き換える
-            value = value.Replace("$$", $"{address.Output:0}");
-
-            // $の値をプログラムアドレスに置き換える
-            value = value.Replace("$", $"{address.Program:0}");
-
-            return value;
-        }
-
-        /// <summary>
-        /// 16進数の変換(H)
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
-        /// <param name="labels"></param>
-        private static string ReplaceHexadecimal(string value)
-        {
-            var resultValue = "";
-            var workValue = value;
-            var limitCounter = 0;
-
-            if (Regex.Match(workValue, RegexPatternErrorHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
-            }
-
-            var regexResult = default(Match);
-            // 後ろH
-            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
-            {
-                var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
-
-                resultValue += workValue.Substring(0, index);
-                try
-                {
-                    resultValue += Convert.ToInt32(matchResultString.Substring(0, matchResultString.Length - 1), 16).ToString("0");
-                }
-                catch
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
-                }
-                workValue = workValue.Substring(index + matchResultString.Length);
-
-                limitCounter++;
-            }
-            resultValue += workValue;
-
-            workValue = resultValue;
-            resultValue = "";
-            // 前0x
-            while ((regexResult = Regex.Match(workValue, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
-            {
-                var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
-
-                resultValue += workValue.Substring(0, index);
-                try
-                {
-                    resultValue += Convert.ToInt32(matchResultString.Substring(2, matchResultString.Length - 2), 16).ToString("0");
-                }
-                catch
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
-                }
-                workValue = workValue.Substring(index + matchResultString.Length);
-
-                limitCounter++;
-            }
-            resultValue += workValue;
-
-            return resultValue;
-        }
-
-        /// <summary>
-        /// 16進数の変換($)
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
-        /// <param name="labels"></param>
-        private static string ReplaceDollarHexadecimal(string value)
-        {
-            var resultValue = "";
-            var workValue = value;
-            var limitCounter = 0;
-
-            if (Regex.Match(workValue, RegexPatternErrorDollarHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
-            }
-
-            var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternDollarHexadecimal, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
-            {
-                var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
-
-                resultValue += workValue.Substring(0, index);
-                try
-                {
-                    resultValue += Convert.ToInt32(matchResultString.Substring(1), 16).ToString("0");
-                }
-                catch
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, $"対象：{value}");
-                }
-                workValue = workValue.Substring(index + matchResultString.Length);
-
-                limitCounter++;
-            }
-            resultValue += workValue;
-
-            return resultValue;
-        }
-
-
-        /// <summary>
-        /// 2進数の変換
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
-        /// <param name="labels"></param>
-        public static string ReplaceBinaryNumber(string value)
-        {
-            var resultValue = "";
-            var workValue = value;
-            var limitCounter = 0;
-
-            if (Regex.Match(workValue, RegexPatternErrorBinaryNumber, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
-            }
-
-            var regexResult = default(Match);
-            while ((regexResult = Regex.Match(workValue, RegexPatternBinaryNumber, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success && limitCounter < 10000)
-            {
-                var matchResultString = regexResult.Groups["value"].Value;
-                var index = workValue.IndexOf(matchResultString, StringComparison.OrdinalIgnoreCase);
-
-                resultValue += workValue.Substring(0, index);
-                try
-                {
-                    var target = matchResultString;
-                    foreach (var item in "_%Bb".ToArray())
-                    {
-                        target = target.Replace(item.ToString(), "");
-                    }
-
-                    resultValue += Convert.ToInt32(target, 2).ToString("0");
-                }
-                catch
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, $"対象：{value}");
-                }
-                workValue = workValue.Substring(index + matchResultString.Length);
-
-                limitCounter++;
-            }
-            resultValue += workValue;
-
-            return resultValue;
+            return InternalConvertTo<T>(value, asmLoad, asmAddress);
         }
 
         /// <summary>
@@ -455,12 +124,12 @@ namespace AILZ80ASM
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static T Calculation<T>(string target)
+        private static T Calculation<T>(string target, AsmLoad asmLoad, AsmAddress? asmAddress)
             where T : struct
         {
             var terms = CalculationParse(target);
             var rvpns = CalculationMakeReversePolish(terms);
-            var value = CalculationByReversePolish<T>(rvpns);
+            var value = CalculationByReversePolish<T>(rvpns, asmLoad, asmAddress);
 
             return value;
         }
@@ -474,17 +143,12 @@ namespace AILZ80ASM
         {
             var terms = new List<string>();
             var tmpValue = value.Trim();
+            var matched = default(Match);
 
-            // 数値と演算子に分解する
+            // 数式との分離
             while (!string.IsNullOrEmpty(tmpValue))
             {
-                var matched = Regex.Match(tmpValue, RegexPatternFormuraAndDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                if (matched.Success)
-                {
-                    terms.Add(matched.Value);
-                    tmpValue = tmpValue.Substring(matched.Length).TrimStart();
-                }
-                else if (tmpValue.StartsWith("\""))
+                if (tmpValue.StartsWith("\""))
                 {
                     var endIndex = tmpValue.IndexOf("\"", 1);
                     var escapeIndex = tmpValue.IndexOf("\\", 1);
@@ -503,26 +167,77 @@ namespace AILZ80ASM
                         tmpValue = tmpValue.Substring(endIndex + 1).TrimStart();
                     }
                 }
+                else if ((matched = Regex.Match(tmpValue, "^" + RegexPatternFormulaChar, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                {
+                    var formula = matched.Groups["formula"].Value;
+                    terms.Add(formula);
+                    tmpValue = tmpValue.Substring(formula.Length).TrimStart();
+                }
                 else
                 {
-                    throw new Exception("演算に使えない文字が検出されました。");
+                    matched = Regex.Match(tmpValue, RegexPatternFormulaChar, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                    if (matched.Success)
+                    {
+                        //Functionの判断
+                        var group = matched.Groups["formula"];
+                        if (group.Value.StartsWith("("))
+                        {
+                            //Functionの切り出し
+                            var valueString = "";
+                            var skipCounter = 0;
+                            foreach (var item in tmpValue.ToArray())
+                            {
+                                valueString += item;
+                                if (item == '(')
+                                {
+                                    skipCounter++;
+                                }
+                                else if (item == ')')
+                                {
+                                    skipCounter--;
+                                    if (skipCounter == 0)
+                                    {
+                                        break;
+                                    }
+                                    else if (skipCounter < 0)
+                                    {
+                                        throw new Exception("カッコの数が不一致です");
+                                    }
+                                }
+                            }
+                            terms.Add(valueString);
+                            tmpValue = tmpValue.Substring(0, valueString.Length);
+                        }
+                        else
+                        {
+                            var valueString = tmpValue.Substring(0, group.Index);
+                            terms.Add(valueString.Trim());
+                            tmpValue = tmpValue.Substring(valueString.Length).TrimStart();
+                        }
+                    }
+                    else
+                    {
+                        terms.Add(tmpValue);
+                        tmpValue = "";
+                    }
                 }
             }
 
             var result = new List<string>();
             var sign = "";
-            // 単項演算子を結合する
+            // 単項演算子と%を結合する
             foreach (var index in Enumerable.Range(0, terms.Count))
             {
                 var tmpString = terms[index];
-                if (tmpString == "+" || tmpString == "-")
+                if (tmpString == "+" || tmpString == "-" || tmpString == "%")
                 {
-                    if (index == 0 || terms[index - 1] != ")" && Regex.Match(terms[index - 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                    if (index == 0 || terms[index - 1] != ")" && Regex.Match(terms[index - 1], RegexPatternFormulaChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
                     {
                         sign = tmpString;
                         continue;
                     }
                 }
+
                 result.Add(sign + tmpString);
                 sign = "";
             }
@@ -531,22 +246,6 @@ namespace AILZ80ASM
                 result.Add(sign);
             }
 
-            // 演算子、数値が連続しているものがないか確認をする
-            var checkValues = result.Where(m => m != "(" && m != ")").ToArray();
-            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
-            {
-                if (Regex.Match(checkValues[index + 0], RegexPatternDigit,RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                    Regex.Match(checkValues[index + 1], RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-                {
-                    throw new Exception("数値と数値の間には演算子が必要です");
-                }
-
-                if (Regex.Match(checkValues[index + 0], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                    Regex.Match(checkValues[index + 1], RegexPatternFormuraChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-                {
-                    throw new Exception("演算子が連続で指定されています。");
-                }
-            }
             return result.ToArray();
         }
 
@@ -562,12 +261,8 @@ namespace AILZ80ASM
 
             foreach (var item in terms)
             {
-                var matched = Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                if (matched.Success || (item.StartsWith("\"") && item.EndsWith("\"")))
-                {
-                    result.Add(item);
-                }
-                else
+                var matched = Regex.Match(item, "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matched.Success)
                 {
                     while (true)
                     {
@@ -584,7 +279,7 @@ namespace AILZ80ASM
                             formura.Pop();
                             break;
                         }
-                        else if (formura.Count == 0 || item == "(" || FormuraPriority[formura.Peek()] > FormuraPriority[item])
+                        else if (formura.Count == 0 || item == "(" || FormulaPriority[formura.Peek()] > FormulaPriority[item])
                         {
                             formura.Push(item);
                             break;
@@ -594,6 +289,10 @@ namespace AILZ80ASM
                             result.Add(formura.Pop());
                         }
                     }
+                }
+                else
+                {
+                    result.Add(item);
                 }
             }
 
@@ -623,29 +322,15 @@ namespace AILZ80ASM
         /// <typeparam name="T"></typeparam>
         /// <param name="rpns"></param>
         /// <returns></returns>
-        private static T CalculationByReversePolish<T>(string[] rpns)
+        private static T CalculationByReversePolish<T>(string[] rpns, AsmLoad asmLoad, AsmAddress? asmAddress)
             where T : struct
         {
             var stack = new Stack<object>();
 
             foreach (var item in rpns)
             {
-                if (Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-                {
-                    if (int.TryParse(item, out var result))
-                    {
-                        stack.Push(result);
-                    }
-                    else
-                    {
-                        throw new Exception("数値に変換できませんでした。");
-                    }
-                }
-                else if (item.StartsWith("\"") && item.EndsWith("\""))
-                {
-                    stack.Push(item.Substring(1, item.Length - 2));
-                }
-                else
+                var matched = default(Match);
+                if (Regex.Match(item, "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
                 {
                     switch (item)
                     {
@@ -730,8 +415,9 @@ namespace AILZ80ASM
                                         default:
                                             throw new NotImplementedException();
                                     }
-                                }else if (lastPopValue is string lastStringValue &&
-                                          firstPopValue is string firstStringValue)
+                                }
+                                else if (lastPopValue is string lastStringValue &&
+                                         firstPopValue is string firstStringValue)
                                 {
                                     switch (item)
                                     {
@@ -809,7 +495,7 @@ namespace AILZ80ASM
                                 stack.Push(~firstValue);
                             }
                             break;
-                        case ":": 
+                        case ":":
                             // 三項演算子の記号、?で処理するのでここは無処理
                             break;
                         case "?":
@@ -835,9 +521,148 @@ namespace AILZ80ASM
 
                     }
                 }
+                else if (item.StartsWith("\"") && item.EndsWith("\""))
+                {
+                    stack.Push(item.Substring(1, item.Length - 2));
+                }
+                else if (Regex.Match(item, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    if (int.TryParse(item, out var result))
+                    {
+                        stack.Push(result);
+                    }
+                    else
+                    {
+                        throw new Exception($"数値に変換できませんでした。{item}");
+                    }
+                }
+                else if ((matched = Regex.Match(item, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                         (matched = Regex.Match(item, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                         (matched = Regex.Match(item, RegexPatternHexadecimal_D, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                {
+                    // 16進数
+                    try
+                    {
+                        stack.Push(Convert.ToInt32(matched.Groups["value"].Value.Replace("_", ""), 16));
+                    }
+                    catch
+                    {
+                        throw new Exception($"数値に変換できませんでした。{item}");
+                    }
+                }
+                else if ((matched = Regex.Match(item, RegexPatternBinaryNumber_B, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                         (matched = Regex.Match(item, RegexPatternBinaryNumber_P, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                {
+                    // 2進数
+                    try
+                    {
+                        stack.Push(Convert.ToInt32(matched.Groups["value"].Value.Replace("_", ""), 2));
+                    }
+                    catch
+                    {
+                        throw new Exception($"数値に変換できませんでした。{item}");
+                    }
+                }
+                else if ((matched = Regex.Match(item, RegexPatternOctal_O, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                {
+                    // 8進数
+                    try
+                    {
+                        stack.Push(Convert.ToInt32(matched.Groups["value"].Value.Replace("_", ""), 8));
+                    }
+                    catch
+                    {
+                        throw new Exception($"数値に変換できませんでした。{item}");
+                    }
+                }
+                else if (item == "$")
+                {
+                    if (!asmAddress.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(asmAddress));
+                    }
+                    // プログラム・ロケーションカウンター
+                    stack.Push((int)asmAddress.Value.Program);
+                }
+                else if (item == "$$")
+                {
+                    if (!asmAddress.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(asmAddress));
+                    }
+                    // アウトプット・ロケーションカウンター
+                    stack.Push((int)asmAddress.Value.Output);
+                }
+                else
+                {
+                    if (asmLoad == default)
+                    {
+                        throw new ArgumentNullException(nameof(asmLoad));
+                    }
+
+                    if (item.Contains("("))
+                    {
+                        var function = asmLoad.FindFunction(item);
+                    }
+                    else
+                    {
+                        stack.Push(CalculationByReversePolishForLabel(item, asmLoad));
+                    }
+
+                }
             }
 
             return CalculationNormalization<T>(stack.Pop());
+        }
+
+        private static object CalculationByReversePolishForLabel(string target, AsmLoad asmLoad)
+        {
+            var macroValue = MacroValueEnum.None;
+            var tmpLabel = target;
+            var optionIndex = target.IndexOf(".@");
+            var hasValue = true;
+            if (optionIndex > 0)
+            {
+                var option = target.Substring(optionIndex);
+                if (string.Compare(option, ".@H", true) == 0 ||
+                    string.Compare(option, ".@HIGH", true) == 0)
+                {
+                    tmpLabel = target.Substring(0, optionIndex);
+                    macroValue = MacroValueEnum.High;
+                }
+                else if (string.Compare(option, ".@L", true) == 0 ||
+                            string.Compare(option, ".@LOW", true) == 0)
+                {
+                    tmpLabel = target.Substring(0, optionIndex);
+                    macroValue = MacroValueEnum.Low;
+                }
+                else if (string.Compare(option, ".@T", true) == 0 ||
+                            string.Compare(option, ".@TEXT", true) == 0)
+                {
+                    tmpLabel = target.Substring(0, optionIndex);
+                    hasValue = false;
+                    macroValue = MacroValueEnum.Text;
+                }
+            }
+
+            var label = asmLoad.FindLabel(tmpLabel, hasValue);
+            if (label == default)
+            {
+                throw new Exception($"未定義のラベルが指定されています。{target}");
+            }
+            var value = (int)label.Value;
+
+            switch (macroValue)
+            {
+                case MacroValueEnum.High:
+                    return value / 256;
+                case MacroValueEnum.Low:
+                    return value % 256;
+                case MacroValueEnum.Text:
+                    return label.ValueString;
+                default:
+                    return value;
+            }
         }
 
         /// <summary>
@@ -903,34 +728,21 @@ namespace AILZ80ASM
             }
         }
 
-        
         /// <summary>
         /// 演算可能かを判断し、可能なら演算をする
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
         /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
         /// <param name="resultValue"></param>
         /// <returns></returns>
-        private static bool InternalTryParse<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress, out T resultValue)
+        private static bool InternalTryParse<T>(string value, AsmLoad asmLoad, AsmAddress? asmAddress, out T resultValue)
             where T : struct
         {
-            var tmpValue = default(string);
-
-            if (asmAddress.HasValue)
-            {
-                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad, asmAddress.Value);
-            }
-            else
-            {
-                tmpValue = ReplaceAll(value, globalLabelName, labelName, asmLoad);
-            }
-
             try
             {
-                resultValue = Calculation<T>(tmpValue);
+                resultValue = Calculation<T>(value, asmLoad, asmAddress);
                 return true;
             }
             catch
@@ -945,15 +757,13 @@ namespace AILZ80ASM
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
         /// <param name="asmLoad"></param>
         /// <param name="asmAddress"></param>
         /// <returns></returns>
-        private static T InternalConvertTo<T>(string value, string globalLabelName, string labelName, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static T InternalConvertTo<T>(string value, AsmLoad asmLoad, AsmAddress? asmAddress)
             where T : struct
         {
-            if (InternalTryParse<T>(value, globalLabelName, labelName, asmLoad, asmAddress, out var resultValue))
+            if (InternalTryParse<T>(value, asmLoad, asmAddress, out var resultValue))
             {
                 return resultValue;
             }

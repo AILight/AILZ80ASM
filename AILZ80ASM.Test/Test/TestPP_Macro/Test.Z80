@@ -3,6 +3,7 @@
 VRAM_ADDRESS	equ $8001
 
 	ORG	$9000
+MAIN::
 	
 	ALLLD
 ADDR:
@@ -52,15 +53,15 @@ end macro
 
 macro MACRO_IN_MACRO VRAM_ADDRESS, a11, a22
 
-	MAIN:VRAMSET VRAM_ADDRESS
+	MAIN.VRAMSET VRAM_ADDRESS
 
-	main:TestArg a11, a22
+	main.TestArg a11, a22
 
 end macro
 
 macro READ_LABEL
 
-	ld hl, MAIN:ADDR
+	ld hl, MAIN.ADDR
 
 end macro
 
@@ -69,7 +70,7 @@ macro REPEAT_JR TEST
 	ld	a, TEST
 	jr nz, .lp
 	
-	MAIN:READ_LABEL
+	MAIN.READ_LABEL
 
 REPEAT 2
         xor     a	
