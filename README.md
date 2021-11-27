@@ -288,3 +288,13 @@ END REPEAT
 	#error "modeの値が範囲外です。"
 #endif
 ```
+## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
+式をまとめる事が出来ます
+- 複数行にまたがる事は出来ません。
+
+```
+	LD A, ABS(-1)	; LD A, 1
+	LD B, ABS(1)	; LD B, 1
+
+Function ABS(value) => value < 0 ? value * -1 : value
+```

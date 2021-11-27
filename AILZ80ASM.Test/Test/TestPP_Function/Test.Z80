@@ -1,9 +1,13 @@
 ﻿	ORG	$9000
+JJ	EQU 1
+KK	EQU 2
+LL	EQU 3
+MM	EQU 4
+NN	EQU 5
 
-	LD A, (IX+FUNC(J+K,FUNC(L+M,N)))
-	RES B, FUNC(J+K,L+M), (IX+FUNC(N+O,P+Q))
+	LD A, (IX+FUNC(JJ+KK,FUNC(LL+MM,NN)))
 	LD A, ABS(-1)
 	LD B, ABS(1)
 
-
-Function ABS(value) => value < 0 ? value * 1 : value
+Function ABS(value) => value < 0 ? value * -1 : value
+Function FUNC(arg1, arg2) => arg1 * 10 + arg2

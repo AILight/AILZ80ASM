@@ -40,7 +40,7 @@ namespace AILZ80ASM
 
         public bool HasValue => DataType == DataTypeEnum.Value || DataType == DataTypeEnum.ADDR;
         public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
-        public UInt16 Value { get; private set; }
+        public int Value { get; private set; }
         public string ValueString { get; private set; }
 
         public DataTypeEnum DataType { get; private set; }
@@ -131,7 +131,7 @@ namespace AILZ80ASM
             if (this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
-            if (AIMath.TryParse<UInt16>(ValueString, asmLoad, out var value))
+            if (AIMath.TryParse<int>(ValueString, asmLoad, out var value))
             {
                 Value = value;
                 this.DataType = DataTypeEnum.Value;
@@ -146,7 +146,7 @@ namespace AILZ80ASM
             if (string.IsNullOrEmpty(ValueString))
                 return;
 
-            if (AIMath.TryParse<UInt16>(ValueString, AsmLoadForArgmument, out var value))
+            if (AIMath.TryParse<int>(ValueString, AsmLoadForArgmument, out var value))
             {
                 Value = value;
                 this.DataType = DataTypeEnum.Value;
@@ -162,7 +162,7 @@ namespace AILZ80ASM
             if (string.IsNullOrEmpty(ValueString))
                 return;
 
-            if (AIMath.TryParse<UInt16>(ValueString, asmLoad, address, out var value))
+            if (AIMath.TryParse<int>(ValueString, asmLoad, address, out var value))
             {
                 Value = value;
                 this.DataType = DataTypeEnum.Value;
@@ -197,7 +197,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.ADDR:
                     break;
                 case DataTypeEnum.Value:
-                    if (AIMath.TryParse<UInt16>(ValueString, asmLoad, address, out var value))
+                    if (AIMath.TryParse<int>(ValueString, asmLoad, address, out var value))
                     {
                         Value = value;
                     }

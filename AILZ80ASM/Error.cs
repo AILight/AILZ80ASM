@@ -72,6 +72,7 @@ namespace AILZ80ASM
             E4002,
             E4003,
             E4004,
+            E4005,
 
             W0001,
             W0002,
@@ -169,9 +170,10 @@ namespace AILZ80ASM
 
             // ファンクション
             [ErrorCodeEnum.E4001] = "同名のFunctionが既に定義されています。",
-            [ErrorCodeEnum.E4002] = "MACROの名前が有効ではありません。",
+            [ErrorCodeEnum.E4002] = "Functionの名前が有効ではありません。",
             [ErrorCodeEnum.E4003] = "Functionが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
+            [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。{0}",
 
 
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、{0}が設定されています。1バイトに丸められます。",

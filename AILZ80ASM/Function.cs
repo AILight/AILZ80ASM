@@ -85,6 +85,30 @@ namespace AILZ80ASM
             return default;
         }
 
+        /// <summary>
+        /// Functionを計算する
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <returns></returns>
+        public int Calculation(string[] arguments, AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            if (Args.Length != arguments.Length)
+            {
+                throw new Exception($"引数の数が不一致です。Function:{this.Name}");
+            }
+
+            var localAsmLoad = new AsmLoad(asmLoad.ISA);
+            foreach (var index in Enumerable.Range(0, arguments.Length))
+            {
+                var label = new Label(Args[index], AIMath.ConvertTo<int>(arguments[index], asmLoad, asmAddress).ToString(), asmLoad);
+                label.SetValue(asmLoad);
+                localAsmLoad.AddLabel(label);
+            }
+
+            return AIMath.ConvertTo<int>(Formula, localAsmLoad);
+        }
 
         /// <summary>
         /// ロングファンクション名を生成する

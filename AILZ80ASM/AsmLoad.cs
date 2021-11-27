@@ -193,7 +193,10 @@ namespace AILZ80ASM
 
         public Function FindFunction(string target)
         {
-            throw new NotImplementedException();
+            var longFunctionName = Function.GetLongFunctionName(target, this);
+            var function = Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
+
+            return function;
         }
     }
 }
