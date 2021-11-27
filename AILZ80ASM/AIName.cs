@@ -72,6 +72,32 @@ namespace AILZ80ASM
             return ValidateName(target, asmLoad);
         }
 
+        public static bool ValidateFunctionName(string target, AsmLoad asmLoad)
+        {
+            if (string.IsNullOrEmpty(target))
+                return false;
+
+            // ()は使えない
+            if (target.IndexOfAny(new[] { '(', ')' }) != -1)
+                return false;
+
+            return ValidateName(target, asmLoad);
+        }
+
+        /// <summary>
+        /// 引数のラベルチェック
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool ValidateFunctionArgument(string target, AsmLoad asmLoad)
+        {
+            if (string.IsNullOrEmpty(target))
+                return false;
+
+            return ValidateName(target, asmLoad);
+        }
+
+
         /// <summary>
         /// 引数の分解を行う（愚直に積む）
         /// </summary>

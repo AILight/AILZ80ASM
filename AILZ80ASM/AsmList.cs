@@ -46,7 +46,7 @@ namespace AILZ80ASM
         }
         public static AsmList CreateLineItemEqual(Label equLabel, LineItem lineItem)
         {
-            return CreateLineItem(default(UInt32?), equLabel.Value, default(byte[]), "", lineItem);
+            return CreateLineItem(default(UInt32?), (ushort)(equLabel.Value & ushort.MaxValue), default(byte[]), "", lineItem);
         }
 
         public static AsmList CreateLineItemORG(AsmAddress address, AsmLength length, LineItem lineItem)

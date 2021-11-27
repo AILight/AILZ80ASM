@@ -206,7 +206,7 @@ namespace AILZ80ASM
                                 }
                             }
                             terms.Add(valueString);
-                            tmpValue = tmpValue.Substring(0, valueString.Length);
+                            tmpValue = tmpValue.Substring(valueString.Length).TrimStart();
                         }
                         else
                         {
@@ -616,9 +616,19 @@ namespace AILZ80ASM
                         throw new ArgumentNullException(nameof(asmLoad));
                     }
 
-                    if (item.Contains("("))
+                    var startIndex = item.IndexOf('(');
+                    if (startIndex != -1)
                     {
-                        var function = asmLoad.FindFunction(item);
+                        var functionName = item.Substring(0, startIndex).Trim();
+                        var function = asmLoad.FindFunction(functionName);
+                        var lastIndex = item.LastIndexOf(')');
+                        if (function == default || lastIndex == -1)
+                        {
+                            throw new Exception($"Functionが見つかりませんでした。{functionName}");
+                        }
+                        var arguments = AIName.ParseArguments(item.Substring(startIndex + 1, lastIndex - startIndex - 1));
+
+                        stack.Push(function.Calculation(arguments, asmLoad, asmAddress));
                     }
                     else
                     {
