@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AILZ80ASM.InstructionSet;
 
 namespace AILZ80ASM
 {
@@ -36,12 +37,13 @@ namespace AILZ80ASM
         public List<Function> Functions { get; private set; } = new List<Function>();
         public List<Function> LocalFunctions { get; private set; } = new List<Function>();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
-        public AsmISA AssembleISA { get; set; }
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
+        public ISA ISA { get; private set; }
 
-        public AsmLoad()
+        public AsmLoad(ISA isa)
         {
+            ISA = isa;
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace AILZ80ASM
         /// <returns></returns>
         public AsmLoad Clone()
         {
-            return new AsmLoad
+            return new AsmLoad(this.ISA)
             {
                 ScopeMode = this.ScopeMode,
                 GlobalLabelName = this.GlobalLabelName,
@@ -66,15 +68,13 @@ namespace AILZ80ASM
                 Functions = this.Functions,
                 LocalFunctions = this.LocalFunctions,
 
-
-                Errors = this.Errors,
-                AssembleISA = this.AssembleISA
+                Errors = this.Errors
             };
         }
 
         public AsmLoad Clone(ScopeModeEnum scopeMode)
         {
-            return new AsmLoad
+            return new AsmLoad(this.ISA)
             {
                 ScopeMode = scopeMode,
                 GlobalLabelName = this.GlobalLabelName,
@@ -90,8 +90,7 @@ namespace AILZ80ASM
                 Functions = this.Functions,
                 LocalFunctions = scopeMode == ScopeModeEnum.Global ? this.LocalFunctions : new List<Function>(),
 
-                Errors = this.Errors,
-                AssembleISA = this.AssembleISA
+                Errors = this.Errors
             };
         }
 
@@ -115,10 +114,36 @@ namespace AILZ80ASM
 
         public void AddLabel(Label label)
         {
-            if (this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
+            // 同一名のラベル
+            if (label.LabelLevel != Label.LabelLevelEnum.GlobalLabel &&
+                this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014);
             }
+            // グローバルラベルとの比較
+            switch (label.LabelLevel)
+            {
+                case Label.LabelLevelEnum.GlobalLabel:
+                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.Label &&
+                        string.Compare(m.LabelName, label.GlobalLabelName, true) == 0))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
+                    }
+                    break;
+                case Label.LabelLevelEnum.Label:
+                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.GlobalLabel &&
+                        string.Compare(m.GlobalLabelName, label.LabelName, true) == 0))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
+                    }
+                    break;
+                case Label.LabelLevelEnum.SubLabel:
+                    // 何もしない
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+
 
             switch (ScopeMode)
             {
@@ -151,6 +176,24 @@ namespace AILZ80ASM
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public Label FindLabel(string target)
+        {
+            return FindLabel(target, true);
+        }
+
+        public Label FindLabel(string target, bool hasValue)
+        {
+            var longLabelName = Label.GetLongLabelName(target, this);
+            var label = AllLabels.Where(m => (m.HasValue || !hasValue) && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+
+            return label;
+        }
+
+        public Function FindFunction(string target)
+        {
+            throw new NotImplementedException();
         }
     }
 }

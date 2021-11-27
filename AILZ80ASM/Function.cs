@@ -9,12 +9,12 @@ namespace AILZ80ASM
     {
         public string GlobalLabelName { get; private set; }
         public string Name { get; private set; }
-        public string FullName => $"{GlobalLabelName}:{Name}";
+        public string FullName => $"{GlobalLabelName}.{Name}";
 
         public string[] Args { get; private set; }
         public string Formula { get; private set; }
 
-        private static readonly string RegexPatternFunction = @"^(?<function>[a-zA-Z0-9_:]+)\s*(?<args>.*)$";
+        private static readonly string RegexPatternFunction = @"^(?<function>[a-zA-Z0-9_\.]+)\s*(?<args>.*)$";
 
         public Function(string functionName, string[] args, string formula, AsmLoad asmLoad)
         {
@@ -94,12 +94,12 @@ namespace AILZ80ASM
         /// <returns></returns>
         public static string GetLongFunctionName(string functionName, AsmLoad asmLoad)
         {
-            if (functionName.IndexOf(":") > 0)
+            if (functionName.Contains("."))
             {
                 return functionName;
             }
 
-            return $"{asmLoad.GlobalLabelName}:{functionName}";
+            return $"{asmLoad.GlobalLabelName}.{functionName}";
         }
     }
 }

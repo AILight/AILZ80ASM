@@ -101,7 +101,7 @@ namespace AILZ80ASM
                     throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {output.Name}");
                 }
 
-                var package = new Package(inputs);
+                var package = new Package(inputs, AsmISA.Z80);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();

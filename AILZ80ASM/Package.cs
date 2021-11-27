@@ -8,18 +8,24 @@ namespace AILZ80ASM
     public class Package
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
-        public AsmLoad AssembleLoad { get; private set; } = new AsmLoad();
+        public AsmLoad AssembleLoad { get; private set; }
 
         public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).ToArray();
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
         public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
 
-        public Package(FileInfo[] files)
+        public Package(FileInfo[] files, AsmISA asmISA)
         {
-            if (files != default && files.Length > 0)
+            switch (asmISA)
             {
-                AssembleLoad.GlobalLabelName = "main";
+                case AsmISA.Z80:
+                    AssembleLoad = new AsmLoad(new InstructionSet.Z80());
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
+            var label = new Label("NS_Main", AssembleLoad);
+            AssembleLoad.AddLabel(label);
 
             foreach (var fileInfo in files)
             {
