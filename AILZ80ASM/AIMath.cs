@@ -246,6 +246,22 @@ namespace AILZ80ASM
                 result.Add(sign);
             }
 
+            // 演算子、数値が連続しているものがないか確認をする
+            var checkValues = result.Where(m => m != "(" && m != ")").ToArray();
+            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+            {
+                if (!Regex.Match(checkValues[index + 0], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                    !Regex.Match(checkValues[index + 1], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    throw new Exception("数値と数値の間には演算子が必要です");
+                }
+
+                if (Regex.Match(checkValues[index + 0], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                    Regex.Match(checkValues[index + 1], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                {
+                    throw new Exception("演算子が連続で指定されています。");
+                }
+            }
             return result.ToArray();
         }
 

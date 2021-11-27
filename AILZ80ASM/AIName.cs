@@ -146,21 +146,13 @@ namespace AILZ80ASM
             }
 
             // レジスター文字列、命令の文字列は利用不可
-            switch (asmLoad.AssembleISA)
+            if (asmLoad.ISA.IsMatchRegisterName(target))
             {
-                case AsmISA.Z80:
-                    var z80 = new Instructions.Z80();
-                    if (z80.IsMatchRegisterName(target))
-                    {
-                        return false;
-                    }
-                    if (z80.IsMatchInstructionName(target))
-                    {
-                        return false;
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
+                return false;
+            }
+            if (asmLoad.ISA.IsMatchInstructionName(target))
+            {
+                return false;
             }
 
             return  Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&

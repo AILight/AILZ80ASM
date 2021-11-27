@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AILZ80ASM.Instructions
+namespace AILZ80ASM.InstructionSet
 {
     public class Z80 : ISA
     {
-        private static readonly string[] RegisterNames = new[] { "A", "B", "C", "D", "E", "H", "L", "I", "F", "R", "IXH", "IXL", "IYH", "IYL", "AF", "BC", "DE", "HL", "SP", "IX", "IY" };
+        private static readonly string[] RegisterAndFlagNames = new[] { "A", "B", "C", "D", "E", "H", "L", "I", "F", "R", "IXH", "IXL", "IYH", "IYL", "AF", "AF'", "BC", "DE", "HL", "SP", "IX", "IY", "NZ", "Z", "NC", "C", "PO", "PE", "P", "M" };
         private static readonly InstructionSet Z80InstructionSet = new()
         {
-            SplitChars = new[] { ' ', ',' , '+' },
-            Brackets = new[] { "()" },
-            RegisterNames = RegisterNames,
+            NumberReplaseChar = '$',
+            SplitChars = new[] { ' ', ',' , '+', '(', ')' },
+            RegisterAndFlagNames = RegisterAndFlagNames,
             InstructionRegisters = new[]
             {
                 new InstructionRegister
@@ -166,52 +166,49 @@ namespace AILZ80ASM.Instructions
                 {
                     MnemonicRegisterName = "p",
                     MnemonicBitName = "TTT",
-                    InstructionRegisterItems = new[]
-                    {
-                        new InstructionRegisterItem { RegisterName = "00H", BitCode = "000" },
-                        new InstructionRegisterItem { RegisterName = "08H", BitCode = "001" },
-                        new InstructionRegisterItem { RegisterName = "10H", BitCode = "010" },
-                        new InstructionRegisterItem { RegisterName = "18H", BitCode = "011" },
-                        new InstructionRegisterItem { RegisterName = "20H", BitCode = "100" },
-                        new InstructionRegisterItem { RegisterName = "28H", BitCode = "101" },
-                        new InstructionRegisterItem { RegisterName = "30H", BitCode = "110" },
-                        new InstructionRegisterItem { RegisterName = "38H", BitCode = "111" },
-                    }
+                    InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.RestartValue,
+                },
+                new InstructionRegister
+                {
+                    MnemonicRegisterName = "zero",
+                    MnemonicBitName = "",
+                    InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value0Bit,
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "n",
                     MnemonicBitName = "NNNNNNNN",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value8Bit,
-                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "nn",
                     MnemonicBitName = "HHHHHHHH,LLLLLLLL",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value16Bit,
-                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "d",
                     MnemonicBitName = "IIIIIIII",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value8Bit,
-                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "b",
                     MnemonicBitName = "BBB",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value3Bit,
-                    ExclusionItems = RegisterNames
                 },
                 new InstructionRegister
                 {
                     MnemonicRegisterName = "e",
                     MnemonicBitName = "EEEEEEEE",
                     InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.RelativeAddress8Bit,
-                    ExclusionItems = RegisterNames
+                },
+                new InstructionRegister
+                {
+                    MnemonicRegisterName = "imv",
+                    MnemonicBitName = "IV",
+                    InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.InterruptModeValue,
                 },
             },
             InstructionItems = new []
@@ -487,9 +484,7 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "HALT" }, OPCode = new[] { "01110110" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "DI" }, OPCode = new[] { "11110011" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "EI" }, OPCode = new[] { "11111011" }, M = 1, T = 4 },
-                new InstructionItem { Mnemonics = new[] { "IM 0" }, OPCode = new[] { "11101101", "01000110" }, M = 2, T = 8 },
-                new InstructionItem { Mnemonics = new[] { "IM 1" }, OPCode = new[] { "11101101", "01010110" }, M = 2, T = 8 },
-                new InstructionItem { Mnemonics = new[] { "IM 2" }, OPCode = new[] { "11101101", "01011110" }, M = 2, T = 8 },
+                new InstructionItem { Mnemonics = new[] { "IM imv" }, OPCode = new[] { "11101101", "010IV110" }, M = 2, T = 8 },
                 // CPU 制御命令:動作・入力
                 new InstructionItem { Mnemonics = new[] { "IN A,(n)" }, OPCode = new[] { "11011011", "NNNNNNNN" }, M = 3, T = 11 },
                 new InstructionItem { Mnemonics = new[] { "IN r1,(C)" }, OPCode = new[] { "11101101", "01DDD000" }, M = 3, T = 12 },
@@ -505,7 +500,7 @@ namespace AILZ80ASM.Instructions
                 new InstructionItem { Mnemonics = new[] { "OTIR" }, OPCode = new[] { "11101101", "10110011" }, M = 0, T = 0 },
                 new InstructionItem { Mnemonics = new[] { "OUTD" }, OPCode = new[] { "11101101", "10101011" }, M = 4, T = 16 },
                 new InstructionItem { Mnemonics = new[] { "OTDR" }, OPCode = new[] { "11101101", "10111011" }, M = 0, T = 0 },
-                new InstructionItem { Mnemonics = new[] { "OUT (C),0" }, OPCode = new[] { "11101101", "01110001" }, M = 3, T = 12, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "OUT (C),zero" }, OPCode = new[] { "11101101", "01110001" }, M = 3, T = 12, UnDocumented = true },
                 // CPU 制御命令:二進化十進 (BCD) 用命令
                 new InstructionItem { Mnemonics = new[] { "DAA" }, OPCode = new[] { "00100111" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "RLD" }, OPCode = new[] { "11101101", "01101111" }, M = 5, T = 18 },
@@ -520,9 +515,96 @@ namespace AILZ80ASM.Instructions
         }
 
         public Z80()
+            : base(Z80InstructionSet)
         {
             Endianness = EndiannessEnum.LittleEndian;
-            InstructionSet = Z80InstructionSet;
+        }
+
+        /// <summary>
+        /// Z80の命令を分解して、再度組み立てる
+        /// </summary>
+        /// <param name="instuction"></param>
+        /// <returns></returns>
+        public override AssembleParseResult ParseInstruction(string instuction)
+        {
+            var assembleParseResult = new AssembleParseResult();
+            instuction = instuction.Replace("\t", " ");
+            var index = instuction.IndexOf(" ");
+            if (index == -1)
+            {
+                assembleParseResult.Instruction = instuction;
+            }
+            else
+            {
+                assembleParseResult.Instruction = instuction.Substring(0, index + 1);
+                instuction = instuction.Substring(index + 1).TrimStart();
+
+                var argument = "";
+                var args = AIName.ParseArguments(instuction);
+                foreach (var item in args)
+                {
+                    if (!string.IsNullOrEmpty(argument))
+                    {
+                        argument += ",";
+                    }
+
+                    if (IsMatchRegisterName(item) || IsMatchInstructionName(item))
+                    {
+                        argument += item;
+                    }
+                    else
+                    {
+                        if (item.StartsWith("(") && item.EndsWith(")"))
+                        {
+                            var tmpValue = item.Substring(1, item.Length - 2).Trim();
+                            if (IsMatchRegisterName(tmpValue))
+                            {
+                                argument += $"({tmpValue})";
+                            }
+                            else if (tmpValue.StartsWith("IX", StringComparison.OrdinalIgnoreCase) ||
+                                     tmpValue.StartsWith("IY", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var indexPlus = tmpValue.IndexOf("+");
+                                if (indexPlus == -1)
+                                {
+                                    // ここにはふつう来ない。ユーザーの記述ミス
+                                    argument += $"({tmpValue})";
+                                }
+                                else
+                                {
+                                    // ここで変数を積む
+                                    var valueString = tmpValue.Substring(indexPlus + 1).Trim();
+                                    var argumentKey = $"{InstructionSet.NumberReplaseChar}{assembleParseResult.ArgumentDic.Count + 1}";
+                                    assembleParseResult.ArgumentDic.Add(argumentKey, valueString);
+
+                                    argument += $"({tmpValue.Substring(0, 2)}+{argumentKey})";
+                                }
+                            }
+                            else
+                            {
+                                // ここで変数を積む
+                                var valueString = item;
+                                var argumentKey = $"{InstructionSet.NumberReplaseChar}{assembleParseResult.ArgumentDic.Count + 1}";
+                                assembleParseResult.ArgumentDic.Add(argumentKey, valueString);
+
+                                argument += $"({argumentKey})";
+                            }
+                        }
+                        else
+                        {
+                            // ここで変数を積む
+                            var valueString = item;
+                            var argumentKey = $"{InstructionSet.NumberReplaseChar}{assembleParseResult.ArgumentDic.Count + 1}";
+                            assembleParseResult.ArgumentDic.Add(argumentKey, valueString);
+
+                            argument += $"{argumentKey}";
+                        }
+                    }
+                }
+                assembleParseResult.Instruction += argument;
+            }
+
+            return assembleParseResult;
         }
     }
 }

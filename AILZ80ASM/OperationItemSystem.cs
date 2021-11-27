@@ -25,7 +25,7 @@ namespace AILZ80ASM
 
         }
 
-        public static bool CanCreate(string operation)
+        public new static bool CanCreate(string operation, AsmLoad asmLoad)
         {
             var matched = Regex.Match(operation, RegexPatternOP, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var op1 = matched.Groups["op1"].Value;

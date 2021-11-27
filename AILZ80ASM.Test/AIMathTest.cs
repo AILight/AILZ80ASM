@@ -123,7 +123,7 @@ namespace AILZ80ASM.Test
             asmAddress.Program = 0x8000;
             asmAddress.Output = 0x8000;
 
-            var asmLoad = new AsmLoad();
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
             var label = new Label("LB", "0xAA01", asmLoad);
             label.SetValue(asmLoad);
 

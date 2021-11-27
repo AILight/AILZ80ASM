@@ -48,7 +48,7 @@ namespace AILZ80ASM.Test
 
         public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, bool testError)
         {
-            var package = new Package(Files);
+            var package = new Package(Files, AsmISA.Z80);
 
             package.Assemble();
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AILZ80ASM.InstructionSet;
 
 namespace AILZ80ASM
 {
@@ -36,12 +37,13 @@ namespace AILZ80ASM
         public List<Function> Functions { get; private set; } = new List<Function>();
         public List<Function> LocalFunctions { get; private set; } = new List<Function>();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
-        public AsmISA AssembleISA { get; set; }
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
+        public ISA ISA { get; private set; }
 
-        public AsmLoad()
+        public AsmLoad(ISA isa)
         {
+            ISA = isa;
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace AILZ80ASM
         /// <returns></returns>
         public AsmLoad Clone()
         {
-            return new AsmLoad
+            return new AsmLoad(this.ISA)
             {
                 ScopeMode = this.ScopeMode,
                 GlobalLabelName = this.GlobalLabelName,
@@ -66,15 +68,13 @@ namespace AILZ80ASM
                 Functions = this.Functions,
                 LocalFunctions = this.LocalFunctions,
 
-
-                Errors = this.Errors,
-                AssembleISA = this.AssembleISA
+                Errors = this.Errors
             };
         }
 
         public AsmLoad Clone(ScopeModeEnum scopeMode)
         {
-            return new AsmLoad
+            return new AsmLoad(this.ISA)
             {
                 ScopeMode = scopeMode,
                 GlobalLabelName = this.GlobalLabelName,
@@ -90,8 +90,7 @@ namespace AILZ80ASM
                 Functions = this.Functions,
                 LocalFunctions = scopeMode == ScopeModeEnum.Global ? this.LocalFunctions : new List<Function>(),
 
-                Errors = this.Errors,
-                AssembleISA = this.AssembleISA
+                Errors = this.Errors
             };
         }
 
