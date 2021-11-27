@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace AILZ80ASM
 {
@@ -25,7 +26,22 @@ namespace AILZ80ASM
             AssembleLoad = asmLoad;
             FileInfo = fileInfo;
 
-            using var streamReader = fileInfo.OpenText();
+            // TODO: AsmLoadに持っていくこと。
+            var encoding = Encoding.UTF8;
+            switch (asmLoad.InputMode)
+            {
+                case "UTF-8":
+                    encoding = Encoding.UTF8;
+                    break;
+                case "SHIFT_JIS":
+                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                    encoding = Encoding.GetEncoding("SHIFT_JIS");
+                    break;
+                default:
+                    break;
+            }
+
+            using var streamReader = new StreamReader(fileInfo.FullName, encoding);
             Read(streamReader);
             streamReader.Close();
 

@@ -40,6 +40,7 @@ namespace AILZ80ASM
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
         public ISA ISA { get; private set; }
+        public string InputMode { get; set; }
 
         public AsmLoad(ISA isa)
         {
