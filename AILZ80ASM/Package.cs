@@ -15,7 +15,7 @@ namespace AILZ80ASM
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
         public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
 
-        public Package(FileInfo[] files, string inputMode, AsmISA asmISA)
+        public Package(FileInfo[] files, AsmLoad.InputModeEnum inputMode, AsmLoad.OutputModeEnum outputMode, AsmISA asmISA)
         {
             switch (asmISA)
             {
@@ -28,6 +28,7 @@ namespace AILZ80ASM
             var label = new Label("NS_Main", AssembleLoad);
             AssembleLoad.AddLabel(label);
             AssembleLoad.InputMode = inputMode;
+            AssembleLoad.OutputMode = outputMode;
 
             foreach (var fileInfo in files)
             {
@@ -147,14 +148,32 @@ namespace AILZ80ASM
             }
         }
 
-        public void SaveBin(FileInfo output)
+        public void SaveOutput(FileInfo output)
         {
             output.Delete();
             using var fileStream = output.OpenWrite();
 
-            SaveBin(fileStream);
+            SaveOutput(fileStream, output.Name);
 
             fileStream.Close();
+        }
+
+        public void SaveOutput(Stream stream, string outputFilename)
+        {
+            switch (AssembleLoad.OutputMode)
+            {
+                case AsmLoad.OutputModeEnum.BIN:
+                    SaveBin(stream);
+                    break;
+                case AsmLoad.OutputModeEnum.T88:
+                    SaveT88(stream, outputFilename);
+                    break;
+                case AsmLoad.OutputModeEnum.CMT:
+                    SaveCMT(stream);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void SaveBin(Stream stream)
@@ -163,6 +182,42 @@ namespace AILZ80ASM
             {
                 item.SaveBin(stream);
             }
+        }
+
+        public void SaveT88(Stream stream, string outputFilename)
+        {
+            using var memoryStream = new MemoryStream();
+            foreach (var item in FileItems)
+            {
+                item.SaveBin(memoryStream);
+            }
+
+            var address = default(UInt16);
+            if (AssembleLoad.AsmAddresses.Count > 0)
+            {
+                address = AssembleLoad.AsmAddresses.FirstOrDefault().Program;
+            }
+
+            var binaryWriter = new IO.T88BinaryWriter(outputFilename, address, memoryStream.ToArray(), stream);
+            binaryWriter.Write();
+        }
+
+        public void SaveCMT(Stream stream)
+        {
+            using var memoryStream = new MemoryStream();
+            foreach (var item in FileItems)
+            {
+                item.SaveBin(memoryStream);
+            }
+
+            var address = default(UInt16);
+            if (AssembleLoad.AsmAddresses.Count > 0)
+            {
+                address = AssembleLoad.AsmAddresses.FirstOrDefault().Program;
+            }
+
+            var binaryWriter = new IO.CMTBinaryWriter(address, memoryStream.ToArray(), stream);
+            binaryWriter.Write();
         }
 
         public void SaveSymbol(FileInfo symbol)
@@ -190,21 +245,7 @@ namespace AILZ80ASM
 
         public void SaveList(FileInfo list)
         {
-            var encoding = Encoding.UTF8;
-            switch (AssembleLoad.InputMode)
-            {
-                case "UTF-8":
-                    encoding = Encoding.UTF8;
-                    break;
-                case "SHIFT_JIS":
-                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                    encoding = Encoding.GetEncoding("SHIFT_JIS");
-                    break;
-                default:
-                    break;
-            }
-
-            using var streamWriter = new StreamWriter(list.FullName, false, encoding);
+            using var streamWriter = new StreamWriter(list.FullName, false, AssembleLoad.Encoding);
             SaveList(streamWriter);
             streamWriter.Close();
         }
