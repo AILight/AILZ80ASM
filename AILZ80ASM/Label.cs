@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
@@ -16,27 +17,41 @@ namespace AILZ80ASM
             ADDR,
         }
 
+        public enum LabelLevelEnum
+        {
+            GlobalLabel,
+            Label,
+            SubLabel,
+        }
+
         private static readonly string RegexPatternGlobalLabel = @"(?<label>(^\w+))::(\s+|$)";
         private static readonly string RegexPatternLabel = @"(?<label>(^\w+)):(\s+|$)";
         private static readonly string RegexPatternEquLabel = @"(?<label>(^\w+)):?";
         private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[@\w]+))(\s+|$)";
         private static readonly string RegexPatternValueLabel = @"(?<label>(^\w+))\s+equ\s+(?<value>(.+))";
-        private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.:@]+))(?<end>\s?)";
+        private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
         public string SubLabelName { get; private set; }
-        public string LongLabelName => DataType == DataTypeEnum.None ? "" : $"{GlobalLabelName}:{MiddleLabelName}";
+        public string LongLabelName => DataType == DataTypeEnum.None ? "" : $"{GlobalLabelName}.{MiddleLabelName}";
         public string MiddleLabelName => DataType == DataTypeEnum.None ? "" : $"{LabelName}{ShortLabelName}";
         public string ShortLabelName => DataType == DataTypeEnum.None ? "" : (string.IsNullOrEmpty(SubLabelName) ? $"" : $".{SubLabelName}");
 
         public bool HasValue => DataType == DataTypeEnum.Value || DataType == DataTypeEnum.ADDR;
         public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
-        public UInt16 Value { get; private set; }
+        public int Value { get; private set; }
         public string ValueString { get; private set; }
 
         public DataTypeEnum DataType { get; private set; }
+        public LabelLevelEnum LabelLevel { get; private set; }
+
         public AsmLoad AsmLoadForArgmument { get; private set; }
+
+        public Label(string labelName, AsmLoad asmLoad)
+            : this(labelName, "", asmLoad)
+        {
+        }
 
         public Label(string labelName, string valueString, AsmLoad asmLoad)
         {
@@ -63,6 +78,7 @@ namespace AILZ80ASM
                     // グローバルラベル
                     GlobalLabelName = matchedGlobalLabel.Groups["label"].Value;
                     asmLoad.GlobalLabelName = GlobalLabelName;
+                    LabelLevel = LabelLevelEnum.GlobalLabel;
                 }
                 else
                 {
@@ -73,6 +89,8 @@ namespace AILZ80ASM
                         // ラベル
                         LabelName = matchedLabel.Groups["label"].Value;
                         asmLoad.LabelName = LabelName;
+                        LabelLevel = LabelLevelEnum.Label;
+
                     }
                     else
                     {
@@ -80,6 +98,7 @@ namespace AILZ80ASM
                         if (matchedSubLabel.Success)
                         {
                             SubLabelName = matchedSubLabel.Groups["label"].Value.Substring(1);
+                            LabelLevel = LabelLevelEnum.SubLabel;
                         }
                     }
                 }
@@ -112,7 +131,7 @@ namespace AILZ80ASM
             if (this.DataType != DataTypeEnum.ProcessingForValue)
                 return;
 
-            if (AIMath.TryParse<UInt16>(ValueString, GlobalLabelName, LabelName, asmLoad, out var value))
+            if (AIMath.TryParse<int>(ValueString, asmLoad, out var value))
             {
                 Value = value;
                 this.DataType = DataTypeEnum.Value;
@@ -127,7 +146,7 @@ namespace AILZ80ASM
             if (string.IsNullOrEmpty(ValueString))
                 return;
 
-            if (AIMath.TryParse<UInt16>(ValueString, AsmLoadForArgmument, out var value))
+            if (AIMath.TryParse<int>(ValueString, AsmLoadForArgmument, out var value))
             {
                 Value = value;
                 this.DataType = DataTypeEnum.Value;
@@ -143,7 +162,7 @@ namespace AILZ80ASM
             if (string.IsNullOrEmpty(ValueString))
                 return;
 
-            if (AIMath.TryParse<UInt16>(ValueString, GlobalLabelName, LabelName, asmLoad, address, out var value))
+            if (AIMath.TryParse<int>(ValueString, asmLoad, address, out var value))
             {
                 Value = value;
                 this.DataType = DataTypeEnum.Value;
@@ -178,7 +197,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.ADDR:
                     break;
                 case DataTypeEnum.Value:
-                    if (AIMath.TryParse<UInt16>(ValueString, GlobalLabelName, LabelName, asmLoad, address, out var value))
+                    if (AIMath.TryParse<int>(ValueString, asmLoad, address, out var value))
                     {
                         Value = value;
                     }
@@ -226,18 +245,36 @@ namespace AILZ80ASM
             if (!Regex.Match(labelName, RegexPatternArgumentLabel, RegexOptions.IgnoreCase | RegexOptions.Singleline).Success)
                 return labelName;
 
-            if (labelName.IndexOf(":") > 0)
+            if (labelName.StartsWith("."))
+            {
+                return $"{asmLoad.GlobalLabelName}.{asmLoad.LabelName}{labelName}";
+            }
+
+            var count = labelName.ToArray().Count(m => m == '.');
+            if (count == 2)
             {
                 return labelName;
             }
-
-            var dotIndex = labelName.IndexOf(".");
-            if (dotIndex == 0)
+            else if (count == 1)
             {
-                return $"{asmLoad.GlobalLabelName}:{asmLoad.LabelName}{labelName}";
+                var nameSpace = labelName.Substring(0, labelName.IndexOf("."));
+                if (asmLoad.AllLabels.Where(m => string.Compare(m.LongLabelName, labelName, true) == 0).Any())
+                {
+                    return labelName;
+                }
+                else
+                {
+                    return $"{asmLoad.GlobalLabelName}.{labelName}";
+                }
             }
-
-            return $"{asmLoad.GlobalLabelName}:{labelName}";
+            else if (count == 0)
+            {
+                return $"{asmLoad.GlobalLabelName}.{labelName}";
+            }
+            else
+            {
+                throw new Exception($"ラベルの指定名が間違っています。{labelName}");
+            }
         }
     }
 }

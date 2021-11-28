@@ -29,6 +29,10 @@ namespace AILZ80ASM
             E0014,
             E0015,
             E0016,
+            E0017,
+            E0018,
+            E0019,
+            E0020,
 
             E1011,
             E1012,
@@ -68,8 +72,11 @@ namespace AILZ80ASM
             E4002,
             E4003,
             E4004,
+            E4005,
 
             W0001,
+            W0002,
+
             I0001,
         }
 
@@ -119,6 +126,10 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
             [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。{0}",
+            [ErrorCodeEnum.E0017] = "ラベル名と同じネームスペース名は付ける事が出来ません。{0}",
+            [ErrorCodeEnum.E0018] = "ネームスペース名と同じラベル名は付ける事が出来ません。{0}",
+            [ErrorCodeEnum.E0019] = "指定できる値は、0です。{0}",
+            [ErrorCodeEnum.E0019] = "指定できる値は、00H,08H,10H,18H,20H,28H,30H,38Hです。{0}",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
@@ -159,12 +170,14 @@ namespace AILZ80ASM
 
             // ファンクション
             [ErrorCodeEnum.E4001] = "同名のFunctionが既に定義されています。",
-            [ErrorCodeEnum.E4002] = "MACROの名前が有効ではありません。",
+            [ErrorCodeEnum.E4002] = "Functionの名前が有効ではありません。",
             [ErrorCodeEnum.E4003] = "Functionが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
+            [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。{0}",
 
 
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、{0}が設定されています。1バイトに丸められます。",
+            [ErrorCodeEnum.W0002] = "2バイトの指定場所に、{0}が設定されています。2バイトに丸められます。",
 
 
             [ErrorCodeEnum.I0001] = "未定義"

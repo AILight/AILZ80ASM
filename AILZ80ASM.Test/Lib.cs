@@ -48,13 +48,13 @@ namespace AILZ80ASM.Test
 
         public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, bool testError)
         {
-            var package = new Package(Files);
+            var package = new Package(Files, AsmLoad.InputModeEnum.UTF_8, AsmLoad.OutputModeEnum.BIN, AsmISA.Z80);
 
             package.Assemble();
 
             if (package.Errors.Length == 0)
             {
-                package.SaveBin(assebledStream);
+                package.SaveOutput(assebledStream, "");
             }
             else if (!testError)
             {

@@ -72,6 +72,32 @@ namespace AILZ80ASM
             return ValidateName(target, asmLoad);
         }
 
+        public static bool ValidateFunctionName(string target, AsmLoad asmLoad)
+        {
+            if (string.IsNullOrEmpty(target))
+                return false;
+
+            // ()は使えない
+            if (target.IndexOfAny(new[] { '(', ')' }) != -1)
+                return false;
+
+            return ValidateName(target, asmLoad);
+        }
+
+        /// <summary>
+        /// 引数のラベルチェック
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool ValidateFunctionArgument(string target, AsmLoad asmLoad)
+        {
+            if (string.IsNullOrEmpty(target))
+                return false;
+
+            return ValidateName(target, asmLoad);
+        }
+
+
         /// <summary>
         /// 引数の分解を行う（愚直に積む）
         /// </summary>
@@ -146,21 +172,13 @@ namespace AILZ80ASM
             }
 
             // レジスター文字列、命令の文字列は利用不可
-            switch (asmLoad.AssembleISA)
+            if (asmLoad.ISA.IsMatchRegisterName(target))
             {
-                case AsmISA.Z80:
-                    var z80 = new Instructions.Z80();
-                    if (z80.IsMatchRegisterName(target))
-                    {
-                        return false;
-                    }
-                    if (z80.IsMatchInstructionName(target))
-                    {
-                        return false;
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
+                return false;
+            }
+            if (asmLoad.ISA.IsMatchInstructionName(target))
+            {
+                return false;
             }
 
             return  Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&

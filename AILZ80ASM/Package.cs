@@ -2,24 +2,33 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace AILZ80ASM
 {
     public class Package
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
-        public AsmLoad AssembleLoad { get; private set; } = new AsmLoad();
+        public AsmLoad AssembleLoad { get; private set; }
 
         public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).ToArray();
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
         public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
 
-        public Package(FileInfo[] files)
+        public Package(FileInfo[] files, AsmLoad.InputModeEnum inputMode, AsmLoad.OutputModeEnum outputMode, AsmISA asmISA)
         {
-            if (files != default && files.Length > 0)
+            switch (asmISA)
             {
-                AssembleLoad.GlobalLabelName = "main";
+                case AsmISA.Z80:
+                    AssembleLoad = new AsmLoad(new InstructionSet.Z80());
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
+            var label = new Label("NS_Main", AssembleLoad);
+            AssembleLoad.AddLabel(label);
+            AssembleLoad.InputMode = inputMode;
+            AssembleLoad.OutputMode = outputMode;
 
             foreach (var fileInfo in files)
             {
@@ -139,14 +148,32 @@ namespace AILZ80ASM
             }
         }
 
-        public void SaveBin(FileInfo output)
+        public void SaveOutput(FileInfo output)
         {
             output.Delete();
             using var fileStream = output.OpenWrite();
 
-            SaveBin(fileStream);
+            SaveOutput(fileStream, output.Name);
 
             fileStream.Close();
+        }
+
+        public void SaveOutput(Stream stream, string outputFilename)
+        {
+            switch (AssembleLoad.OutputMode)
+            {
+                case AsmLoad.OutputModeEnum.BIN:
+                    SaveBin(stream);
+                    break;
+                case AsmLoad.OutputModeEnum.T88:
+                    SaveT88(stream, outputFilename);
+                    break;
+                case AsmLoad.OutputModeEnum.CMT:
+                    SaveCMT(stream);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public void SaveBin(Stream stream)
@@ -155,6 +182,42 @@ namespace AILZ80ASM
             {
                 item.SaveBin(stream);
             }
+        }
+
+        public void SaveT88(Stream stream, string outputFilename)
+        {
+            using var memoryStream = new MemoryStream();
+            foreach (var item in FileItems)
+            {
+                item.SaveBin(memoryStream);
+            }
+
+            var address = default(UInt16);
+            if (AssembleLoad.AsmAddresses.Count > 0)
+            {
+                address = AssembleLoad.AsmAddresses.FirstOrDefault().Program;
+            }
+
+            var binaryWriter = new IO.T88BinaryWriter(outputFilename, address, memoryStream.ToArray(), stream);
+            binaryWriter.Write();
+        }
+
+        public void SaveCMT(Stream stream)
+        {
+            using var memoryStream = new MemoryStream();
+            foreach (var item in FileItems)
+            {
+                item.SaveBin(memoryStream);
+            }
+
+            var address = default(UInt16);
+            if (AssembleLoad.AsmAddresses.Count > 0)
+            {
+                address = AssembleLoad.AsmAddresses.FirstOrDefault().Program;
+            }
+
+            var binaryWriter = new IO.CMTBinaryWriter(address, memoryStream.ToArray(), stream);
+            binaryWriter.Write();
         }
 
         public void SaveSymbol(FileInfo symbol)
@@ -182,13 +245,9 @@ namespace AILZ80ASM
 
         public void SaveList(FileInfo list)
         {
-            using var fileStream = list.OpenWrite();
-            using var streamWriter = new StreamWriter(fileStream);
-
+            using var streamWriter = new StreamWriter(list.FullName, false, AssembleLoad.Encoding);
             SaveList(streamWriter);
-
             streamWriter.Close();
-            fileStream.Close();
         }
 
         public void SaveList(StreamWriter streamWriter)

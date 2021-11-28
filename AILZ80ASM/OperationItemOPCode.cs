@@ -1,28 +1,32 @@
-﻿namespace AILZ80ASM
-{
-    public class OperationItemOPCode<T> : OperationItem
-        where T : Instructions.ISA, new()
-    {
-        private T ISA { get; set; }
+﻿using System;
+using AILZ80ASM.InstructionSet;
 
-        public override byte[] Bin => ISA.ToBin();
+namespace AILZ80ASM
+{
+    public class OperationItemOPCode : OperationItem
+    {
+        private AsmLoad AsmLoad {get; set; }
+        private AssembleResult AssembleResult { get; set; }
+
+        public override byte[] Bin => AsmLoad?.ISA?.ToBin(AssembleResult) ?? Array.Empty<byte>();
         public override AsmList List
         {
             get
             {
-                return AsmList.CreateLineItem(Address, Bin, ISA.InstructionItem.T == 0 ? "" : ISA.InstructionItem.T.ToString(), LineDetailExpansionItemOperation.LineItem);
+                return AsmList.CreateLineItem(Address, Bin, AssembleResult.InstructionItem.T == 0 ? "" : AssembleResult.InstructionItem.T.ToString(), LineDetailExpansionItemOperation.LineItem);
             }
         }
-        public override AsmLength Length => new AsmLength(ISA.OPCodeLength);
+        public override AsmLength Length => new AsmLength(AssembleResult.InstructionItem.OPCode.Length);
 
-        private OperationItemOPCode(T isa, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address)
+        private OperationItemOPCode(InstructionSet.AssembleResult assembleResult, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
-            ISA = isa;
+            AssembleResult = assembleResult;
             LineDetailExpansionItemOperation = lineDetailExpansionItemOperation;
             Address = address;
+            AsmLoad = asmLoad;
         }
 
-        public static bool CanCreate(string operation)
+        public new static bool CanCreate(string operation, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(operation))
             {
@@ -30,8 +34,7 @@
                 return true;
             }
 
-            var isa = new T() { Instruction = operation };
-            if (isa.PreAssemble())
+            if (asmLoad.ISA.PreAssemble(operation) != default)
             {
                 return true;
             }
@@ -41,14 +44,14 @@
 
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
-            var returnValue = default(OperationItemOPCode<T>);
+            var returnValue = default(OperationItemOPCode);
             var code = lineDetailExpansionItemOperation.LineItem.OperationString;
             if (!string.IsNullOrEmpty(code))
             {
-                var isa = new T() { Instruction = code };
-                if (isa.PreAssemble())
+                var resutl = asmLoad.ISA.PreAssemble(code);
+                if (resutl != default)
                 {
-                    returnValue = new OperationItemOPCode<T>(isa, lineDetailExpansionItemOperation, address);
+                    returnValue = new OperationItemOPCode(resutl, lineDetailExpansionItemOperation, address, asmLoad);
                 }
             }
 
@@ -57,7 +60,53 @@
 
         public override void Assemble(AsmLoad asmLoad)
         {
-            ISA.Assemble(LineDetailExpansionItemOperation, asmLoad);
+            try
+            {
+                asmLoad.ISA.Assemble(AssembleResult, asmLoad, LineDetailExpansionItemOperation.Address);
+
+                if (AssembleResult.InnerAssembleException is AssembleOutOfRangeException exception)
+                {
+                    // ワーニングを積む
+                    switch (exception.InstructionRegisterMode)
+                    {
+                        case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
+                            asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0001, exception.Value));
+                            break;
+                        case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
+                            asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0002, exception.Value));
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+
+                }
+
+            }
+            catch (AssembleOutOfRangeException ex)
+            {
+                switch (ex.InstructionRegisterMode)
+                {
+                    case InstructionRegister.InstructionRegisterModeEnum.RelativeAddress8Bit:
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0003, ex.Message);
+
+                    case InstructionRegister.InstructionRegisterModeEnum.Value0Bit:
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0019, ex.Message);
+
+                    case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0016, ex.Message);
+
+                    case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
+                    case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.W0001, ex.Message);
+
+                    case InstructionRegister.InstructionRegisterModeEnum.RestartValue:
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017, ex.Message);
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
         }
 
     }

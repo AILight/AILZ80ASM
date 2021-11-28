@@ -5,13 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace AILZ80ASM.Instructions
+namespace AILZ80ASM.InstructionSet
 {
     public class InstructionSet
     {
+        public char NumberReplaseChar { get; set; }
         public char[] SplitChars { get; set; }
-        public string[] Brackets { get; set; }
-        public string[] RegisterNames { get; set; }
+        public string[] RegisterAndFlagNames { get; set; }
         public InstructionRegister[] InstructionRegisters { get; set; }
         public InstructionItem[] InstructionItems { get; set; }
         public string[] InstructionNames { get; set; }
@@ -24,7 +24,7 @@ namespace AILZ80ASM.Instructions
 
             foreach (var item in InstructionItems)
             {
-                var instructionNames = item.MakeDataSet(SplitChars, Brackets, InstructionRegisters);
+                var instructionNames = item.MakeDataSet(SplitChars, InstructionRegisters);
                 instructionList.AddRange(instructionNames);
                 foreach (var key in instructionNames.Select(m => m[0].ToString().ToLower()).Distinct())
                 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace AILZ80ASM
 {
@@ -25,7 +26,7 @@ namespace AILZ80ASM
             AssembleLoad = asmLoad;
             FileInfo = fileInfo;
 
-            using var streamReader = fileInfo.OpenText();
+            using var streamReader = new StreamReader(fileInfo.FullName, asmLoad.Encoding);
             Read(streamReader);
             streamReader.Close();
 

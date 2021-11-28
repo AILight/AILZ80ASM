@@ -9,12 +9,12 @@ namespace AILZ80ASM
     {
         public string GlobalLabelName { get; private set; }
         public string Name { get; private set; }
-        public string FullName => $"{GlobalLabelName}:{Name}";
+        public string FullName => $"{GlobalLabelName}.{Name}";
 
         public string[] Args { get; private set; }
         public LineItem[] LineItems { get; private set; }
 
-        private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_:()]+)\s*(?<args>.*)$";
+        private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_\.()]+)\s*(?<args>.*)$";
 
         public Macro(string macroName, string[] args, LineItem[] lineItems, AsmLoad asmLoad)
         {
@@ -166,12 +166,12 @@ namespace AILZ80ASM
         /// <returns></returns>
         public static string GetLongMacroName(string macroName, AsmLoad asmLoad)
         {
-            if (macroName.IndexOf(":") > 0)
+            if (macroName.IndexOf(".") > 0)
             {
                 return macroName;
             }
 
-            return $"{asmLoad.GlobalLabelName}:{macroName}";
+            return $"{asmLoad.GlobalLabelName}.{macroName}";
         }
     }
 }

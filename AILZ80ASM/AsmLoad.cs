@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AILZ80ASM.InstructionSet;
 
 namespace AILZ80ASM
 {
@@ -12,6 +13,20 @@ namespace AILZ80ASM
             Global,
             Local
         }
+
+        public enum InputModeEnum
+        {
+            UTF_8,
+            SHIFT_JIS,
+        }
+
+        public enum OutputModeEnum
+        {
+            BIN,
+            T88,
+            CMT,
+        }
+
         private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
 
         private string _GlobalLabelName;
@@ -25,23 +40,55 @@ namespace AILZ80ASM
             }
         }
         public string LabelName { get; set; }
+
         public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include循環展開チェック用
         public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
 
         public Label[] AllLabels => Labels.Union(LocalLabels).ToArray();
         public Function[] AllFunctions => Functions.Union(LocalFunctions).ToArray();
+        public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
         public List<Label> Labels { get; private set; } = new List<Label>();
         public List<Label> LocalLabels { get; private set; } = new List<Label>();
         public List<Macro> Macros { get; private set; } = new List<Macro>();
         public List<Function> Functions { get; private set; } = new List<Function>();
         public List<Function> LocalFunctions { get; private set; } = new List<Function>();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
-        public AsmISA AssembleISA { get; set; }
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
-
-        public AsmLoad()
+        public ISA ISA { get; private set; }
+        public InputModeEnum InputMode { get; set; }
+        public OutputModeEnum OutputMode { get; set; }
+        public System.Text.Encoding Encoding
         {
+            get
+            {
+                var encoding = System.Text.Encoding.UTF8;
+                switch (InputMode)
+                {
+                    case InputModeEnum.UTF_8:
+                        encoding = System.Text.Encoding.UTF8;
+                        break;
+                    case InputModeEnum.SHIFT_JIS:
+                        try
+                        {
+                            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                            encoding = System.Text.Encoding.GetEncoding("SHIFT_JIS");
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("お使いの環境では、SHIFT_JISをご利用いただくことは出来ません。", ex);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return encoding;
+            }
+        }
+
+        public AsmLoad(ISA isa)
+        {
+            ISA = isa;
         }
 
         /// <summary>
@@ -50,11 +97,12 @@ namespace AILZ80ASM
         /// <returns></returns>
         public AsmLoad Clone()
         {
-            return new AsmLoad
+            return new AsmLoad(this.ISA)
             {
                 ScopeMode = this.ScopeMode,
                 GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
+                AsmAddresses = this.AsmAddresses,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
                 Macros = this.Macros,
@@ -66,19 +114,18 @@ namespace AILZ80ASM
                 Functions = this.Functions,
                 LocalFunctions = this.LocalFunctions,
 
-
-                Errors = this.Errors,
-                AssembleISA = this.AssembleISA
+                Errors = this.Errors
             };
         }
 
         public AsmLoad Clone(ScopeModeEnum scopeMode)
         {
-            return new AsmLoad
+            return new AsmLoad(this.ISA)
             {
                 ScopeMode = scopeMode,
                 GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
+                AsmAddresses = this.AsmAddresses,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
                 Macros = this.Macros,
@@ -90,8 +137,7 @@ namespace AILZ80ASM
                 Functions = this.Functions,
                 LocalFunctions = scopeMode == ScopeModeEnum.Global ? this.LocalFunctions : new List<Function>(),
 
-                Errors = this.Errors,
-                AssembleISA = this.AssembleISA
+                Errors = this.Errors
             };
         }
 
@@ -115,10 +161,36 @@ namespace AILZ80ASM
 
         public void AddLabel(Label label)
         {
-            if (this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
+            // 同一名のラベル
+            if (label.LabelLevel != Label.LabelLevelEnum.GlobalLabel &&
+                this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014);
             }
+            // グローバルラベルとの比較
+            switch (label.LabelLevel)
+            {
+                case Label.LabelLevelEnum.GlobalLabel:
+                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.Label &&
+                        string.Compare(m.LabelName, label.GlobalLabelName, true) == 0))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
+                    }
+                    break;
+                case Label.LabelLevelEnum.Label:
+                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.GlobalLabel &&
+                        string.Compare(m.GlobalLabelName, label.LabelName, true) == 0))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
+                    }
+                    break;
+                case Label.LabelLevelEnum.SubLabel:
+                    // 何もしない
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+
 
             switch (ScopeMode)
             {
@@ -151,6 +223,32 @@ namespace AILZ80ASM
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public Label FindLabel(string target)
+        {
+            return FindLabel(target, true);
+        }
+
+        public Label FindLabel(string target, bool hasValue)
+        {
+            var longLabelName = Label.GetLongLabelName(target, this);
+            var label = AllLabels.Where(m => (m.HasValue || !hasValue) && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+
+            return label;
+        }
+
+        public Function FindFunction(string target)
+        {
+            var longFunctionName = Function.GetLongFunctionName(target, this);
+            var function = Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
+
+            return function;
+        }
+
+        public void AddAsmAddress(AsmAddress asmAddress)
+        {
+            AsmAddresses.Add(asmAddress);
         }
     }
 }

@@ -5,8 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class OperationItemData<T> : OperationItem
-        where T : Instructions.ISA, new()
+    public class OperationItemData : OperationItem
     {
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
@@ -31,7 +30,7 @@ namespace AILZ80ASM
 
         }
 
-        public static bool CanCreate(string operation)
+        public new static bool CanCreate(string operation, AsmLoad asmLoad)
         {
             var matched = Regex.Match(operation, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var op1 = matched.Groups["op1"].Value;
@@ -40,7 +39,7 @@ namespace AILZ80ASM
 
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
-            var returnValue = default(OperationItemData<T>);
+            var returnValue = default(OperationItemData);
             var matched = Regex.Match(lineDetailExpansionItemOperation.LineItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             var op1 = matched.Groups["op1"].Value;
@@ -77,7 +76,7 @@ namespace AILZ80ASM
         /// <param name="address"></param>
         /// <param name="labels"></param>
         /// <returns></returns>
-        private static OperationItemData<T> DBDW(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        private static OperationItemData DBDW(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var ops = op2.Split(',').Select(m => m.Trim()).ToArray();
             var matchString = Regex.Match(op2, RegexPatternDataString, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -93,7 +92,7 @@ namespace AILZ80ASM
                 }
             }
 
-            return new OperationItemData<T>()
+            return new OperationItemData()
             {
                 ValueStrings = ops,
                 DataType = dataType,
@@ -123,8 +122,8 @@ namespace AILZ80ASM
                 var operation = matchFunction.Groups["operation"].Value.Trim();
 
                 //ループの展開
-                var startValue = AIMath.ConvertTo<int>(start, lineDetailExpansionItemOperation, asmLoad);
-                var endValue = AIMath.ConvertTo<int>(end, lineDetailExpansionItemOperation, asmLoad);
+                var startValue = AIMath.ConvertTo<int>(start, asmLoad, lineDetailExpansionItemOperation.Address);
+                var endValue = AIMath.ConvertTo<int>(end, asmLoad, lineDetailExpansionItemOperation.Address);
                 var stepValue = startValue < endValue ? 1 : -1;
                 var loopCount = (endValue - startValue) * stepValue;
                 var currentValue = startValue;
@@ -158,9 +157,9 @@ namespace AILZ80ASM
         /// <param name="lineExpansionItem"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static OperationItemData<T> DBDWS(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        private static OperationItemData DBDWS(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
-            var returnValue = default(OperationItemData<T>);
+            var returnValue = default(OperationItemData);
             var ops = op2.Split(',');
             var valueString = "0";
 
@@ -176,7 +175,7 @@ namespace AILZ80ASM
             var count = AIMath.ConvertTo<int>(ops[0], asmLoad);
             var valuesStrings = Enumerable.Range(0, count).Select(_ => valueString).ToArray();
 
-            returnValue = new OperationItemData<T>()
+            returnValue = new OperationItemData()
             {
                 ValueStrings = valuesStrings,
                 DataType = dataType,
@@ -191,20 +190,19 @@ namespace AILZ80ASM
         public override void Assemble(AsmLoad asmLoad)
         {
             var byteList = new List<byte>();
-            var isa = new T();
             switch (DataType)
             {
                 case DataTypeEnum.dw:
                     foreach (var valueString in ValueStrings)
                     {
-                        var value = AIMath.ConvertTo<UInt16>(valueString, LineDetailExpansionItemOperation, asmLoad);
-                        switch (isa.Endianness)
+                        var value = AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address);
+                        switch (asmLoad.ISA.Endianness)
                         {
-                            case Instructions.ISA.EndiannessEnum.LittleEndian:
+                            case InstructionSet.ISA.EndiannessEnum.LittleEndian:
                                 byteList.Add((byte)(value % 256));
                                 byteList.Add((byte)(value / 256));
                                 break;
-                            case Instructions.ISA.EndiannessEnum.BigEndian:
+                            case InstructionSet.ISA.EndiannessEnum.BigEndian:
                                 byteList.Add((byte)(value / 256));
                                 byteList.Add((byte)(value % 256));
                                 break;
@@ -217,7 +215,7 @@ namespace AILZ80ASM
                 case DataTypeEnum.db:
                     foreach (var valueString in ValueStrings)
                     {
-                        byteList.Add((byte)AIMath.ConvertTo<UInt16>(valueString, LineDetailExpansionItemOperation, asmLoad));
+                        byteList.Add((byte)AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address));
                     }
                     break;
                 default:

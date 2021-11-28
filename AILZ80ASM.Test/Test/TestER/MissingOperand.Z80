@@ -6,7 +6,6 @@
 	LD L, IYh
 	LD H, IYl
 	LD L, IYl
-	
 	LD IXh,H
 	LD IXh,L
 	LD IXl,H

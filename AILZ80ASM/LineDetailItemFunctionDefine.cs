@@ -7,6 +7,8 @@ namespace AILZ80ASM
 {
     public class LineDetailItemFunctionDefine : LineDetailItem
     {
+        private static readonly string RegexPatternFunction = @"^\s*Function\s+(?<function_name>[a-zA-Z0-9_]+)\s*\((?<argument>.+)\)\s*=>\s(?<formula>.+)";
+
         private LineDetailItemFunctionDefine(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
@@ -15,33 +17,32 @@ namespace AILZ80ASM
 
         public static LineDetailItemFunctionDefine Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            if (lineItem.OperationString.StartsWith("Function ", StringComparison.OrdinalIgnoreCase))
+            var matched = Regex.Match(lineItem.OperationString, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            if (matched.Success)
             {
-                var target = lineItem.OperationString.Substring(9).TrimStart();
-                var indexBracket = target.IndexOf("(");
-                var indexArrow = target.IndexOf("=>");
-
-                if (indexBracket == -1 || indexBracket > indexArrow)
-                {
-                    throw new Exception("ファンクション名の次に ( が必要です。");
-                }
-
-                if (indexArrow == -1)
-                {
-                    throw new Exception("ファンクションには、=> が必要です。");
-                }
-
                 // 名前の切り出し
-                var functionName = target.Substring(0, indexBracket);
+                var functionName = matched.Groups["function_name"].Value;
+                var argument = matched.Groups["argument"].Value;
+                var formula = matched.Groups["formula"].Value;
 
-                // 引数の切り出し
-                var argument = target.Substring(indexBracket, indexArrow - indexBracket).Trim();
-                argument = argument.Substring(1, argument.Length - 2);
                 var arguments = AIName.ParseArguments(argument);
-                // 式の切り出し
-                var formula = target.Substring(indexArrow + 2).Trim();
+
+                if (!AIName.ValidateFunctionName(functionName, asmLoad))
+                {
+                    asmLoad.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E4002));
+                }
+
+                foreach (var item in arguments)
+                {
+                    if (!AIName.ValidateFunctionArgument(item, asmLoad))
+                    {
+                        asmLoad.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E4005, item));
+                    }
+                }
 
                 var function = new Function(functionName, arguments, formula, asmLoad);
+
                 asmLoad.AddFunction(function);
 
                 return new LineDetailItemFunctionDefine(lineItem, asmLoad);

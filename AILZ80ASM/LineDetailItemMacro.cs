@@ -5,8 +5,6 @@ namespace AILZ80ASM
 {
     public class LineDetailItemMacro : LineDetailItem
     {
-        private Macro Macro { get; set; }
-        private string[] Argmuments { get; set; }
         public override AsmList[] Lists
         {
             get

@@ -19,47 +19,49 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ```
 > AILZ80ASM -i sample.z80 -o sample.z80
 ```
-##### ファイル形式
-- UTF-8
+##### 入力ファイル形式
+- UTF-8（デフォルト）、SHIFT_JIS
 
 ## コマンドラインオプション
-- -i, --input <input>      アセンブリ対象のファイルをスペース区切りで指定します。
-- -o, --output <output>    出力ファイルを指定します。
-- -s, --symbol <symbol>    シンボルファイルを指定します。
-- -l, --list <list>        リストファイルを指定します。
-- -v, --version            バージョンを表示します。
-- -?, -h, --help           バージョンを表示します。
+- -i, --input <input>          アセンブリ対象のファイルをスペース区切りで指定します。
+- -im, --input-mode <inMode>   入力ファイルのモードを選択します。（デフォルト：UTF-8、SHIFT_JIS）
+- -o, --output <output>        出力ファイルを指定します。
+- -om, --output-mode <outMode> 出力ファイルのモードを選択します。（デフォルト：BIN、T88、CMT）
+- -s, --symbol <symbol>        シンボルファイルを指定します。
+- -l, --list <list>            リストファイルを指定します。
+- -v, --version                バージョンを表示します。
+- -?, -h, --help               ヘルプを表示します。
 
 # ソースコード書式
 
 ## ニーモニック
 - ザイログ・ニーモニックの表記
 - 大文字、小文字の区別はしない 
-- [本アセンブラで利用できるニーモニック一覧](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestRD_ALL/Test.Z80)
+- [本アセンブラで利用できるニーモニック一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestRD_ALL/Test.Z80)
 
 ## 未定義命令 (Undocumented Instructions) 
-- [IXH, IXL, IYH, IYLに対応](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestUD_LD/Test.Z80)
-- [SLL](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestUD_SLL/Test.Z80)
+- [IXH, IXL, IYH, IYLに対応](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestUD_LD/Test.Z80)
+- [SLL](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestUD_SLL/Test.Z80)
 - [IN F,(C)](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L1), [IN (C)](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L3)
 - [OUT (C), 0](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L2)
 - [ビット操作](https://github.com/AILight/AILZ80ASM/blob/e445250854525bc124ff6156ee328d085be31028/AILZ80ASM.Test/ReleaseDecision/InstructionSet.z80#L786)
 
 ## ラベル
-ラベルは、ネームスペース、標準ラベル、ローカルラベルで指定します。ネームスペースを指定しない場合には、 'main' が割り当てられています。必要に応じて変更をしてください。
+ラベルは、ネームスペース、標準ラベル、ローカルラベルで指定します。ネームスペースを指定しない場合には、 'NS_Main' が割り当てられています。必要に応じて変更をしてください。
 ラベルは指定した行以降は、下位のラベルを利用するときには上位のラベル名を省略することが出来ます。
 
 `マクロ内から外部のラベルを参照するときには、ネームスペース付きで呼び出す必要がありますので、注意が必要です。`
 	
 #### ラベルの宣言
 - <ネームスペース名[::]> 
-  - デフォルト： `main`
+  - デフォルト： `NS_Main`
 - <ラベル名[:]>
   - 標準ラベル
 - <[.]ローカルラベル名>
   - ローカルラベル
 
 #### ラベルの指定
-- <ネームスペース>:<ラベル名>.<ローカルラベル名>
+- <ネームスペース>.<ラベル名>.<ローカルラベル名>
 - <ラベル名>.<ローカルラベル名>
 - <ローカルラベル名>
 
@@ -67,7 +69,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - .@H をラベルに追加すると、上位1バイトを取得 （.@HIGH でも可能）
 - .@L をラベルに追加すると、下位1バイトを取得 （.@LOW  でも可能）
 - .@T をラベルに追加すると、ラベルに指定した名前を文字列として取得 （.@TEXT でも可能）
-- [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+- [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
 - [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/74dd29bfbceda9c986ed50fe651b0c0d89127637/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
 
 #### ラベル指定サンプル
@@ -138,7 +140,7 @@ addr:
 - <式3>
   - 先アドレスを指定した場合には、0で埋めます。<式3>を設定するとその値で埋めます。
 - メモリのアライメントを合わせるには、ALIGNをお勧めします。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestCS_ORG/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ORG/Test.Z80)
 
 ```
 	ORG $1000
@@ -162,7 +164,7 @@ LB3000:
 #### <ラベル> EQU <式>
 - 指定したラベルに、<式> の値を持たせます。
 - ローカルラベルで利用することも可能です。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
 
 ```
 PORT_A  equ $CC
@@ -180,14 +182,14 @@ PORT_A  equ $CC
 - ロケーションカウンタの値を、<式>で設定したアライメント境界まで移動します。
 - <式>に設定できる値は、2のべき乗である必要があります。
 - 移動により空いた領域には、0 または <式2> の値で埋められます。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
 #### INCLUDE [<ファイル名>], [<ファイルタイプ>], [<開始位置>], [<長さ>]
 - ファイル名の内容を、その場所に展開します
 - ファイルタイプ：TEXT と BINARY が選択できます。省略するとTEXTになります。また短縮形 T, B が使えます。
 - 開始位置:ファイルの読み出し開始位置が指定できます。（ファイルタイプがBINARYの時に有効）
 - 長さ:ファイルの読み込み長さが指定できます。（ファイルタイプがBINARYの時に有効）
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Include/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.Z80)
 ```
 include "Test.inc"			; テキストファイルとして展開されます
 include "Test.inc", B			; バイナリーファイルとして展開されます
@@ -230,7 +232,7 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - 引数に付けた名前がマクロ内で利用できます
 - マクロ名に()を含める事が出来ます。ただし先頭に付ける事は出来ません
 - マクロの中から外の要素を参照するには、ネームスペースを含めた名前にする必要があります。[サンプル](https://github.com/AILight/AILZ80ASM/blob/034672f506f5253b74824598faf35fdbc5000c99/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80#L55)
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80)
 ```
 ARG1	equ 2
 .Three  equ 3
@@ -258,7 +260,7 @@ END MACRO
 - 式1に設定した値の回数分をREPEATの中に記述してある命令を展開します
 - 式2には、最終の展開時に削除したい命令数を負の値で設定します
 - ネストに対応しています
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Repeat/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Repeat/Test.Z80)
 
 ```
 REPEAT 3
@@ -280,7 +282,7 @@ END REPEAT
 - #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
 - #ENDIF: 条件付きアセンブルを終了します。
 - #ERROR: 無条件にエラーを発生させます。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/master/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
 
 ```
 #if mode == 1
@@ -291,3 +293,20 @@ END REPEAT
 	#error "modeの値が範囲外です。"
 #endif
 ```
+## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
+式をまとめる事が出来ます
+- 複数行にまたがる事は出来ません。
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Function/Test.Z80)
+
+```
+	LD A, ABS(-1)	; LD A, 1
+	LD B, ABS(1)	; LD B, 1
+
+Function ABS(value) => value < 0 ? value * -1 : value
+```
+
+## 謝辞
+- 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
+- 山本昌志様（Z80命令セット）[Yamamoto's Laboratory](http://www.yamamo10.jp/yamamoto/index.html)
+- 神楽坂朋様（Z80命令表）[神楽坂製作所](http://tomocyan.net/~kagurazaka/html/index2.html)
+- Thomas Scherrer様（Z80 Undocumented Instructions） [Thomas Scherrer Z80-Family HomePage](http://www.z80.info/index.htm)

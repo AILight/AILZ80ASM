@@ -15,7 +15,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void TestPP_Function()
         {
-            //Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
 
         [TestMethod]
