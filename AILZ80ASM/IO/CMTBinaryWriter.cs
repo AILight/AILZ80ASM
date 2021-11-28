@@ -31,15 +31,11 @@ namespace AILZ80ASM.IO
         /// ブロックを書き込み
         /// </summary>
         /// <param name="buffer"></param>
-        private void WriteDataBlock(byte[] buffer, bool withLength)
+        private void WriteDataBlock(byte[] buffer)
         {
             var sum = buffer.Sum(m => m);
             var check = 0x100 - (sum & 0xff);   // チェックバイト
             WriteStream((byte)0x3a);
-            if (withLength)
-            {
-                WriteStream((byte)buffer.Length);
-            }
             WriteStream(buffer);
             WriteStream((byte)check);
 
@@ -56,8 +52,10 @@ namespace AILZ80ASM.IO
             var readPointer = 0;
             while (readPointer < Buffer.Length)
             {
-                var readBuffer = Buffer.Skip(readPointer).Take(255).ToArray();
-                WriteDataBlock(readBuffer, true);
+                var readBuffer = Buffer.Skip(readPointer).Take(255);
+                var tmpBuffer = (new byte[1]).Concat(readBuffer).ToArray();
+                tmpBuffer[0] = (byte)readBuffer.Count();
+                WriteDataBlock(tmpBuffer);
 
                 readPointer += readBuffer.Count();
             }
@@ -65,7 +63,7 @@ namespace AILZ80ASM.IO
 
         private void WriteHeader()
         {
-            WriteDataBlock(new byte[] { (byte)(StartAddress >> 8), (byte)(StartAddress & 0xFF) }, false);
+            WriteDataBlock(new byte[] { (byte)(StartAddress >> 8), (byte)(StartAddress & 0xFF) });
         }
 
         private void WriteEnd()
