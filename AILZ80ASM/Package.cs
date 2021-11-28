@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace AILZ80ASM
 {
@@ -14,7 +15,7 @@ namespace AILZ80ASM
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
         public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
 
-        public Package(FileInfo[] files, AsmISA asmISA)
+        public Package(FileInfo[] files, string inputMode, AsmISA asmISA)
         {
             switch (asmISA)
             {
@@ -26,6 +27,7 @@ namespace AILZ80ASM
             }
             var label = new Label("NS_Main", AssembleLoad);
             AssembleLoad.AddLabel(label);
+            AssembleLoad.InputMode = inputMode;
 
             foreach (var fileInfo in files)
             {
@@ -188,13 +190,23 @@ namespace AILZ80ASM
 
         public void SaveList(FileInfo list)
         {
-            using var fileStream = list.OpenWrite();
-            using var streamWriter = new StreamWriter(fileStream);
+            var encoding = Encoding.UTF8;
+            switch (AssembleLoad.InputMode)
+            {
+                case "UTF-8":
+                    encoding = Encoding.UTF8;
+                    break;
+                case "SHIFT_JIS":
+                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                    encoding = Encoding.GetEncoding("SHIFT_JIS");
+                    break;
+                default:
+                    break;
+            }
 
+            using var streamWriter = new StreamWriter(list.FullName, false, encoding);
             SaveList(streamWriter);
-
             streamWriter.Close();
-            fileStream.Close();
         }
 
         public void SaveList(StreamWriter streamWriter)
