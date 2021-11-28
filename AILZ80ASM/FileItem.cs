@@ -26,22 +26,7 @@ namespace AILZ80ASM
             AssembleLoad = asmLoad;
             FileInfo = fileInfo;
 
-            // TODO: AsmLoadに持っていくこと。
-            var encoding = Encoding.UTF8;
-            switch (asmLoad.InputMode)
-            {
-                case "UTF-8":
-                    encoding = Encoding.UTF8;
-                    break;
-                case "SHIFT_JIS":
-                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                    encoding = Encoding.GetEncoding("SHIFT_JIS");
-                    break;
-                default:
-                    break;
-            }
-
-            using var streamReader = new StreamReader(fileInfo.FullName, encoding);
+            using var streamReader = new StreamReader(fileInfo.FullName, asmLoad.Encoding);
             Read(streamReader);
             streamReader.Close();
 

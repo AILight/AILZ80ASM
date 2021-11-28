@@ -67,8 +67,11 @@ namespace AILZ80ASM
                                 bytes = bytes.Select(m => value).ToArray();
                             }
                         }
+                        var newAsmAddress = new AsmAddress(programAddress, outputAddress);
+                        asmLoad.AddAsmAddress(newAsmAddress);
 
-                        returnValue = new OperationItemSystem { Address = new AsmAddress(programAddress, outputAddress), ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
+
+                        returnValue = new OperationItemSystem { Address = newAsmAddress, ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
                     }
                     break;
                 case "ALIGN":

@@ -42,7 +42,7 @@ namespace AILZ80ASM
                 defaultValue: "BIN",
                 parameters: new[] { new Parameter { Name = "BIN", Description = "出力ファイルをBIN形式で出力します。" },
                                     new Parameter { Name = "HEX", Description = "（未対応）出力ファイルをHEX形式で出力します。" },
-                                    new Parameter { Name = "T88", Description = "（未対応）出力ファイルをT88形式で出力します。" },
+                                    new Parameter { Name = "T88", Description = "（仮対応）出力ファイルをT88形式で出力します。" },
                                     new Parameter { Name = "CMT", Description = "（未対応）出力ファイルをCMT形式で出力します。" },},
                 required: false));
 
@@ -111,7 +111,7 @@ namespace AILZ80ASM
         /// <param name="list"></param>
         /// <returns></returns>
         static public bool Assember(
-                FileInfo[] inputs, string inputMode, FileInfo output, string outputMode, FileInfo symbol, FileInfo list)
+                FileInfo[] inputs, string inputModeString, FileInfo output, string outputModeString, FileInfo symbol, FileInfo list)
         {
             try
             {
@@ -140,13 +140,42 @@ namespace AILZ80ASM
                     throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {symbol.Name}");
                 }
 
-                var package = new Package(inputs, inputMode, AsmISA.Z80);
+                var inputMode = AsmLoad.InputModeEnum.UTF_8;
+                switch (inputModeString)
+                {
+                    case "UTF-8":
+                        inputMode = AsmLoad.InputModeEnum.UTF_8;
+                        break;
+                    case "SHIFT_JIS":
+                        inputMode = AsmLoad.InputModeEnum.SHIFT_JIS;
+                        break;
+                    default:
+                        break;
+                }
+                var outputMode = AsmLoad.OutputModeEnum.BIN;
+                switch (outputModeString)
+                {
+                    case "BIN":
+                        outputMode = AsmLoad.OutputModeEnum.BIN;
+                        break;
+                    case "T88":
+                        outputMode = AsmLoad.OutputModeEnum.T88;
+                        break;
+                    case "CMT":
+                        outputMode = AsmLoad.OutputModeEnum.CMT;
+                        break;
+                    default:
+                        break;
+                }
+
+
+                var package = new Package(inputs, inputMode, outputMode, AsmISA.Z80);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
                     if (package.Errors.Length == 0)
                     {
-                        package.SaveBin(output);
+                        package.SaveOutput(output);
                     }
                 }
                 package.OutputError();

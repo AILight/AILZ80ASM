@@ -13,6 +13,20 @@ namespace AILZ80ASM
             Global,
             Local
         }
+
+        public enum InputModeEnum
+        {
+            UTF_8,
+            SHIFT_JIS,
+        }
+
+        public enum OutputModeEnum
+        {
+            BIN,
+            T88,
+            CMT,
+        }
+
         private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
 
         private string _GlobalLabelName;
@@ -26,11 +40,13 @@ namespace AILZ80ASM
             }
         }
         public string LabelName { get; set; }
+
         public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include循環展開チェック用
         public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
 
         public Label[] AllLabels => Labels.Union(LocalLabels).ToArray();
         public Function[] AllFunctions => Functions.Union(LocalFunctions).ToArray();
+        public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
         public List<Label> Labels { get; private set; } = new List<Label>();
         public List<Label> LocalLabels { get; private set; } = new List<Label>();
         public List<Macro> Macros { get; private set; } = new List<Macro>();
@@ -40,7 +56,35 @@ namespace AILZ80ASM
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
         public ISA ISA { get; private set; }
-        public string InputMode { get; set; }
+        public InputModeEnum InputMode { get; set; }
+        public OutputModeEnum OutputMode { get; set; }
+        public System.Text.Encoding Encoding
+        {
+            get
+            {
+                var encoding = System.Text.Encoding.UTF8;
+                switch (InputMode)
+                {
+                    case InputModeEnum.UTF_8:
+                        encoding = System.Text.Encoding.UTF8;
+                        break;
+                    case InputModeEnum.SHIFT_JIS:
+                        try
+                        {
+                            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                            encoding = System.Text.Encoding.GetEncoding("SHIFT_JIS");
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("お使いの環境では、SHIFT_JISをご利用いただくことは出来ません。", ex);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return encoding;
+            }
+        }
 
         public AsmLoad(ISA isa)
         {
@@ -58,6 +102,7 @@ namespace AILZ80ASM
                 ScopeMode = this.ScopeMode,
                 GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
+                AsmAddresses = this.AsmAddresses,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
                 Macros = this.Macros,
@@ -80,6 +125,7 @@ namespace AILZ80ASM
                 ScopeMode = scopeMode,
                 GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
+                AsmAddresses = this.AsmAddresses,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
                 Macros = this.Macros,
@@ -198,6 +244,11 @@ namespace AILZ80ASM
             var function = Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
 
             return function;
+        }
+
+        public void AddAsmAddress(AsmAddress asmAddress)
+        {
+            AsmAddresses.Add(asmAddress);
         }
     }
 }

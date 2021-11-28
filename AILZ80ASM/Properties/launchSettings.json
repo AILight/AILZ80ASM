@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "-h --input-mode"
+      "commandLineArgs": " -i .\\Main.z80 -o .\\Main.t88 -om T88"
     }
   }
 }
