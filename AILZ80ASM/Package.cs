@@ -1,5 +1,4 @@
-﻿using AILZ80ASM.AIStreamWriter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -170,6 +169,7 @@ namespace AILZ80ASM
                     SaveT88(stream, outputFilename);
                     break;
                 case AsmLoad.OutputModeEnum.CMT:
+                    SaveCMT(stream);
                     break;
                 default:
                     break;
@@ -199,6 +199,24 @@ namespace AILZ80ASM
             }
 
             var binaryWriter = new IO.T88BinaryWriter(outputFilename, address, memoryStream.ToArray(), stream);
+            binaryWriter.Write();
+        }
+
+        public void SaveCMT(Stream stream)
+        {
+            using var memoryStream = new MemoryStream();
+            foreach (var item in FileItems)
+            {
+                item.SaveBin(memoryStream);
+            }
+
+            var address = default(UInt16);
+            if (AssembleLoad.AsmAddresses.Count > 0)
+            {
+                address = AssembleLoad.AsmAddresses.FirstOrDefault().Program;
+            }
+
+            var binaryWriter = new IO.CMTBinaryWriter(address, memoryStream.ToArray(), stream);
             binaryWriter.Write();
         }
 

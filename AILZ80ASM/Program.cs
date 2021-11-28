@@ -41,9 +41,9 @@ namespace AILZ80ASM
                 description: "出力ファイルのモードを選択します。",
                 defaultValue: "BIN",
                 parameters: new[] { new Parameter { Name = "BIN", Description = "出力ファイルをBIN形式で出力します。" },
-                                    new Parameter { Name = "HEX", Description = "（未対応）出力ファイルをHEX形式で出力します。" },
-                                    new Parameter { Name = "T88", Description = "（仮対応）出力ファイルをT88形式で出力します。" },
-                                    new Parameter { Name = "CMT", Description = "（未対応）出力ファイルをCMT形式で出力します。" },},
+                                    new Parameter { Name = "HEX", Description = "出力ファイルをHEX形式で出力します。（未対応）" },
+                                    new Parameter { Name = "T88", Description = "出力ファイルをT88形式で出力します。（ベータ）" },
+                                    new Parameter { Name = "CMT", Description = "出力ファイルをCMT形式で出力します。（ベータ）" },},
                 required: false));
 
             rootCommand.AddOption(new Option<FileInfo>(

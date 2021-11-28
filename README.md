@@ -19,16 +19,18 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ```
 > AILZ80ASM -i sample.z80 -o sample.z80
 ```
-##### ファイル形式
-- UTF-8
+##### 入力ファイル形式
+- UTF-8（デフォルト）、SHIFT_JIS
 
 ## コマンドラインオプション
-- -i, --input <input>      アセンブリ対象のファイルをスペース区切りで指定します。
-- -o, --output <output>    出力ファイルを指定します。
-- -s, --symbol <symbol>    シンボルファイルを指定します。
-- -l, --list <list>        リストファイルを指定します。
-- -v, --version            バージョンを表示します。
-- -?, -h, --help           バージョンを表示します。
+- -i, --input <input>          アセンブリ対象のファイルをスペース区切りで指定します。
+- -im, --input-mode <inMode>   入力ファイルのモードを選択します。（デフォルト：UTF-8、SHIFT_JIS）
+- -o, --output <output>        出力ファイルを指定します。
+- -om, --output-mode <outMode> 出力ファイルのモードを選択します。（デフォルト：BIN、T88、CMT）
+- -s, --symbol <symbol>        シンボルファイルを指定します。
+- -l, --list <list>            リストファイルを指定します。
+- -v, --version                バージョンを表示します。
+- -?, -h, --help               ヘルプを表示します。
 
 # ソースコード書式
 
