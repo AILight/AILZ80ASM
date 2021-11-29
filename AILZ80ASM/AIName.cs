@@ -138,11 +138,6 @@ namespace AILZ80ASM
             }
             argumentList.Add(argument.Trim());
 
-            if (argumentList.Any(m => string.IsNullOrEmpty(m)))
-            {
-                throw new Exception("空の引数がありました");
-            }
-
             return argumentList.ToArray();
 
         }

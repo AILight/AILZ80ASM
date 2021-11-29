@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": " -i .\\SoundTest.z80 -o .\\SoundTest.cmt -om CMT"
+      "commandName": "Project"
     }
   }
 }

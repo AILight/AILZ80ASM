@@ -63,6 +63,16 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_DBDW()
+        {
+            var errors = Assemble("DBDW.Z80");
+
+            Assert.AreEqual(errors.Length, 2);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0021, 3, "DBDW.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0022, 4, "DBDW.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Error()
         {
             var errors = Assemble("Error.Z80");
