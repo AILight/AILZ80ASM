@@ -33,6 +33,8 @@ namespace AILZ80ASM
             E0018,
             E0019,
             E0020,
+            E0021,
+            E0022,
 
             E1011,
             E1012,
@@ -129,7 +131,9 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0017] = "ラベル名と同じネームスペース名は付ける事が出来ません。{0}",
             [ErrorCodeEnum.E0018] = "ネームスペース名と同じラベル名は付ける事が出来ません。{0}",
             [ErrorCodeEnum.E0019] = "指定できる値は、0です。{0}",
-            [ErrorCodeEnum.E0019] = "指定できる値は、00H,08H,10H,18H,20H,28H,30H,38Hです。{0}",
+            [ErrorCodeEnum.E0020] = "指定できる値は、00H,08H,10H,18H,20H,28H,30H,38Hです。{0}",
+            [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。{0}",
+            [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。{0}",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
@@ -156,6 +160,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E2005] = "Include 長さの指定が間違っています。",
             [ErrorCodeEnum.E2006] = "Include 開始アドレスがファイルの長さを超えています。",
             [ErrorCodeEnum.E2007] = "Include にはラベルを指定できません。",
+
             // マクロ
             [ErrorCodeEnum.E3001] = "MACROに対応するEND MACROが見つかりませんでした。",
             [ErrorCodeEnum.E3002] = "END MACROが先に見つかりました。",
