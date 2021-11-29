@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": " -i .\\asm.z80 -o .\\asm.bin -l .\\asm.lst"
+      "commandName": "Project"
     }
   }
 }
