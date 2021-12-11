@@ -14,8 +14,9 @@ namespace AILZ80ASM
             Local
         }
 
-        public enum InputModeEnum
+        public enum EncodeModeEnum
         {
+            AUTO,
             UTF_8,
             SHIFT_JIS,
         }
@@ -23,6 +24,7 @@ namespace AILZ80ASM
         public enum OutputModeEnum
         {
             BIN,
+            HEX,
             T88,
             CMT,
         }
@@ -56,35 +58,8 @@ namespace AILZ80ASM
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
         public ISA ISA { get; private set; }
-        public InputModeEnum InputMode { get; set; }
-        public OutputModeEnum OutputMode { get; set; }
-        public System.Text.Encoding Encoding
-        {
-            get
-            {
-                var encoding = System.Text.Encoding.UTF8;
-                switch (InputMode)
-                {
-                    case InputModeEnum.UTF_8:
-                        encoding = System.Text.Encoding.UTF8;
-                        break;
-                    case InputModeEnum.SHIFT_JIS:
-                        try
-                        {
-                            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                            encoding = System.Text.Encoding.GetEncoding("SHIFT_JIS");
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new Exception("お使いの環境では、SHIFT_JISをご利用いただくことは出来ません。", ex);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return encoding;
-            }
-        }
+        public EncodeModeEnum InputEncodeMode { get; set; }
+        public EncodeModeEnum OutputEncodeMode { get; set; } = EncodeModeEnum.UTF_8;
 
         public AsmLoad(ISA isa)
         {
@@ -250,5 +225,81 @@ namespace AILZ80ASM
         {
             AsmAddresses.Add(asmAddress);
         }
+
+        public EncodeModeEnum GetEncodMode(FileInfo fileInfo)
+        {
+            var encodeMode = InputEncodeMode;
+            if (encodeMode == EncodeModeEnum.AUTO)
+            {
+                using var readStream = fileInfo.OpenRead();
+                using var memoryStream = new MemoryStream();
+                readStream.CopyTo(memoryStream);
+                var bytes = memoryStream.ToArray();
+
+                var isUTF8 = AIEncode.IsUTF8(bytes);
+                var isSHIFT_JIS = AIEncode.IsSHIFT_JIS(bytes);
+                if (!isUTF8 && isSHIFT_JIS)
+                {
+                    encodeMode = EncodeModeEnum.SHIFT_JIS;
+                }
+            }
+            return encodeMode;
+        }
+
+        public System.Text.Encoding GetInputEncoding(FileInfo fileInfo)
+        {
+            var encodeMode = GetEncodMode(fileInfo);
+            var encoding = GetInputEncoding(encodeMode);
+
+            return encoding;
+        }
+
+        public System.Text.Encoding GetInputEncoding(EncodeModeEnum encodeMode)
+        {
+            if (encodeMode == EncodeModeEnum.AUTO)
+            {
+                throw new ArgumentException("encodeMode:AUTOは指定できません");
+            }
+
+            OutputEncodeMode = encodeMode;
+            var encoding = GetEncoding(encodeMode);
+
+            return encoding;
+        }
+
+
+        public System.Text.Encoding GetOutputEncoding()
+        {
+            var encoding = GetEncoding(OutputEncodeMode);
+            return encoding;
+        }
+
+        public static System.Text.Encoding GetEncoding(EncodeModeEnum encodeMode)
+        {
+            var encoding = default(System.Text.Encoding);
+
+            switch (encodeMode)
+            {
+                case EncodeModeEnum.UTF_8:
+                    encoding = System.Text.Encoding.UTF8;
+                    break;
+                case EncodeModeEnum.SHIFT_JIS:
+                    try
+                    {
+                        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                        encoding = System.Text.Encoding.GetEncoding("SHIFT_JIS");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("お使いの環境では、SHIFT_JISをご利用いただくことは出来ません。", ex);
+                    }
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return encoding;
+        }
+
     }
 }

@@ -15,7 +15,7 @@ namespace AILZ80ASM
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
         public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
 
-        public Package(FileInfo[] files, AsmLoad.InputModeEnum inputMode, AsmLoad.OutputModeEnum outputMode, AsmISA asmISA)
+        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmISA asmISA)
         {
             switch (asmISA)
             {
@@ -27,8 +27,7 @@ namespace AILZ80ASM
             }
             var label = new Label("NS_Main", AssembleLoad);
             AssembleLoad.AddLabel(label);
-            AssembleLoad.InputMode = inputMode;
-            AssembleLoad.OutputMode = outputMode;
+            AssembleLoad.InputEncodeMode = encodeMode;
 
             foreach (var fileInfo in files)
             {
@@ -148,25 +147,29 @@ namespace AILZ80ASM
             }
         }
 
-        public void SaveOutput(FileInfo output)
+        public void SaveOutput(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
         {
-            output.Delete();
-            using var fileStream = output.OpenWrite();
+            foreach (var item in outputFiles)
+            {
+                item.Value.Delete();
+                using var fileStream = item.Value.OpenWrite();
 
-            SaveOutput(fileStream, output.Name);
+                SaveOutput(fileStream, item);
 
-            fileStream.Close();
+                fileStream.Close();
+            }
+
         }
 
-        public void SaveOutput(Stream stream, string outputFilename)
+        public void SaveOutput(Stream stream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
         {
-            switch (AssembleLoad.OutputMode)
+            switch (outputFile.Key)
             {
                 case AsmLoad.OutputModeEnum.BIN:
                     SaveBin(stream);
                     break;
                 case AsmLoad.OutputModeEnum.T88:
-                    SaveT88(stream, outputFilename);
+                    SaveT88(stream, outputFile.Value.Name);
                     break;
                 case AsmLoad.OutputModeEnum.CMT:
                     SaveCMT(stream);
@@ -245,7 +248,7 @@ namespace AILZ80ASM
 
         public void SaveList(FileInfo list)
         {
-            using var streamWriter = new StreamWriter(list.FullName, false, AssembleLoad.Encoding);
+            using var streamWriter = new StreamWriter(list.FullName, false, AssembleLoad.GetOutputEncoding());
             SaveList(streamWriter);
             streamWriter.Close();
         }
