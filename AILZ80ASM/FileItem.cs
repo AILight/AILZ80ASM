@@ -25,8 +25,10 @@ namespace AILZ80ASM
 
             AssembleLoad = asmLoad;
             FileInfo = fileInfo;
+            var encodeMode = asmLoad.GetEncodMode(fileInfo);
 
-            using var streamReader = new StreamReader(fileInfo.FullName, asmLoad.Encoding);
+            using var streamReader = new StreamReader(fileInfo.FullName, asmLoad.GetInputEncoding(encodeMode));
+            
             Read(streamReader);
             streamReader.Close();
 

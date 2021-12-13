@@ -10,5 +10,6 @@ namespace AILZ80ASM.CommandLine
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ShortCut { get; set; }
     }
 }

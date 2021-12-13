@@ -32,7 +32,7 @@ namespace AILZ80ASM.CommandLine
                 result += $"Usage:\n";
                 result += $"  {ApplicationName} [options]\n\n";
                 result += $"Options:\n";
-                foreach (var item in Options)
+                foreach (var item in Options.Where(m => !m.IsHide))
                 {
                     var commandList = new List<string>();
                     var commandWidth = 27;
@@ -42,7 +42,24 @@ namespace AILZ80ASM.CommandLine
                     var tmpList = new List<string>();
                     foreach (var index in Enumerable.Range(0, item.Aliases.Length))
                     {
-                        tmpList.Add(item.Aliases[index] + (index == item.Aliases.Length - 1 ? item.GetType().GenericTypeArguments[0] != typeof(bool) ? $" <{item.OptionName}>" : "" : ", "));
+                        var outputAliase = item.Aliases[index];
+                        if (index == item.Aliases.Length - 1 && item.GetType().GenericTypeArguments[0] != typeof(bool))
+                        {
+                            outputAliase += $" <{item.ArgumentName}>";
+                        }
+
+                        if (index > 0)
+                        {
+                            if (index == 1 && tmpList[0].Length == 3)
+                            {
+                                outputAliase = "," + outputAliase;
+                            }
+                            else
+                            {
+                                outputAliase = ", " + outputAliase;
+                            }
+                        }
+                        tmpList.Add(outputAliase);
                     }
 
                     // コマンド側のリストを作成
@@ -56,7 +73,13 @@ namespace AILZ80ASM.CommandLine
                     }
 
                     // 説明文の作成
-                    descriptionList.Add(item.Description);
+                    var description = item.Description;
+                    if (item.IsDefineOptional)
+                    {
+                        description += "(オプション名の省略が可能）";
+                    }
+
+                    descriptionList.Add(description);
 
                     // 表示処理を作成
                     foreach (var index in Enumerable.Range(0, Math.Max(commandList.Count, descriptionList.Count)))
@@ -91,6 +114,16 @@ namespace AILZ80ASM.CommandLine
                 }
                 result += $"  {ApplicationName} {argument} <parameter>\n\n";
 
+                // ショートカット
+                var shrtcuts = option.Parameters.Where(m => !string.IsNullOrEmpty(m.ShortCut));
+                if (shrtcuts.Count() > 0)
+                {
+                    result += $"Shrtcut Usage:\n";
+                    result += $"  {ApplicationName} ";
+                    result += string.Join(" ", shrtcuts.Select(m => m.ShortCut));
+                    result += $"\n\n";
+                }
+
                 if (!string.IsNullOrEmpty(option.Description))
                 {
                     result += $"Description:\n";
@@ -116,6 +149,7 @@ namespace AILZ80ASM.CommandLine
                         result += $"  {parameter.Name}".PadRight(maxLength + 3) + $"{parameter.Description}\n";
                     }
                     result += $"\n";
+
                 }
 
             }
@@ -129,6 +163,16 @@ namespace AILZ80ASM.CommandLine
 
         public void AddOption<T>(Option<T> inputOption)
         {
+            if (string.IsNullOrEmpty(inputOption.ArgumentName))
+            {
+                inputOption.ArgumentName =inputOption.Name;
+            }
+
+            if (inputOption.Required && !string.IsNullOrEmpty(inputOption.DefaultValue))
+            {
+                throw new Exception("RequiredがTrueですが、DefaultValueが設定されています。");
+            }
+
             Options.Add(inputOption);
         }
 
@@ -136,24 +180,37 @@ namespace AILZ80ASM.CommandLine
         {
             try
             {
+                // デフォルト値の設定
+                foreach (var item in Options.Where(m => !string.IsNullOrEmpty(m.DefaultValue)))
+                {
+                    item.SetValue(new[] { item.DefaultValue });
+                    item.Selected = false;                      // デフォルト設定は選択をクリア
+                }
+
                 // オプションに値を積む
                 foreach (var item in InternalParse(args))
                 {
-                    var option = Options.FirstOrDefault(m => m.Aliases.Contains(item.Key));
-                    if (option == default)
-                    {
-                        throw new Exception($"{item.Key}は、有効なコマンドではありません。");
-                    }
-                    option.SetValue(item.Value);
+                    item.Key.SetValue(item.Value.ToArray());
                 }
 
                 // 応答メッセージ有のオプションを処理
                 foreach (var option in Options.Where(m => m.OptionFunc != default))
                 {
-                    if (args.Any(m => option.Aliases.Any(n => n == m)))
+                    if (args.Any(m => option.Aliases.Any(n => string.Compare(n, m, true) == 0)))
                     {
                         this.ParseMessage = option.OptionFunc.Invoke(new string[] { GetValue<string>(option.Name) });
                         return false;
+                    }
+                }
+
+                // デフォルトオプションの実行（必須または、宣言のみ）
+                foreach (var option in Options.Where(m => !m.HasValue && (m.Required || m.Selected) && m.DefaultFunc != default))
+                {
+                    var values = option.DefaultFunc.Invoke(Options.ToArray());
+                    if (values.Length > 0)
+                    {
+                        option.SetValue(values);
+                        option.Selected = false;
                     }
                 }
 
@@ -187,44 +244,119 @@ namespace AILZ80ASM.CommandLine
             return ((Option<T>)option).Value;
         }
 
-
-        /// <summary>
-        /// 引数をParseする
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        private Dictionary<string, List<string>> InternalParse(string[] args)
+        public bool GetSelected(string targetName)
         {
-            var result = new Dictionary<string, List<string>>();
-            var key = default(string);
+            var option = Options.FirstOrDefault(m => m.Name == targetName);
+            if (option == default)
+            {
+                throw new Exception($"有効な名前ではありません。{targetName}");
+            }
+
+            return option.Selected;
+        }
+
+        private Dictionary<IOption, List<string>> InternalParse(string[] args)
+        {
+            var result = new Dictionary<IOption, List<string>>();
+            var existOptionForParameter = new List<IOption>();
+
+            var key = default(IOption);
             var helpMode = false;
+            var saveOption = default(IOption);
+            var saveParameter = default(Parameter);
+            // デフォルトパラメーターを取得
+            var defineOptionalOption = Options.FirstOrDefault(m => m.IsDefineOptional);
+
 
             foreach (var value in args)
             {
                 if (value.StartsWith("-") && !helpMode)
                 {
-                    key = value;
-                    result.Add(key, new List<string>());
-                    // HelpModeチェック
-                    if (Options.Where(m => m.Name == "help").Any(m => m.Aliases.Contains(key)))
+                    // saveParameterに値があったら、オプションとして積む
+                    ParameterEntry(saveOption, saveParameter, existOptionForParameter, result);
+
+                    // Shortcutチェック
+                    var matched = false;
+                    foreach (var option in Options)
                     {
-                        helpMode = true;
+                        saveOption = option;
+                        saveParameter = option.Parameters?.FirstOrDefault(m => !string.IsNullOrEmpty(m.ShortCut) && m.ShortCut == value);
+                        if (saveParameter != default && !existOptionForParameter.Contains(option))
+                        {
+                            matched = true;
+                            break;
+                        }
+                        else if (option.Aliases.Any(m => m == value))
+                        {
+                            // オプションとマッチ
+                            key = option;
+                            if (!result.ContainsKey(key))
+                            {
+                                result.Add(key, new List<string>());
+                                matched = true;
+                                // ヘルプチェック
+                                helpMode = option.IsHelp;
+
+                                break;
+                            }
+                        }
+                    }
+                    if (!matched)
+                    {
+                        throw new Exception($"{value}は、有効なコマンドではありません。");
                     }
                 }
                 else
                 {
                     helpMode = false;
-                    if (!result.ContainsKey(key))
+                    // デフォルトの宣言対応
+                    if (key == default && defineOptionalOption != default)
                     {
-                        throw new Exception($"コマンドの指定が間違っています。{string.Join(" ", args)}");
+                        key = defineOptionalOption;
+                        result.Add(key, new List<string>());
                     }
 
+                    // パラメータ直後の値の場合は、オプションとのマッチを行う
+                    if (saveParameter != default)
+                    {
+                        var option = Options.FirstOrDefault(m => m.Aliases.Contains(saveParameter.ShortCut));
+                        if (option != default)
+                        {
+                            key = option;
+                            if (!result.ContainsKey(key))
+                            {
+                                result.Add(key, new List<string>());
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception($"{value}は、有効な値ではありません。");
+                        }
+                        saveParameter = default;
+                    }
+
+                    // 値を積む
                     result[key].Add(value);
                 }
             }
 
-            return result;
-        }
+            // saveParameterに値があったら、オプションとして積む
+            ParameterEntry(saveOption, saveParameter, existOptionForParameter, result);
 
+            return result;
+
+            static void ParameterEntry(IOption option, Parameter parameter, List<IOption> existOptionForParameter, Dictionary<IOption, List<string>> result)
+            {
+                if (parameter != default)
+                {
+                    if (!result.ContainsKey(option))
+                    {
+                        result.Add(option, new List<string>());
+                    }
+                    result[option].Add(parameter.Name);
+                    existOptionForParameter.Add(option);
+                }
+            }
+        }
     }
 }
