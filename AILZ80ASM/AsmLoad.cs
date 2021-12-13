@@ -238,6 +238,7 @@ namespace AILZ80ASM
 
                 var isUTF8 = AIEncode.IsUTF8(bytes);
                 var isSHIFT_JIS = AIEncode.IsSHIFT_JIS(bytes);
+                encodeMode = EncodeModeEnum.UTF_8;
                 if (!isUTF8 && isSHIFT_JIS)
                 {
                     encodeMode = EncodeModeEnum.SHIFT_JIS;

@@ -9,8 +9,10 @@ NN	EQU 5
 	LD A, ABS(-1)
 	LD B, ABS(1)
 
-	DB FUNC(1, 2), FUNC(3, 4),
+	DB FUNC( 1, 2 ), FUNC(3, 4),
 	DW FUNC(10, 20), FUNC(300, 400),
+	DB FUNC2(3)
 
 Function ABS(value) => value < 0 ? value * -1 : value
 Function FUNC(arg1, arg2) => arg1 * 10 + arg2
+Function FUNC2(arg1) => arg1 + NS_MAIN.JJ + NS_MAIN.KK

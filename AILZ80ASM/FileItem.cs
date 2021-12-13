@@ -27,6 +27,8 @@ namespace AILZ80ASM
             FileInfo = fileInfo;
             var encodeMode = asmLoad.GetEncodMode(fileInfo);
 
+            Console.WriteLine($"Encode:{encodeMode} File:{fileInfo.Name}");
+
             using var streamReader = new StreamReader(fileInfo.FullName, asmLoad.GetInputEncoding(encodeMode));
             
             Read(streamReader);

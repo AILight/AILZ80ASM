@@ -133,5 +133,25 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("$ + 1", asmLoad, asmAddress), 0x8001);
         }
 
+        [TestMethod]
+        public void Calc_09()
+        {
+            Assert.AreEqual(AIMath.ConvertTo<byte>("'0'"), (byte)'0');
+            Assert.AreEqual(AIMath.ConvertTo<byte>("' ' - '0'"), 256 + ((byte)' ' - (byte)'0'));
+            Assert.AreEqual(AIMath.ConvertTo<byte>("':'"), (byte)':');
+            Assert.AreEqual(AIMath.ConvertTo<byte>("'\\''"), (byte)'\'');
+            Assert.AreEqual(AIMath.ConvertTo<byte>("'\\0'"), (byte)0);
+
+            foreach (var item in System.Linq.Enumerable.Range(0x20, 95))
+            {
+                if (item == 0x27)
+                {
+                    continue;
+                }
+
+                var character = (char)(byte)item;
+                Assert.AreEqual(AIMath.ConvertTo<byte>($"'{character}'"), (byte)item);
+            }
+        }
     }
 }

@@ -24,3 +24,10 @@ PUT_CHR2:
 	ret
 
 	ORG ($ + 255 ) / 256 * 256, ($$ + 255 ) / 256 * 256, $AA
+
+NEW_LABLE:
+.TEST1	equ	$			; 敵弾
+.TEST2	equ	$$			; 敵弾
+
+	ORG .TEST1 + 10, .TEST2 + 10
+	ld a, 1

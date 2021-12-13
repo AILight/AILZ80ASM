@@ -62,6 +62,14 @@ namespace AILZ80ASM
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             AsmAddress = asmAddress;
+            if (!EquLabel.HasValue)
+            {
+                try
+                {
+                    EquLabel.SetValueAndAddress(AsmAddress, AsmLoad);
+                }
+                catch { }
+            }
 
             base.PreAssemble(ref asmAddress);
         }

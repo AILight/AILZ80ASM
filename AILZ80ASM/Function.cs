@@ -99,10 +99,14 @@ namespace AILZ80ASM
                 throw new Exception($"引数の数が不一致です。Function:{this.Name}");
             }
 
-            var localAsmLoad = new AsmLoad(asmLoad.ISA);
+            
+            var localAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
+            var globalLabel = new Label("Function_Local::", localAsmLoad);
+            localAsmLoad.AddLabel(globalLabel);
+
             foreach (var index in Enumerable.Range(0, arguments.Length))
             {
-                var label = new Label(Args[index], AIMath.ConvertTo<int>(arguments[index], asmLoad, asmAddress).ToString(), asmLoad);
+                var label = new Label(Args[index], AIMath.ConvertTo<int>(arguments[index], asmLoad, asmAddress).ToString(), localAsmLoad);
                 label.SetValue(asmLoad);
                 localAsmLoad.AddLabel(label);
             }

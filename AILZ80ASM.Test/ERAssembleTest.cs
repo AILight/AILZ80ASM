@@ -73,6 +73,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Equ()
+        {
+            var errors = Assemble("Equ.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "Equ.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Error()
         {
             var errors = Assemble("Error.Z80");

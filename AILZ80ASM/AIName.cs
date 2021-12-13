@@ -7,9 +7,10 @@ namespace AILZ80ASM
 {
     public static class AIName
     {
-        private static readonly string RegexPatternLabelValidate = @"^[a-zA-Z0-9_]+";
-        private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+";
-        private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+";
+        private static readonly string RegexPatternLabelValidate = @"^[a-zA-Z0-9_]+$";
+        private static readonly string RegexPatternMacroValidate = @"^[a-zA-Z0-9_()]+$";
+        private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+$";
+        private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+$";
         private static readonly string RegexPatternLabelInvalid = @"^[0-9]";
 
         public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
@@ -56,7 +57,7 @@ namespace AILZ80ASM
             if (target.StartsWith("(") || target.StartsWith(")"))
                 return false;
 
-            return ValidateName(target, asmLoad);
+            return ValidateNameForMacroName(target, asmLoad);
         }
 
         /// <summary>
@@ -143,7 +144,7 @@ namespace AILZ80ASM
         }
 
         /// <summary>
-        /// 名前のチェック
+        /// 名前のチェック（一般ラベル）
         /// </summary>
         /// <param name="target"></param>
         /// <param name="asmLoad"></param>
@@ -177,6 +178,44 @@ namespace AILZ80ASM
             }
 
             return  Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                   !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+        }
+
+        /// <summary>
+        /// 名前のチェック（一般ラベル）
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="asmLoad"></param>
+        /// <returns></returns>
+        private static bool ValidateNameForMacroName(string target, AsmLoad asmLoad)
+        {
+            if (string.IsNullOrEmpty(target))
+            {
+                return false;
+            }
+
+            // 含まれてはいけない文字の調査
+            if (target.ToArray().Any(m => ":. ".Contains(m)))
+            {
+                return false;
+            }
+
+            if (AIMath.IsNumber(target))
+            {
+                return false;
+            }
+
+            // レジスター文字列、命令の文字列は利用不可
+            if (asmLoad.ISA.IsMatchRegisterName(target))
+            {
+                return false;
+            }
+            if (asmLoad.ISA.IsMatchInstructionName(target))
+            {
+                return false;
+            }
+
+            return Regex.Match(target, RegexPatternMacroValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
                    !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
 
