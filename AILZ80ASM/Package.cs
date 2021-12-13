@@ -25,7 +25,7 @@ namespace AILZ80ASM
                 default:
                     throw new NotImplementedException();
             }
-            var label = new Label("NS_Main", AssembleLoad);
+            var label = new Label("NS_Main::", AssembleLoad);
             AssembleLoad.AddLabel(label);
             AssembleLoad.InputEncodeMode = encodeMode;
 

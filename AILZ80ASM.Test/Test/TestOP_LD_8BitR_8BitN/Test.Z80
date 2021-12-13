@@ -5,3 +5,4 @@
 	ld e,5
 	ld h,6
 	ld l,7
+	ld	a, ':'
