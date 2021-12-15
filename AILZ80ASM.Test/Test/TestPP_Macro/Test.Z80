@@ -6,8 +6,7 @@ VRAM_ADDRESS	equ $8001
 	ORG	$9000
 	
 	ALLLD
-ADDR:
-	TestArg 0, 1
+ADDR: TestArg 0, 1
 	TestArg ARG1, ARG1.Three
 	VRAMSET VRAM_ADDRESS
 	VRAMSET ADDR
@@ -65,7 +64,7 @@ macro READ_LABEL
 
 end macro
 
-macro REPEAT_JR TEST
+REPEAT_JR macro TEST
 
 	ld	a, TEST
 	jr nz, .lp
@@ -80,5 +79,5 @@ END REPEAT
 
 .lp
 
-end macro
+endm
 

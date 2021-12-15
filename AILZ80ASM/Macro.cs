@@ -97,6 +97,7 @@ namespace AILZ80ASM
             {
                 var localLineItem = new LineItem(lineItem);
                 localLineItem.SetLabel(lineItem.LabelString);
+                localLineItem.ClearOperation();
 
                 localLineItem.CreateLineDetailItem(asmLoad);
                 lineDetailScopeItems.Add(new LineDetailScopeItem(localLineItem, asmLoad));
