@@ -1,25 +1,25 @@
-﻿INCLUDE ".\Test\TestPP_Repeat\Test.INC"
+﻿INCLUDE ".\Test\TestPP_RepeatCompatible\Test.INC"
 
-REPEAT 3
+REPT 3
         xor     a
-END REPEAT
+ENDM
 
-REPEAT 8 LAST -1
+REPT 8 LAST -1
         ld      (hl), a
         set     5, h
         ld      (hl), a
         add     hl, de
-END REPEAT
+ENDM
 
-REPEAT 2
+REPT 2
         xor     a
 
-REPEAT 3
+REPT 3
         LD      a, 0
-END REPEAT
+ENDM
 
-END REPEAT
+ENDM
 
-REPEAT SCREEN.WIDTH
+REPT SCREEN.WIDTH
         RLA
-END REPEAT
+ENDM

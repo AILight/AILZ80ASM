@@ -15,7 +15,7 @@ ADDR: TestArg 0, 1
 	READ_LABEL
 	REPEAT_JR 3
 
-MACRO ALLLD
+ALLLD MACRO
 	ld a,1
 	ld b,2
 	ld c,3
@@ -23,21 +23,21 @@ MACRO ALLLD
 	ld e,5
 	ld h,6
 	ld l,7
-END MACRO
+	ENDM
 
-macro TestArg a1, a2
+TestArg macro a1, a2
 	ld a, a1
 	ld b, a2
-end macro
+	endm
 
-macro VRAMSET VRAM_ADDRESS
+VRAMSET macro VRAM_ADDRESS
 
 	ld H, VRAM_ADDRESS.@H
 	ld L, VRAM_ADDRESS.@L
 
-end macro
+	endm
 
-macro REPEAT_TEST
+REPEAT_TEST macro
 
 REPEAT 2
         xor     a	
@@ -48,21 +48,21 @@ REPEAT 3 LAST - 1
 	ld b,2
 END REPEAT
 
-end macro
+	endm
 
-macro MACRO_IN_MACRO VRAM_ADDRESS, a11, a22
+MACRO_IN_MACRO macro VRAM_ADDRESS, a11, a22
 
 	MAIN.VRAMSET VRAM_ADDRESS
 
 	main.TestArg a11, a22
 
-end macro
+	endm
 
-macro READ_LABEL
+READ_LABEL macro
 
 	ld hl, MAIN.ADDR
 
-end macro
+	endm
 
 REPEAT_JR macro TEST
 
@@ -79,5 +79,5 @@ END REPEAT
 
 .lp
 
-endm
+	endm
 

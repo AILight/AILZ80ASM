@@ -25,7 +25,7 @@ namespace AILZ80ASM
             }
         }
 
-        public LineDetailItemMacroDefine(LineItem lineItem, AsmLoad asmLoad)
+        protected LineDetailItemMacroDefine(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 

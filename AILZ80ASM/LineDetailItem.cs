@@ -49,9 +49,13 @@ namespace AILZ80ASM
                 {
                     lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
                 }
-                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeat)
+                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeatModern)
                 {
-                    lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
+                }
+                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeatCompatible)
+                {
+                    lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 }
                 else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemConditional)
                 {
@@ -74,7 +78,8 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);

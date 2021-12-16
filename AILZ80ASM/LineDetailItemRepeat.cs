@@ -5,34 +5,34 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class LineDetailItemRepeat : LineDetailItem
+    public abstract class LineDetailItemRepeat : LineDetailItem
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
-        private static readonly string RegexPatternRepeatFullStart = @"^\s*Repeat\s+(?<count>.+)\s+LAST\s+(?<last_arg>.+)$";
-        private static readonly string RegexPatternRepeatSimpleStart = @"^\s*Repeat\s+(?<count>.+)$";
-        private static readonly string RegexPatternRepeatEnd = @"^\s*End\s+Repeat\s*$";
-
         private string RepeatCountLabel { get; set; }
         private string RepeatLastLabel { get; set; }
 
         private readonly List<LineItem> RepeatLines = new List<LineItem>();
         private int RepeatNestedCount { get; set; } = 0;
 
-        private LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
+        protected LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        public static LineDetailItemRepeat Create(LineItem lineItem, AsmLoad asmLoad)
+        protected static LineDetailItemRepeat Create(LineDetailItemRepeat lineDetailItemRepeat, string regexPatternRepeatFullStart, string regexPatternRepeatSimpleStart, string regexPatternRepeatEnd, AsmLoad asmLoad)
         {
-            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var startSimpleMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var lineItem = lineDetailItemRepeat.LineItem;
+            var startMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startSimpleMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // リピート処理中
-            if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeat asmLoad_LineDetailItemRepeat)
+            if (asmLoad.LineDetailItemForExpandItem != default &&
+                asmLoad.LineDetailItemForExpandItem.GetType() == lineDetailItemRepeat.GetType())
             {
+                var asmLoad_LineDetailItemRepeat = asmLoad.LineDetailItemForExpandItem as LineDetailItemRepeat;
+
                 // 終了条件チェック
                 if (endMatched.Success)
                 {
@@ -44,7 +44,7 @@ namespace AILZ80ASM
                         asmLoad_LineDetailItemRepeat.RepeatLines.Add(lineItem);
 
                         asmLoad.LineDetailItemForExpandItem = default;
-                        return new LineDetailItemRepeat(lineItem, asmLoad);
+                        return lineDetailItemRepeat;
                     }
                 }
 
@@ -63,7 +63,7 @@ namespace AILZ80ASM
                 }
 
                 repeatLines.Add(lineItem);
-                return new LineDetailItemRepeat(lineItem, asmLoad);
+                return lineDetailItemRepeat;
             }
             else
             {
@@ -76,12 +76,9 @@ namespace AILZ80ASM
                 // 開始条件チェック
                 if (startMatched.Success)
                 {
-                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad)
-                    {
-                        RepeatCountLabel = startMatched.Groups["count"].Value,
-                        RepeatLastLabel = startMatched.Groups["last_arg"].Value,
-                        RepeatNestedCount = 1
-                    };
+                    lineDetailItemRepeat.RepeatCountLabel = startMatched.Groups["count"].Value;
+                    lineDetailItemRepeat.RepeatLastLabel = startMatched.Groups["last_arg"].Value;
+                    lineDetailItemRepeat.RepeatNestedCount = 1;
                     lineDetailItemRepeat.RepeatLines.Add(lineItem);
                     asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
@@ -89,11 +86,8 @@ namespace AILZ80ASM
                 }
                 else if (startSimpleMatched.Success)
                 {
-                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad)
-                    {
-                        RepeatCountLabel = startSimpleMatched.Groups["count"].Value,
-                        RepeatNestedCount = 1
-                    };
+                    lineDetailItemRepeat.RepeatCountLabel = startSimpleMatched.Groups["count"].Value;
+                    lineDetailItemRepeat.RepeatNestedCount = 1;
                     lineDetailItemRepeat.RepeatLines.Add(lineItem);
                     asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
