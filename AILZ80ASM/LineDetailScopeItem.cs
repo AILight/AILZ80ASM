@@ -22,8 +22,9 @@ namespace AILZ80ASM
             AsmLoad = asmLoad.Clone();
             LineDetailExpansionItems = new[]
             {
-               new LineDetailExpansionItemOperation(lineItem, asmLoad)
+               new LineDetailExpansionItemOperation(lineItem, AsmLoad)
             };
+            asmLoad.SetScope(AsmLoad);
         }
 
         public LineDetailScopeItem(LineDetailExpansionItem[] lineDetailExpansionItems, AsmLoad asmLoad)

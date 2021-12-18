@@ -116,7 +116,8 @@ namespace AILZ80ASM
                 {
                     var lineItems = default(LineItem[]);
                     var localAsmLoad = AsmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
-                    localAsmLoad.LabelName = $"REPEAT_{Guid.NewGuid():N}";
+                    var localLabel = new Label($"REPEAT_{Guid.NewGuid():N}:", localAsmLoad);
+                    localAsmLoad.AddLabel(localLabel);
 
                     if (repeatCounter == count)
                     {

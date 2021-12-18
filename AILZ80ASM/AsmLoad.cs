@@ -31,17 +31,8 @@ namespace AILZ80ASM
 
         private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
 
-        private string _GlobalLabelName;
-        public string GlobalLabelName
-        {
-            get { return _GlobalLabelName; }
-            set
-            {
-                _GlobalLabelName = value;
-                LabelName = "";
-            }
-        }
-        public string LabelName { get; set; }
+        public string GlobalLabelName { get; private set; }
+        public string LabelName { get; private set; }
 
         public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include循環展開チェック用
         public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
@@ -134,6 +125,12 @@ namespace AILZ80ASM
             }
         }
 
+        public void SetScope(AsmLoad asmLoad)
+        {
+            this.GlobalLabelName = asmLoad.GlobalLabelName;
+            this.LabelName = asmLoad.LabelName;
+        }
+
         public void AddLabel(Label label)
         {
             // 同一名のラベル
@@ -151,6 +148,8 @@ namespace AILZ80ASM
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
                     }
+                    this.GlobalLabelName = label.GlobalLabelName;
+                    this.LabelName = "";
                     break;
                 case Label.LabelLevelEnum.Label:
                     if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.GlobalLabel &&
@@ -158,6 +157,7 @@ namespace AILZ80ASM
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
                     }
+                    this.LabelName = label.LabelName;
                     break;
                 case Label.LabelLevelEnum.SubLabel:
                     // 何もしない

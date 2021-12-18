@@ -126,19 +126,20 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Macro.Z80");
 
-            Assert.AreEqual(errors.Length, 12);
+            Assert.AreEqual(errors.Length, 13);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 2, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 19, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3005, 32, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 37, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 17, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 20, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3005, 33, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 38, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3004, 3, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3004, 5, "Macro.Z80", errors);
             AssertErrorItemMessage(Error.ErrorCodeEnum.E3010, 12, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 43, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 48, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 53, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 58, "Macro.Z80", errors);
-            AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 62, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 44, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 49, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 54, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 59, "Macro.Z80", errors);
+            AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 63, "Macro.Z80", errors);
         }
 
         [TestMethod]

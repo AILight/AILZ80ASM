@@ -18,6 +18,7 @@ namespace AILZ80ASM
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
             LineItem = lineItem;
+            /*
             // ラベルの処理をする
             if (lineItem.LabelString.EndsWith("::"))
             {
@@ -27,14 +28,15 @@ namespace AILZ80ASM
             {
                 asmLoad.LabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 1);
             }
+            */
 
             AsmLoad = asmLoad.Clone();
         }
 
         public static LineDetailItem CreateLineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
-            // ラベルの処理
-            ProcessAsmLoad(lineItem, asmLoad);
+            //// ラベルの処理
+            //ProcessAsmLoad(lineItem, asmLoad);
 
             // インクルードのチェック
             var lineDetailItem = default(LineDetailItem);
@@ -91,6 +93,7 @@ namespace AILZ80ASM
             return lineDetailItem;
         }
 
+        /*
         private static void ProcessAsmLoad(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!string.IsNullOrEmpty(lineItem.LabelString))
@@ -105,6 +108,7 @@ namespace AILZ80ASM
                 }
             }
         }
+        */
 
         public virtual void ExpansionItem()
         {

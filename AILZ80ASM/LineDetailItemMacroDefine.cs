@@ -51,8 +51,10 @@ namespace AILZ80ASM
                 {
                     asmLoad.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3006));
                 }
-
-                asmLoad_LineDetailItemMacro.MacroLines.Add(lineItem);
+                else
+                {
+                    asmLoad_LineDetailItemMacro.MacroLines.Add(lineItem);
+                }
 
                 if (endMatched.Success)
                 {
