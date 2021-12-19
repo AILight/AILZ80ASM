@@ -115,12 +115,12 @@ namespace AILZ80ASM.CommandLine
                 result += $"  {ApplicationName} {argument} <parameter>\n\n";
 
                 // ショートカット
-                var shrtcuts = option.Parameters.Where(m => !string.IsNullOrEmpty(m.ShortCut));
-                if (shrtcuts.Count() > 0)
+                var shortcuts = option.Parameters.Where(m => !string.IsNullOrEmpty(m.ShortCut));
+                if (shortcuts.Count() > 0)
                 {
-                    result += $"Shrtcut Usage:\n";
+                    result += $"Shortcut Usage:\n";
                     result += $"  {ApplicationName} ";
-                    result += string.Join(" ", shrtcuts.Select(m => m.ShortCut));
+                    result += string.Join(" ", shortcuts.Select(m => m.ShortCut));
                     result += $"\n\n";
                 }
 

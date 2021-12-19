@@ -69,9 +69,9 @@ namespace AILZ80ASM
                 Description = "出力ファイルのモードを選択します。",
                 DefaultValue = "bin",
                 Parameters = new[] { new Parameter { Name = "bin", ShortCut = "-bin", Description = "出力ファイルをBIN形式で出力します。" },
-                                     new Parameter { Name = "hex", ShortCut = "-hex", Description = "出力ファイルをHEX形式で出力します。（未対応）" },
-                                     new Parameter { Name = "t88", ShortCut = "-t88", Description = "出力ファイルをT88形式で出力します。（ベータ）" },
-                                     new Parameter { Name = "cmt", ShortCut = "-cmt", Description = "出力ファイルをCMT形式で出力します。（ベータ）" },},
+                                     //new Parameter { Name = "hex", ShortCut = "-hex", Description = "出力ファイルをHEX形式で出力します。（未対応）" },
+                                     new Parameter { Name = "t88", ShortCut = "-t88", Description = "出力ファイルをT88形式で出力します。" },
+                                     new Parameter { Name = "cmt", ShortCut = "-cmt", Description = "出力ファイルをCMT形式で出力します。" },},
                 Required = false
             });
 
@@ -88,6 +88,7 @@ namespace AILZ80ASM
             });
 
             // 隠しコマンド
+            /*
             rootCommand.AddOption(new Option<FileInfo>()
             {
                 Name = "outputHex",
@@ -98,7 +99,7 @@ namespace AILZ80ASM
                 IsHide = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".hex"); }
             });
-
+            */
             // 隠しコマンド
             rootCommand.AddOption(new Option<FileInfo>()
             {
@@ -192,7 +193,7 @@ namespace AILZ80ASM
             var outputMode = rootCommand.GetValue<string>("outputMode");
             var outputModeSelected = rootCommand.GetSelected("outputMode");
             var outputBin = rootCommand.GetValue<FileInfo>("outputBin");
-            var outputHex = rootCommand.GetValue<FileInfo>("outputHex");
+            //var outputHex = rootCommand.GetValue<FileInfo>("outputHex");
             var outputT88 = rootCommand.GetValue<FileInfo>("outputT88");
             var outputCMT = rootCommand.GetValue<FileInfo>("outputCMT");
 
@@ -200,12 +201,12 @@ namespace AILZ80ASM
             {
                 result.Add(AsmLoad.OutputModeEnum.BIN, outputBin);
             }
-
+            /*
             if (outputHex != default)
             {
                 result.Add(AsmLoad.OutputModeEnum.HEX, outputHex);
             }
-
+            */
             if (outputT88 != default)
             {
                 result.Add(AsmLoad.OutputModeEnum.T88, outputT88);

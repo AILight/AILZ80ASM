@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": "SoundTest.z80  -bin"
+      "commandName": "Project"
     }
   }
 }
