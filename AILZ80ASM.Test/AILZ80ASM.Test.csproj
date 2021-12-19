@@ -23,6 +23,12 @@
     <None Update="Test\TestCS_ALIGN\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestCS_ORG\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestCS_ORG\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestER\Equ.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -77,6 +83,12 @@
     <None Update="Test\TestER\Address.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestLB_DSDBSDWS_Test\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -113,10 +125,10 @@
     <None Update="Test\TestLB_CALL_Address\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCS_ORG\Test.BIN">
+    <None Update="Test\TestCS_ORG_Rom\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestCS_ORG\Test.Z80">
+    <None Update="Test\TestCS_ORG_Rom\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_Function\Test.BIN">

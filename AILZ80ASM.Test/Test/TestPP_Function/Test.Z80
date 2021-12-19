@@ -4,6 +4,7 @@ KK	EQU 2
 LL	EQU 3
 MM	EQU 4
 NN	EQU 5
+OO	EQU $1234
 
 	LD A, (IX+FUNC(JJ+KK,FUNC(LL+MM,NN)))
 	LD A, ABS(-1)
@@ -12,7 +13,10 @@ NN	EQU 5
 	DB FUNC( 1, 2 ), FUNC(3, 4),
 	DW FUNC(10, 20), FUNC(300, 400),
 	DB FUNC2(3)
+	DB H(OO), L(OO)
 
 Function ABS(value) => value < 0 ? value * -1 : value
 Function FUNC(arg1, arg2) => arg1 * 10 + arg2
-Function FUNC2(arg1) => arg1 + NS_MAIN.JJ + NS_MAIN.KK
+Function FUNC2(arg1) => arg1 + NS_MAIN.JJ + KK
+Function H(v16) => v16 >> 8
+Function L(v16) => v16 & 0xFF

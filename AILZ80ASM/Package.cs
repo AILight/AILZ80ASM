@@ -15,7 +15,7 @@ namespace AILZ80ASM
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
         public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
 
-        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmISA asmISA)
+        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, bool outputTrim, AsmISA asmISA)
         {
             switch (asmISA)
             {
@@ -28,6 +28,8 @@ namespace AILZ80ASM
             var label = new Label("NS_Main::", AssembleLoad);
             AssembleLoad.AddLabel(label);
             AssembleLoad.InputEncodeMode = encodeMode;
+
+            AssembleLoad.OutputTrim = outputTrim;
 
             foreach (var fileInfo in files)
             {
@@ -58,6 +60,9 @@ namespace AILZ80ASM
 
             // アセンブルを行う
             InternalAssemble();
+
+            // データのトリムを行う
+            TrimData();
         }
 
         /// <summary>
@@ -144,6 +149,17 @@ namespace AILZ80ASM
             foreach (var fileItem in FileItems)
             {
                 fileItem.Assemble();
+            }
+        }
+
+        /// <summary>
+        /// データトリムする
+        /// </summary>
+        private void TrimData()
+        {
+            foreach (var operationItem in AssembleLoad.TirmOperationITems)
+            {
+                operationItem.TrimData();
             }
         }
 
@@ -298,7 +314,7 @@ namespace AILZ80ASM
         /// <param name="errorLineItems"></param>
         private static void InternalOutputError(ErrorLineItem[] errorLineItems, string title)
         {
-            foreach (var errorLineItem in errorLineItems)
+            foreach (var errorLineItem in errorLineItems.Distinct())
             {
                 var errorCode = errorLineItem.ErrorCode.ToString();
                 var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}:{(errorLineItem.LineItem.LineIndex)} ";

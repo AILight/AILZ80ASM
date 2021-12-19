@@ -46,11 +46,14 @@ namespace AILZ80ASM
         public List<Function> Functions { get; private set; } = new List<Function>();
         public List<Function> LocalFunctions { get; private set; } = new List<Function>();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
+        public List<AsmLoad> AsmLoads { get; private set; } = new List<AsmLoad>();
+        public List<OperationItem> TirmOperationITems { get; private set; } = new List<OperationItem>();
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
         public ISA ISA { get; private set; }
         public EncodeModeEnum InputEncodeMode { get; set; }
         public EncodeModeEnum OutputEncodeMode { get; set; } = EncodeModeEnum.UTF_8;
+        public bool OutputTrim { get; internal set; }
 
         public AsmLoad(ISA isa)
         {
@@ -63,32 +66,13 @@ namespace AILZ80ASM
         /// <returns></returns>
         public AsmLoad Clone()
         {
-            return new AsmLoad(this.ISA)
-            {
-                ScopeMode = this.ScopeMode,
-                GlobalLabelName = this.GlobalLabelName,
-                LabelName = this.LabelName,
-                AsmAddresses = this.AsmAddresses,
-                LoadFiles = this.LoadFiles,
-                LoadMacros = this.LoadMacros,
-                Macros = this.Macros,
-                LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
-
-                Labels = this.Labels,
-                LocalLabels = this.LocalLabels,
-
-                Functions = this.Functions,
-                LocalFunctions = this.LocalFunctions,
-
-                Errors = this.Errors
-            };
+            return Clone(this.ScopeMode);
         }
 
         public AsmLoad Clone(ScopeModeEnum scopeMode)
         {
-            return new AsmLoad(this.ISA)
+            var asmLoad = new AsmLoad(this.ISA)
             {
-                ScopeMode = scopeMode,
                 GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
                 AsmAddresses = this.AsmAddresses,
@@ -103,8 +87,43 @@ namespace AILZ80ASM
                 Functions = this.Functions,
                 LocalFunctions = scopeMode == ScopeModeEnum.Global ? this.LocalFunctions : new List<Function>(),
 
-                Errors = this.Errors
+                Errors = this.Errors,
+                OutputTrim = this.OutputTrim,
+                TirmOperationITems = this.TirmOperationITems,
             };
+            switch (scopeMode)
+            {
+                case ScopeModeEnum.Global:
+                    asmLoad.ScopeMode = ScopeModeEnum.Global;
+                    asmLoad.LocalLabels = this.LocalLabels;
+                    asmLoad.LocalFunctions = this.LocalFunctions;
+                    break;
+                case ScopeModeEnum.Local:
+                    switch (this.ScopeMode)
+                    {
+                        case ScopeModeEnum.Global:
+                            asmLoad.ScopeMode = ScopeModeEnum.Local;
+                            asmLoad.LocalLabels = new List<Label>();
+                            asmLoad.LocalFunctions = new List<Function>();
+                            break;
+                        case ScopeModeEnum.Local:
+                            asmLoad.ScopeMode = ScopeModeEnum.Local;
+                            asmLoad.LocalLabels = this.LocalLabels;
+                            asmLoad.LocalFunctions = this.LocalFunctions;
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+
+            asmLoad.AsmLoads.AddRange(this.AsmLoads);
+            asmLoad.AsmLoads.Add(this);
+
+            return asmLoad;
         }
 
         public void LoadCloseValidate()
@@ -209,6 +228,16 @@ namespace AILZ80ASM
         {
             var longLabelName = Label.GetLongLabelName(target, this);
             var label = AllLabels.Where(m => (m.HasValue || !hasValue) && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+            if (label == default && this.ScopeMode == ScopeModeEnum.Local &&
+                !AllLabels.Any(m => string.Compare(m.LongLabelName, longLabelName, true) == 0))
+            {
+                var asmLoad = this.AsmLoads.LastOrDefault(m => m.ScopeMode == ScopeModeEnum.Global);
+                if (asmLoad != default)
+                {
+                    longLabelName = Label.GetLongLabelName(target, asmLoad);
+                    label = AllLabels.Where(m => (m.HasValue || !hasValue) && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+                }
+            }
 
             return label;
         }
@@ -217,6 +246,16 @@ namespace AILZ80ASM
         {
             var longFunctionName = Function.GetLongFunctionName(target, this);
             var function = Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
+            if (function == default && this.ScopeMode == ScopeModeEnum.Local &&
+                !Functions.Any(m => string.Compare(m.FullName, longFunctionName, true) == 0))
+            {
+                var asmLoad = this.AsmLoads.LastOrDefault(m => m.ScopeMode == ScopeModeEnum.Global);
+                if (asmLoad != default)
+                {
+                    longFunctionName = Function.GetLongFunctionName(target, asmLoad);
+                    function = Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
+                }
+            }
 
             return function;
         }
@@ -225,6 +264,17 @@ namespace AILZ80ASM
         {
             AsmAddresses.Add(asmAddress);
         }
+
+        public void AddTrimOperationItem(OperationItem operationItem)
+        {
+            TirmOperationITems.Add(operationItem);
+        }
+
+        public void ClearTrimOperationItem()
+        {
+            TirmOperationITems.Clear();
+        }
+
 
         public EncodeModeEnum GetEncodMode(FileInfo fileInfo)
         {

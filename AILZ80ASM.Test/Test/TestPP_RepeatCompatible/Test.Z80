@@ -1,6 +1,6 @@
 ﻿INCLUDE ".\Test\TestPP_RepeatCompatible\Test.INC"
 
-REPT 3
+LB: REPT 3
         xor     a
 ENDM
 
@@ -23,3 +23,5 @@ ENDM
 REPT SCREEN.WIDTH
         RLA
 ENDM
+
+    JP LB

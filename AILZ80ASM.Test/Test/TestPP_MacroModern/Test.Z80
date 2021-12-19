@@ -60,7 +60,7 @@ end macro
 
 macro READ_LABEL
 
-	ld hl, MAIN.ADDR
+	ld hl, ADDR
 
 end macro
 

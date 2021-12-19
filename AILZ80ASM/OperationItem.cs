@@ -29,9 +29,10 @@ namespace AILZ80ASM
         public static bool CanCreate(string operation, AsmLoad asmLoad)
         {
             var can = false;
-            can = can || OperationItemOPCode.CanCreate(operation, asmLoad); // OpeCode
-            can = can || OperationItemData.CanCreate(operation, asmLoad);   // Data
-            can = can || OperationItemSystem.CanCreate(operation, asmLoad); // System
+            can = can || OperationItemOPCode.CanCreate(operation, asmLoad);     // OpeCode
+            can = can || OperationItemData.CanCreate(operation, asmLoad);       // Data
+            can = can || OperationItemDataSpace.CanCreate(operation, asmLoad);  // DataSpace
+            can = can || OperationItemSystem.CanCreate(operation, asmLoad);     // System
 
             return can;
         }
@@ -42,14 +43,30 @@ namespace AILZ80ASM
             var operationItem = default(OperationItem);
 
             // 命令を判別する
-            operationItem ??= OperationItemOPCode.Create(lineDetailExpansionItemOperation, address, asmLoad); // OpeCode
-            operationItem ??= OperationItemData.Create(lineDetailExpansionItemOperation, address, asmLoad);   // Data
-            operationItem ??= OperationItemSystem.Create(lineDetailExpansionItemOperation, address, asmLoad);  // System
+            operationItem ??= OperationItemOPCode.Create(lineDetailExpansionItemOperation, address, asmLoad);       // OpeCode
+            operationItem ??= OperationItemData.Create(lineDetailExpansionItemOperation, address, asmLoad);         // Data
+            operationItem ??= OperationItemDataSpace.Create(lineDetailExpansionItemOperation, address, asmLoad);    // DataSpace
+            operationItem ??= OperationItemSystem.Create(lineDetailExpansionItemOperation, address, asmLoad);       // System
+
+            if (asmLoad.OutputTrim && 
+                operationItem is OperationItemDataSpace operationItemDataSpace && operationItemDataSpace.IsDefaultValueClear)
+            {
+                asmLoad.AddTrimOperationItem(operationItem);
+            }
+            else
+            {
+                asmLoad.ClearTrimOperationItem();
+            }
 
             return operationItem;
         }
 
         public virtual void Assemble(AsmLoad asmLoad)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void TrimData()
         {
             throw new NotImplementedException();
         }

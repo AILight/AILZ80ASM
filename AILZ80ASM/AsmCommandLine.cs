@@ -145,6 +145,14 @@ namespace AILZ80ASM
 
             rootCommand.AddOption(new Option<bool>()
             {
+                Name = "outputTrim",
+                Aliases = new[] { "-t", "--trim" },
+                Description = "DSで確保したメモリが、出力データの最後にある場合にトリムされます。",
+                Required = false,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
                 Name = "version",
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",

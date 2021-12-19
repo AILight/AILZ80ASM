@@ -60,7 +60,7 @@ MACRO_IN_MACRO macro VRAM_ADDRESS, a11, a22
 
 READ_LABEL macro
 
-	ld hl, MAIN.ADDR
+	ld hl, ADDR
 
 	endm
 

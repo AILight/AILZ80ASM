@@ -108,6 +108,16 @@ namespace AILZ80ASM
             if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
             {
                 var lineDetailScopeItems = new List<LineDetailScopeItem>();
+                // ラベルを処理する
+                if (!string.IsNullOrEmpty(LineItem.LabelString))
+                {
+                    var localLineItem = new LineItem(LineItem);
+                    localLineItem.SetLabel(LineItem.LabelString);
+                    localLineItem.ClearOperation();
+
+                    lineDetailScopeItems.Add(new LineDetailScopeItem(localLineItem, this.AsmLoad));
+                }
+
                 var count = AIMath.ConvertTo<UInt16>(RepeatCountLabel, this.AsmLoad);
                 var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertTo<UInt16>(RepeatLastLabel, this.AsmLoad);
                 var repeatLines = RepeatLines.Skip(1).SkipLast(1);

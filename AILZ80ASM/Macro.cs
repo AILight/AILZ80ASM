@@ -93,13 +93,13 @@ namespace AILZ80ASM
             }
 
             var lineDetailScopeItems = new List<LineDetailScopeItem>();
+            // ラベルを処理する
             if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
                 var localLineItem = new LineItem(lineItem);
                 localLineItem.SetLabel(lineItem.LabelString);
                 localLineItem.ClearOperation();
 
-                //localLineItem.CreateLineDetailItem(asmLoad);
                 lineDetailScopeItems.Add(new LineDetailScopeItem(localLineItem, asmLoad));
             }
             // Macro展開用のAsmLoadを作成する

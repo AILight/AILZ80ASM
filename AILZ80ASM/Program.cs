@@ -42,7 +42,8 @@ namespace AILZ80ASM
                             rootCommand.GetOutputFiles(),
                             rootCommand.GetValue<FileInfo>("symbol"),
                             rootCommand.GetValue<FileInfo>("list"),
-                            rootCommand.GetValue<FileInfo>("debug"));
+                            rootCommand.GetValue<FileInfo>("debug"),
+                            rootCommand.GetValue<bool>("outputTrim"));
         }
 
 
@@ -57,7 +58,7 @@ namespace AILZ80ASM
         /// <param name="list"></param>
         /// <returns></returns>
         public static bool Assember(
-                FileInfo[] inputs, AsmLoad.EncodeModeEnum encodeMode, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, FileInfo symbol, FileInfo list, FileInfo debug)
+                FileInfo[] inputs, AsmLoad.EncodeModeEnum encodeMode, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, FileInfo symbol, FileInfo list, FileInfo debug, bool outputTrim)
         {
             try
             {
@@ -110,7 +111,7 @@ namespace AILZ80ASM
                     throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {symbol.Name}");
                 }
 
-                var package = new Package(inputs, encodeMode, AsmISA.Z80);
+                var package = new Package(inputs, encodeMode, outputTrim, AsmISA.Z80);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();

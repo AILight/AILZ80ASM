@@ -13,7 +13,7 @@ namespace AILZ80ASM.Test
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
             using var memoryStream = new MemoryStream();
 
-            return Lib.Assemble(inputFiles, memoryStream, true);
+            return Lib.Assemble(inputFiles, memoryStream, false, true);
         }
 
         [TestMethod]
