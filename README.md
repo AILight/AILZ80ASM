@@ -40,10 +40,10 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 > AILZ80ASM sample.z80
 
 ■ sample.z80をアセンブル、出力はCMT形式
-> AILZ80ASM sample.z80 -om cmt
 > AILZ80ASM sample.z80 -cmt
+> AILZ80ASM sample.z80 -om cmt
 
-■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの表示、DSをTrim
+■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力、DSをTrim
 > AILZ80ASM sample.z80 -bin -cmt -l -t
 
 ■ sample.z80をアセンブル、出力はBIN形式、ファイル名は、output.bin
@@ -169,18 +169,19 @@ addr:
 LB1000:
 	LD A, (LB1000)
 
-	ORG $2000
+	ORG $1010
+LB1010:
+	LD A, (LB1010)
+
+	ORG $2000, $0020
 LB2000:
 	LD A, (LB2000)
-
-	ORG $3000, $0010
-LB3000:
-	LD A, (LB3000)
 ```
 出力結果
 ```
-0000 3A 00 10 3A 00 20 00 00 00 00 00 00 00 00 00 00
-0010 3A 00 30
+0000 3A 00 10 00 00 00 00 00 00 00 00 00 00 00 00 00
+0010 3A 10 10 00 00 00 00 00 00 00 00 00 00 00 00 00
+0020 3A 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00
 ```
 
 #### <ラベル> EQU <式>
@@ -255,8 +256,7 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - MACROからENDMまでがマクロとして定義されます
 - 引数に付けた名前がマクロ内で利用できます
 - マクロ名に()を含める事が出来ます。ただし先頭に付ける事は出来ません
-- マクロの中から外の要素を参照するには、ネームスペースを含めた名前にする必要があります。[サンプル](https://github.com/AILight/AILZ80ASM/blob/034672f506f5253b74824598faf35fdbc5000c99/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80#L55)
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroCompatible/Test.Z80)
 ```
 ARG1	equ 2
 .Three  equ 3
@@ -264,7 +264,7 @@ ARG1	equ 2
 	ALLLD
 	TestArg ARG1, ARG1.Three
 
-MACRO ALLLD
+ALLLD MACRO
 	ld a,1
 	ld b,2
 	ld c,3
@@ -272,31 +272,31 @@ MACRO ALLLD
 	ld e,5
 	ld h,6
 	ld l,7
-END MACRO
+	ENDM
 
-MACRO TestArg a1, a2
+TestArg MACRO a1, a2
 	ld a, a1
 	ld b, a2
-END MACRO
+	ENDM
 ```
 
 #### REPT <式1> [LAST <式2>]　～ ENDM
 - 式1に設定した値の回数分をREPTの中に記述してある命令を展開します
 - 式2には、最終の展開時に削除したい命令数を負の値で設定します
 - ネストに対応しています
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Repeat/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_RepeatCompatible/Test.Z80)
 
 ```
-REPEAT 3
+	REPT 3
         xor     a
-END REPEAT
+	ENDM
 
-REPEAT 8 LAST -1
+	REPT 8 LAST -1
         ld      (hl), a
         set     5, h
         ld      (hl), a
         add     hl, de
-END REPEAT
+	ENDM
 ```
 
 ## 条件付きアセンブル
