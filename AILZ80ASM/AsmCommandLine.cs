@@ -193,7 +193,7 @@ namespace AILZ80ASM
             var outputMode = rootCommand.GetValue<string>("outputMode");
             var outputModeSelected = rootCommand.GetSelected("outputMode");
             var outputBin = rootCommand.GetValue<FileInfo>("outputBin");
-            var outputHex = rootCommand.GetValue<FileInfo>("outputHex");
+            //var outputHex = rootCommand.GetValue<FileInfo>("outputHex");
             var outputT88 = rootCommand.GetValue<FileInfo>("outputT88");
             var outputCMT = rootCommand.GetValue<FileInfo>("outputCMT");
 
@@ -201,12 +201,12 @@ namespace AILZ80ASM
             {
                 result.Add(AsmLoad.OutputModeEnum.BIN, outputBin);
             }
-
+            /*
             if (outputHex != default)
             {
                 result.Add(AsmLoad.OutputModeEnum.HEX, outputHex);
             }
-
+            */
             if (outputT88 != default)
             {
                 result.Add(AsmLoad.OutputModeEnum.T88, outputT88);

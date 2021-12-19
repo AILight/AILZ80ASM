@@ -360,6 +360,7 @@ namespace AILZ80ASM.Test
             }
         }
 
+        /*
         [TestMethod]
         public void Test_CommandLine_Hex()
         {
@@ -417,6 +418,7 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.HEX].Name, "Main.hex");
             }
         }
+        */
 
         [TestMethod]
         public void Test_CommandLine_Bin_CMT_T88()
