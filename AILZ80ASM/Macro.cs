@@ -93,18 +93,20 @@ namespace AILZ80ASM
             }
 
             var lineDetailScopeItems = new List<LineDetailScopeItem>();
+            // ラベルを処理する
             if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
                 var localLineItem = new LineItem(lineItem);
                 localLineItem.SetLabel(lineItem.LabelString);
+                localLineItem.ClearOperation();
 
-                localLineItem.CreateLineDetailItem(asmLoad);
                 lineDetailScopeItems.Add(new LineDetailScopeItem(localLineItem, asmLoad));
             }
             // Macro展開用のAsmLoadを作成する
             var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
             var guid = $"{Guid.NewGuid():N}";
-            macroAsmLoad.GlobalLabelName = $"macro_{this.Name}_{guid}";
+            var globalLabel = new Label($"macro_{this.Name}_{guid}::", macroAsmLoad);
+            macroAsmLoad.AddLabel(globalLabel);
 
             if (arguments.Length > 0)
             {
@@ -126,7 +128,8 @@ namespace AILZ80ASM
                     macroAsmLoad.AddLabel(label);
                 }
             }
-            macroAsmLoad.LabelName = $"label_{this.Name}_{guid}";
+            var localLabel = new Label($"label_{this.Name}_{guid}:", macroAsmLoad);
+            macroAsmLoad.AddLabel(localLabel);
 
             // LineItemsを作成
             var lineItems = this.LineItems.Skip(1).SkipLast(1).Select(m =>

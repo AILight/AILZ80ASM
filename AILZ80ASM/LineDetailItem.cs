@@ -18,36 +18,32 @@ namespace AILZ80ASM
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
             LineItem = lineItem;
-            // ラベルの処理をする
-            if (lineItem.LabelString.EndsWith("::"))
-            {
-                asmLoad.GlobalLabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
-            }
-            else if (lineItem.LabelString.EndsWith(":"))
-            {
-                asmLoad.LabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 1);
-            }
 
             AsmLoad = asmLoad.Clone();
         }
 
         public static LineDetailItem CreateLineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
-            // ラベルの処理
-            ProcessAsmLoad(lineItem, asmLoad);
-
             // インクルードのチェック
             var lineDetailItem = default(LineDetailItem);
 
             if (asmLoad.LineDetailItemForExpandItem != default)
             {
-                if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
+                if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacroDefineModern)
                 {
-                    lineDetailItem ??= LineDetailItemMacroDefine.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
                 }
-                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeat)
+                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacroDefineCompatible)
                 {
-                    lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
+                }
+                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeatModern)
+                {
+                    lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
+                }
+                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeatCompatible)
+                {
+                    lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 }
                 else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemConditional)
                 {
@@ -67,9 +63,11 @@ namespace AILZ80ASM
             }
             else
             {
-                lineDetailItem ??= LineDetailItemMacroDefine.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
@@ -79,21 +77,6 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない
             }
             return lineDetailItem;
-        }
-
-        private static void ProcessAsmLoad(LineItem lineItem, AsmLoad asmLoad)
-        {
-            if (!string.IsNullOrEmpty(lineItem.LabelString))
-            {
-                if (lineItem.LabelString.EndsWith("::"))
-                {
-                    asmLoad.GlobalLabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 2);
-                }
-                else if (lineItem.LabelString.EndsWith(":"))
-                {
-                    asmLoad.LabelName = lineItem.LabelString.Substring(0, lineItem.LabelString.Length - 1);
-                }
-            }
         }
 
         public virtual void ExpansionItem()

@@ -82,7 +82,7 @@ namespace AILZ80ASM
             if (target.IndexOfAny(new[] { '(', ')' }) != -1)
                 return false;
 
-            return ValidateName(target, asmLoad);
+            return ValidateNameForFunction(target, asmLoad);
         }
 
         /// <summary>
@@ -237,5 +237,44 @@ namespace AILZ80ASM
                    Regex.Match(target, RegexPatternLocalLabelNOValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
 
+        /// <summary>
+        /// 名前のチェック（ファンクション）
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="asmLoad"></param>
+        /// <returns></returns>
+        private static bool ValidateNameForFunction(string target, AsmLoad asmLoad)
+        {
+            if (string.IsNullOrEmpty(target))
+            {
+                return false;
+            }
+
+            // 含まれてはいけない文字の調査
+            if (target.ToArray().Any(m => ":. ".Contains(m)))
+            {
+                return false;
+            }
+
+            if (AIMath.IsNumber(target))
+            {
+                return false;
+            }
+
+            // レジスター文字列、命令の文字列は利用不可
+            /*
+            if (asmLoad.ISA.IsMatchRegisterName(target))
+            {
+                return false;
+            }
+            if (asmLoad.ISA.IsMatchInstructionName(target))
+            {
+                return false;
+            }
+            */
+
+            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                   !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+        }
     }
 }

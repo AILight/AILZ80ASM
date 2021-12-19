@@ -9,6 +9,7 @@
             {
                 new LineDetailScopeItem(this.LineItem, this.AsmLoad)
             };
+            asmLoad.SetScope(this.AsmLoad);
         }
 
         public static LineDetailItem Create(LineItem lineItem, AsmLoad asmLoad)

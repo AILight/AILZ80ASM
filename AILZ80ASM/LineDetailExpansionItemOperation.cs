@@ -34,6 +34,10 @@ namespace AILZ80ASM
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
             }
+            if (!string.IsNullOrEmpty(lineItem.LabelString))
+            {
+                asmLoad.AddLabel(Label);
+            }
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress, AsmLoad asmLoad)
@@ -71,10 +75,6 @@ namespace AILZ80ASM
 
             // ラベル設定
             Label.SetAddressLabel(Address);
-            if (Label.HasValue)
-            {
-                asmLoad.AddLabel(Label);
-            }
         }
 
         public override void Assemble(AsmLoad asmLoad)

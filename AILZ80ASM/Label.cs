@@ -77,7 +77,7 @@ namespace AILZ80ASM
                 {
                     // グローバルラベル
                     GlobalLabelName = matchedGlobalLabel.Groups["label"].Value;
-                    asmLoad.GlobalLabelName = GlobalLabelName;
+                    LabelName = "";
                     LabelLevel = LabelLevelEnum.GlobalLabel;
                 }
                 else
@@ -88,7 +88,6 @@ namespace AILZ80ASM
                     {
                         // ラベル
                         LabelName = matchedLabel.Groups["label"].Value;
-                        asmLoad.LabelName = LabelName;
                         LabelLevel = LabelLevelEnum.Label;
 
                     }
