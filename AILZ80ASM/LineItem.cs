@@ -62,6 +62,12 @@ namespace AILZ80ASM
             LabelString = labelName;
         }
 
+        public void ClearOperation()
+        {
+            OperationString = "";
+            LineString = $"{LabelString} {CommentString}";
+        }
+
         public void CreateLineDetailItem(AsmLoad asmLoad)
         {
             // LineDetailItem作成

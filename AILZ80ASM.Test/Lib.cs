@@ -46,15 +46,15 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, bool testError)
+        public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, bool dataTrim, bool testError)
         {
-            var package = new Package(Files, AsmLoad.InputModeEnum.UTF_8, AsmLoad.OutputModeEnum.BIN, AsmISA.Z80);
+            var package = new Package(Files, AsmLoad.EncodeModeEnum.UTF_8, dataTrim, AsmISA.Z80);
 
             package.Assemble();
 
             if (package.Errors.Length == 0)
             {
-                package.SaveOutput(assebledStream, "");
+                package.SaveOutput(assebledStream, new System.Collections.Generic.KeyValuePair<AsmLoad.OutputModeEnum, FileInfo>(AsmLoad.OutputModeEnum.BIN, new FileInfo("Main.bin")));
             }
             else if (!testError)
             {
@@ -67,23 +67,32 @@ namespace AILZ80ASM.Test
 
         public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile)
         {
+            Assemble_AreSame(inputFiles, outputFile, false);
+        }
+
+        public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, bool dataTrim)
+        {
             using var memoryStream = new MemoryStream();
             using var outputStream = outputFile.OpenRead();
 
-            Lib.Assemble(inputFiles, memoryStream, false);
+            Lib.Assemble(inputFiles, memoryStream, dataTrim, false);
             memoryStream.Position = 0;
             Lib.AreSame(outputStream, memoryStream);
         }
 
-
         public static void Assemble_AreSame(string directoryName)
+        {
+            Assemble_AreSame(directoryName, false);
+        }
+
+        public static void Assemble_AreSame(string directoryName, bool dataTrim)
         {
             var targetDirectoryName = Path.Combine(".", "Test", directoryName);
 
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Test.Z80")) };
             var outputFile = new FileInfo(Path.Combine(targetDirectoryName, "Test.BIN"));
 
-            Lib.Assemble_AreSame(inputFiles, outputFile);
+            Lib.Assemble_AreSame(inputFiles, outputFile, dataTrim);
         }
     }
 }

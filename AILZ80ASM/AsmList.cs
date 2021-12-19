@@ -25,9 +25,9 @@ namespace AILZ80ASM
         {
         }
 
-        public static AsmList CreateFileInfoBOF(FileInfo fileInfo)
+        public static AsmList CreateFileInfoBOF(FileInfo fileInfo, AsmLoad.EncodeModeEnum encodeMode)
         {
-            return CreateSource($"BOF:{fileInfo.Name}");
+            return CreateSource($"BOF:{fileInfo.Name} Encode:{encodeMode}");
         }
 
         public static AsmList CreateFileInfoEOF(FileInfo fileInfo)

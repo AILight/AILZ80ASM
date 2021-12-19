@@ -67,6 +67,19 @@ namespace AILZ80ASM
                                 bytes = bytes.Select(m => value).ToArray();
                             }
                         }
+                        else if (asmLoad.AsmAddresses.Count > 0)
+                        {
+                            if (address.Program > programAddress)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+                            }
+                            var offset = (UInt16)(programAddress - address.Program);
+                            if (offset > 0)
+                            {
+                                length.Output = offset;
+                                bytes = new byte[length.Output];
+                            }
+                        }
                         var newAsmAddress = new AsmAddress(programAddress, outputAddress);
                         asmLoad.AddAsmAddress(newAsmAddress);
 

@@ -24,11 +24,11 @@ namespace AILZ80ASM
             SubLabel,
         }
 
-        private static readonly string RegexPatternGlobalLabel = @"(?<label>(^\w+))::(\s+|$)";
-        private static readonly string RegexPatternLabel = @"(?<label>(^\w+)):(\s+|$)";
-        private static readonly string RegexPatternEquLabel = @"(?<label>(^\w+)):?";
-        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[@\w]+))(\s+|$)";
-        private static readonly string RegexPatternValueLabel = @"(?<label>(^\w+))\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternGlobalLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))::(\s+|$)";
+        private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):(\s+|$)";
+        private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):?";
+        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))(\s+|$)";
+        private static readonly string RegexPatternValueLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))\s+equ\s+(?<value>(.+))";
         private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
@@ -77,7 +77,7 @@ namespace AILZ80ASM
                 {
                     // グローバルラベル
                     GlobalLabelName = matchedGlobalLabel.Groups["label"].Value;
-                    asmLoad.GlobalLabelName = GlobalLabelName;
+                    LabelName = "";
                     LabelLevel = LabelLevelEnum.GlobalLabel;
                 }
                 else
@@ -88,7 +88,6 @@ namespace AILZ80ASM
                     {
                         // ラベル
                         LabelName = matchedLabel.Groups["label"].Value;
-                        asmLoad.LabelName = LabelName;
                         LabelLevel = LabelLevelEnum.Label;
 
                     }

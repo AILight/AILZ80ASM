@@ -25,6 +25,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestLB_DSDBSDWS_Trim_Test()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name, true);
+        }
+
+        [TestMethod]
         public void TestLB_EQU_Test()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

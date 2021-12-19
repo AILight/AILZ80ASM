@@ -22,6 +22,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternOctal_O = @"^(?<value>([0-7_]+))O$";
         private static readonly string RegexPatternBinaryNumber_B = @"^(?<value>([01_]+))B$";
         private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
+        private static readonly string RegexPatternChar = @"^'(?<value>(.|\\.))'$";
         private static readonly string RegexPatternDigit = @"^(\+|\-|)(\d+)$";
         private static readonly string RegexPatternFormulaChar = @"(?<formula>(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:))";
         private static readonly Dictionary<string, int> FormulaPriority = new()
@@ -157,6 +158,26 @@ namespace AILZ80ASM
                         endIndex = tmpValue.IndexOf("\"", endIndex + 1);
                         escapeIndex = tmpValue.IndexOf("\\", endIndex + 1);
                     }
+                    if (endIndex == -1)
+                    {
+                        throw new Exception("演算に使えない文字が検出されました。");
+                    }
+                    else
+                    {
+                        terms.Add(tmpValue.Substring(0, endIndex + 1));
+                        tmpValue = tmpValue.Substring(endIndex + 1).TrimStart();
+                    }
+                }
+                else if (tmpValue.StartsWith("'"))
+                {
+                    var endIndex = tmpValue.IndexOf("'", 1);
+                    var escapeIndex = tmpValue.IndexOf("\\", 1);
+
+                    if (escapeIndex != -1 && endIndex > escapeIndex && tmpValue.Length > escapeIndex + 2)
+                    {
+                        endIndex = tmpValue.IndexOf("'", escapeIndex + 2);
+                    }
+
                     if (endIndex == -1)
                     {
                         throw new Exception("演算に使えない文字が検出されました。");
@@ -585,6 +606,33 @@ namespace AILZ80ASM
                     try
                     {
                         stack.Push(Convert.ToInt32(matched.Groups["value"].Value.Replace("_", ""), 8));
+                    }
+                    catch
+                    {
+                        throw new Exception($"数値に変換できませんでした。{item}");
+                    }
+                }
+                else if ((matched = Regex.Match(item, RegexPatternChar, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                {
+                    // 文字
+                    try
+                    {
+                        var value = matched.Groups["value"].Value;
+                        var chars = value.ToArray();
+                        if (chars.Length == 1)
+                        {
+                            stack.Push(Convert.ToInt32(chars[0]));
+                        }
+                        else
+                        {
+                            stack.Push(value switch
+                            {
+                                "\\0" => 0,
+                                "\\'" => 0x27,
+                                _ => throw new Exception()
+                            });
+                        }
+
                     }
                     catch
                     {

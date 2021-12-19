@@ -1,0 +1,33 @@
+﻿	org $8000
+	ADDR equ $2000
+
+	ld a, 0
+	call PUT_CHR1
+	call PUT_CHR2
+	ret
+
+PUT_CHR1:
+	ld a, 1
+	call PUT_CHR1.test
+	ret
+.test
+	ld a, 2
+	ret
+
+	org ADDR, $20
+PUT_CHR2:
+	ld a, 1
+	call PUT_CHR2.test
+	ret
+.test
+	ld a, 2
+	ret
+
+	ORG ($ + 255 ) / 256 * 256, ($$ + 255 ) / 256 * 256, $AA
+
+NEW_LABLE:
+.TEST1	equ	$			; 敵弾
+.TEST2	equ	$$			; 敵弾
+
+	ORG .TEST1 + 10, .TEST2 + 10
+	ld a, 1

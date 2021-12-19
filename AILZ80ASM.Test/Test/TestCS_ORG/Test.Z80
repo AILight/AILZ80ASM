@@ -6,6 +6,8 @@
 	call PUT_CHR2
 	ret
 
+	org $8100
+
 PUT_CHR1:
 	ld a, 1
 	call PUT_CHR1.test
@@ -14,7 +16,8 @@ PUT_CHR1:
 	ld a, 2
 	ret
 
-	org ADDR, $20
+	ALIGN 16
+
 PUT_CHR2:
 	ld a, 1
 	call PUT_CHR2.test
@@ -22,5 +25,3 @@ PUT_CHR2:
 .test
 	ld a, 2
 	ret
-
-	ORG ($ + 255 ) / 256 * 256, ($$ + 255 ) / 256 * 256, $AA

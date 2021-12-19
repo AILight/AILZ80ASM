@@ -1,4 +1,6 @@
-﻿REPEAT 3
+﻿INCLUDE ".\Test\TestPP_RepeatModern\Test.INC"
+
+LB: REPEAT 3
         xor     a
 END REPEAT
 
@@ -17,3 +19,9 @@ REPEAT 3
 END REPEAT
 
 END REPEAT
+
+REPEAT SCREEN.WIDTH
+        RLA
+END REPEAT
+
+    JP LB

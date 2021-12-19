@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AILZ80ASM.CommandLine;
@@ -9,82 +10,16 @@ namespace AILZ80ASM
     {
         public static int Main(params string[] args)
         {
-            var rootCommand = new RootCommand(
-              description: "AILight Z80 Assember.");
-
-            rootCommand.AddOption(new Option<FileInfo[]>(
-                name: "input",
-                aliases: new [] { "-i", "--input" },
-                description: "アセンブリ対象のファイルをスペース区切りで指定します。",
-                required: true));
-
-            rootCommand.AddOption(new Option<string>(
-                name: "inputMode",
-                optionName: "inMode",
-                aliases: new [] { "-im", "--input-mode" },
-                description: "入力ファイルのモードを選択します。",
-                defaultValue: "UTF-8",
-                parameters: new[] { new Parameter { Name = "UTF-8", Description = "入力ファイルをUTF-8で開きます。" },
-                                    new Parameter { Name = "SHIFT_JIS", Description = "入力ファイルをSHIFT_JISで開きます" },},
-                required: false));
-
-            rootCommand.AddOption(new Option<FileInfo>(
-                name: "output",
-                aliases: new string[] { "-o", "--output" },
-                description: "出力ファイルを指定します。",
-                required: true));
-
-            rootCommand.AddOption(new Option<string>(
-                name: "outputMode",
-                optionName: "outMode",
-                aliases: new [] { "-om", "--output-mode" },
-                description: "出力ファイルのモードを選択します。",
-                defaultValue: "BIN",
-                parameters: new[] { new Parameter { Name = "BIN", Description = "出力ファイルをBIN形式で出力します。" },
-                                    new Parameter { Name = "HEX", Description = "出力ファイルをHEX形式で出力します。（未対応）" },
-                                    new Parameter { Name = "T88", Description = "出力ファイルをT88形式で出力します。（ベータ）" },
-                                    new Parameter { Name = "CMT", Description = "出力ファイルをCMT形式で出力します。（ベータ）" },},
-                required: false));
-
-            rootCommand.AddOption(new Option<FileInfo>(
-                name: "symbol",
-                aliases: new [] { "-s", "--symbol"  },
-                description: "シンボルファイルを指定します。",
-                required: false));
-
-            rootCommand.AddOption(new Option<FileInfo>(
-                name: "list",
-                aliases: new [] { "-l", "--list" },
-                description: "リストファイルを指定します。",
-                required: false));
-
-            rootCommand.AddOption(new Option<bool>(
-                name: "version",
-                aliases: new [] { "-v", "--version" },
-                description: "バージョンを表示します。",
-                required: false,
-                optionFunc: (argument) => { return System.Environment.Version.ToString(); }));
-
-            rootCommand.AddOption(new Option<string>(
-                name: "help",
-                aliases: new [] { "-?", "-h", "--help" },
-                description: "ヘルプを表示します。各オプションの詳細は以下の通りに指定してください。例： --help --input-mode",
-                required: false,
-                optionFunc: (argument) => { return rootCommand.HelpCommand(argument); }));
-
             try
             {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+
                 OutputStart();
 
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
                 if (rootCommand.Parse(args))
                 {
-                    return Assember(rootCommand.GetValue<FileInfo[]>("input"),
-                                    rootCommand.GetValue<string>("inputMode"),
-                                    rootCommand.GetValue<FileInfo>("output"),
-                                    rootCommand.GetValue<string>("outputMode"),
-                                    rootCommand.GetValue<FileInfo>("symbol"),
-                                    rootCommand.GetValue<FileInfo>("list")) ? 0 : 1;
+                    return Assember(rootCommand) ? 0 : 1;
                 }
                 else
                 {
@@ -100,6 +35,18 @@ namespace AILZ80ASM
             }
         }
 
+        public static bool Assember(RootCommand rootCommand)
+        {
+            return Assember(rootCommand.GetValue<FileInfo[]>("input"),
+                            rootCommand.GetEncodeMode(),
+                            rootCommand.GetOutputFiles(),
+                            rootCommand.GetValue<FileInfo>("symbol"),
+                            rootCommand.GetValue<FileInfo>("list"),
+                            rootCommand.GetValue<FileInfo>("debug"),
+                            rootCommand.GetValue<bool>("outputTrim"));
+        }
+
+
         /// <summary>
         /// アセンブル
         /// </summary>
@@ -110,24 +57,48 @@ namespace AILZ80ASM
         /// <param name="symbol"></param>
         /// <param name="list"></param>
         /// <returns></returns>
-        static public bool Assember(
-                FileInfo[] inputs, string inputModeString, FileInfo output, string outputModeString, FileInfo symbol, FileInfo list)
+        public static bool Assember(
+                FileInfo[] inputs, AsmLoad.EncodeModeEnum encodeMode, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, FileInfo symbol, FileInfo list, FileInfo debug, bool outputTrim)
         {
             try
             {
+                // デバッグ情報
+                /*
+                if (debugFileInfo != default)
+                {
+                    if (debugFileInfo.Exists)
+                    {
+                        Console.Write("デバッグファイルが既に存在しています。削除してから書き込みますか？ (y/n)");
+                        if (Console.ReadKey().Key == ConsoleKey.Y)
+                        {
+                            debugFileInfo.Delete();
+                        }
+                    }
+                    OutputStartForDebug(debugFileInfo);
+                    //OutputFileInfo(inputs, "入力ファイル:");
+                    //OutputFileInfo(output, "出力ファイル:");
+                    //OutputFileInfo(symbol, "シンボルファイル:");
+                    //OutputFileInfo(debugFileInfo, "デバッグファイル:");
+
+                }
+                */
+
                 if (inputs == default || inputs.Length == 0)
                 {
                     throw new ArgumentException($"入力ファイルが指定されていません。");
                 }
 
-                if (output == default)
+                if (outputFiles == default)
                 {
                     throw new ArgumentException($"出力ファイルが指定されていません。");
                 }
 
-                if (output != default && inputs.Any(m => m.FullName == output.FullName))
+                foreach (var item in outputFiles)
                 {
-                    throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {output.Name}");
+                    if (inputs.Any(m => m.FullName == item.Value.FullName))
+                    {
+                        throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {item.Value.Name}");
+                    }
                 }
 
                 if (list != default && inputs.Any(m => m.FullName == list.FullName))
@@ -140,44 +111,16 @@ namespace AILZ80ASM
                     throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {symbol.Name}");
                 }
 
-                var inputMode = AsmLoad.InputModeEnum.UTF_8;
-                switch (inputModeString)
-                {
-                    case "UTF-8":
-                        inputMode = AsmLoad.InputModeEnum.UTF_8;
-                        break;
-                    case "SHIFT_JIS":
-                        inputMode = AsmLoad.InputModeEnum.SHIFT_JIS;
-                        break;
-                    default:
-                        break;
-                }
-                var outputMode = AsmLoad.OutputModeEnum.BIN;
-                switch (outputModeString)
-                {
-                    case "BIN":
-                        outputMode = AsmLoad.OutputModeEnum.BIN;
-                        break;
-                    case "T88":
-                        outputMode = AsmLoad.OutputModeEnum.T88;
-                        break;
-                    case "CMT":
-                        outputMode = AsmLoad.OutputModeEnum.CMT;
-                        break;
-                    default:
-                        break;
-                }
-
-
-                var package = new Package(inputs, inputMode, outputMode, AsmISA.Z80);
+                var package = new Package(inputs, encodeMode, outputTrim, AsmISA.Z80);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
                     if (package.Errors.Length == 0)
                     {
-                        package.SaveOutput(output);
+                        package.SaveOutput(outputFiles);
                     }
                 }
+
                 package.OutputError();
                 if (symbol != default)
                 {
@@ -201,6 +144,39 @@ namespace AILZ80ASM
             Console.WriteLine(ProductInfo.ProductLongName);
             Console.WriteLine(ProductInfo.Copyright);
             Console.WriteLine("");
+        }
+
+        private static void OutputStartForDebug(FileInfo fileInfo)
+        {
+            Console.WriteLine(ProductInfo.ProductLongName);
+            Console.WriteLine(ProductInfo.Copyright);
+            Console.WriteLine("");
+            //OutputDebug(new[] { ProductInfo.ProductLongName, ProductInfo.Copyright, $"Assemble start:{DateTime.Now}", "" }, fileInfo, false);
+        }
+
+        private static void OutputDebug(string[] targets, FileInfo fileInfo)
+        {
+            //OutputDebug(targets, fileInfo, true);
+        }
+
+        private static void DebugWriteLine(string[] targets, FileInfo fileInfo, bool display)
+        {
+            if (fileInfo == default)
+            {
+                return;
+            }
+
+            using (var streamWriter = fileInfo.AppendText())
+            {
+                foreach (var item in targets)
+                {
+                    if (display)
+                    {
+                        Console.WriteLine(item);
+                    }
+                    streamWriter.WriteLine(item);
+                }
+            }
         }
     }
 }

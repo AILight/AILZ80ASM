@@ -9,6 +9,7 @@ namespace AILZ80ASM
     public class FileItem
     {
         private AsmLoad AssembleLoad { get; set; }
+        private AsmLoad.EncodeModeEnum EncodeMode { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
 
@@ -25,8 +26,11 @@ namespace AILZ80ASM
 
             AssembleLoad = asmLoad;
             FileInfo = fileInfo;
+            var encodeMode = asmLoad.GetEncodMode(fileInfo);
+            EncodeMode = encodeMode;
 
-            using var streamReader = new StreamReader(fileInfo.FullName, asmLoad.Encoding);
+            using var streamReader = new StreamReader(fileInfo.FullName, asmLoad.GetInputEncoding(encodeMode));
+            
             Read(streamReader);
             streamReader.Close();
 
@@ -247,7 +251,7 @@ namespace AILZ80ASM
         /// <param name="stream"></param>
         public void SaveList(StreamWriter streamWriter)
         {
-            streamWriter.WriteLine(AsmList.CreateFileInfoBOF(FileInfo).ToString());
+            streamWriter.WriteLine(AsmList.CreateFileInfoBOF(FileInfo, EncodeMode).ToString());
 
             foreach (var list in this.Lists)
             {
