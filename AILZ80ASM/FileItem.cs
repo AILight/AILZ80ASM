@@ -131,6 +131,8 @@ namespace AILZ80ASM
                     }
                 }
 
+                lists.Add(AsmList.CreateFileInfoEOF(FileInfo, EncodeMode));
+
                 return lists.ToArray();
             }
         }
@@ -251,14 +253,10 @@ namespace AILZ80ASM
         /// <param name="stream"></param>
         public void SaveList(StreamWriter streamWriter)
         {
-            streamWriter.WriteLine(AsmList.CreateFileInfoBOF(FileInfo, EncodeMode).ToString());
-
             foreach (var list in this.Lists)
             {
-                streamWriter.WriteLine(list.ToString());
+                streamWriter.WriteLine(list.ToString(AssembleLoad.ListMode));
             }
-
-            streamWriter.WriteLine(AsmList.CreateFileInfoEOF(FileInfo).ToString());
         }
     }
 }

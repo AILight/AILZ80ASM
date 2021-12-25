@@ -1,0 +1,28 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 8000                       org $8000
+000000 8000 3E00           7      ld a, 0
+                              addr:
+000002 8002 C30280        10      JP addr
+000005 8005 DA0280        10      JP c, addr
+000008 8008 18F8          12      JR addr
+00000A 800A 38F6          12      JR c, addr
+00000C 800C 10F4          13      DJNZ addr
+00000E 800E 1810          12      JR addr2
+000010 8010 00             4      nop
+000011 8011 00             4      nop
+                              .test
+000012 8012 C31280        10      jp addr.test
+000015 8015 EA1280        10      jp pe, .test
+000018 8018 18F8          12      jr addr.test
+00001A 801A 38F6          12      jr c, .test
+00001C 801C 10F4          13      djnz addr.test
+00001E 801E 1801          12      JR addr2.test
+                              addr2:
+000020 8020 00             4      nop
+                              .test
+000021 8021 00             4      nop
+000022 8022 C9            10      ret
+                              
+                              
+                                  
+[EOF:Test.Z80:UTF_8]

@@ -1,0 +1,47 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 DDCB1108      23      RRC b,(ix+$11)
+000004 0004 DDCB2209      23      RRC c,(ix+$22)
+000008 0008 DDCB330A      23      RRC d,(ix+$33)
+00000C 000C DDCB440B      23      RRC e,(ix+$44)
+000010 0010 DDCB550C      23      RRC h,(ix+$55)
+000014 0014 DDCB660D      23      RRC l,(ix+$66)
+000018 0018 DDCB770F      23      RRC a,(ix+$77)
+00001C 001C 00             4      NOP
+00001D 001D 00             4      NOP
+00001E 001E 00             4      NOP
+00001F 001F 00             4      NOP
+000020 0020 FDCB1108      23      RRC b,(iy+$11)
+000024 0024 FDCB2209      23      RRC c,(iy+$22)
+000028 0028 FDCB330A      23      RRC d,(iy+$33)
+00002C 002C FDCB440B      23      RRC e,(iy+$44)
+000030 0030 FDCB550C      23      RRC h,(iy+$55)
+000034 0034 FDCB660D      23      RRC l,(iy+$66)
+000038 0038 FDCB770F      23      RRC a,(iy+$77)
+00003C 003C 00             4      NOP
+00003D 003D 00             4      NOP
+00003E 003E 00             4      NOP
+00003F 003F 00             4      NOP
+                              
+000040 0040 DDCB1108      23      RRC (ix+$11),b
+000044 0044 DDCB2209      23      RRC (ix+$22),c
+000048 0048 DDCB330A      23      RRC (ix+$33),d
+00004C 004C DDCB440B      23      RRC (ix+$44),e
+000050 0050 DDCB550C      23      RRC (ix+$55),h
+000054 0054 DDCB660D      23      RRC (ix+$66),l
+000058 0058 DDCB770F      23      RRC (ix+$77),a
+00005C 005C 00             4      NOP
+00005D 005D 00             4      NOP
+00005E 005E 00             4      NOP
+00005F 005F 00             4      NOP
+000060 0060 FDCB1108      23      RRC (iy+$11),b
+000064 0064 FDCB2209      23      RRC (iy+$22),c
+000068 0068 FDCB330A      23      RRC (iy+$33),d
+00006C 006C FDCB440B      23      RRC (iy+$44),e
+000070 0070 FDCB550C      23      RRC (iy+$55),h
+000074 0074 FDCB660D      23      RRC (iy+$66),l
+000078 0078 FDCB770F      23      RRC (iy+$77),a
+00007C 007C 00             4      NOP
+00007D 007D 00             4      NOP
+00007E 007E 00             4      NOP
+00007F 007F 00             4      NOP
+[EOF:Test.Z80:UTF_8]

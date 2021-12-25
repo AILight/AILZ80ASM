@@ -1,0 +1,6 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 EDA1          16      cpi
+000002 0002 EDB1                  cpir
+000004 0004 EDA9          16      cpd
+000006 0006 EDB9                  cpdr
+[EOF:Test.Z80:UTF_8]

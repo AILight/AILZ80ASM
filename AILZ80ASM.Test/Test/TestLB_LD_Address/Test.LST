@@ -1,0 +1,45 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 8000                       org $8000
+000000 8000 3E00           7      ld a, 0
+                              addr:
+000002 8002 3A0280        13      ld a, (addr)
+000005 8005 210280        10      ld hl, addr
+000008 8008 2A0280        16      ld hl, (addr)
+00000B 800B 220280        16      ld (addr), hl
+00000E 800E 010280        10      ld bc, addr
+000011 8011 ED4B0280      20      ld bc, (addr)
+000015 8015 ED430280      20      ld (addr), bc
+000019 8019 110280        10      ld de, addr
+00001C 801C ED5B0280      20      ld de, (addr)
+000020 8020 ED530280      20      ld (addr), de
+000024 8024 310280        10      ld sp, addr
+000027 8027 ED7B0280      20      ld sp, (addr)
+00002B 802B ED730280      20      ld (addr), sp
+00002F 802F DD210280      14      ld ix, addr
+000033 8033 DD2A0280      20      ld ix, (addr)
+000037 8037 DD220280      20      ld (addr), ix
+00003B 803B FD210280      14      ld iy, addr
+00003F 803F FD2A0280      20      ld iy, (addr)
+000043 8043 FD220280      20      ld (addr), iy
+                              .test
+000047 8047 3A4780        13      ld a,(addr.test)
+00004A 804A 214780        10      ld hl, addr.test
+00004D 804D 2A4780        16      ld hl, (addr.test)
+000050 8050 224780        16      ld (addr.test), hl
+000053 8053 014780        10      ld bc, addr.test
+000056 8056 ED4B4780      20      ld bc, (addr.test)
+00005A 805A ED434780      20      ld (addr.test), bc
+00005E 805E 114780        10      ld de, addr.test
+000061 8061 ED5B4780      20      ld de, (addr.test)
+000065 8065 ED534780      20      ld (addr.test), de
+000069 8069 314780        10      ld sp, addr.test
+00006C 806C ED7B4780      20      ld sp, (addr.test)
+000070 8070 ED734780      20      ld (addr.test), sp
+000074 8074 DD214780      14      ld ix, addr.test
+000078 8078 DD2A4780      20      ld ix, (addr.test)
+00007C 807C DD224780      20      ld (addr.test), ix
+000080 8080 FD214780      14      ld iy, addr.test
+000084 8084 FD2A4780      20      ld iy, (addr.test)
+000088 8088 FD224780      20      ld (addr.test), iy
+                                  
+[EOF:Test.Z80:UTF_8]

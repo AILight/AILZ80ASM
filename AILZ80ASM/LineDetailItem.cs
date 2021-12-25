@@ -6,7 +6,6 @@ namespace AILZ80ASM
 {
     public abstract class LineDetailItem
     {
-        //private static readonly string RegexPatternLabel = @"^\s*(?<label>[a-zA-Z0-9_]+::?)";
         public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad { get; set; }
 

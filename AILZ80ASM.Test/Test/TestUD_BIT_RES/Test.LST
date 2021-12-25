@@ -1,0 +1,37 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 DDCB0780      23      RES B,  0, (IX+ 7)
+000004 0004 DDCB0689      23      RES C,  1, (IX+ 6)
+000008 0008 DDCB0592      23      RES D,  2, (IX+ 5)
+00000C 000C DDCB049B      23      RES E,  3, (IX+ 4)
+000010 0010 DDCB03A4      23      RES H,  4, (IX+ 3)
+000014 0014 DDCB02AD      23      RES L,  5, (IX+ 2)
+000018 0018 DDCB01B7      23      RES A,  6, (IX+ 1)
+00001C 001C DDCB00BF      23      RES A,  7, (IX+ 0)
+                              
+000020 0020 FDCB0780      23      RES B,  0, (IY+ 7)
+000024 0024 FDCB0689      23      RES C,  1, (IY+ 6)
+000028 0028 FDCB0592      23      RES D,  2, (IY+ 5)
+00002C 002C FDCB049B      23      RES E,  3, (IY+ 4)
+000030 0030 FDCB03A4      23      RES H,  4, (IY+ 3)
+000034 0034 FDCB02AD      23      RES L,  5, (IY+ 2)
+000038 0038 FDCB01B7      23      RES A,  6, (IY+ 1)
+00003C 003C FDCB00BF      23      RES A,  7, (IY+ 0)
+                              
+000040 0040 DDCB0780      23      RES 0, (IX+ 7), B  
+000044 0044 DDCB0689      23      RES 1, (IX+ 6), C  
+000048 0048 DDCB0592      23      RES 2, (IX+ 5), D  
+00004C 004C DDCB049B      23      RES 3, (IX+ 4), E  
+000050 0050 DDCB03A4      23      RES 4, (IX+ 3), H  
+000054 0054 DDCB02AD      23      RES 5, (IX+ 2), L  
+000058 0058 DDCB01B7      23      RES 6, (IX+ 1), A  
+00005C 005C DDCB00BF      23      RES 7, (IX+ 0), A  
+                              
+000060 0060 FDCB0780      23      RES 0, (IY+ 7), B  
+000064 0064 FDCB0689      23      RES 1, (IY+ 6), C  
+000068 0068 FDCB0592      23      RES 2, (IY+ 5), D  
+00006C 006C FDCB049B      23      RES 3, (IY+ 4), E  
+000070 0070 FDCB03A4      23      RES 4, (IY+ 3), H  
+000074 0074 FDCB02AD      23      RES 5, (IY+ 2), L  
+000078 0078 FDCB01B7      23      RES 6, (IY+ 1), A  
+00007C 007C FDCB00BF      23      RES 7, (IY+ 0), A  
+[EOF:Test.Z80:UTF_8]

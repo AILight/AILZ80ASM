@@ -13,9 +13,9 @@ namespace AILZ80ASM
 
         public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).ToArray();
         public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
-        public ErrorLineItem[] Infomations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Infomation).ToArray();
+        public ErrorLineItem[] Informations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Information).ToArray();
 
-        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, bool outputTrim, AsmISA asmISA)
+        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmLoad.ListModeEnum listMode, bool outputTrim, AsmISA asmISA)
         {
             switch (asmISA)
             {
@@ -25,9 +25,10 @@ namespace AILZ80ASM
                 default:
                     throw new NotImplementedException();
             }
-            var label = new Label("NS_Main::", AssembleLoad);
+            var label = new Label("[NS_Main]", AssembleLoad);
             AssembleLoad.AddLabel(label);
             AssembleLoad.InputEncodeMode = encodeMode;
+            AssembleLoad.ListMode = listMode;
 
             AssembleLoad.OutputTrim = outputTrim;
 
@@ -190,8 +191,14 @@ namespace AILZ80ASM
                 case AsmLoad.OutputModeEnum.CMT:
                     SaveCMT(stream);
                     break;
-                default:
+                case AsmLoad.OutputModeEnum.LST:
+                    SaveLST(stream);
                     break;
+                case AsmLoad.OutputModeEnum.SYM:
+                    SaveSYM(stream);
+                    break;
+                default:
+                    throw new NotImplementedException($"指定の出力形式は選択できません。{outputFile.Key}");
             }
         }
 
@@ -239,16 +246,16 @@ namespace AILZ80ASM
             binaryWriter.Write();
         }
 
-        public void SaveSymbol(FileInfo symbol)
+        public void SaveSYM(FileInfo symbol)
         {
             using var fileStream = symbol.OpenWrite();
 
-            SaveSymbol(fileStream);
+            SaveSYM(fileStream);
 
             fileStream.Close();
         }
 
-        public void SaveSymbol(Stream stream)
+        public void SaveSYM(Stream stream)
         {
             using var streamWriter = new StreamWriter(stream);
 
@@ -262,21 +269,29 @@ namespace AILZ80ASM
             }
         }
 
-        public void SaveList(FileInfo list)
+        public void SaveLST(FileInfo list)
         {
-            using var streamWriter = new StreamWriter(list.FullName, false, AssembleLoad.GetOutputEncoding());
-            SaveList(streamWriter);
-            streamWriter.Close();
+            using var fileStream = list.OpenWrite();
+
+            SaveLST(fileStream);
+
+            fileStream.Close();
         }
 
-        public void SaveList(StreamWriter streamWriter)
+        public void SaveLST(Stream stream)
         {
-            streamWriter.WriteLine(AsmList.CreateSource($"{ProductInfo.ProductLongName}").ToString());
+            using var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream);
+
+            streamWriter.WriteLine(AsmList.CreateSource($"{ProductInfo.ProductLongName}").ToString(AssembleLoad.ListMode));
 
             foreach (var item in FileItems)
             {
                 item.SaveList(streamWriter);
             }
+            streamWriter.Flush();
+            memoryStream.Position = 0;
+            memoryStream.CopyTo(stream);
         }
 
         public void OutputError()
@@ -286,11 +301,11 @@ namespace AILZ80ASM
                 Console.WriteLine($"");
                 OutputError(Errors, "Error");
                 OutputError(Warnings, "Warning");
-                OutputError(Infomations, "Infomation");
+                OutputError(Informations, "Information");
             }
 
             Console.WriteLine($"");
-            Console.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Infomations.Length} infomation");
+            Console.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Informations.Length} information");
         }
 
         /// <summary>

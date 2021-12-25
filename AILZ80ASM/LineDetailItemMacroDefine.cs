@@ -47,7 +47,8 @@ namespace AILZ80ASM
                 }
 
                 // ローカルラベル以外は使用禁止
-                if (lineItem.LabelString.EndsWith(":"))
+                if ((lineItem.LabelString.StartsWith("[") && lineItem.LabelString.EndsWith("]")) || 
+                    lineItem.LabelString.EndsWith(":"))
                 {
                     asmLoad.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3006));
                 }

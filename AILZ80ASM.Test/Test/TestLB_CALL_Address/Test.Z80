@@ -2,7 +2,7 @@
 	ld a, 0
 	call PUT_CHR
 	ret
-PUT_CHR:
+PUT_CHR::
 	ld a, 1
 	call PUT_CHR.test
 	ret

@@ -1,0 +1,12 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 CB30           8      sll b
+000002 0002 CB31           8      sll c
+000004 0004 CB32           8      sll d
+000006 0006 CB33           8      sll e
+000008 0008 CB34           8      sll h
+00000A 000A CB35           8      sll l
+00000C 000C CB36          15      sll (hl)
+00000E 000E CB37           8      sll a
+000010 0010 DDCB1036      23      sll (ix+$10)
+000014 0014 FDCB3036      23      sll (iy+$30)
+[EOF:Test.Z80:UTF_8]

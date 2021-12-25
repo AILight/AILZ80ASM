@@ -1,0 +1,40 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+       0002                   ARG1equ 2
+       0003                   .Three  equ 3
+       8001                   VRAM_ADDRESSequ $8001
+                              
+000000 9000                       ORG $9000
+       0001                       ALLLDArg EQU 1
+                                  
+                                  ALLLD 2
+                             +
+000000 9000 1604           7 +    ld d,4
+000002 9002 1E05           7 +    ld e,5
+000004 9004 2606           7 +    ld h,6
+000006 9006 2E07           7 +    ld l,7
+                             +
+                                  ALLLD ALLLDArg
+                             +
+000008 9008 3E01           7 +    ld a,1
+00000A 900A 0602           7 +    ld b,2
+00000C 900C 0E03           7 +    ld c,3
+                             +
+                                  ;ALLLD 3
+                              
+                              MACRO ALLLD mode
+                              
+                              #if mode == 1
+                                  ld a,1
+                                  ld b,2
+                                  ld c,3
+                              #elif mode == 2
+                                  ld d,4
+                                  ld e,5
+                                  ld h,6
+                                  ld l,7
+                              #else
+                                  #error "modeの値が範囲外です。"
+                              #endif
+                              
+                              END MACRO
+[EOF:Test.Z80:UTF_8]

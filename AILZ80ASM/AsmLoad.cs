@@ -27,6 +27,16 @@ namespace AILZ80ASM
             HEX,
             T88,
             CMT,
+            LST,
+            SYM,
+            DBG,
+        }
+
+        public enum ListModeEnum
+        {
+            Simple,
+            Middle,
+            Full,
         }
 
         private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
@@ -53,6 +63,7 @@ namespace AILZ80ASM
         public ISA ISA { get; private set; }
         public EncodeModeEnum InputEncodeMode { get; set; }
         public EncodeModeEnum OutputEncodeMode { get; set; } = EncodeModeEnum.UTF_8;
+        public ListModeEnum ListMode { get; set; } = ListModeEnum.Full;
         public bool OutputTrim { get; internal set; }
 
         public AsmLoad(ISA isa)

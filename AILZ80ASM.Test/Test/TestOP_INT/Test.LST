@@ -1,0 +1,9 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 00             4      nop
+000001 0001 FB             4      ei
+000002 0002 F3             4      di
+000003 0003 76             4      halt
+000004 0004 ED46           8      im 0
+000006 0006 ED56           8      im 1
+000008 0008 ED5E           8      im 2
+[EOF:Test.Z80:UTF_8]

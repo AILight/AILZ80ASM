@@ -105,7 +105,7 @@ namespace AILZ80ASM
             // Macro展開用のAsmLoadを作成する
             var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
             var guid = $"{Guid.NewGuid():N}";
-            var globalLabel = new Label($"macro_{this.Name}_{guid}::", macroAsmLoad);
+            var globalLabel = new Label($"[macro_{this.Name}_{guid}]", macroAsmLoad);
             macroAsmLoad.AddLabel(globalLabel);
 
             if (arguments.Length > 0)

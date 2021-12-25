@@ -1,0 +1,35 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 8000                       org $8000
+       2000                       ADDR equ $2000
+                              
+000000 8000 3E00           7      ld a, 0
+000002 8002 CD0980        17      call PUT_CHR1
+000005 8005 CD0020        17      call PUT_CHR2
+000008 8008 C9            10      ret
+                              
+                              PUT_CHR1:
+000009 8009 3E01           7      ld a, 1
+00000B 800B CD0F80        17      call PUT_CHR1.test
+00000E 800E C9            10      ret
+                              .test
+00000F 800F 3E02           7      ld a, 2
+000011 8011 C9            10      ret
+                              
+000020 2000                       org ADDR, $20
+                              PUT_CHR2:
+000020 2000 3E01           7      ld a, 1
+000022 2002 CD0620        17      call PUT_CHR2.test
+000025 2005 C9            10      ret
+                              .test
+000026 2006 3E02           7      ld a, 2
+000028 2008 C9            10      ret
+                              
+000100 2100                       ORG ($ + 255 ) / 256 * 256, ($$ + 255 ) / 256 * 256, $AA
+                              
+                              NEW_LABLE:
+       2100                   .TEST1  equ $           ; 敵弾
+       0100                   .TEST2  equ $$          ; 敵弾
+                              
+00010A 210A                       ORG .TEST1 + 10, .TEST2 + 10
+00010A 210A 3E01           7      ld a, 1
+[EOF:Test.Z80:UTF_8]

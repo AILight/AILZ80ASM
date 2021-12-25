@@ -14,12 +14,19 @@ namespace AILZ80ASM
             Repeat,
         }
 
+        public enum ListStatusEnum
+        {
+            Normal,
+            SourceOnly,
+        }
+
         public UInt32? OutputAddress { get; set; }
         public UInt16? ProgramAddress { get; set; }
         public byte[] Bin { get; set; }
         public string Status { get; set; }
         public Stack<NestedCodeTypeEnum> NestedCodeTypes { get; set; }
         public string Source { get; set; }
+        public ListStatusEnum ListStatus { get; set; }
 
         private AsmList()
         {
@@ -27,17 +34,27 @@ namespace AILZ80ASM
 
         public static AsmList CreateFileInfoBOF(FileInfo fileInfo, AsmLoad.EncodeModeEnum encodeMode)
         {
-            return CreateSource($"BOF:{fileInfo.Name} Encode:{encodeMode}");
+            return CreateSourceOnly($"[BOF:{fileInfo.Name}:{encodeMode}]");
         }
 
-        public static AsmList CreateFileInfoEOF(FileInfo fileInfo)
+        public static AsmList CreateFileInfoEOF(FileInfo fileInfo, int length)
         {
-            return CreateSource($"EOF:{fileInfo.Name}");
+            return CreateSourceOnly($"[EOF:{fileInfo.Name}:{length}]");
+        }
+
+        public static AsmList CreateFileInfoEOF(FileInfo fileInfo, AsmLoad.EncodeModeEnum encodeMode)
+        {
+            return CreateSourceOnly($"[EOF:{fileInfo.Name}:{encodeMode}]");
+        }
+
+        public static AsmList CreateSourceOnly(string target)
+        {
+            return Create(default(UInt32?), default(UInt16?), default(byte[]), "", target, ListStatusEnum.SourceOnly);
         }
 
         public static AsmList CreateSource(string target)
         {
-            return Create(default(UInt32?), default(UInt16?), default(byte[]), "", target);
+            return Create(default(UInt32?), default(UInt16?), default(byte[]), "", target, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateLineItem(LineItem lineItem)
@@ -54,6 +71,11 @@ namespace AILZ80ASM
             return CreateLineItem(new AsmAddress(address, length), default(byte[]), "", lineItem);
         }
 
+        public static AsmList CreateLineItem(AsmAddress asmAdddress, byte[] bin)
+        {
+            return Create(asmAdddress.Output, asmAdddress.Program, bin, "", "", ListStatusEnum.Normal);
+        }
+
         public static AsmList CreateLineItem(AsmAddress asmAdddress, byte[] bin, string status, LineItem lineItem)
         {
             return CreateLineItem(asmAdddress.Output, asmAdddress.Program, bin, status, lineItem);
@@ -61,10 +83,10 @@ namespace AILZ80ASM
 
         public static AsmList CreateLineItem(UInt32? outputAddress, UInt16? programAddress, byte[] bin, string status, LineItem lineItem)
         {
-            return Create(outputAddress, programAddress, bin, status, lineItem.LineString);
+            return Create(outputAddress, programAddress, bin, status, lineItem.LineString, ListStatusEnum.Normal);
         }
 
-        public static AsmList Create(UInt32? outputAddress, UInt16? programAddress, byte[] bin, string status, string source)
+        public static AsmList Create(UInt32? outputAddress, UInt16? programAddress, byte[] bin, string status, string source, ListStatusEnum listStatus)
         {
             return new AsmList
             {
@@ -72,18 +94,24 @@ namespace AILZ80ASM
                 ProgramAddress = programAddress,
                 Bin = bin,
                 Status = status,
-                Source = source
+                Source = source,
+                ListStatus = listStatus,
             };
         }
 
         public override string ToString()
+        {
+            return ToString(AsmLoad.ListModeEnum.Full);
+        }
+
+        public string ToString(AsmLoad.ListModeEnum listMode)
         {
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
             var address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
             var binary = Bin != default ? string.Concat(Bin.Select(m => $"{m:X2}")) : "";
             var codeType = "";
             var status = this.Status;
-            var source = this.Source;
+            var source = GetReplaseTab(this.Source, 4);
             if (this.Bin != default && this.Bin.Length > 16)
             {
                 var startBin = this.Bin[0];
@@ -99,21 +127,54 @@ namespace AILZ80ASM
 
             var results = new List<string>();
 
-            foreach (var item in Regex.Split(binary, @"(?<=\G.{16})(?!$)"))
+            switch (this.ListStatus)
             {
-                address1 = address1.PadLeft(6);
-                address2 = address2.PadLeft(4);
-                status = status.PadLeft(2);
-                codeType = codeType.PadLeft(1);
-                var binaryString = item.PadRight(16);
+                case ListStatusEnum.Normal:
+                    var binaryLength = listMode switch
+                    {
+                        AsmLoad.ListModeEnum.Simple => 14,
+                        _ => 16,
+                    };
 
-                results.Add($"{address1} {address2} {binaryString}{status} {codeType}{source}");
-                // クリアする
-                address1 = "";
-                address2 = "";
-                status = "";
-                source = "";
+                    foreach (var item in Regex.Split(binary, @"(?<=\G.{" + binaryLength.ToString() + "})(?!$)"))
+                    {
+                        address1 = address1.PadLeft(6);
+                        address2 = address2.PadLeft(4);
+                        status = status.PadLeft(2);
+                        codeType = codeType.PadLeft(1);
+                        var binaryString = item.PadRight(binaryLength);
+
+                        switch (listMode)
+                        {
+                            case AsmLoad.ListModeEnum.Simple:
+                                results.Add($"  {address2}  {binaryString} {codeType}{source}");
+                                break;
+                            case AsmLoad.ListModeEnum.Middle:
+                                results.Add($"{address2} {binaryString}{status} {codeType}{source}");
+                                break;
+                            case AsmLoad.ListModeEnum.Full:
+                                results.Add($"{address1} {address2} {binaryString}{status} {codeType}{source}");
+                                break;
+                            default:
+                                break;
+                        }
+
+                        // クリアする
+                        address1 = "";
+                        address2 = "";
+                        status = "";
+                        source = "";
+                    }
+
+                    break;
+                case ListStatusEnum.SourceOnly:
+                    results.Add(source);
+                    break;
+                default:
+                    break;
             }
+
+
             return string.Join(Environment.NewLine, results);
         }
 
@@ -129,6 +190,38 @@ namespace AILZ80ASM
             }
 
             NestedCodeTypes.Push(nestedCodeTypeEnum);
+        }
+
+        private static string GetReplaseTab(string target, int tabLength)
+        {
+            var result = new List<char>();
+            var counter = 0;
+
+            foreach (var item in target.ToArray())
+            {
+                if (item == '\t')
+                {
+                    result.AddRange(new string(' ', tabLength - counter).ToArray());
+                    counter = 0;
+                }
+                else if (item <= 0x7F)
+                {
+                    result.Add(item);
+                    counter += 1;
+                }
+                else
+                {
+                    result.Add(item);
+                    counter += 2;
+                }
+
+                if (counter > tabLength)
+                {
+                    counter -= tabLength;
+                }
+            }
+
+            return string.Concat(result);
         }
 
     }

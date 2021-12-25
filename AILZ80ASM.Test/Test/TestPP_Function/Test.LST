@@ -1,0 +1,19 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 9000                       ORG $9000
+       0001                   JJ  EQU 1
+       0002                   KK  EQU 2
+       0003                   LL  EQU 3
+       0004                   MM  EQU 4
+       0005                   NN  EQU 5
+       1234                   OO  EQU $1234
+                              
+000000 9000 DD7E69        19      LD A, (IX+FUNC(JJ+KK,FUNC(LL+MM,NN)))
+000003 9003 3E01           7      LD A, ABS(-1)
+000005 9005 0601           7      LD B, ABS(1)
+                              
+000007 9007 0C22                  DB FUNC( 1, 2 ), FUNC(3, 4),
+000009 9009 7800480D              DW FUNC(10, 20), FUNC(300, 400),
+00000D 900D 06                    DB FUNC2(3)
+00000E 900E 1234                  DB H(OO), L(OO)
+                              
+[EOF:Test.Z80:UTF_8]
