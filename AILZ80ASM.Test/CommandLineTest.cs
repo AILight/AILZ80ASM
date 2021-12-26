@@ -132,7 +132,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-e", "UTF-8" };
+                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-en", "UTF-8" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -151,7 +151,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-e", "SHIFT_JIS" };
+                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-en", "SHIFT_JIS" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
