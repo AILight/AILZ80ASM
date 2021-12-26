@@ -13,6 +13,10 @@ namespace AILZ80ASM
         {
             try
             {
+                // Tranceの書きさし先を削除
+                TraceListenerRemoveAll();
+                Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
+
                 var rootCommand = AsmCommandLine.SettingRootCommand();
 
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
@@ -22,7 +26,8 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    Console.WriteLine(rootCommand.ParseMessage);
+                    OutputStart();
+                    Trace.WriteLine(rootCommand.ParseMessage);
 
                     return 2;
                 }
@@ -60,11 +65,7 @@ namespace AILZ80ASM
         {
             try
             {
-                // Tranceの書きさし先を削除
-                TraceListenerRemoveAll();
-
                 // Traceの書き出し先を設定
-                Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
                 if (traceFile != default)
                 {
                     traceFile.Delete();

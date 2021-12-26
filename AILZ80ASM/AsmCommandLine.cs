@@ -149,7 +149,7 @@ namespace AILZ80ASM
                 Name = "listMode",
                 ArgumentName = "mode",
                 Aliases = new[] { "-lm", "--list-mode" },
-                Description = "リストのモードを設定します。",
+                Description = "リストの出力形式を指定します。",
                 DefaultValue = "full",
                 Parameters = new[] { new Parameter { Name = "simple", Description = "最小の項目で出力します。" },
                                      new Parameter { Name = "middle", Description = "出力アドレス無しで出力します。" },
@@ -162,7 +162,7 @@ namespace AILZ80ASM
                 Name = "error",
                 ArgumentName = "file",
                 Aliases = new[] { "-e", "--error" },
-                Description = "エラーファイルを出力します。",
+                Description = "アセンブル結果を出力します。",
                 Required = false,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".err"); }
             });
