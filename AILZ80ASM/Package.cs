@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -298,14 +299,14 @@ namespace AILZ80ASM
         {
             if (AssembleLoad.Errors.Count > 0)
             {
-                Console.WriteLine($"");
+                Trace.WriteLine($"");
                 OutputError(Errors, "Error");
                 OutputError(Warnings, "Warning");
                 OutputError(Informations, "Information");
             }
 
-            Console.WriteLine($"");
-            Console.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Informations.Length} information");
+            Trace.WriteLine($"");
+            Trace.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Informations.Length} information");
         }
 
         /// <summary>
@@ -317,9 +318,9 @@ namespace AILZ80ASM
         {
             if (errorLineItems.Length > 0)
             {
-                Console.WriteLine($"> {title}");
+                Trace.WriteLine($"> {title}");
                 InternalOutputError(errorLineItems, title);
-                Console.WriteLine();
+                Trace.WriteLine("");
             }
         }
 
@@ -333,7 +334,7 @@ namespace AILZ80ASM
             {
                 var errorCode = errorLineItem.ErrorCode.ToString();
                 var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}:{(errorLineItem.LineItem.LineIndex)} ";
-                Console.WriteLine($"{filePosition} {errorCode}: {errorLineItem.ErrorMessage}");
+                Trace.WriteLine($"{filePosition} {errorCode}: {errorLineItem.ErrorMessage}");
             }
         }
     }

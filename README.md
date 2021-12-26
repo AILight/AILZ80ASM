@@ -26,7 +26,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 
 ## コマンドラインオプション
 - -i, --input <files>          アセンブリ対象のファイルをスペース区切りで指定します。
-- -e, --encode <mode>          ファイルのエンコードを選択します。（UTF-8、SHIFT_JIS）
+- -en, --encode <mode>         ファイルのエンコードを選択します。（UTF-8、SHIFT_JIS）
 - -o, --output <file>          出力ファイルを指定します。
 - -om, --output-mode <outMode> 出力ファイルのモードを選択します。（デフォルト：BIN、T88、CMT）
 - -s, --symbol <symbol>        シンボルファイルを指定します。
