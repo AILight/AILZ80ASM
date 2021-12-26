@@ -1,0 +1,10 @@
+﻿INCLUDE ".\Test\TestPP_RepeatAlign\Test.INC"
+
+	; 実行アドレスを整える
+	REPT	($ + 15) / 16 * 16 - $
+	nop
+	ENDM
+
+	LD A, SCREEN.WIDTH
+	LD H, DATA.MY + 0
+	LD L, DATA.MY + 1

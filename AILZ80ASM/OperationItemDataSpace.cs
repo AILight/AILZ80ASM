@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class OperationItemDataSpace : OperationItem
+    public class OperationItemDataSpace : OperationItem, IOperationItemDefaultClearable
     {
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }

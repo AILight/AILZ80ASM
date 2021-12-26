@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
-    public class OperationItemSystem : OperationItem
+    public class OperationItemSystem : OperationItem, IOperationItemDefaultClearable
     {
         private static readonly string RegexPatternOP = @"^(?<op1>(ORG|ALIGN))\s+(?<op2>[^,]+)\s*,*\s*(?<op3>[^,]*)\s*,*\s*(?<op4>[^,]*)$";
 
@@ -19,6 +19,8 @@ namespace AILZ80ASM
             }
         }
         public override AsmLength Length => ItemDataLength;
+        public bool IsDefaultValueClear { get; set; } = true;
+
 
         private OperationItemSystem()
         {
@@ -50,6 +52,7 @@ namespace AILZ80ASM
                         var bytes = Array.Empty<byte>();
                         var outputAddress = address.Output;
                         var length = new AsmLength(0);
+                        var isDefaultValueClear = true;
 
                         if (!string.IsNullOrEmpty(op3))
                         {
@@ -65,6 +68,7 @@ namespace AILZ80ASM
                             {
                                 var value = AIMath.ConvertTo<byte>(op4, asmLoad, lineDetailExpansionItemOperation.Address);
                                 bytes = bytes.Select(m => value).ToArray();
+                                isDefaultValueClear = false;
                             }
                         }
                         else if (asmLoad.AsmAddresses.Count > 0)
@@ -84,7 +88,7 @@ namespace AILZ80ASM
                         asmLoad.AddAsmAddress(newAsmAddress);
 
 
-                        returnValue = new OperationItemSystem { Address = newAsmAddress, ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
+                        returnValue = new OperationItemSystem { Address = newAsmAddress, ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation, IsDefaultValueClear = isDefaultValueClear };
                     }
                     break;
                 case "ALIGN":
@@ -98,13 +102,15 @@ namespace AILZ80ASM
                         var offset = align - (address.Program % align);
                         var length = new AsmLength(offset);
                         var bytes = new byte[length.Output];
+                        var isDefaultValueClear = true;
                         if (!string.IsNullOrEmpty(op3))
                         {
                             var value = AIMath.ConvertTo<byte>(op3, asmLoad, lineDetailExpansionItemOperation.Address);
                             bytes = bytes.Select(m => value).ToArray();
+                            isDefaultValueClear = false;
                         }
 
-                        returnValue = new OperationItemSystem { Address = address, ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation };
+                        returnValue = new OperationItemSystem { Address = address, ItemDataLength = length, ItemDataBin = bytes, LineDetailExpansionItemOperation = lineDetailExpansionItemOperation, IsDefaultValueClear = isDefaultValueClear };
                     }
                     break;
                 default:
@@ -116,6 +122,12 @@ namespace AILZ80ASM
 
         public override void Assemble(AsmLoad asmLoad)
         {
+        }
+
+        public override void TrimData()
+        {
+            ItemDataBin = Array.Empty<byte>();
+            ItemDataLength = new AsmLength();
         }
     }
 }
