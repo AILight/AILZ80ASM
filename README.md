@@ -31,6 +31,8 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - -om, --output-mode <outMode> 出力ファイルのモードを選択します。（デフォルト：BIN、T88、CMT）
 - -s, --symbol <symbol>        シンボルファイルを指定します。
 - -l, --list <list>            リストファイルを指定します。
+- -lm,--list-mode <mode>       リストの出力形式を指定します。（デフォルト：full、simple、middle）
+- -e, --error <file>           アセンブル結果を出力します。
 - -t, --trim                   DSで確保したメモリが、出力データの最後にある場合にトリムされます。
 - -v, --version                バージョンを表示します。
 - -?, -h, --help <help>        ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -help --input-mode
@@ -39,12 +41,15 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ■ sample.z80をアセンブル、出力はBIN形式
 > AILZ80ASM sample.z80
 
+■ sample.z80をアセンブル、出力はBIN形式、ログファイルを出力
+> AILZ80ASM sample.z80 -e
+
 ■ sample.z80をアセンブル、出力はCMT形式
 > AILZ80ASM sample.z80 -cmt
 > AILZ80ASM sample.z80 -om cmt
 
-■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力、DSをTrim
-> AILZ80ASM sample.z80 -bin -cmt -l -t
+■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力（形式：シンプル）、DSをTrim
+> AILZ80ASM sample.z80 -bin -cmt -l -t -lm simple
 
 ■ sample.z80をアセンブル、出力はBIN形式、ファイル名は、output.bin
 > AILZ80ASM sample.z80 -bin output.bin
@@ -75,10 +80,21 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 #### ラベルの宣言
 - [<ネームスペース名>]
   - デフォルト： `NS_Main`
+```
+[NS_Main]		; ネームスペース指定
+```
 - <ラベル名[:]>
   - 標準ラベル
+```
+LABLE:			; ラベル指定
+```
 - <[.]ローカルラベル名>
   - ローカルラベル
+```
+LABLE:			; ラベル指定
+.A			; ローカルラベル
+.B			; ローカルラベル
+```
 
 #### ラベルの指定
 - <ネームスペース>.<ラベル名>.<ローカルラベル名>
