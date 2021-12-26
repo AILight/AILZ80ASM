@@ -1,0 +1,37 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+                              include ".\Test\TestPP_Include\Test.inc"
+       0000                       FALSE   equ 0       ; FALSE
+       FFFF                       TRUEequ !FALSE  ; TRUE
+       0000                       NULLequ 0       ; NULL
+       0008                       START   equ $0008
+       0008                       LENGTH  equ $0008
+                                
+[EOF:Test.inc:UTF_8]
+000000 8000                       ORG $8000
+000000 8000 3EFF           7      ld a, TRUE
+                                  ;ld b, 0
+000002 8002 0E00           7      ld c, FALSE
+                              include ".\Test\TestPP_Include\Test1.inc"
+000004 8004 3EFF           7      ld a, TRUE
+                              include ".\Test\TestPP_Include\Test2.inc"
+                              LABEL:
+000006 8006 0E00           7      ld c, FALSE
+[EOF:Test2.inc:UTF_8]
+[EOF:Test1.inc:UTF_8]
+000008 8008 C30680        10      jp  LABEL
+00000B 800B 0000000000            DS  5
+                              
+                              include ".\Test\TestPP_Include\Test3.bin", B
+000010 8010 00010203040506    
+            0708090A0B0C0D    
+            0E0F              
+[EOF:Test3.bin:16]
+                              include ".\Test\TestPP_Include\Test3.bin", B, START
+000020 8020 08090A0B0C0D0E    
+            0F                
+[EOF:Test3.bin:8]
+                              include ".\Test\TestPP_Include\Test3.bin", B, , LENGTH
+000028 8028 00010203040506    
+            07                
+[EOF:Test3.bin:8]
+[EOF:Test.Z80:UTF_8]

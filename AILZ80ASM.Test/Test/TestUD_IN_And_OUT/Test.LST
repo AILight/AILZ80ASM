@@ -1,0 +1,5 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 ED70          12      IN F,(C)
+000002 0002 ED71          12      OUT (C),0
+000004 0004 ED70          12      IN (C)
+[EOF:Test.Z80:UTF_8]

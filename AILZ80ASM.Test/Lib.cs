@@ -8,7 +8,7 @@ namespace AILZ80ASM.Test
     {
         private const int READ_BUFFER_LENGTH = 3;
 
-        public static void AreSame(Stream expectedStream, Stream actualStream)
+        public static void AreSameBin(Stream expectedStream, Stream actualStream)
         {
             var expectedBytes = new byte[READ_BUFFER_LENGTH];
             var actualBytes = new byte[READ_BUFFER_LENGTH];
@@ -46,15 +46,41 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, bool dataTrim, bool testError)
+        public static void AreSameLst(Stream expectedStream, Stream actualStream)
         {
-            var package = new Package(Files, AsmLoad.EncodeModeEnum.UTF_8, dataTrim, AsmISA.Z80);
+            using var expectedStreamReader = new StreamReader(expectedStream);
+            using var actualStreamReader = new StreamReader(actualStream);
+            var expected = expectedStreamReader.ReadLine();
+            var actual = actualStreamReader.ReadLine();
+            var line = 1;
+            while (!string.IsNullOrEmpty(expected) && !string.IsNullOrEmpty(actual))
+            {
+                if (line > 1)
+                {
+                    Assert.AreEqual(expected, actual, $"Line:{line} expect:{expected} actual:{actual}");
+                }
+
+                expected = expectedStreamReader.ReadLine();
+                actual = actualStreamReader.ReadLine();
+                line++;
+            }
+
+            if (!string.IsNullOrEmpty(expected) || !string.IsNullOrEmpty(actual))
+            {
+                Assert.AreEqual(expected, actual, $"Line:{line} expect:{expected} actual:{actual}");
+            }
+        }
+
+        public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, Stream assembledList, bool dataTrim, bool testError)
+        {
+            var package = new Package(Files, AsmLoad.EncodeModeEnum.UTF_8, AsmLoad.ListModeEnum.Full, dataTrim, AsmISA.Z80);
 
             package.Assemble();
 
             if (package.Errors.Length == 0)
             {
                 package.SaveOutput(assebledStream, new System.Collections.Generic.KeyValuePair<AsmLoad.OutputModeEnum, FileInfo>(AsmLoad.OutputModeEnum.BIN, new FileInfo("Main.bin")));
+                package.SaveOutput(assembledList, new System.Collections.Generic.KeyValuePair<AsmLoad.OutputModeEnum, FileInfo>(AsmLoad.OutputModeEnum.LST, new FileInfo("Main.lst")));
             }
             else if (!testError)
             {
@@ -65,19 +91,34 @@ namespace AILZ80ASM.Test
         }
 
 
-        public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile)
+        public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, FileInfo listFile)
         {
-            Assemble_AreSame(inputFiles, outputFile, false);
+            Assemble_AreSame(inputFiles, outputFile, listFile, false);
         }
 
-        public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, bool dataTrim)
+        public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, FileInfo listFile, bool dataTrim)
         {
-            using var memoryStream = new MemoryStream();
+            using var outputBinMemoryStream = new MemoryStream();
+            using var outputLstMemoryStream = new MemoryStream();
             using var outputStream = outputFile.OpenRead();
 
-            Lib.Assemble(inputFiles, memoryStream, dataTrim, false);
-            memoryStream.Position = 0;
-            Lib.AreSame(outputStream, memoryStream);
+            Lib.Assemble(inputFiles, outputBinMemoryStream, outputLstMemoryStream, dataTrim, false);
+            outputBinMemoryStream.Position = 0;
+            outputLstMemoryStream.Position = 0;
+            Lib.AreSameBin(outputStream, outputBinMemoryStream);
+
+            /*
+            if (listFile.Exists)
+            {
+                using var listStream = listFile.OpenRead();
+                Lib.AreSameLst(listStream, outputLstMemoryStream);
+            }
+            else
+            {
+                using var listStream = listFile.OpenWrite();
+                outputLstMemoryStream.CopyTo(listStream);
+            }
+            */
         }
 
         public static void Assemble_AreSame(string directoryName)
@@ -92,7 +133,9 @@ namespace AILZ80ASM.Test
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Test.Z80")) };
             var outputFile = new FileInfo(Path.Combine(targetDirectoryName, "Test.BIN"));
 
-            Lib.Assemble_AreSame(inputFiles, outputFile, dataTrim);
+            var listFile = new FileInfo(Path.Combine(targetDirectoryName, "Test.LST"));
+
+            Lib.Assemble_AreSame(inputFiles, outputFile, listFile, dataTrim);
         }
     }
 }

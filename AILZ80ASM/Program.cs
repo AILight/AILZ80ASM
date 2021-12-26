@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using AILZ80ASM.CommandLine;
@@ -12,9 +13,11 @@ namespace AILZ80ASM
         {
             try
             {
-                var rootCommand = AsmCommandLine.SettingRootCommand();
+                // Tranceの書きさし先を削除
+                TraceListenerRemoveAll();
+                Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
 
-                OutputStart();
+                var rootCommand = AsmCommandLine.SettingRootCommand();
 
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
                 if (rootCommand.Parse(args))
@@ -23,7 +26,8 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    Console.WriteLine(rootCommand.ParseMessage);
+                    OutputStart();
+                    Trace.WriteLine(rootCommand.ParseMessage);
 
                     return 2;
                 }
@@ -40,10 +44,9 @@ namespace AILZ80ASM
             return Assember(rootCommand.GetValue<FileInfo[]>("input"),
                             rootCommand.GetEncodeMode(),
                             rootCommand.GetOutputFiles(),
-                            rootCommand.GetValue<FileInfo>("symbol"),
-                            rootCommand.GetValue<FileInfo>("list"),
-                            rootCommand.GetValue<FileInfo>("debug"),
-                            rootCommand.GetValue<bool>("outputTrim"));
+                            rootCommand.GetListMode(),
+                            rootCommand.GetValue<bool>("outputTrim"),
+                            rootCommand.GetValue<FileInfo>("error"));
         }
 
 
@@ -58,17 +61,28 @@ namespace AILZ80ASM
         /// <param name="list"></param>
         /// <returns></returns>
         public static bool Assember(
-                FileInfo[] inputs, AsmLoad.EncodeModeEnum encodeMode, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, FileInfo symbol, FileInfo list, FileInfo debug, bool outputTrim)
+                FileInfo[] inputs, AsmLoad.EncodeModeEnum encodeMode, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, AsmLoad.ListModeEnum listMode, bool outputTrim, FileInfo traceFile)
         {
             try
             {
+                // Traceの書き出し先を設定
+                if (traceFile != default)
+                {
+                    traceFile.Delete();
+                    Trace.Listeners.Add(new TextWriterTraceListener(traceFile.FullName, "error"));
+                    Trace.AutoFlush = true;
+                }
+
+                OutputStart();
+
+
                 // デバッグ情報
                 /*
                 if (debugFileInfo != default)
                 {
                     if (debugFileInfo.Exists)
                     {
-                        Console.Write("デバッグファイルが既に存在しています。削除してから書き込みますか？ (y/n)");
+                        Trace.Write("デバッグファイルが既に存在しています。削除してから書き込みますか？ (y/n)");
                         if (Console.ReadKey().Key == ConsoleKey.Y)
                         {
                             debugFileInfo.Delete();
@@ -101,17 +115,7 @@ namespace AILZ80ASM
                     }
                 }
 
-                if (list != default && inputs.Any(m => m.FullName == list.FullName))
-                {
-                    throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {list.Name}");
-                }
-
-                if (symbol != default && inputs.Any(m => m.FullName == symbol.FullName))
-                {
-                    throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {symbol.Name}");
-                }
-
-                var package = new Package(inputs, encodeMode, outputTrim, AsmISA.Z80);
+                var package = new Package(inputs, encodeMode, listMode, outputTrim, AsmISA.Z80);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
@@ -122,35 +126,40 @@ namespace AILZ80ASM
                 }
 
                 package.OutputError();
-                if (symbol != default)
-                {
-                    package.SaveSymbol(symbol);
-                }
-                if (list != default)
-                {
-                    package.SaveList(list);
-                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error:{ex.Message}");
+                Trace.WriteLine($"Error:{ex.Message}");
                 return false;
             }
             return true;
         }
 
+        private static void TraceListenerRemoveAll()
+        {
+            var listenerNames = new List<string>();
+            foreach (TraceListener item in Trace.Listeners)
+            {
+                listenerNames.Add(item.Name);
+            }
+            foreach (var item in listenerNames)
+            {
+                Trace.Listeners.Remove(item);
+            }
+        }
+
         private static void OutputStart()
         {
-            Console.WriteLine(ProductInfo.ProductLongName);
-            Console.WriteLine(ProductInfo.Copyright);
-            Console.WriteLine("");
+            Trace.WriteLine(ProductInfo.ProductLongName);
+            Trace.WriteLine(ProductInfo.Copyright);
+            Trace.WriteLine("");
         }
 
         private static void OutputStartForDebug(FileInfo fileInfo)
         {
-            Console.WriteLine(ProductInfo.ProductLongName);
-            Console.WriteLine(ProductInfo.Copyright);
-            Console.WriteLine("");
+            Trace.WriteLine(ProductInfo.ProductLongName);
+            Trace.WriteLine(ProductInfo.Copyright);
+            Trace.WriteLine("");
             //OutputDebug(new[] { ProductInfo.ProductLongName, ProductInfo.Copyright, $"Assemble start:{DateTime.Now}", "" }, fileInfo, false);
         }
 
@@ -172,7 +181,7 @@ namespace AILZ80ASM
                 {
                     if (display)
                     {
-                        Console.WriteLine(item);
+                        Trace.WriteLine(item);
                     }
                     streamWriter.WriteLine(item);
                 }

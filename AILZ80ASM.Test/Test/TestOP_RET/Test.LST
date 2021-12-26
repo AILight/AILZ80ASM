@@ -1,0 +1,13 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 C0            11      ret nz
+000001 0001 D0            11      ret nc
+000002 0002 E0            11      ret po
+000003 0003 F0            11      ret p
+000004 0004 C8            11      ret z
+000005 0005 D8            11      ret c
+000006 0006 E8            11      ret pe
+000007 0007 F8            11      ret m
+000008 0008 C9            10      ret
+000009 0009 ED4D          15      reti
+00000B 000B ED45          14      retn
+[EOF:Test.Z80:UTF_8]

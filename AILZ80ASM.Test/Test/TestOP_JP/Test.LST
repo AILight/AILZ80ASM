@@ -1,0 +1,14 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 C22301        10      jp nz, $0123
+000003 0003 D26745        10      jp nc, $4567
+000006 0006 E2AB89        10      jp po, $89AB
+000009 0009 F2EFCD        10      jp p, $CDEF
+00000C 000C CA0132        10      jp z, $3201
+00000F 000F DA4567        10      jp c, $6745
+000012 0012 EA89AB        10      jp pe, $AB89
+000015 0015 FACDEF        10      jp m, $EFCD
+000018 0018 C33412        10      jp $1234
+00001B 001B E9             4      jp (hl)
+00001C 001C DDE9           8      jp (ix)
+00001E 001E FDE9           8      jp (iy)
+[EOF:Test.Z80:UTF_8]

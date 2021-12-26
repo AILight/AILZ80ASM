@@ -1,0 +1,76 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 8000                       org $8000
+000000 8000 3E00           7      ld a, 0
+       C000                       GREEN_ADDR equ $C000
+       000F                       GREEN_PTN_DEF  equ 0000_1111b
+       0001                       GREEN_A equ 0000_0001b
+       0002                       GREEN_B equ 0000_0010b
+       0004                       GREEN_C equ 0000_0100b
+       00CC                       PORT_A equ $CC
+       0001                       .SET_DATA equ $01
+       FFEE                       TEST_ADDR1 equ  FFEEH
+       FFEE                       TEST_ADDR2 equ 0FFEEH
+       F8F1                       TEST_ADDR3 equ 0xF8F1
+                              
+000002 8002 2100C0        10      LD HL, GREEN_ADDR
+000005 8005 110580        10      LD DE, $
+000008 8008 3E0F           7      LD A, GREEN_PTN_DEF
+00000A 800A 3E07           7      LD A, GREEN_A | GREEN_B | GREEN_C
+00000C 800C 06C0           7      LD B, GREEN_ADDR.@H
+00000E 800E 0E00           7      LD C, GREEN_ADDR.@L
+000010 8010 3E01           7      LD A, PORT_A.SET_DATA
+000012 8012 D3CC          11      OUT (PORT_A), A
+000014 8014 21EEFF        10      LD HL, TEST_ADDR1
+000017 8017 21EEFF        10      LD HL, TEST_ADDR2
+00001A 801A 21F1F8        10      LD HL, TEST_ADDR3
+00001D 801D 00             4      NOP
+00001E 801E 00             4      NOP
+00001F 801F 00             4      NOP
+                              ForwardLabel:
+000020 8020 ED732680      20      LD (.stack), SP
+000024 8024 00             4      NOP
+       8026                   .stack  equ $ + 1
+000025 8025 310000        10      LD   SP, 0
+                              
+                              LocalLabel:
+       0000                   .C  equ 0
+       0001                   .CP equ 1
+       0002                   .D  equ 2
+       0003                   .DP equ 3
+       0004                   .E  equ 4
+       0005                   .F  equ 5
+       0006                   .FP equ 6
+       0007                   .G  equ 7
+       0008                   .GP equ 8
+       0009                   .A  equ 9
+       000A                   .AP equ 10
+       000B                   .B  equ 11
+                              
+000028 8028 00             4      NOP
+000029 8029 308033803680      AtmarkTest: dw .@1, .@2, .@3
+00002F 802F 00             4      NOP
+000030 8030 010203            .@1 db 1, 2, 3
+000033 8033 040506            .@2 db 4, 5, 6
+000036 8036 070809            .@3 db 7, 8, 9
+                              
+000039 8039 00             4      NOP
+00003A 803A 00             4      NOP
+00003B 803B 00             4      NOP
+00003C 803C 00             4      NOP
+00003D 803D 00             4      NOP
+00003E 803E 00             4      NOP
+00003F 803F 00             4      NOP
+                              
+000040 8040 010C36        10      ld  bc, EqualTest1.@1 * 256 + EqualTest2.@1
+                                  ;ld bc, %00110110 * 256 + %00001100
+                              
+                              EqualTest1:
+       0036                   .@1 equ %00110110   ; 1
+       0076                   .@2 equ %01110110   ; 2
+       00B6                   .@3 equ %10110110   ; 3
+                              
+                              EqualTest2:
+       000C                   .@1 equ %00001100   ; 1
+       000D                   .@2 equ %00001101   ; 2
+       000E                   .@3 equ %00001110   ; 3
+[EOF:Test.Z80:UTF_8]

@@ -173,5 +173,29 @@ namespace AILZ80ASM
                     throw new NotImplementedException();
             }
         }
+
+        public override AsmList[] Lists
+        {
+            get
+            {
+                var lists = new List<AsmList>();
+                lists.Add(AsmList.CreateLineItem(LineItem));
+
+                switch (FileType)
+                {
+                    case FileTypeEnum.Text:
+                        lists.AddRange(FileItem.Lists);
+                        break;
+                    case FileTypeEnum.Binary:
+                        lists.Add(LineDetailExpansionItem.List);
+                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.Bin.Length));
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                return lists.ToArray();
+            }
+        }
     }
 }

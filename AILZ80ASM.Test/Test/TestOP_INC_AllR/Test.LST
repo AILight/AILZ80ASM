@@ -1,0 +1,18 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 3C             4      inc a
+000001 0001 04             4      inc b
+000002 0002 0C             4      inc c
+000003 0003 14             4      inc d
+000004 0004 1C             4      inc e
+000005 0005 24             4      inc h
+000006 0006 2C             4      inc l
+000007 0007 03             6      inc bc
+000008 0008 13             6      inc de
+000009 0009 23             6      inc hl
+00000A 000A 33             6      inc sp
+00000B 000B 34            11      inc (hl)
+00000C 000C DD23          10      inc ix
+00000E 000E FD23          10      inc iy
+000010 0010 DD3400        23      inc (ix+0)
+000013 0013 FD3401        23      inc (iy+1)
+[EOF:Test.Z80:UTF_8]

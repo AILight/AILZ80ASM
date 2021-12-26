@@ -21,14 +21,17 @@ namespace AILZ80ASM
             }
 
             // ラベルの名称だけを取得
-            if (target.EndsWith("::"))
+            if (target.StartsWith("[") && target.EndsWith("]"))
             {
-                target = target.Substring(0, target.Length - 2);
+                target = target.Substring(1, target.Length - 2);
             }
 
             if (target.EndsWith(":"))
             {
-                target = target.Substring(0, target.Length - 1);
+                while (target.EndsWith(":"))
+                {
+                    target = target.Substring(0, target.Length - 1);
+                }
             }
 
             if (target.StartsWith("."))

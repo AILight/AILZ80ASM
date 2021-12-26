@@ -102,7 +102,7 @@ namespace AILZ80ASM
             return default;
         }
 
-        public override void ExpansionItem()
+        public override void PreAssemble(ref AsmAddress asmAddress)
         {
             // リピート数が設定されているものを処理する
             if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
@@ -111,14 +111,13 @@ namespace AILZ80ASM
                 // ラベルを処理する
                 if (!string.IsNullOrEmpty(LineItem.LabelString))
                 {
-                    var localLineItem = new LineItem(LineItem);
-                    localLineItem.SetLabel(LineItem.LabelString);
-                    localLineItem.ClearOperation();
-
-                    lineDetailScopeItems.Add(new LineDetailScopeItem(localLineItem, this.AsmLoad));
+                    var localLineItem = new LineItem(LineItem.LabelString, 0, default(System.IO.FileInfo));
+                    localLineItem.CreateLineDetailItem(this.AsmLoad);
+                    localLineItem.ExpansionItem();
+                    localLineItem.PreAssemble(ref asmAddress);
                 }
 
-                var count = AIMath.ConvertTo<UInt16>(RepeatCountLabel, this.AsmLoad);
+                var count = AIMath.ConvertTo<UInt16>(RepeatCountLabel, this.AsmLoad, asmAddress);
                 var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertTo<UInt16>(RepeatLastLabel, this.AsmLoad);
                 var repeatLines = RepeatLines.Skip(1).SkipLast(1);
 
@@ -159,6 +158,7 @@ namespace AILZ80ASM
                         try
                         {
                             lineItem.ExpansionItem();
+                            lineItem.PreAssemble(ref asmAddress);
                             lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
                         }
                         catch (ErrorAssembleException ex)
@@ -174,7 +174,7 @@ namespace AILZ80ASM
                 LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
             }
 
-            base.ExpansionItem();
+            //base.PreAssemble(ref asmAddress);
         }
     }
 }

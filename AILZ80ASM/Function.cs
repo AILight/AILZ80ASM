@@ -101,7 +101,8 @@ namespace AILZ80ASM
 
             
             var localAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
-            var globalLabel = new Label("Function_Local::", localAsmLoad);
+            var guid = $"{Guid.NewGuid():N}";
+            var globalLabel = new Label($"[faunction_{guid}]", localAsmLoad);
             localAsmLoad.AddLabel(globalLabel);
 
             foreach (var index in Enumerable.Range(0, arguments.Length))

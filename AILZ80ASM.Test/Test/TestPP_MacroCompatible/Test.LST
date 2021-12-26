@@ -1,0 +1,142 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+                              [MAIN]
+       0002                   ARG1equ 2
+       0003                   .Three  equ 3
+       8001                   VRAM_ADDRESSequ $8001
+                              
+000000 9000                       ORG $9000
+                                  
+                                  ALLLD
+000000 9000 3E01           7 +    ld a,1
+000002 9002 0602           7 +    ld b,2
+000004 9004 0E03           7 +    ld c,3
+000006 9006 1604           7 +    ld d,4
+000008 9008 1E05           7 +    ld e,5
+00000A 900A 2606           7 +    ld h,6
+00000C 900C 2E07           7 +    ld l,7
+                              ADDR: TestArg 0, 1
+                             +ADDR: 
+00000E 900E 3E00           7 +    ld a, a1
+000010 9010 0601           7 +    ld b, a2
+                                  TestArg ARG1, ARG1.Three
+000012 9012 3E02           7 +    ld a, a1
+000014 9014 0603           7 +    ld b, a2
+                                  VRAMSET VRAM_ADDRESS
+                             +
+000016 9016 2680           7 +    ld H, VRAM_ADDRESS.@H
+000018 9018 2E01           7 +    ld L, VRAM_ADDRESS.@L
+                             +
+                                  VRAMSET ADDR
+                             +
+00001A 901A 2690           7 +    ld H, VRAM_ADDRESS.@H
+00001C 901C 2E0E           7 +    ld L, VRAM_ADDRESS.@L
+                             +
+                                  REPEAT_TEST
+                             +
+00001E 901E AF             4 +        xor     a   
+00001F 901F AF             4 +        xor     a   
+                             +
+000020 9020 3E01           7 +    ld a,1
+000022 9022 0602           7 +    ld b,2
+000024 9024 3E01           7 +    ld a,1
+000026 9026 0602           7 +    ld b,2
+000028 9028 3E01           7 +    ld a,1
+                             +
+                                  MACRO_IN_MACRO ADDR, 0, 1
+                             +
+                             +
+00002A 902A 2690           7 +    ld H, VRAM_ADDRESS.@H
+00002C 902C 2E0E           7 +    ld L, VRAM_ADDRESS.@L
+                             +
+                             +
+00002E 902E 3E00           7 +    ld a, a1
+000030 9030 0601           7 +    ld b, a2
+                             +
+                                  READ_LABEL
+                             +
+000032 9032 210E90        10 +    ld hl, ADDR
+                             +
+                                  REPEAT_JR 3
+                             +
+000035 9035 3E03           7 +    ld  a, TEST
+000037 9037 2007          12 +    jr nz, .lp
+                             +    
+                             +
+000039 9039 210E90        10 +    ld hl, ADDR
+                             +
+                             +
+00003C 903C AF             4 +        xor     a   
+00003D 903D AF             4 +        xor     a   
+                             +
+00003E 903E 3E00           7 +    ld a, 0
+                             +
+                             +.lp
+                             +
+                              
+                              ALLLD MACRO
+                                  ld a,1
+                                  ld b,2
+                                  ld c,3
+                                  ld d,4
+                                  ld e,5
+                                  ld h,6
+                                  ld l,7
+                                  ENDM
+                              
+                              TestArg macro a1, a2
+                                  ld a, a1
+                                  ld b, a2
+                                  endm
+                              
+                              VRAMSET macro VRAM_ADDRESS
+                              
+                                  ld H, VRAM_ADDRESS.@H
+                                  ld L, VRAM_ADDRESS.@L
+                              
+                                  endm
+                              
+                              REPEAT_TEST macro
+                              
+                              REPEAT 2
+                                      xor     a   
+                              END REPEAT
+                              
+                              REPEAT 3 LAST - 1
+                                  ld a,1
+                                  ld b,2
+                              END REPEAT
+                              
+                                  endm
+                              
+                              MACRO_IN_MACRO macro VRAM_ADDRESS, a11, a22
+                              
+                                  MAIN.VRAMSET VRAM_ADDRESS
+                              
+                                  main.TestArg a11, a22
+                              
+                                  endm
+                              
+                              READ_LABEL macro
+                              
+                                  ld hl, ADDR
+                              
+                                  endm
+                              
+                              REPEAT_JR macro TEST
+                              
+                                  ld  a, TEST
+                                  jr nz, .lp
+                                  
+                                  MAIN.READ_LABEL
+                              
+                              REPEAT 2
+                                      xor     a   
+                              END REPEAT
+                              
+                                  ld a, 0
+                              
+                              .lp
+                              
+                                  endm
+                              
+[EOF:Test.Z80:UTF_8]

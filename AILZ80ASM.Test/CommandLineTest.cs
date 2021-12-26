@@ -132,7 +132,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-e", "UTF-8" };
+                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-en", "UTF-8" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -151,7 +151,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-e", "SHIFT_JIS" };
+                var arguments = new[] { "Main.z80", "-o", "Main.bin", "-en", "SHIFT_JIS" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -459,49 +459,52 @@ namespace AILZ80ASM.Test
 
                 Assert.AreEqual(fileInfos.Length, 1);
                 Assert.AreEqual(fileInfos.First().Name, "Main.z80");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
-                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("list").Name, "Main.lst");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.LST].Name, "Main.lst");
+
+                var listMode = rootCommand.GetListMode();
+                Assert.AreEqual(listMode, AsmLoad.ListModeEnum.Full);
             }
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "--list" };
+                var arguments = new[] { "Main.z80", "-bin", "--list", "-lm", "simple" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
 
                 Assert.AreEqual(fileInfos.Length, 1);
                 Assert.AreEqual(fileInfos.First().Name, "Main.z80");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
-                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("list").Name, "Main.lst");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.LST].Name, "Main.lst");
+
+                var listMode = rootCommand.GetListMode();
+                Assert.AreEqual(listMode, AsmLoad.ListModeEnum.Simple);
             }
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "--list", "List.lst" };
+                var arguments = new[] { "Main.z80", "-bin", "--list", "List.lst", "--list-mode", "middle" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
 
                 Assert.AreEqual(fileInfos.Length, 1);
                 Assert.AreEqual(fileInfos.First().Name, "Main.z80");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
-                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("list").Name, "List.lst");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.LST].Name, "List.lst");
+
+                var listMode = rootCommand.GetListMode();
+                Assert.AreEqual(listMode, AsmLoad.ListModeEnum.Middle);
             }
 
         }
@@ -518,13 +521,11 @@ namespace AILZ80ASM.Test
 
                 Assert.AreEqual(fileInfos.Length, 1);
                 Assert.AreEqual(fileInfos.First().Name, "Main.z80");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
-                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("symbol").Name, "Main.sym");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.SYM].Name, "Main.sym");
             }
 
             {
@@ -536,13 +537,11 @@ namespace AILZ80ASM.Test
 
                 Assert.AreEqual(fileInfos.Length, 1);
                 Assert.AreEqual(fileInfos.First().Name, "Main.z80");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
-                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("symbol").Name, "Main.sym");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.SYM].Name, "Main.sym");
             }
 
             {
@@ -554,17 +553,16 @@ namespace AILZ80ASM.Test
 
                 Assert.AreEqual(fileInfos.Length, 1);
                 Assert.AreEqual(fileInfos.First().Name, "Main.z80");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
-                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
-                Assert.AreEqual(rootCommand.GetValue<FileInfo>("symbol").Name, "Symbol.sym");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.SYM].Name, "Symbol.sym");
             }
 
         }
 
+        /*
         [TestMethod]
         public void Test_CommandLine_Debug()
         {
@@ -623,5 +621,6 @@ namespace AILZ80ASM.Test
             }
 
         }
+        */
     }
 }

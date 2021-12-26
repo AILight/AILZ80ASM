@@ -128,6 +128,11 @@ namespace AILZ80ASM
         private static T Calculation<T>(string target, AsmLoad asmLoad, AsmAddress? asmAddress)
             where T : struct
         {
+            if (string.IsNullOrEmpty(target))
+            {
+                throw new Exception("式が空文字です");
+            }
+
             var terms = CalculationParse(target);
             var rvpns = CalculationMakeReversePolish(terms);
             var value = CalculationByReversePolish<T>(rvpns, asmLoad, asmAddress);
@@ -269,18 +274,21 @@ namespace AILZ80ASM
 
             // 演算子、数値が連続しているものがないか確認をする
             var checkValues = result.Where(m => m != "(" && m != ")").ToArray();
-            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+            if (checkValues.Length > 0)
             {
-                if (!Regex.Match(checkValues[index + 0], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                    !Regex.Match(checkValues[index + 1], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
                 {
-                    throw new Exception("数値と数値の間には演算子が必要です");
-                }
+                    if (!Regex.Match(checkValues[index + 0], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                        !Regex.Match(checkValues[index + 1], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                    {
+                        throw new Exception("数値と数値の間には演算子が必要です");
+                    }
 
-                if (Regex.Match(checkValues[index + 0], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                    Regex.Match(checkValues[index + 1], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
-                {
-                    throw new Exception("演算子が連続で指定されています。");
+                    if (Regex.Match(checkValues[index + 0], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                        Regex.Match(checkValues[index + 1], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                    {
+                        throw new Exception("演算子が連続で指定されています。");
+                    }
                 }
             }
             return result.ToArray();
@@ -341,12 +349,15 @@ namespace AILZ80ASM
 
             // 三項演算子のチェック
             var checkValues = result.ToArray();
-            foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+            if (checkValues.Length > 0)
             {
-                if ((checkValues[index + 0] == ":" && checkValues[index + 1] != "?") ||
-                    (checkValues[index + 0] != ":" && checkValues[index + 1] == "?"))
+                foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
                 {
-                    throw new Exception("三項演算子の使い方が間違っています。");
+                    if ((checkValues[index + 0] == ":" && checkValues[index + 1] != "?") ||
+                        (checkValues[index + 0] != ":" && checkValues[index + 1] == "?"))
+                    {
+                        throw new Exception("三項演算子の使い方が間違っています。");
+                    }
                 }
             }
 

@@ -54,5 +54,13 @@ namespace AILZ80ASM
             asmAddress = new AsmAddress(asmAddress, new AsmLength(_Bin.Length));
 
         }
+
+        public override AsmList List
+        {
+            get 
+            {
+                return AsmList.CreateLineItem(Address, Bin);
+            }
+        }
     }
 }

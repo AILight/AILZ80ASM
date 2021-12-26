@@ -1,0 +1,13 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 A8             4      xor b
+000001 0001 A9             4      xor c
+000002 0002 AA             4      xor d
+000003 0003 AB             4      xor e
+000004 0004 AC             4      xor h
+000005 0005 AD             4      xor l
+000006 0006 AE             7      xor (hl)
+000007 0007 AF             4      xor a
+000008 0008 EE23           7      xor $23
+00000A 000A DDAE00        19      xor (ix+0)
+00000D 000D FDAE01        19      xor (iy+1)
+[EOF:Test.Z80:UTF_8]

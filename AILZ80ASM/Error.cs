@@ -8,7 +8,7 @@ namespace AILZ80ASM
         {
             Error,
             Warning,
-            Infomation,
+            Information,
         }
 
         public enum ErrorCodeEnum
@@ -94,7 +94,7 @@ namespace AILZ80ASM
             }
             else
             {
-                return ErrorTypeEnum.Infomation;
+                return ErrorTypeEnum.Information;
             }
         }
 

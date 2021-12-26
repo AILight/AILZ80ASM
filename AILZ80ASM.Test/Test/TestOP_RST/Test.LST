@@ -1,0 +1,10 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 C7            12      rst 00h
+000001 0001 D7            12      rst 10h
+000002 0002 E7            12      rst 20h
+000003 0003 F7            12      rst 30h
+000004 0004 CF            12      rst 08h
+000005 0005 DF            12      rst 18h
+000006 0006 EF            12      rst 28h
+000007 0007 FF            12      rst 38h
+[EOF:Test.Z80:UTF_8]

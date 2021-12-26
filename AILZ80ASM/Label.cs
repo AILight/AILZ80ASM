@@ -24,8 +24,8 @@ namespace AILZ80ASM
             SubLabel,
         }
 
-        private static readonly string RegexPatternGlobalLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))::(\s+|$)";
-        private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):(\s+|$)";
+        private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!--/-/<-@^-`{-~]+))\](\s+|$)";
+        private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):+(\s+|$)";
         private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):?";
         private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))(\s+|$)";
         private static readonly string RegexPatternValueLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))\s+equ\s+(?<value>(.+))";
@@ -212,12 +212,19 @@ namespace AILZ80ASM
             var matchedGlobalLabel = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matchedGlobalLabel.Success)
             {
-                return matchedGlobalLabel.Groups["label"].Value + "::";
+                return "[" + matchedGlobalLabel.Groups["label"].Value + "]";
             }
             var matchedLabel = Regex.Match(lineString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matchedLabel.Success)
             {
-                return matchedLabel.Groups["label"].Value + ":";
+                var label = matchedLabel.Groups["label"].Value;
+                var startIndex = label.Length;
+                while (lineString.IndexOf(":", startIndex) != -1)
+                {
+                    startIndex++;
+                }
+
+                return lineString.Substring(0, startIndex);
             }
             var matchedSubLabel = Regex.Match(lineString, RegexPatternSubLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matchedSubLabel.Success)

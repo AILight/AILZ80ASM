@@ -42,7 +42,7 @@ namespace AILZ80ASM
             {
                 Name = "encodeMode",
                 ArgumentName = "mode",
-                Aliases = new[] { "-e", "--encode" },
+                Aliases = new[] { "-en", "--encode" },
                 Description = "ファイルのエンコードを選択します。",
                 DefaultValue = "auto",
                 Parameters = new[] { new Parameter { Name = "auto", Description = "自動判断します。不明な場合はUTF-8で処理します。" },
@@ -144,6 +144,29 @@ namespace AILZ80ASM
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".lst"); }
             });
 
+            rootCommand.AddOption(new Option<string>()
+            {
+                Name = "listMode",
+                ArgumentName = "mode",
+                Aliases = new[] { "-lm", "--list-mode" },
+                Description = "リストの出力形式を指定します。",
+                DefaultValue = "full",
+                Parameters = new[] { new Parameter { Name = "simple", Description = "最小の項目で出力します。" },
+                                     new Parameter { Name = "middle", Description = "出力アドレス無しで出力します。" },
+                                     new Parameter { Name = "full", Description = "出力アドレスを含めて出力します。" },},
+                Required = false
+            });
+
+            rootCommand.AddOption(new Option<FileInfo>()
+            {
+                Name = "error",
+                ArgumentName = "file",
+                Aliases = new[] { "-e", "--error" },
+                Description = "アセンブル結果を出力します。",
+                Required = false,
+                DefaultFunc = (options) => { return GetDefaulFilename(options, ".err"); }
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "outputTrim",
@@ -192,29 +215,26 @@ namespace AILZ80ASM
             var outputSelected = rootCommand.GetSelected("output");
             var outputMode = rootCommand.GetValue<string>("outputMode");
             var outputModeSelected = rootCommand.GetSelected("outputMode");
-            var outputBin = rootCommand.GetValue<FileInfo>("outputBin");
-            //var outputHex = rootCommand.GetValue<FileInfo>("outputHex");
-            var outputT88 = rootCommand.GetValue<FileInfo>("outputT88");
-            var outputCMT = rootCommand.GetValue<FileInfo>("outputCMT");
+            
+            var outputDic = new Dictionary<AsmLoad.OutputModeEnum, string>
+            {
+                [AsmLoad.OutputModeEnum.BIN] = "outputBin",
+                //[AsmLoad.OutputModeEnum.HEX] = "outputHex",
+                [AsmLoad.OutputModeEnum.T88] = "outputT88",
+                [AsmLoad.OutputModeEnum.CMT] = "outputCMT",
+                [AsmLoad.OutputModeEnum.SYM] = "symbol",
+                [AsmLoad.OutputModeEnum.LST] = "list",
+                [AsmLoad.OutputModeEnum.DBG] = "debug",
+            };
 
-            if (outputBin != default)
+            foreach (var item in outputDic)
             {
-                result.Add(AsmLoad.OutputModeEnum.BIN, outputBin);
-            }
-            /*
-            if (outputHex != default)
-            {
-                result.Add(AsmLoad.OutputModeEnum.HEX, outputHex);
-            }
-            */
-            if (outputT88 != default)
-            {
-                result.Add(AsmLoad.OutputModeEnum.T88, outputT88);
-            }
+                var outputFileInfo = rootCommand.GetValue<FileInfo>(item.Value);
+                if (outputFileInfo != default)
+                {
+                    result.Add(item.Key, outputFileInfo);
+                }
 
-            if (outputCMT != default)
-            {
-                result.Add(AsmLoad.OutputModeEnum.CMT, outputCMT);
             }
 
             if (result.Count == 0 || outputSelected || outputModeSelected)
@@ -242,6 +262,21 @@ namespace AILZ80ASM
                 "auto" => AsmLoad.EncodeModeEnum.AUTO,
                 "utf-8" => AsmLoad.EncodeModeEnum.UTF_8,
                 "shift_jis" => AsmLoad.EncodeModeEnum.SHIFT_JIS,
+                _ => throw new InvalidOperationException()
+            };
+
+            return encodeMode;
+        }
+
+        public static AsmLoad.ListModeEnum GetListMode(this RootCommand rootCommand)
+        {
+            var listMode = rootCommand.GetValue<string>("listMode");
+
+            var encodeMode = listMode switch
+            {
+                "simple" => AsmLoad.ListModeEnum.Simple,
+                "middle" => AsmLoad.ListModeEnum.Middle,
+                "full" => AsmLoad.ListModeEnum.Full,
                 _ => throw new InvalidOperationException()
             };
 

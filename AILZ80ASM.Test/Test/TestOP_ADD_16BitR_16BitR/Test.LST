@@ -1,0 +1,12 @@
+                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
+000000 0000 09            13      add hl,bc
+000001 0001 19            13      add hl,de
+000002 0002 29            13      add hl,hl
+000003 0003 39            13      add hl,sp
+000004 0004 DD09          15      add ix,bc
+000006 0006 DD19          15      add ix,de
+000008 0008 DD39          15      add ix,sp
+00000A 000A FD09          15      add iy,bc
+00000C 000C FD19          15      add iy,de
+00000E 000E FD39          15      add iy,sp
+[EOF:Test.Z80:UTF_8]
