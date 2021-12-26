@@ -85,7 +85,7 @@ namespace AILZ80ASM
             return default;
         }
 
-        public LineDetailScopeItem[] Expansion(LineItem lineItem, string[] arguments, AsmLoad asmLoad)
+        public LineDetailScopeItem[] Expansion(LineItem lineItem, string[] arguments, AsmLoad asmLoad, ref AsmAddress asmAddress)
         {
             if (asmLoad.LoadMacros.Any(m => this == m))
             {
@@ -96,11 +96,10 @@ namespace AILZ80ASM
             // ラベルを処理する
             if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
-                var localLineItem = new LineItem(lineItem);
-                localLineItem.SetLabel(lineItem.LabelString);
-                localLineItem.ClearOperation();
-
-                lineDetailScopeItems.Add(new LineDetailScopeItem(localLineItem, asmLoad));
+                var localLineItem = new LineItem(lineItem.LabelString, 0, default(System.IO.FileInfo));
+                localLineItem.CreateLineDetailItem(asmLoad);
+                localLineItem.ExpansionItem();
+                localLineItem.PreAssemble(ref asmAddress);
             }
             // Macro展開用のAsmLoadを作成する
             var macroAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
@@ -147,6 +146,7 @@ namespace AILZ80ASM
                 try
                 {
                     localLineItem.ExpansionItem();
+                    localLineItem.PreAssemble(ref asmAddress);
                     lineDetailScopeItems.AddRange(localLineItem.LineDetailItem.LineDetailScopeItems);
                 }
                 catch (ErrorAssembleException ex)

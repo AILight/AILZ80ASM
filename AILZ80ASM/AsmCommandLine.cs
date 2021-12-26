@@ -42,7 +42,7 @@ namespace AILZ80ASM
             {
                 Name = "encodeMode",
                 ArgumentName = "mode",
-                Aliases = new[] { "-e", "--encode" },
+                Aliases = new[] { "-en", "--encode" },
                 Description = "ファイルのエンコードを選択します。",
                 DefaultValue = "auto",
                 Parameters = new[] { new Parameter { Name = "auto", Description = "自動判断します。不明な場合はUTF-8で処理します。" },
@@ -155,6 +155,16 @@ namespace AILZ80ASM
                                      new Parameter { Name = "middle", Description = "出力アドレス無しで出力します。" },
                                      new Parameter { Name = "full", Description = "出力アドレスを含めて出力します。" },},
                 Required = false
+            });
+
+            rootCommand.AddOption(new Option<FileInfo>()
+            {
+                Name = "error",
+                ArgumentName = "file",
+                Aliases = new[] { "-e", "--error" },
+                Description = "エラーファイルを出力します。",
+                Required = false,
+                DefaultFunc = (options) => { return GetDefaulFilename(options, ".err"); }
             });
 
             rootCommand.AddOption(new Option<bool>()

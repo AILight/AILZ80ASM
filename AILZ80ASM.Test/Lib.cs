@@ -107,6 +107,7 @@ namespace AILZ80ASM.Test
             outputLstMemoryStream.Position = 0;
             Lib.AreSameBin(outputStream, outputBinMemoryStream);
 
+            /*
             if (listFile.Exists)
             {
                 using var listStream = listFile.OpenRead();
@@ -117,6 +118,7 @@ namespace AILZ80ASM.Test
                 using var listStream = listFile.OpenWrite();
                 outputLstMemoryStream.CopyTo(listStream);
             }
+            */
         }
 
         public static void Assemble_AreSame(string directoryName)

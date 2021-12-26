@@ -117,6 +117,7 @@ namespace AILZ80ASM
             return default;
         }
 
+        /*
         public override void ExpansionItem()
         {
             // 初期値設定
@@ -147,6 +148,40 @@ namespace AILZ80ASM
             }
 
             base.ExpansionItem();
+        }
+        */
+
+        public override void PreAssemble(ref AsmAddress asmAddress)
+        {
+            // 初期値設定
+            LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
+            // リピート数が設定されているものを処理する
+            foreach (var condition in Conditions.Keys)
+            {
+                if (string.IsNullOrEmpty(condition) || AIMath.ConvertTo<bool>(condition, AsmLoad))
+                {
+                    var lineItems = default(LineItem[]);
+                    var lineDetailScopeItems = new List<LineDetailScopeItem>();
+
+                    lineItems = Conditions[condition].Select(m =>
+                    {
+                        var lineItem = new LineItem(m);
+                        lineItem.CreateLineDetailItem(AsmLoad);
+                        return lineItem;
+                    }).ToArray();
+
+                    foreach (var lineItem in lineItems)
+                    {
+                        lineItem.ExpansionItem();
+                        lineItem.PreAssemble(ref asmAddress);
+                        lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
+                    }
+                    LineDetailScopeItems = lineDetailScopeItems.ToArray();
+                    break;
+                }
+            }
+
+            //base.PreAssemble(ref asmAddress);
         }
     }
 }
