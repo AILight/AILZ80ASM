@@ -81,6 +81,8 @@ namespace AILZ80ASM
 
             W9001,
             W9002,
+            W9003,
+            W9004,
 
             I0001,
         }
@@ -191,6 +193,8 @@ namespace AILZ80ASM
             // あいまいさの許容
             [ErrorCodeEnum.W9001] = "(IX)は、(IX+0)として処理されました。",
             [ErrorCodeEnum.W9002] = "(IY)は、(IY+0)として処理されました。",
+            [ErrorCodeEnum.W9003] = "SUB A,は、SUBとして処理されました。",
+            [ErrorCodeEnum.W9004] = "EX HL,DE は、EX DE,HLとして処理されました。",
 
             [ErrorCodeEnum.I0001] = "未定義"
         };

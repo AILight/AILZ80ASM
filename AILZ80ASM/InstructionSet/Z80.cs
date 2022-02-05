@@ -270,6 +270,7 @@ namespace AILZ80ASM.InstructionSet
                 new InstructionItem { Mnemonics = new[] { "LDDR" }, OPCode = new[] { "11101101", "10111000" }, M = 0, T = 0 },
                 // 交換
                 new InstructionItem { Mnemonics = new[] { "EX DE,HL" }, OPCode = new[] { "11101011" }, M = 1, T = 4 },
+                new InstructionItem { Mnemonics = new[] { "EX HL,DE" }, OPCode = new[] { "11101011" }, M = 1, T = 4, ErrorCode = Error.ErrorCodeEnum.W9004 },
                 new InstructionItem { Mnemonics = new[] { "EX AF,AF'" }, OPCode = new[] { "00001000" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "EXX" }, OPCode = new[] { "11011001" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "EX (SP),HL" }, OPCode = new[] { "11100011" }, M = 5, T = 19 },
@@ -413,13 +414,17 @@ namespace AILZ80ASM.InstructionSet
                 new InstructionItem { Mnemonics = new[] { "SUB (IY)" }, OPCode = new[] { "11111101", "10010110", "00000000" }, M = 5, T = 19, ErrorCode = Error.ErrorCodeEnum.W9002 },
                 new InstructionItem { Mnemonics = new[] { "SUB ixr1" }, OPCode = new[] { "11011101", "10010DDD" }, M = 2, T = 10, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "SUB iyr1" }, OPCode = new[] { "11111101", "10010DDD" }, M = 2, T = 10, UnDocumented = true },
-                /*
-                new OpItem { Operations = new []{ "SUB A,r" }, OPCode = new[]{ "10010SSS" }, M = 1, T = 4, AccumulatorExtra = true },
-                new OpItem { Operations = new []{ "SUB A,n" }, OPCode = new[]{ "11010110", "NNNNNNNN" }, M = 2, T = 7, AccumulatorExtra = true },
-                new OpItem { Operations = new []{ "SUB A,(HL)" }, OPCode = new[]{ "10010110" }, M = 2, T = 7, AccumulatorExtra = true },
-                new OpItem { Operations = new []{ "SUB A,(IX+d)" }, OPCode = new[]{ "11011101", "10010110", "IIIIIIII" }, M = 5, T = 19, AccumulatorExtra = true },
-                new OpItem { Operations = new []{ "SUB A,(IY+d)" }, OPCode = new[]{ "11111101", "10010110", "IIIIIIII" }, M = 5, T = 19, AccumulatorExtra = true },
-                */
+
+                new InstructionItem { Mnemonics = new[] { "SUB A,r2" }, OPCode = new[]{ "10010SSS" }, M = 1, T = 4, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,n" }, OPCode = new[]{ "11010110", "NNNNNNNN" }, M = 2, T = 7, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,(HL)" }, OPCode = new[]{ "10010110" }, M = 2, T = 7, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,(IX+d)" }, OPCode = new[]{ "11011101", "10010110", "IIIIIIII" }, M = 5, T = 19, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,(IY+d)" }, OPCode = new[]{ "11111101", "10010110", "IIIIIIII" }, M = 5, T = 19, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,(IX)" }, OPCode = new[]{ "11011101", "10010110", "00000000" }, M = 5, T = 19, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,(IY)" }, OPCode = new[]{ "11111101", "10010110", "00000000" }, M = 5, T = 19, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,ixr1" }, OPCode = new[] { "11011101", "10010DDD" }, M = 2, T = 10, UnDocumented = true, ErrorCode = Error.ErrorCodeEnum.W9003 },
+                new InstructionItem { Mnemonics = new[] { "SUB A,iyr1" }, OPCode = new[] { "11111101", "10010DDD" }, M = 2, T = 10, UnDocumented = true, ErrorCode = Error.ErrorCodeEnum.W9003 },
+
                 new InstructionItem { Mnemonics = new[] { "SBC A,r2" }, OPCode = new[] { "10011SSS" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "SBC A,n" }, OPCode = new[] { "11011110", "NNNNNNNN" }, M = 2, T = 7 },
                 new InstructionItem { Mnemonics = new[] { "SBC A,(HL)" }, OPCode = new[] { "10011110" }, M = 2, T = 7 },

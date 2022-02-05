@@ -352,6 +352,8 @@ Function ABS(value) => value < 0 ? value * -1 : value
 ## 表記の揺れ対応
 - (IX) → (IX+0)
 - (IY) → (IY+0)
+- SUB A, → SUB
+- EX DE,HL, → EX HL,DE
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
