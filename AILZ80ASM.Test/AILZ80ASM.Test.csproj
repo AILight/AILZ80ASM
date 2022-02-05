@@ -431,6 +431,12 @@
     <None Update="Test\TestUD_SRA\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestWN_IXIY\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestWN_IXIY\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestUD_SRL\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

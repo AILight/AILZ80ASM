@@ -79,6 +79,9 @@ namespace AILZ80ASM
             W0001,
             W0002,
 
+            W9001,
+            W9002,
+
             I0001,
         }
 
@@ -181,9 +184,13 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。{0}",
 
 
+            // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、{0}が設定されています。1バイトに丸められます。",
             [ErrorCodeEnum.W0002] = "2バイトの指定場所に、{0}が設定されています。2バイトに丸められます。",
 
+            // あいまいさの許容
+            [ErrorCodeEnum.W9001] = "(IX)は、(IX+0)として処理されました。",
+            [ErrorCodeEnum.W9002] = "(IY)は、(IY+0)として処理されました。",
 
             [ErrorCodeEnum.I0001] = "未定義"
         };
