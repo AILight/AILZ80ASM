@@ -4,7 +4,7 @@ using System.Reflection;
 namespace AILZ80ASM.Test
 {
     [TestClass]
-    public class CSAssembleTest
+    public class Z80CSAssembleTest
     {
         [TestMethod]
         public void TestCS_ALIGN()

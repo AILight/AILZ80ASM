@@ -7,7 +7,7 @@ using AILZ80ASM.CommandLine;
 
 namespace AILZ80ASM
 {
-    class Program
+    public class Program
     {
         public static int Main(params string[] args)
         {
@@ -22,7 +22,8 @@ namespace AILZ80ASM
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
                 if (rootCommand.Parse(args))
                 {
-                    return Assember(rootCommand) ? 0 : 1;
+                    var result = Assember(rootCommand);
+                    return result ? 0 : 1;
                 }
                 else
                 {
@@ -34,7 +35,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Trace.WriteLine($"Error:{ex.Message}");
                 return 3;
             }
         }
@@ -63,6 +64,7 @@ namespace AILZ80ASM
         public static bool Assember(
                 FileInfo[] inputs, AsmLoad.EncodeModeEnum encodeMode, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, AsmLoad.ListModeEnum listMode, bool outputTrim, FileInfo traceFile)
         {
+            var assembleResult = false;
             try
             {
                 // Traceの書き出し先を設定
@@ -122,17 +124,18 @@ namespace AILZ80ASM
                     if (package.Errors.Length == 0)
                     {
                         package.SaveOutput(outputFiles);
+                        assembleResult = true;
                     }
                 }
 
                 package.OutputError();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Trace.WriteLine($"Error:{ex.Message}");
-                return false;
+                throw;
             }
-            return true;
+
+            return assembleResult;
         }
 
         private static void TraceListenerRemoveAll()
