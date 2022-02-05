@@ -389,7 +389,7 @@ namespace AILZ80ASM.InstructionSet
                 new InstructionItem { Mnemonics = new[] { "DEC ixr1" }, OPCode = new[] { "11011101", "00DDD101" }, M = 2, T = 10, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "DEC iyr1" }, OPCode = new[] { "11111101", "00DDD101" }, M = 2, T = 10, UnDocumented = true },
                 // 16ビットの加算
-                new InstructionItem { Mnemonics = new[] { "ADD HL,rp" }, OPCode = new[] { "00RP1001" }, M = 3, T = 13 },
+                new InstructionItem { Mnemonics = new[] { "ADD HL,rp" }, OPCode = new[] { "00RP1001" }, M = 3, T = 11 },
                 new InstructionItem { Mnemonics = new[] { "ADC HL,rp" }, OPCode = new[] { "11101101", "01RP1010" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "ADD IX,rps" }, OPCode = new[] { "11011101", "00RP1001" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "ADD IY,rps" }, OPCode = new[] { "11111101", "00RP1001" }, M = 4, T = 15 },
