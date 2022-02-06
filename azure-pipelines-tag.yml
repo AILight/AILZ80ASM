@@ -50,21 +50,21 @@ steps:
     modifyOutputPath: false
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/win-x64/publish/AILZ80ASM.exe'
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net6.0/win-x64/publish/AILZ80ASM.exe'
     includeRootFolder: true
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.win-x64.$(tag).zip'
     replaceExistingArchive: true
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/osx-x64/publish/AILZ80ASM'
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net6.0/osx-x64/publish/AILZ80ASM'
     includeRootFolder: true
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.osx-x64.$(tag).zip'
     replaceExistingArchive: true
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net5.0/linux-x64/publish/AILZ80ASM'
+    rootFolderOrFile: '$(Build.SourcesDirectory)/AILZ80ASM/bin/Release/net6.0/linux-x64/publish/AILZ80ASM'
     includeRootFolder: true
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/AILZ80ASM.linux-x64.$(tag).zip'
