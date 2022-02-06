@@ -35,6 +35,7 @@ namespace AILZ80ASM
             E0020,
             E0021,
             E0022,
+            E0023,
 
             E1011,
             E1012,
@@ -139,6 +140,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0020] = "指定できる値は、00H,08H,10H,18H,20H,28H,30H,38Hです。{0}",
             [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。{0}",
             [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。{0}",
+            [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。{0}",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
