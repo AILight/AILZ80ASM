@@ -1,7 +1,7 @@
 # Z80 Assembler 'AILZ80ASM' ベータ版
 [![Build Status](https://ailight.visualstudio.com/AILight%20Games/_apis/build/status/AILight.AILZ80ASM_Test?branchName=main)](https://ailight.visualstudio.com/AILight%20Games/_build/latest?definitionId=8&branchName=main)
 
-AILZ80ASMは、C#で書かれた.NET Coreの環境で動作するZ80アセンブラです。
+AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラです。
 
 ##### 読み方
 - 「あいるぜっとはちまるあせむ」
@@ -12,7 +12,9 @@ AILZ80ASMは、C#で書かれた.NET Coreの環境で動作するZ80アセンブ
 
 ## 入手方法 
 - 本ソースコードを、Visual Studio 2019でビルドする。
-- 実行形式をダウンロードして利用する。 [ダウンロード](https://github.com/AILight/AILZ80ASM/releases)　
+- 実行形式をダウンロードして利用する。 [ダウンロード](https://github.com/AILight/AILZ80ASM/releases)
+
+※ 実行形式は、「[自己完結型の実行可能ファイル](https://docs.microsoft.com/ja-jp/dotnet/core/deploying/#publish-self-contained)」になっています。.NETの環境を用意する必要はありません。
 
 ## 使い方
 AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等> [ <オプション指定文字列:ファイル名等>]
@@ -22,7 +24,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ##### 入力ファイル形式
 - UTF-8、SHIFT_JIS
 - ファイルの形式は自動的に判断されます。
-- 誤認識する場合には、コマンドラインオプションをお使いください。
+- 誤認識する場合には、コマンドラインオプション(--encode)をお使いください。
 
 ## コマンドラインオプション
 - -i, --input <files>          アセンブリ対象のファイルをスペース区切りで指定します。
@@ -138,7 +140,7 @@ addr:
 
 ## 即値
 - 2進数、10進数、16進数
-- 2進数：末尾に% or bを付けます。また _ を含める事が出来ます。
+- 2進数：先頭に%、もしくは末尾にbを付けます。また _ を含める事が出来ます。
 - 10進数：何もつけません
 - 16進数：先頭に$ or 0x もしくは末尾にHを付けます
 
