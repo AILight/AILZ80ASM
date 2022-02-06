@@ -40,28 +40,21 @@ namespace AILZ80ASM.CommandLine
 
                     // コマンド作成
                     var tmpList = new List<string>();
-                    foreach (var index in Enumerable.Range(0, item.Aliases.Length))
+                    for (var index = 0; index < item.Aliases.Length; index++)
                     {
                         var outputAliase = item.Aliases[index];
-                        if (index == item.Aliases.Length - 1 && item.GetType().GenericTypeArguments[0] != typeof(bool))
+                        if (index < item.Aliases.Length - 1)
+                        {
+                            outputAliase += ", ";
+                        }
+                        else if (index == item.Aliases.Length - 1 && item.GetType().GenericTypeArguments[0] != typeof(bool))
                         {
                             outputAliase += $" <{item.ArgumentName}>";
                         }
 
-                        if (index > 0)
-                        {
-                            if (index == 1 && tmpList[0].Length == 3)
-                            {
-                                outputAliase = "," + outputAliase;
-                            }
-                            else
-                            {
-                                outputAliase = ", " + outputAliase;
-                            }
-                        }
                         tmpList.Add(outputAliase);
                     }
-
+  
                     // コマンド側のリストを作成
                     foreach (var command in tmpList)
                     {

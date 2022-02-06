@@ -48,10 +48,10 @@ namespace AILZ80ASM
             var code = lineDetailExpansionItemOperation.LineItem.OperationString;
             if (!string.IsNullOrEmpty(code))
             {
-                var resutl = asmLoad.ISA.PreAssemble(code);
-                if (resutl != default)
+                var result = asmLoad.ISA.PreAssemble(code);
+                if (result != default)
                 {
-                    returnValue = new OperationItemOPCode(resutl, lineDetailExpansionItemOperation, address, asmLoad);
+                    returnValue = new OperationItemOPCode(result, lineDetailExpansionItemOperation, address, asmLoad);
                 }
             }
 
@@ -63,6 +63,11 @@ namespace AILZ80ASM
             try
             {
                 asmLoad.ISA.Assemble(AssembleResult, asmLoad, LineDetailExpansionItemOperation.Address);
+
+                if (AssembleResult.InstructionItem.ErrorCode.HasValue)
+                {
+                    asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, AssembleResult.InstructionItem.ErrorCode.Value));
+                }
 
                 if (AssembleResult.InnerAssembleException is AssembleOutOfRangeException exception)
                 {

@@ -12,11 +12,11 @@ namespace AILZ80ASM
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         public AsmLoad AssembleLoad { get; private set; }
 
-        public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).ToArray();
-        public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).ToArray();
-        public ErrorLineItem[] Informations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Information).ToArray();
+        public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error && (AssembleLoad.DisableWarningCodes == default || !AssembleLoad.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+        public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning && (AssembleLoad.DisableWarningCodes == default || !AssembleLoad.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+        public ErrorLineItem[] Informations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Information && (AssembleLoad.DisableWarningCodes == default || !AssembleLoad.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
 
-        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmLoad.ListModeEnum listMode, bool outputTrim, AsmISA asmISA)
+        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmLoad.ListModeEnum listMode, bool outputTrim, Error.ErrorCodeEnum[] disableWarningCodes, AsmISA asmISA)
         {
             switch (asmISA)
             {
@@ -32,6 +32,7 @@ namespace AILZ80ASM
             AssembleLoad.ListMode = listMode;
 
             AssembleLoad.OutputTrim = outputTrim;
+            AssembleLoad.DisableWarningCodes = disableWarningCodes;
 
             foreach (var fileInfo in files)
             {

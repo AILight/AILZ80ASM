@@ -65,6 +65,7 @@ namespace AILZ80ASM
         public EncodeModeEnum OutputEncodeMode { get; set; } = EncodeModeEnum.UTF_8;
         public ListModeEnum ListMode { get; set; } = ListModeEnum.Full;
         public bool OutputTrim { get; internal set; }
+        public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
 
         public AsmLoad(ISA isa)
         {
