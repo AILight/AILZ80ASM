@@ -1,0 +1,42 @@
+﻿	sub b
+	sub c
+	sub d
+	sub e
+	sub h
+	sub l
+	sub (hl)
+	sub a
+	sub $12
+	sub (ix+1)
+	sub (iy+2)
+	sub (ix)
+	sub (iy)
+	sub ixh
+	sub ixl
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	sub a,b
+	sub a,c
+	sub a,d
+	sub a,e
+	sub a,h
+	sub a,l
+	sub a,(hl)
+	sub a,a
+	sub a,$12
+	sub a,(ix+1)
+	sub a,(iy+2)
+	sub a,(ix)
+	sub a,(iy)
+	sub a,ixh
+	sub a,ixl
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP

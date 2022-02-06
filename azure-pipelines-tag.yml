@@ -10,7 +10,7 @@ trigger:
 pr: none  # no PR triggers
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2022'
 
 variables:
   solution: '**/*.sln'

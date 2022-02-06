@@ -4,22 +4,22 @@ using System.Reflection;
 namespace AILZ80ASM.Test
 {
     [TestClass]
-    public class CSAssembleTest
+    public class Z80WNAssembleTest
     {
         [TestMethod]
-        public void TestCS_ALIGN()
+        public void TestWN_EXHLDE()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
 
         [TestMethod]
-        public void TestCS_ORG()
+        public void TestWN_IXIY()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
 
         [TestMethod]
-        public void TestCS_ORG_Rom()
+        public void TestWN_SUB()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

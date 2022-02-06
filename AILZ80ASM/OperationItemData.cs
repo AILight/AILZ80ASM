@@ -72,36 +72,51 @@ namespace AILZ80ASM
         private static OperationItemData DBDW(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var ops = AIName.ParseArguments(op2);
-            var matchString = Regex.Match(op2, RegexPatternDataString, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (matchString.Success)
+            var dataList = new List<string>();
+            
+            foreach (var item in ops.Select((value, index) => new { Value = value, Index = index }))
             {
-                ops = System.Text.Encoding.ASCII.GetBytes(matchString.Groups["string"].Value).Select(m => m.ToString("0")).ToArray();
-            }
-            else
-            {
-                if (Regex.IsMatch(op2, RegexPatternDataFunction))
+                //文字列の判断
+                var matchedString = Regex.Match(item.Value, RegexPatternDataString, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matchedString.Success)
                 {
-                    ops = DBDW_Function(op2, lineDetailExpansionItemOperation, asmLoad).ToArray();
+                    dataList.AddRange(System.Text.Encoding.ASCII.GetBytes(matchedString.Groups["string"].Value).Select(m => m.ToString("0")));
+                }
+                else if(Regex.IsMatch(item.Value, RegexPatternDataFunction))
+                {
+                    dataList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, asmLoad));
                 }
                 else
                 {
-                    if (ops.Count() > 0)
+                    if (string.IsNullOrWhiteSpace(item.Value))
                     {
-                        // 最終文字が空文字なら削除
-                        if (string.IsNullOrEmpty(ops.Last()))
+                        // 最後は値の無指定が可能
+                        if (item.Index < ops.Length - 1)
                         {
-                            ops = ops.Take(ops.Length - 1).ToArray();
+                            switch (dataType)
+                            {
+                                case DataTypeEnum.db:
+                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, "(空)");
+                                case DataTypeEnum.dw:
+                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, "(空)");
+                                default:
+                                    throw new NotImplementedException();
+                            }
                         }
+                    }
+                    else
+                    {
+                        dataList.Add(item.Value);
                     }
                 }
             }
 
             return new OperationItemData()
             {
-                ValueStrings = ops,
+                ValueStrings = dataList.ToArray(),
                 DataType = dataType,
                 Address = address,
-                ItemDataLength = new AsmLength(ops.Length * (int)dataType),
+                ItemDataLength = new AsmLength(dataList.Count * (int)dataType),
                 LineDetailExpansionItemOperation = lineDetailExpansionItemOperation
             };
         }

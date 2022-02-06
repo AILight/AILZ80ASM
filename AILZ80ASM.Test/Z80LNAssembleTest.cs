@@ -4,10 +4,10 @@ using System.Reflection;
 namespace AILZ80ASM.Test
 {
     [TestClass]
-    public class RDAssembleTest
+    public class Z80LNAssembleTest
     {
         [TestMethod]
-        public void TestRD_ALL()
+        public void TestLN_Comment()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

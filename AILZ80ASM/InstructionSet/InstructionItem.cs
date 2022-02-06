@@ -13,8 +13,9 @@ namespace AILZ80ASM.InstructionSet
         public string[] OPCode { get; set; }
         public int M { get; set; }
         public int T { get; set; }
-        public bool AccumulatorExtra { get; set; }
+        //public bool AccumulatorExtra { get; set; }
         public bool UnDocumented { get; set; }
+        public Error.ErrorCodeEnum? ErrorCode { get; set; }
 
         private string[] RegexPatterns { get; set; }
         internal Dictionary<string, InstructionRegister> InstructionRegisterDic { get; set; } = new Dictionary<string, InstructionRegister>();

@@ -35,6 +35,7 @@ namespace AILZ80ASM
             E0020,
             E0021,
             E0022,
+            E0023,
 
             E1011,
             E1012,
@@ -78,6 +79,11 @@ namespace AILZ80ASM
 
             W0001,
             W0002,
+
+            W9001,
+            W9002,
+            W9003,
+            W9004,
 
             I0001,
         }
@@ -134,6 +140,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0020] = "指定できる値は、00H,08H,10H,18H,20H,28H,30H,38Hです。{0}",
             [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。{0}",
             [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。{0}",
+            [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。{0}",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
@@ -181,9 +188,15 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。{0}",
 
 
+            // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、{0}が設定されています。1バイトに丸められます。",
             [ErrorCodeEnum.W0002] = "2バイトの指定場所に、{0}が設定されています。2バイトに丸められます。",
 
+            // あいまいさの許容
+            [ErrorCodeEnum.W9001] = "(IX)は、(IX+0)として処理されました。",
+            [ErrorCodeEnum.W9002] = "(IY)は、(IY+0)として処理されました。",
+            [ErrorCodeEnum.W9003] = "SUB A,は、SUBとして処理されました。",
+            [ErrorCodeEnum.W9004] = "EX HL,DE は、EX DE,HLとして処理されました。",
 
             [ErrorCodeEnum.I0001] = "未定義"
         };

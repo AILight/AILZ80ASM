@@ -250,26 +250,37 @@ namespace AILZ80ASM
             }
 
             var result = new List<string>();
-            var sign = "";
-            // 単項演算子と%を結合する
-            foreach (var index in Enumerable.Range(0, terms.Count))
+            for (int index = 0; index < terms.Count; index++)
             {
                 var tmpString = terms[index];
                 if (tmpString == "+" || tmpString == "-" || tmpString == "%")
                 {
                     if (index == 0 || terms[index - 1] != ")" && Regex.Match(terms[index - 1], RegexPatternFormulaChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
                     {
-                        sign = tmpString;
+                        if (index >= terms.Count - 1)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0023, value);
+                        }
+                        index++;
+                        var addString = terms[index];
+
+                        if (tmpString == "%")
+                        {
+                            result.Add(tmpString + addString);
+                        }
+                        else
+                        {
+                            result.Add("(");
+                            result.Add("0");
+                            result.Add(tmpString);
+                            result.Add(addString);
+                            result.Add(")");
+                        }
                         continue;
                     }
                 }
 
-                result.Add(sign + tmpString);
-                sign = "";
-            }
-            if (!string.IsNullOrEmpty(sign))
-            {
-                result.Add(sign);
+                result.Add(tmpString);
             }
 
             // 演算子、数値が連続しているものがないか確認をする

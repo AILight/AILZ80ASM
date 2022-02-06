@@ -1,0 +1,840 @@
+﻿	adc a, (ix+0)
+	adc a, (iy+0)
+	add a, (ix+0)
+	add a, (iy+0)
+	and	   (ix+0)
+	and    (iy+0)
+	BIT 0, (IX+0)
+	BIT 1, (IX+0)
+	BIT 2, (IX+0)
+	BIT 3, (IX+0)
+	BIT 4, (IX+0)
+	BIT 5, (IX+0)
+	BIT 6, (IX+0)
+	BIT 7, (IX+0)
+	BIT 0, (IY+0)
+	BIT 1, (IY+0)
+	BIT 2, (IY+0)
+	BIT 3, (IY+0)
+	BIT 4, (IY+0)
+	BIT 5, (IY+0)
+	BIT 6, (IY+0)
+	BIT 7, (IY+0)
+	cp     (ix+0)
+	cp     (iy+0)
+	dec    (ix+0)
+	dec    (iy+0)
+	inc    (ix+0)
+	inc    (iy+0)
+	ld b,  (ix+0)
+	ld d,  (ix+0)
+	ld h,  (ix+0)
+	ld c,  (ix+0)
+	ld e,  (ix+0)
+	ld l,  (ix+0)
+	ld a,  (ix+0)
+	ld b,  (iy+0)
+	ld d,  (iy+0)
+	ld h,  (iy+0)
+	ld c,  (iy+0)
+	ld e,  (iy+0)
+	ld l,  (iy+0)
+	ld a,  (iy+0)
+	ld     (ix+0), 12h
+	ld     (iy+0), 34h
+	ld     (ix+0), b
+	ld     (ix+0), c
+	ld     (ix+0), d
+	ld     (ix+0), e
+	ld     (ix+0), h
+	ld     (ix+0), l
+	ld     (ix+0), a
+	ld     (iy+0), b
+	ld     (iy+0), c
+	ld     (iy+0), d
+	ld     (iy+0), e
+	ld     (iy+0), h
+	ld     (iy+0), l
+	ld     (iy+0), a
+	or     (ix+0)
+	or     (iy+0)
+	RES 0, (IX+0)
+	RES 1, (IX+0)
+	RES 2, (IX+0)
+	RES 3, (IX+0)
+	RES 4, (IX+0)
+	RES 5, (IX+0)
+	RES 6, (IX+0)
+	RES 7, (IX+0)
+	RES 0, (IY+0)
+	RES 1, (IY+0)
+	RES 2, (IY+0)
+	RES 3, (IY+0)
+	RES 4, (IY+0)
+	RES 5, (IY+0)
+	RES 6, (IY+0)
+	RES 7, (IY+0)
+	rlc    (ix+0)
+	rl     (ix+0)
+	rlc    (iy+0)
+	rl     (iy+0)
+	rrc    (ix+0)
+	rr     (ix+0)
+	rrc    (iy+0)
+	rr     (iy+0)
+	sbc a, (ix+0)
+	sbc a, (iy+0)
+	SET 0, (IX+0)
+	SET 1, (IX+0)
+	SET 2, (IX+0)
+	SET 3, (IX+0)
+	SET 4, (IX+0)
+	SET 5, (IX+0)
+	SET 6, (IX+0)
+	SET 7, (IX+0)
+	SET 0, (IY+0)
+	SET 1, (IY+0)
+	SET 2, (IY+0)
+	SET 3, (IY+0)
+	SET 4, (IY+0)
+	SET 5, (IY+0)
+	SET 6, (IY+0)
+	SET 7, (IY+0)
+	sla    (ix+0)
+	sla    (iy+0)
+	sra    (ix+0)
+	srl    (ix+0)
+	sra    (iy+0)
+	srl    (iy+0)
+	sub    (ix+0)
+	sub    (iy+0)
+	xor    (ix+0)
+	xor    (iy+0)
+	RES B,  0, (IX+ 0)
+	RES C,  1, (IX+ 0)
+	RES D,  2, (IX+ 0)
+	RES E,  3, (IX+ 0)
+	RES H,  4, (IX+ 0)
+	RES L,  5, (IX+ 0)
+	RES A,  6, (IX+ 0)
+	RES A,  7, (IX+ 0)
+
+	RES B,  0, (IY+ 0)
+	RES C,  1, (IY+ 0)
+	RES D,  2, (IY+ 0)
+	RES E,  3, (IY+ 0)
+	RES H,  4, (IY+ 0)
+	RES L,  5, (IY+ 0)
+	RES A,  6, (IY+ 0)
+	RES A,  7, (IY+ 0)
+
+	RES 0, (IX+ 0), B  
+	RES 1, (IX+ 0), C  
+	RES 2, (IX+ 0), D  
+	RES 3, (IX+ 0), E  
+	RES 4, (IX+ 0), H  
+	RES 5, (IX+ 0), L  
+	RES 6, (IX+ 0), A  
+	RES 7, (IX+ 0), A  
+
+	RES 0, (IY+ 0), B  
+	RES 1, (IY+ 0), C  
+	RES 2, (IY+ 0), D  
+	RES 3, (IY+ 0), E  
+	RES 4, (IY+ 0), H  
+	RES 5, (IY+ 0), L  
+	RES 6, (IY+ 0), A  
+	RES 7, (IY+ 0), A  
+
+	SET B,  0, (IX+ 0)
+	SET C,  1, (IX+ 0)
+	SET D,  2, (IX+ 0)
+	SET E,  3, (IX+ 0)
+	SET H,  4, (IX+ 0)
+	SET L,  5, (IX+ 0)
+	SET A,  6, (IX+ 0)
+	SET A,  7, (IX+ 0)
+
+	SET B,  0, (IY+ 0)
+	SET C,  1, (IY+ 0)
+	SET D,  2, (IY+ 0)
+	SET E,  3, (IY+ 0)
+	SET H,  4, (IY+ 0)
+	SET L,  5, (IY+ 0)
+	SET A,  6, (IY+ 0)
+	SET A,  7, (IY+ 0)
+
+	SET 0, (IX+ 0), B  
+	SET 1, (IX+ 0), C  
+	SET 2, (IX+ 0), D  
+	SET 3, (IX+ 0), E  
+	SET 4, (IX+ 0), H  
+	SET 5, (IX+ 0), L  
+	SET 6, (IX+ 0), A  
+	SET 7, (IX+ 0), A  
+
+	SET 0, (IY+ 0), B  
+	SET 1, (IY+ 0), C  
+	SET 2, (IY+ 0), D  
+	SET 3, (IY+ 0), E  
+	SET 4, (IY+ 0), H  
+	SET 5, (IY+ 0), L  
+	SET 6, (IY+ 0), A  
+	SET 7, (IY+ 0), A  
+
+	sll   (ix+0)
+	sll   (iy+0)
+
+	RL b, (ix+0)
+	RL c, (ix+0)
+	RL d, (ix+0)
+	RL e, (ix+0)
+	RL h, (ix+0)
+	RL l, (ix+0)
+	RL a, (ix+0)
+	RL b, (iy+0)
+	RL c, (iy+0)
+	RL d, (iy+0)
+	RL e, (iy+0)
+	RL h, (iy+0)
+	RL l, (iy+0)
+	RL a, (iy+0)
+	RL    (ix+0),b
+	RL    (ix+0),c
+	RL    (ix+0),d
+	RL    (ix+0),e
+	RL    (ix+0),h
+	RL    (ix+0),l
+	RL    (ix+0),a
+	RL    (iy+0),b
+	RL    (iy+0),c
+	RL    (iy+0),d
+	RL    (iy+0),e
+	RL    (iy+0),h
+	RL    (iy+0),l
+	RL    (iy+0),a
+	RLC b,(ix+0)
+	RLC c,(ix+0)
+	RLC d,(ix+0)
+	RLC e,(ix+0)
+	RLC h,(ix+0)
+	RLC l,(ix+0)
+	RLC a,(ix+0)
+	RLC b,(iy+0)
+	RLC c,(iy+0)
+	RLC d,(iy+0)
+	RLC e,(iy+0)
+	RLC h,(iy+0)
+	RLC l,(iy+0)
+	RLC a,(iy+0)
+	RLC   (ix+0),b
+	RLC   (ix+0),c
+	RLC   (ix+0),d
+	RLC   (ix+0),e
+	RLC   (ix+0),h
+	RLC   (ix+0),l
+	RLC   (ix+0),a
+	RLC   (iy+0),b
+	RLC   (iy+0),c
+	RLC   (iy+0),d
+	RLC   (iy+0),e
+	RLC   (iy+0),h
+	RLC   (iy+0),l
+	RLC   (iy+0),a
+	RR b, (ix+0)
+	RR c, (ix+0)
+	RR d, (ix+0)
+	RR e, (ix+0)
+	RR h, (ix+0)
+	RR l, (ix+0)
+	RR a, (ix+0)
+	RR b, (iy+0)
+	RR c, (iy+0)
+	RR d, (iy+0)
+	RR e, (iy+0)
+	RR h, (iy+0)
+	RR l, (iy+0)
+	RR a, (iy+0)
+	RR    (ix+0),b
+	RR    (ix+0),c
+	RR    (ix+0),d
+	RR    (ix+0),e
+	RR    (ix+0),h
+	RR    (ix+0),l
+	RR    (ix+0),a
+	RR    (iy+0),b
+	RR    (iy+0),c
+	RR    (iy+0),d
+	RR    (iy+0),e
+	RR    (iy+0),h
+	RR    (iy+0),l
+	RR    (iy+0),a
+	RRC b,(ix+0)
+	RRC c,(ix+0)
+	RRC d,(ix+0)
+	RRC e,(ix+0)
+	RRC h,(ix+0)
+	RRC l,(ix+0)
+	RRC a,(ix+0)
+	RRC b,(iy+0)
+	RRC c,(iy+0)
+	RRC d,(iy+0)
+	RRC e,(iy+0)
+	RRC h,(iy+0)
+	RRC l,(iy+0)
+	RRC a,(iy+0)
+	RRC   (ix+0),b
+	RRC   (ix+0),c
+	RRC   (ix+0),d
+	RRC   (ix+0),e
+	RRC   (ix+0),h
+	RRC   (ix+0),l
+	RRC   (ix+0),a
+	RRC   (iy+0),b
+	RRC   (iy+0),c
+	RRC   (iy+0),d
+	RRC   (iy+0),e
+	RRC   (iy+0),h
+	RRC   (iy+0),l
+	RRC   (iy+0),a
+	SLA b,(ix+0)
+	SLA c,(ix+0)
+	SLA d,(ix+0)
+	SLA e,(ix+0)
+	SLA h,(ix+0)
+	SLA l,(ix+0)
+	SLA a,(ix+0)
+	SLA b,(iy+0)
+	SLA c,(iy+0)
+	SLA d,(iy+0)
+	SLA e,(iy+0)
+	SLA h,(iy+0)
+	SLA l,(iy+0)
+	SLA a,(iy+0)
+	SLA   (ix+0),b
+	SLA   (ix+0),c
+	SLA   (ix+0),d
+	SLA   (ix+0),e
+	SLA   (ix+0),h
+	SLA   (ix+0),l
+	SLA   (ix+0),a
+	SLA   (iy+0),b
+	SLA   (iy+0),c
+	SLA   (iy+0),d
+	SLA   (iy+0),e
+	SLA   (iy+0),h
+	SLA   (iy+0),l
+	SLA   (iy+0),a
+	SLL b,(ix+0)
+	SLL c,(ix+0)
+	SLL d,(ix+0)
+	SLL e,(ix+0)
+	SLL h,(ix+0)
+	SLL l,(ix+0)
+	SLL a,(ix+0)
+	SLL b,(iy+0)
+	SLL c,(iy+0)
+	SLL d,(iy+0)
+	SLL e,(iy+0)
+	SLL h,(iy+0)
+	SLL l,(iy+0)
+	SLL a,(iy+0)
+	SLL   (ix+0),b
+	SLL   (ix+0),c
+	SLL   (ix+0),d
+	SLL   (ix+0),e
+	SLL   (ix+0),h
+	SLL   (ix+0),l
+	SLL   (ix+0),a
+	SLL   (iy+0),b
+	SLL   (iy+0),c
+	SLL   (iy+0),d
+	SLL   (iy+0),e
+	SLL   (iy+0),h
+	SLL   (iy+0),l
+	SLL   (iy+0),a
+	SRA b,(ix+0)
+	SRA c,(ix+0)
+	SRA d,(ix+0)
+	SRA e,(ix+0)
+	SRA h,(ix+0)
+	SRA l,(ix+0)
+	SRA a,(ix+0)
+	SRA b,(iy+0)
+	SRA c,(iy+0)
+	SRA d,(iy+0)
+	SRA e,(iy+0)
+	SRA h,(iy+0)
+	SRA l,(iy+0)
+	SRA a,(iy+0)
+	SRA   (ix+0),b
+	SRA   (ix+0),c
+	SRA   (ix+0),d
+	SRA   (ix+0),e
+	SRA   (ix+0),h
+	SRA   (ix+0),l
+	SRA   (ix+0),a
+	SRA   (iy+0),b
+	SRA   (iy+0),c
+	SRA   (iy+0),d
+	SRA   (iy+0),e
+	SRA   (iy+0),h
+	SRA   (iy+0),l
+	SRA   (iy+0),a
+	SRL b,(ix+0)
+	SRL c,(ix+0)
+	SRL d,(ix+0)
+	SRL e,(ix+0)
+	SRL h,(ix+0)
+	SRL l,(ix+0)
+	SRL a,(ix+0)
+	SRL b,(iy+0)
+	SRL c,(iy+0)
+	SRL d,(iy+0)
+	SRL e,(iy+0)
+	SRL h,(iy+0)
+	SRL l,(iy+0)
+	SRL a,(iy+0)
+	SRL   (ix+0),b
+	SRL   (ix+0),c
+	SRL   (ix+0),d
+	SRL   (ix+0),e
+	SRL   (ix+0),h
+	SRL   (ix+0),l
+	SRL   (ix+0),a
+	SRL   (iy+0),b
+	SRL   (iy+0),c
+	SRL   (iy+0),d
+	SRL   (iy+0),e
+	SRL   (iy+0),h
+	SRL   (iy+0),l
+	SRL   (iy+0),a
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+
+	; 省略コード
+	adc a, (ix)
+	adc a, (iy)
+	add a, (ix)
+	add a, (iy)
+	and	   (ix)
+	and    (iy)
+	BIT 0, (IX)
+	BIT 1, (IX)
+	BIT 2, (IX)
+	BIT 3, (IX)
+	BIT 4, (IX)
+	BIT 5, (IX)
+	BIT 6, (IX)
+	BIT 7, (IX)
+	BIT 0, (IY)
+	BIT 1, (IY)
+	BIT 2, (IY)
+	BIT 3, (IY)
+	BIT 4, (IY)
+	BIT 5, (IY)
+	BIT 6, (IY)
+	BIT 7, (IY)
+	cp     (ix)
+	cp     (iy)
+	dec    (ix)
+	dec    (iy)
+	inc    (ix)
+	inc    (iy)
+	ld b,  (ix)
+	ld d,  (ix)
+	ld h,  (ix)
+	ld c,  (ix)
+	ld e,  (ix)
+	ld l,  (ix)
+	ld a,  (ix)
+	ld b,  (iy)
+	ld d,  (iy)
+	ld h,  (iy)
+	ld c,  (iy)
+	ld e,  (iy)
+	ld l,  (iy)
+	ld a,  (iy)
+	ld     (ix), 12h
+	ld     (iy), 34h
+	ld     (ix), b
+	ld     (ix), c
+	ld     (ix), d
+	ld     (ix), e
+	ld     (ix), h
+	ld     (ix), l
+	ld     (ix), a
+	ld     (iy), b
+	ld     (iy), c
+	ld     (iy), d
+	ld     (iy), e
+	ld     (iy), h
+	ld     (iy), l
+	ld     (iy), a
+	or     (ix)
+	or     (iy)
+	RES 0, (IX)
+	RES 1, (IX)
+	RES 2, (IX)
+	RES 3, (IX)
+	RES 4, (IX)
+	RES 5, (IX)
+	RES 6, (IX)
+	RES 7, (IX)
+	RES 0, (IY)
+	RES 1, (IY)
+	RES 2, (IY)
+	RES 3, (IY)
+	RES 4, (IY)
+	RES 5, (IY)
+	RES 6, (IY)
+	RES 7, (IY)
+	rlc    (ix)
+	rl     (ix)
+	rlc    (iy)
+	rl     (iy)
+	rrc    (ix)
+	rr     (ix)
+	rrc    (iy)
+	rr     (iy)
+	sbc a, (ix)
+	sbc a, (iy)
+	SET 0, (IX)
+	SET 1, (IX)
+	SET 2, (IX)
+	SET 3, (IX)
+	SET 4, (IX)
+	SET 5, (IX)
+	SET 6, (IX)
+	SET 7, (IX)
+	SET 0, (IY)
+	SET 1, (IY)
+	SET 2, (IY)
+	SET 3, (IY)
+	SET 4, (IY)
+	SET 5, (IY)
+	SET 6, (IY)
+	SET 7, (IY)
+	sla    (ix)
+	sla    (iy)
+	sra    (ix)
+	srl    (ix)
+	sra    (iy)
+	srl    (iy)
+	sub    (ix)
+	sub    (iy)
+	xor    (ix)
+	xor    (iy)
+	RES B,  0, (IX)
+	RES C,  1, (IX)
+	RES D,  2, (IX)
+	RES E,  3, (IX)
+	RES H,  4, (IX)
+	RES L,  5, (IX)
+	RES A,  6, (IX)
+	RES A,  7, (IX)
+
+	RES B,  0, (IY)
+	RES C,  1, (IY)
+	RES D,  2, (IY)
+	RES E,  3, (IY)
+	RES H,  4, (IY)
+	RES L,  5, (IY)
+	RES A,  6, (IY)
+	RES A,  7, (IY)
+
+	RES 0, (IX), B  
+	RES 1, (IX), C  
+	RES 2, (IX), D  
+	RES 3, (IX), E  
+	RES 4, (IX), H  
+	RES 5, (IX), L  
+	RES 6, (IX), A  
+	RES 7, (IX), A  
+
+	RES 0, (IY), B  
+	RES 1, (IY), C  
+	RES 2, (IY), D  
+	RES 3, (IY), E  
+	RES 4, (IY), H  
+	RES 5, (IY), L  
+	RES 6, (IY), A  
+	RES 7, (IY), A  
+
+	SET B,  0, (IX)
+	SET C,  1, (IX)
+	SET D,  2, (IX)
+	SET E,  3, (IX)
+	SET H,  4, (IX)
+	SET L,  5, (IX)
+	SET A,  6, (IX)
+	SET A,  7, (IX)
+
+	SET B,  0, (IY)
+	SET C,  1, (IY)
+	SET D,  2, (IY)
+	SET E,  3, (IY)
+	SET H,  4, (IY)
+	SET L,  5, (IY)
+	SET A,  6, (IY)
+	SET A,  7, (IY)
+
+	SET 0, (IX), B  
+	SET 1, (IX), C  
+	SET 2, (IX), D  
+	SET 3, (IX), E  
+	SET 4, (IX), H  
+	SET 5, (IX), L  
+	SET 6, (IX), A  
+	SET 7, (IX), A  
+
+	SET 0, (IY), B  
+	SET 1, (IY), C  
+	SET 2, (IY), D  
+	SET 3, (IY), E  
+	SET 4, (IY), H  
+	SET 5, (IY), L  
+	SET 6, (IY), A  
+	SET 7, (IY), A  
+
+	sll   (ix)
+	sll   (iy)
+
+	RL b, (ix)
+	RL c, (ix)
+	RL d, (ix)
+	RL e, (ix)
+	RL h, (ix)
+	RL l, (ix)
+	RL a, (ix)
+	RL b, (iy)
+	RL c, (iy)
+	RL d, (iy)
+	RL e, (iy)
+	RL h, (iy)
+	RL l, (iy)
+	RL a, (iy)
+	RL    (ix),b
+	RL    (ix),c
+	RL    (ix),d
+	RL    (ix),e
+	RL    (ix),h
+	RL    (ix),l
+	RL    (ix),a
+	RL    (iy),b
+	RL    (iy),c
+	RL    (iy),d
+	RL    (iy),e
+	RL    (iy),h
+	RL    (iy),l
+	RL    (iy),a
+	RLC b,(ix)
+	RLC c,(ix)
+	RLC d,(ix)
+	RLC e,(ix)
+	RLC h,(ix)
+	RLC l,(ix)
+	RLC a,(ix)
+	RLC b,(iy)
+	RLC c,(iy)
+	RLC d,(iy)
+	RLC e,(iy)
+	RLC h,(iy)
+	RLC l,(iy)
+	RLC a,(iy)
+	RLC   (ix),b
+	RLC   (ix),c
+	RLC   (ix),d
+	RLC   (ix),e
+	RLC   (ix),h
+	RLC   (ix),l
+	RLC   (ix),a
+	RLC   (iy),b
+	RLC   (iy),c
+	RLC   (iy),d
+	RLC   (iy),e
+	RLC   (iy),h
+	RLC   (iy),l
+	RLC   (iy),a
+	RR b, (ix)
+	RR c, (ix)
+	RR d, (ix)
+	RR e, (ix)
+	RR h, (ix)
+	RR l, (ix)
+	RR a, (ix)
+	RR b, (iy)
+	RR c, (iy)
+	RR d, (iy)
+	RR e, (iy)
+	RR h, (iy)
+	RR l, (iy)
+	RR a, (iy)
+	RR    (ix),b
+	RR    (ix),c
+	RR    (ix),d
+	RR    (ix),e
+	RR    (ix),h
+	RR    (ix),l
+	RR    (ix),a
+	RR    (iy),b
+	RR    (iy),c
+	RR    (iy),d
+	RR    (iy),e
+	RR    (iy),h
+	RR    (iy),l
+	RR    (iy),a
+	RRC b,(ix)
+	RRC c,(ix)
+	RRC d,(ix)
+	RRC e,(ix)
+	RRC h,(ix)
+	RRC l,(ix)
+	RRC a,(ix)
+	RRC b,(iy)
+	RRC c,(iy)
+	RRC d,(iy)
+	RRC e,(iy)
+	RRC h,(iy)
+	RRC l,(iy)
+	RRC a,(iy)
+	RRC   (ix),b
+	RRC   (ix),c
+	RRC   (ix),d
+	RRC   (ix),e
+	RRC   (ix),h
+	RRC   (ix),l
+	RRC   (ix),a
+	RRC   (iy),b
+	RRC   (iy),c
+	RRC   (iy),d
+	RRC   (iy),e
+	RRC   (iy),h
+	RRC   (iy),l
+	RRC   (iy),a
+	SLA b,(ix)
+	SLA c,(ix)
+	SLA d,(ix)
+	SLA e,(ix)
+	SLA h,(ix)
+	SLA l,(ix)
+	SLA a,(ix)
+	SLA b,(iy)
+	SLA c,(iy)
+	SLA d,(iy)
+	SLA e,(iy)
+	SLA h,(iy)
+	SLA l,(iy)
+	SLA a,(iy)
+	SLA   (ix),b
+	SLA   (ix),c
+	SLA   (ix),d
+	SLA   (ix),e
+	SLA   (ix),h
+	SLA   (ix),l
+	SLA   (ix),a
+	SLA   (iy),b
+	SLA   (iy),c
+	SLA   (iy),d
+	SLA   (iy),e
+	SLA   (iy),h
+	SLA   (iy),l
+	SLA   (iy),a
+	SLL b,(ix)
+	SLL c,(ix)
+	SLL d,(ix)
+	SLL e,(ix)
+	SLL h,(ix)
+	SLL l,(ix)
+	SLL a,(ix)
+	SLL b,(iy)
+	SLL c,(iy)
+	SLL d,(iy)
+	SLL e,(iy)
+	SLL h,(iy)
+	SLL l,(iy)
+	SLL a,(iy)
+	SLL   (ix),b
+	SLL   (ix),c
+	SLL   (ix),d
+	SLL   (ix),e
+	SLL   (ix),h
+	SLL   (ix),l
+	SLL   (ix),a
+	SLL   (iy),b
+	SLL   (iy),c
+	SLL   (iy),d
+	SLL   (iy),e
+	SLL   (iy),h
+	SLL   (iy),l
+	SLL   (iy),a
+	SRA b,(ix)
+	SRA c,(ix)
+	SRA d,(ix)
+	SRA e,(ix)
+	SRA h,(ix)
+	SRA l,(ix)
+	SRA a,(ix)
+	SRA b,(iy)
+	SRA c,(iy)
+	SRA d,(iy)
+	SRA e,(iy)
+	SRA h,(iy)
+	SRA l,(iy)
+	SRA a,(iy)
+	SRA   (ix),b
+	SRA   (ix),c
+	SRA   (ix),d
+	SRA   (ix),e
+	SRA   (ix),h
+	SRA   (ix),l
+	SRA   (ix),a
+	SRA   (iy),b
+	SRA   (iy),c
+	SRA   (iy),d
+	SRA   (iy),e
+	SRA   (iy),h
+	SRA   (iy),l
+	SRA   (iy),a
+	SRL b,(ix)
+	SRL c,(ix)
+	SRL d,(ix)
+	SRL e,(ix)
+	SRL h,(ix)
+	SRL l,(ix)
+	SRL a,(ix)
+	SRL b,(iy)
+	SRL c,(iy)
+	SRL d,(iy)
+	SRL e,(iy)
+	SRL h,(iy)
+	SRL l,(iy)
+	SRL a,(iy)
+	SRL   (ix),b
+	SRL   (ix),c
+	SRL   (ix),d
+	SRL   (ix),e
+	SRL   (ix),h
+	SRL   (ix),l
+	SRL   (ix),a
+	SRL   (iy),b
+	SRL   (iy),c
+	SRL   (iy),d
+	SRL   (iy),e
+	SRL   (iy),h
+	SRL   (iy),l
+	SRL   (iy),a
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP

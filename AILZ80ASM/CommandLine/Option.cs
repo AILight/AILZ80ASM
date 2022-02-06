@@ -96,6 +96,29 @@ namespace AILZ80ASM.CommandLine
                 }
                 HasValue = true;
             }
+            else if (typeof(T) == typeof(Error.ErrorCodeEnum[]))
+            {
+                if (localValues.Count == 0)
+                {
+                    throw new Exception($"{Name}に、ワーニング・コードを指定する必要があります。（複数コード指定可能）");
+                }
+                // 全部変換できるか確認
+                var result = new List<Error.ErrorCodeEnum>();
+                foreach (var item in localValues)
+                {
+                    if (Enum.TryParse<Error.ErrorCodeEnum>(item, out var errorCode))
+                    {
+                        result.Add(errorCode);
+                    }
+                    else
+                    {
+                        throw new Exception($"{Name}に、{item}は指定できません。ワーニング・コードを確認してください。");
+                    }
+                }
+
+                Value = (T)(object)result.ToArray();
+                HasValue = true;
+            }
             else
             {
                 throw new NotImplementedException();

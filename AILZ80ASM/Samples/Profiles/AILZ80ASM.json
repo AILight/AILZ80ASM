@@ -1,0 +1,11 @@
+{
+  "default-options": [
+    "-e",
+    "-t"
+  ],
+  "disable-warnings": [
+    "W0001",
+    "W9001",
+    "W9002"
+  ]
+}

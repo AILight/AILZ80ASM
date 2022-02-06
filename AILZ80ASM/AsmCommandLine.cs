@@ -175,6 +175,15 @@ namespace AILZ80ASM
                 Required = false,
             });
 
+            rootCommand.AddOption(new Option<Error.ErrorCodeEnum[]>()
+            {
+                Name = "disableWarningCode",
+                ArgumentName = "codes",
+                Aliases = new[] { "-dw", "--disable-warning" },
+                Description = "Warning、Informationをオフにするコードをスペース区切りで指定します。",
+                Required = false,
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "version",
@@ -198,7 +207,7 @@ namespace AILZ80ASM
             {
                 Name = "help",
                 Aliases = new[] { "-?", "-h", "--help" },
-                Description = "ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -help --input-mode",
+                Description = "ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode",
                 Required = false,
                 IsHelp = true,
                 OptionFunc = (argument) => { return rootCommand.HelpCommand(argument); }

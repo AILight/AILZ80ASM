@@ -109,10 +109,10 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Calc_07()
         {
-            Assert.AreEqual(AIMath.ConvertTo<UInt16>("FFFFH"), 0xFFFF);
-            Assert.AreEqual(AIMath.ConvertTo<UInt16>("0xFFFF"), 0xFFFF);
-            Assert.AreEqual(AIMath.ConvertTo<UInt16>("176O"), 126);
-            Assert.AreEqual(AIMath.ConvertTo<UInt16>("0101_1010b"), 0x5A);
+            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("FFFFH"), 0xFFFF);
+            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("0xFFFF"), 0xFFFF);
+            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("176O"), 126);
+            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("0101_1010b"), 0x5A);
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("%0101_1010"), 0x5A);
         }
 
@@ -152,6 +152,24 @@ namespace AILZ80ASM.Test
                 var character = (char)(byte)item;
                 Assert.AreEqual(AIMath.ConvertTo<byte>($"'{character}'"), (byte)item);
             }
+        }
+
+        [TestMethod]
+        public void Calc_10()
+        {
+            var asmAddress = new AsmAddress();
+            asmAddress.Program = 0x8000;
+            asmAddress.Output = 0x8000;
+
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            var label = new Label("LB", "0xAA02", asmLoad);
+            label.SetValue(asmLoad);
+
+            asmLoad.AddLabel(label);
+
+            Assert.AreEqual(AIMath.ConvertTo<byte>("-1", asmLoad), 0xFF);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("-1 * -1", asmLoad), 1);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("-LB", asmLoad), 0x55FE);
         }
     }
 }

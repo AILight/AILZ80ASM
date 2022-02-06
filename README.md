@@ -34,8 +34,10 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - -lm,--list-mode <mode>       リストの出力形式を指定します。（デフォルト：full、simple、middle）
 - -e, --error <file>           アセンブル結果を出力します。
 - -t, --trim                   DSで確保したメモリが、出力データの最後にある場合にトリムされます。
+- -dw,                         Warning、Informationをオフにするコードをスペース区切りで指定します。
+- --disable-warning <codes>
 - -v, --version                バージョンを表示します。
-- -?, -h, --help <help>        ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -help --input-mode
+- -?, -h, --help <help>        ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
 
 ```
 ■ sample.z80をアセンブル、出力はBIN形式
@@ -55,9 +57,22 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 > AILZ80ASM sample.z80 -bin output.bin
 > AILZ80ASM -i sample.z80 -o output.bin -om bin
 
+■ sample.z80をアセンブル、出力はBIN形式、指定（W0001,W9001,W9002）のワーニング表示をOFFにする
+> AILZ80ASM sample.z80 -bin output.bin -dw W0001 W9001 W9002
+
 ■ -omオプションのヘルプを表示
 > AILZ80ASM -h -om
 ```
+
+## コマンドライン 戻り値
+- 0: アセンブルが正常に終了
+- 1: アセンブルにエラーがあり、処理途中で終了
+- 2: コマンドライン引数に間違いがあり、終了
+- 3: 内部エラーが発生、アセンブルの強制終了
+
+## コマンドライン デフォルト値の設定
+EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
+- サンプルへのリンクを書く
 
 # ソースコード書式
 
@@ -342,6 +357,12 @@ TestArg MACRO a1, a2
 
 Function ABS(value) => value < 0 ? value * -1 : value
 ```
+
+## 表記の揺れ対応
+- (IX) → (IX+0)
+- (IY) → (IY+0)
+- SUB A, → SUB
+- EX DE,HL, → EX HL,DE
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)

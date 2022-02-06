@@ -73,7 +73,7 @@ namespace AILZ80ASM.Test
 
         public static ErrorLineItem[] Assemble(FileInfo[] Files, Stream assebledStream, Stream assembledList, bool dataTrim, bool testError)
         {
-            var package = new Package(Files, AsmLoad.EncodeModeEnum.UTF_8, AsmLoad.ListModeEnum.Full, dataTrim, AsmISA.Z80);
+            var package = new Package(Files, AsmLoad.EncodeModeEnum.UTF_8, AsmLoad.ListModeEnum.Full, dataTrim, default(Error.ErrorCodeEnum[]), AsmISA.Z80);
 
             package.Assemble();
 
