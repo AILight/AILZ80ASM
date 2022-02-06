@@ -72,7 +72,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 
 ## コマンドライン デフォルト値の設定
 EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
-- サンプルへのリンクを書く
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Samples/Profiles/AILZ80ASM.json)
 
 # ソースコード書式
 
