@@ -364,7 +364,7 @@ Function ABS(value) => value < 0 ? value * -1 : value
 - (IX) → (IX+0)
 - (IY) → (IY+0)
 - SUB A, → SUB
-- EX DE,HL, → EX HL,DE
+- EX HL,DE → EX DE,HL
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
