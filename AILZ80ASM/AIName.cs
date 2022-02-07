@@ -117,25 +117,33 @@ namespace AILZ80ASM
             var argumentList = new List<string>();
             var argument = "";
             var skipCounter = 0;
+            var stringMode = false;
 
             foreach (var item in target.ToArray())
             {
-                if (item == ',' && skipCounter == 0)
+                if (item == '\"')
                 {
-                    argumentList.Add(argument.Trim());
-                    argument = "";
-                    continue;
+                    stringMode = !stringMode;
                 }
-                else if (item == '(')
+                else if (!stringMode)
                 {
-                    skipCounter++;
-                }
-                else if (item == ')')
-                {
-                    skipCounter--;
-                    if (skipCounter < 0)
+                    if (item == ',' && skipCounter == 0)
                     {
-                        throw new Exception("カッコの数が不一致です");
+                        argumentList.Add(argument.Trim());
+                        argument = "";
+                        continue;
+                    }
+                    else if (item == '(')
+                    {
+                        skipCounter++;
+                    }
+                    else if (item == ')')
+                    {
+                        skipCounter--;
+                        if (skipCounter < 0)
+                        {
+                            throw new Exception("カッコの数が不一致です");
+                        }
                     }
                 }
                 argument += item;
