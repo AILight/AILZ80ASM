@@ -1,0 +1,9 @@
+﻿	ld a, (IX+0)
+	ld a, (IX+128)
+	ld a, (IX-129)
+	DS 7
+
+	ld a, (IY+0)
+	ld a, (IY+128)
+	ld a, (IY-129)
+	DS 7

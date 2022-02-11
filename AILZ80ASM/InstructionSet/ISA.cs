@@ -116,7 +116,7 @@ namespace AILZ80ASM.InstructionSet
                                 var offsetAddress = tmpValue16 - asmAddress.Program - 2;
                                 if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                                 {
-                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}でした。");
+                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、0x{tmpValue16:x2}:{tmpValue16}です。");
                                 }
                                 var e8 = ConvertTo2BaseString(offsetAddress, 8);
                                 replaceDic.Add(instructionRegister.MnemonicBitName, e8);
@@ -128,7 +128,7 @@ namespace AILZ80ASM.InstructionSet
                                 replaceDic.Add(instructionRegister.MnemonicBitName, "");
                                 if (tmpValue16 != 0)
                                 {
-                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}でした。");
+                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、0x{tmpValue16:x2}:{tmpValue16}です。");
                                 }
                             }
                             break;
@@ -139,7 +139,7 @@ namespace AILZ80ASM.InstructionSet
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value3);
                                 if (tmpValue16 > 7)
                                 {
-                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}でした。");
+                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、0x{tmpValue16:x2}:{tmpValue16}です。");
                                 }
                             }
                             break;
@@ -150,7 +150,18 @@ namespace AILZ80ASM.InstructionSet
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                                 if (tmpValue16 > 255)
                                 {
-                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}でした。");
+                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、0x{tmpValue16:x2}:{tmpValue16}です。");
+                                }
+                            }
+                            break;
+                        case InstructionRegister.InstructionRegisterModeEnum.Value8BitSigned:
+                            {
+                                var tmpValue16 = AIMath.ConvertTo<int>(stringValue, asmLoad, asmAddress);
+                                var value8 = ConvertTo2BaseString(tmpValue16 & 0xFF, 8);
+                                replaceDic.Add(instructionRegister.MnemonicBitName, value8);
+                                if (tmpValue16 > 127 || tmpValue16 < -128)
+                                {
+                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、0x{tmpValue16:x2}:{tmpValue16}です。");
                                 }
                             }
                             break;
@@ -164,7 +175,7 @@ namespace AILZ80ASM.InstructionSet
                                 replaceDic.Add(mnemonicBitNames[1], tmpValue16String.Substring(8));
                                 if (tmpValue32 > 65535)
                                 {
-                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, (int)tmpValue32, $"指定された値は、{tmpValue32}でした。");
+                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, (int)tmpValue32, $"指定された値は、0x{tmpValue32:x4}:{tmpValue32}です。");
                                 }
                             }
                             break;
@@ -176,7 +187,7 @@ namespace AILZ80ASM.InstructionSet
                                     0 => "00",
                                     1 => "10",
                                     2 => "11",
-                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}でした。")
+                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}です。")
                                 };
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                             }
@@ -194,7 +205,7 @@ namespace AILZ80ASM.InstructionSet
                                     0x28 => "101",
                                     0x30 => "110",
                                     0x38 => "111",
-                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}でした。")
+                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、{tmpValue16}です。")
                                 };
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                             }

@@ -70,6 +70,7 @@ namespace AILZ80ASM.InstructionSet
                                 case InstructionRegister.InstructionRegisterModeEnum.Value0Bit:
                                 case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
                                 case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
+                                case InstructionRegister.InstructionRegisterModeEnum.Value8BitSigned:
                                 case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
                                 case InstructionRegister.InstructionRegisterModeEnum.InterruptModeValue:
                                 case InstructionRegister.InstructionRegisterModeEnum.RestartValue:
@@ -85,7 +86,7 @@ namespace AILZ80ASM.InstructionSet
                                     }
                                     break;
                                 default:
-                                    break;
+                                    throw new InvalidOperationException();
                             }
                             target = $"(?<{instructionRegister.MnemonicRegisterName}>{target})";
                             

@@ -1,0 +1,13 @@
+﻿	ld a, (IX+0)
+	ld a, (IX+1)
+	ld a, (IX+127)
+	ld a, (IX-1)
+	ld a, (IX-128)
+	NOP
+
+	ld a, (IY+0)
+	ld a, (IY+1)
+	ld a, (IY+127)
+	ld a, (IY-1)
+	ld a, (IY-128)
+	NOP
