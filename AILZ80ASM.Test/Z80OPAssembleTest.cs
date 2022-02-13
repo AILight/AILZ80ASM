@@ -103,6 +103,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestOP_INDEX_Register()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestOP_INT()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

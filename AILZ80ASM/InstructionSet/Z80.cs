@@ -190,7 +190,7 @@ namespace AILZ80ASM.InstructionSet
                 {
                     MnemonicRegisterName = "d",
                     MnemonicBitName = "IIIIIIII",
-                    InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value8Bit,
+                    InstructionRegisterMode = InstructionRegister.InstructionRegisterModeEnum.Value8BitSigned,
                 },
                 new InstructionRegister
                 {
@@ -635,8 +635,8 @@ namespace AILZ80ASM.InstructionSet
                             else if (tmpValue.StartsWith("IX", StringComparison.OrdinalIgnoreCase) ||
                                      tmpValue.StartsWith("IY", StringComparison.OrdinalIgnoreCase))
                             {
-                                var indexPlus = tmpValue.IndexOf("+");
-                                if (indexPlus == -1)
+                                var indexSign = tmpValue.IndexOfAny(new[] { '+', '-' });
+                                if (indexSign == -1)
                                 {
                                     // ここにはふつう来ない。ユーザーの記述ミス
                                     argument += $"({tmpValue})";
@@ -644,7 +644,7 @@ namespace AILZ80ASM.InstructionSet
                                 else
                                 {
                                     // ここで変数を積む
-                                    var valueString = tmpValue.Substring(indexPlus + 1).Trim();
+                                    var valueString = tmpValue.Substring(indexSign).Trim();
                                     var argumentKey = $"{InstructionSet.NumberReplaseChar}{assembleParseResult.ArgumentDic.Count + 1}";
                                     assembleParseResult.ArgumentDic.Add(argumentKey, valueString);
 

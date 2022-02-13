@@ -10,7 +10,7 @@
 
         public static LineDetailItemInvalid Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
+            throw new Exceptions.ErrorAssembleException(Error.ErrorCodeEnum.E0001);
         }
 
     }

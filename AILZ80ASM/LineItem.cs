@@ -30,7 +30,7 @@ namespace AILZ80ASM
 
             //展開情報作成
             //コメントを処理する
-            var indexCommnet = lineString.IndexOf(';');
+            var indexCommnet = AIString.IndexOfSkipString(lineString, ';');
             var operationString = default(string);
 
             if (indexCommnet != -1)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,7 +13,6 @@ namespace AILZ80ASM
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
         private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
-        private static readonly string RegexPatternDataString = @"^\""(?<string>.*)\""$";
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
 
         public override byte[] Bin => ItemDataBin;
@@ -77,10 +77,10 @@ namespace AILZ80ASM
             foreach (var item in ops.Select((value, index) => new { Value = value, Index = index }))
             {
                 //文字列の判断
-                var matchedString = Regex.Match(item.Value, RegexPatternDataString, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                if (matchedString.Success)
+                if (AIString.IsChar(item.Value) || AIString.IsString(item.Value))
                 {
-                    dataList.AddRange(System.Text.Encoding.ASCII.GetBytes(matchedString.Groups["string"].Value).Select(m => m.ToString("0")));
+                    var bytes = AIString.GetBytesByString(item.Value, asmLoad);
+                    dataList.AddRange(bytes.Select(m => m.ToString("0")));
                 }
                 else if(Regex.IsMatch(item.Value, RegexPatternDataFunction))
                 {

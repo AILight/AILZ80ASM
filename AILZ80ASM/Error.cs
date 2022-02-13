@@ -51,6 +51,7 @@ namespace AILZ80ASM
             E1031,
             E1032,
 
+            // Include
             E2001,
             E2002,
             E2003,
@@ -58,6 +59,11 @@ namespace AILZ80ASM
             E2005,
             E2006,
             E2007,
+
+            // CharMap
+            E2101,
+            E2102,
+
             // マクロ
             E3001,
             E3002,
@@ -79,6 +85,7 @@ namespace AILZ80ASM
 
             W0001,
             W0002,
+            W0003,
 
             W9001,
             W9002,
@@ -123,7 +130,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
             [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{byte.MinValue}～{byte.MaxValue}までです。",
-            [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。{0}",
+            [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。[{0}]",
             [ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
             [ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
             [ErrorCodeEnum.E0007] = "8進数の変換に失敗しました。",
@@ -133,14 +140,14 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
             [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
-            [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。{0}",
-            [ErrorCodeEnum.E0017] = "ラベル名と同じネームスペース名は付ける事が出来ません。{0}",
-            [ErrorCodeEnum.E0018] = "ネームスペース名と同じラベル名は付ける事が出来ません。{0}",
-            [ErrorCodeEnum.E0019] = "指定できる値は、0です。{0}",
-            [ErrorCodeEnum.E0020] = "指定できる値は、00H,08H,10H,18H,20H,28H,30H,38Hです。{0}",
-            [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。{0}",
-            [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。{0}",
-            [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。{0}",
+            [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。[{0}]",
+            [ErrorCodeEnum.E0017] = "ラベル名と同じネームスペース名は付ける事が出来ません。[{0}]",
+            [ErrorCodeEnum.E0018] = "ネームスペース名と同じラベル名は付ける事が出来ません。[{0}]",
+            [ErrorCodeEnum.E0019] = "指定できる値は、0です。[{0}]",
+            [ErrorCodeEnum.E0020] = "指定できる値は、00H,08H,10H,18H,20H,28H,30H,38Hです。[{0}]",
+            [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。[{0}]",
+            [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。[{0}]",
+            [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。[{0}]",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
@@ -168,29 +175,33 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E2006] = "Include 開始アドレスがファイルの長さを超えています。",
             [ErrorCodeEnum.E2007] = "Include にはラベルを指定できません。",
 
+            // CharMap
+            [ErrorCodeEnum.E2101] = "CharMap ファイルが見つかりませんでした。[{0}]",
+            [ErrorCodeEnum.E2102] = "CharMap 変換テーブルに値が見つかりませんでした。[{0}]",
+
             // マクロ
             [ErrorCodeEnum.E3001] = "MACROに対応するEND MACROが見つかりませんでした。",
             [ErrorCodeEnum.E3002] = "END MACROが先に見つかりました。",
             [ErrorCodeEnum.E3003] = "MACROが重複登録されていますので、名前解決が出来ません。",
             [ErrorCodeEnum.E3004] = "MACROの引数の数が一致していません。",
-            [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。{0}",
+            [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。[{0}]",
             [ErrorCodeEnum.E3006] = "MACROでは、ローカルラベル以外は使えません。",
             [ErrorCodeEnum.E3007] = "MACROの名前が有効ではありません。",
             [ErrorCodeEnum.E3008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
-            [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
+            [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。[{0}]",
             [ErrorCodeEnum.E3010] = "同名のMACROが既に定義されています。",
 
             // ファンクション
             [ErrorCodeEnum.E4001] = "同名のFunctionが既に定義されています。",
             [ErrorCodeEnum.E4002] = "Functionの名前が有効ではありません。",
-            [ErrorCodeEnum.E4003] = "Functionが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。{0}",
+            [ErrorCodeEnum.E4003] = "Functionが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。[{0}]",
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
-            [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。{0}",
-
+            [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。[{0}]",
 
             // ワーニング
-            [ErrorCodeEnum.W0001] = "1バイトの指定場所に、{0}が設定されています。1バイトに丸められます。",
-            [ErrorCodeEnum.W0002] = "2バイトの指定場所に、{0}が設定されています。2バイトに丸められます。",
+            [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[{0}]が設定されています。1バイトに丸められます。",
+            [ErrorCodeEnum.W0002] = "2バイトの指定場所に、[{0}]が設定されています。2バイトに丸められます。",
+            [ErrorCodeEnum.W0003] = "1バイト（符号付き）の指定場所に、[{0}]が設定されています。2バイトに丸められます。",
 
             // あいまいさの許容
             [ErrorCodeEnum.W9001] = "(IX)は、(IX+0)として処理されました。",

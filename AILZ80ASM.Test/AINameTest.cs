@@ -64,5 +64,23 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(arguments[2], "DEF");
         }
 
+        [TestMethod]
+        public void ArgumentTest_07()
+        {
+            var arguments = AIName.ParseArguments("\"ABC\", 123, \"ABC,DEF\", \"ABC\\\"DEF\"");
+
+            Assert.AreEqual(arguments[0], "\"ABC\"");
+            Assert.AreEqual(arguments[1], "123");
+            Assert.AreEqual(arguments[2], "\"ABC,DEF\"");
+            Assert.AreEqual(arguments[3], "\"ABC\\\"DEF\"");
+        }
+
+        [TestMethod]
+        public void ArgumentTest_08()
+        {
+            var arguments = AIName.ParseArguments("\"0123456789:;<=>? \"");
+
+            Assert.AreEqual(arguments[0], "\"0123456789:;<=>? \"");
+        }
     }
 }

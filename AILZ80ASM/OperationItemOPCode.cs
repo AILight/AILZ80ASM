@@ -1,4 +1,5 @@
 ﻿using System;
+using AILZ80ASM.Exceptions;
 using AILZ80ASM.InstructionSet;
 
 namespace AILZ80ASM
@@ -79,6 +80,9 @@ namespace AILZ80ASM
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
                             asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0002, exception.Value));
+                            break;
+                        case InstructionRegister.InstructionRegisterModeEnum.Value8BitSigned:
+                            asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0003, exception.Value));
                             break;
                         default:
                             throw new NotImplementedException();

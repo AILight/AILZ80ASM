@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AILZ80ASM.Exceptions;
 
 namespace AILZ80ASM
 {

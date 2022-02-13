@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AILZ80ASM.Exceptions;
 
 namespace AILZ80ASM
 {

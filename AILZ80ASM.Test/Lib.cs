@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace AILZ80ASM.Test
 {
@@ -87,22 +88,22 @@ namespace AILZ80ASM.Test
                 throw new Exception(package.Errors[0].ErrorMessage);
             }
 
-            return package.Errors;
+            return package.Errors.Union(package.Warnings).Union(package.Informations).ToArray();
         }
 
 
-        public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, FileInfo listFile)
+        public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, FileInfo listFile)
         {
-            Assemble_AreSame(inputFiles, outputFile, listFile, false);
+            return Assemble_AreSame(inputFiles, outputFile, listFile, false);
         }
 
-        public static void Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, FileInfo listFile, bool dataTrim)
+        public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, FileInfo outputFile, FileInfo listFile, bool dataTrim)
         {
             using var outputBinMemoryStream = new MemoryStream();
             using var outputLstMemoryStream = new MemoryStream();
             using var outputStream = outputFile.OpenRead();
 
-            Lib.Assemble(inputFiles, outputBinMemoryStream, outputLstMemoryStream, dataTrim, false);
+            var errors = Lib.Assemble(inputFiles, outputBinMemoryStream, outputLstMemoryStream, dataTrim, false);
             outputBinMemoryStream.Position = 0;
             outputLstMemoryStream.Position = 0;
             Lib.AreSameBin(outputStream, outputBinMemoryStream);
@@ -119,14 +120,16 @@ namespace AILZ80ASM.Test
                 outputLstMemoryStream.CopyTo(listStream);
             }
             */
+
+            return errors;
         }
 
-        public static void Assemble_AreSame(string directoryName)
+        public static ErrorLineItem[] Assemble_AreSame(string directoryName)
         {
-            Assemble_AreSame(directoryName, false);
+            return Assemble_AreSame(directoryName, false);
         }
 
-        public static void Assemble_AreSame(string directoryName, bool dataTrim)
+        public static ErrorLineItem[] Assemble_AreSame(string directoryName, bool dataTrim)
         {
             var targetDirectoryName = Path.Combine(".", "Test", directoryName);
 
@@ -135,7 +138,15 @@ namespace AILZ80ASM.Test
 
             var listFile = new FileInfo(Path.Combine(targetDirectoryName, "Test.LST"));
 
-            Lib.Assemble_AreSame(inputFiles, outputFile, listFile, dataTrim);
+            return Lib.Assemble_AreSame(inputFiles, outputFile, listFile, dataTrim);
+        }
+
+        public static void AssertErrorItemMessage(Error.ErrorCodeEnum errorCode, int lineIndex, string fileName, ErrorLineItem[] errors)
+        {
+            if (!errors.Any(m => m.ErrorCode == errorCode && m.LineItem.LineIndex == lineIndex && m.LineItem.FileInfo.Name == fileName))
+            {
+                Assert.Fail($"指定のエラーが見つかりませんでした。　ErrorCode:{errorCode} LineIndex:{lineIndex}");
+            }
         }
     }
 }

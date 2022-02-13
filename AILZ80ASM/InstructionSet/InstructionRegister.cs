@@ -16,6 +16,7 @@ namespace AILZ80ASM.InstructionSet
             Value0Bit,
             Value3Bit,
             Value8Bit,
+            Value8BitSigned,
             Value16Bit,
             InterruptModeValue,
             RestartValue,
