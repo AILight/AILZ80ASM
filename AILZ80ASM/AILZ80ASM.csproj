@@ -12,6 +12,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="CharMaps\JIS1.json" />
+    <None Remove="CharMaps\JIS12.json" />
+    <None Remove="CharMaps\SJIS.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="CharMaps\JIS1.json" />
+    <EmbeddedResource Include="CharMaps\JIS12.json" />
+    <EmbeddedResource Include="CharMaps\SJIS.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Samples\Profiles\AILZ80ASM.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

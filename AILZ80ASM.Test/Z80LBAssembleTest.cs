@@ -13,6 +13,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestLB_CharMap_Test()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestLB_DBDW_Test()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

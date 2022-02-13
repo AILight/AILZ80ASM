@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AILZ80ASM.Exceptions;
 
 namespace AILZ80ASM
 {

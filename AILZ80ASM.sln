@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AILZ80ASM", "AILZ80ASM\AILZ80ASM.csproj", "{93C0C165-4B19-4A3D-B8BB-5276087C989F}"
 EndProject
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AILZ80ASM.Tools", "AILZ80ASM.Tools\AILZ80ASM.Tools.csproj", "{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{5411EED7-F51B-4892-92A4-09A52C8CFC39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5411EED7-F51B-4892-92A4-09A52C8CFC39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5411EED7-F51B-4892-92A4-09A52C8CFC39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

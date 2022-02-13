@@ -1,4 +1,5 @@
 ﻿using System;
+using AILZ80ASM.Exceptions;
 using AILZ80ASM.InstructionSet;
 
 namespace AILZ80ASM

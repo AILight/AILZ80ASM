@@ -8,7 +8,7 @@
         public string ErrorMessage => Error.GetMessage(this.ErrorCode, Parameters);
         private object[] Parameters { get; set; }
 
-        public ErrorLineItem(LineItem lineItem, ErrorAssembleException errorAssembleException)
+        public ErrorLineItem(LineItem lineItem, Exceptions.ErrorAssembleException errorAssembleException)
             : this(lineItem, errorAssembleException.ErrorCode, errorAssembleException.Parameters)
         {
         }

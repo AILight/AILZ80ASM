@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AILZ80ASM.InstructionSet;
+using AILZ80ASM.Exceptions;
 
 namespace AILZ80ASM
 {
@@ -66,6 +67,7 @@ namespace AILZ80ASM
         public ListModeEnum ListMode { get; set; } = ListModeEnum.Full;
         public bool OutputTrim { get; internal set; }
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
+        public string CharMap { get; set; } = "SJIS";
 
         public AsmLoad(ISA isa)
         {
@@ -102,6 +104,7 @@ namespace AILZ80ASM
                 Errors = this.Errors,
                 OutputTrim = this.OutputTrim,
                 TirmOperationITems = this.TirmOperationITems,
+                CharMap = this.CharMap,
             };
             switch (scopeMode)
             {

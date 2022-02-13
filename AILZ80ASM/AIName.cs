@@ -12,6 +12,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+$";
         private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+$";
         private static readonly string RegexPatternLabelInvalid = @"^[0-9]";
+        private static readonly string RegexPatternCharMapInvalid = @"^[a-zA-Z0-9_]+$";
 
         public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
         {
@@ -117,15 +118,42 @@ namespace AILZ80ASM
             var argumentList = new List<string>();
             var argument = "";
             var skipCounter = 0;
-            var stringMode = false;
+            var stringMode = 0;
+            var skipMode = false;
 
             foreach (var item in target.ToArray())
             {
-                if (item == '\"')
+                if (skipMode)
                 {
-                    stringMode = !stringMode;
+                    skipMode = false;
                 }
-                else if (!stringMode)
+                else if (item == '\"' && (stringMode == 0 || stringMode == 1))
+                {
+                    if (stringMode == 0)
+                    {
+                        stringMode = 1;
+                    }
+                    else
+                    {
+                        stringMode = 0;
+                    }
+                }
+                else if (item == '\'' && (stringMode == 0 || stringMode == 2))
+                {
+                    if (stringMode == 0)
+                    {
+                        stringMode = 2;
+                    }
+                    else
+                    {
+                        stringMode = 0;
+                    }
+                }
+                else if (stringMode > 0 && item == '\\')
+                {
+                    skipMode = true;
+                }
+                else if (stringMode == 0)
                 {
                     if (item == ',' && skipCounter == 0)
                     {
@@ -152,6 +180,19 @@ namespace AILZ80ASM
 
             return argumentList.ToArray();
 
+        }
+
+        /// <summary>
+        /// CharMap名をチェックする
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool ValidateCharMapName(string target)
+        {
+            if (string.IsNullOrEmpty(target))
+                return false;
+
+            return Regex.Match(target, RegexPatternCharMapInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
 
         /// <summary>

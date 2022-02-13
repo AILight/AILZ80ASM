@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.Exceptions;
+using System;
 using System.Linq;
 
 namespace AILZ80ASM
