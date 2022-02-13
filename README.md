@@ -74,7 +74,20 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 
 ## コマンドライン デフォルト値の設定
 EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Samples/Profiles/AILZ80ASM.json)
+- [AILZ80ASM.json](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Samples/Profiles/AILZ80ASM.json)
+```
+{
+  "default-options": [
+    "-e",
+    "-t"
+  ],
+  "disable-warnings": [
+    "W0001",
+    "W9001",
+    "W9002"
+  ]
+}
+```
 
 # ソースコード書式
 
@@ -144,6 +157,39 @@ addr:
 - 10進数：何もつけません
 - 16進数：先頭に$ or 0x もしくは末尾にHを付けます
 
+## 文字と文字列について
+- １文字を扱うときには、 **'** で囲んでください。
+- 文字列を扱うときには、 **"** で囲んでください。
+
+## 文字と文字列について（現在仕様検討中）
+- エスケープシーケンスは未対応、今後対応予定
+- 文字コードの指定
+	- デフォルト値(SHIFT_JIS)
+	- 即値指定：DB @SJIS:"あいうえお"
+	- 全体で指定する場合：CHARMAP @SJIS
+- 定義ファイル
+	- 検索順
+		1. 作業ディレクトリ
+		1. EXEディレクトリ
+		1. EXE内包ファイル (SJIS)
+	- ファイル形式
+		1. Json形式（対応表）
+
+### エスケープシーケンス（現在対応中）
+| エスケープ シーケンス | 表現 | Unicode エンコーディング
+----|----|----
+| \\' | 単一引用符「'」 | 0x0027 |
+| \\" | 単一引用符「"」 | 0x0022 |
+| \\\\ | 円記号「\\」 | 0x005C |
+| \0 | Null | 0x0000 |
+| \a | ベル (警告) | 0x0007 |
+| \b | バックスペース | 0x0008 |
+| \f | フォーム フィード | 0x000C |
+| \n | 改行 | 0x000A |
+| \r | キャリッジ リターン | 0x000D |
+| \t | 水平タブ | 0x0009 |
+| \v | 垂直タブ | 0x000B |
+	
 ## ロケーションカウンタ
 - $  は、現在のプログラム・ロケーションカウンタを参照することができます
 - $$ は、現在のアウトプット・ロケーションカウンタを参照することができます
@@ -360,14 +406,25 @@ TestArg MACRO a1, a2
 Function ABS(value) => value < 0 ? value * -1 : value
 ```
 
+## END
+未対応、今後対応予定です。
+				
 ## 表記の揺れ対応
 - (IX) → (IX+0)
 - (IY) → (IY+0)
 - SUB A, → SUB
 - EX HL,DE → EX DE,HL
 
+## エラー
+ - レベル分けされており、E:Error,W:Warning,I:Information があります。
+ - Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
+ - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Error.cs)
+
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
 - 山本昌志様（Z80命令セット）[Yamamoto's Laboratory](http://www.yamamo10.jp/yamamoto/index.html)
 - 神楽坂朋様（Z80命令表）[神楽坂製作所](http://tomocyan.net/~kagurazaka/html/index2.html)
 - Thomas Scherrer様（Z80 Undocumented Instructions） [Thomas Scherrer Z80-Family HomePage](http://www.z80.info/index.htm)
+
+## Z80資料
+- [Z80 CPU User Manual - Zilog](http://www.zilog.com/docs/z80/um0080.pdf)
