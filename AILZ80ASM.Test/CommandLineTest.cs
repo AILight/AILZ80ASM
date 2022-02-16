@@ -49,17 +49,15 @@ namespace AILZ80ASM.Test
             }
         }
 
-        /*
         [TestMethod]
         public void Test_CommandLine_Version()
         {
             var rootCommand = AsmCommandLine.SettingRootCommand();
             var arguments = new[] { "-v" };
 
-            Assert.IsTrue(rootCommand.Parse(arguments));
-            Assert.IsTrue(rootCommand.HelpMessage.IndexOf("AILZ80ASM") >= 0);
+            Assert.IsFalse(rootCommand.Parse(arguments));
+            Assert.IsTrue(Version.TryParse(rootCommand.ParseMessage, out var dummy));
         }
-        */
 
         [TestMethod]
         public void Test_CommandLine_Input()
