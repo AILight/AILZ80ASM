@@ -728,13 +728,13 @@ namespace AILZ80ASM
                     macroValue = MacroValueEnum.High;
                 }
                 else if (string.Compare(option, ".@L", true) == 0 ||
-                            string.Compare(option, ".@LOW", true) == 0)
+                         string.Compare(option, ".@LOW", true) == 0)
                 {
                     tmpLabel = target.Substring(0, optionIndex);
                     macroValue = MacroValueEnum.Low;
                 }
                 else if (string.Compare(option, ".@T", true) == 0 ||
-                            string.Compare(option, ".@TEXT", true) == 0)
+                         string.Compare(option, ".@TEXT", true) == 0)
                 {
                     tmpLabel = target.Substring(0, optionIndex);
                     hasValue = false;
