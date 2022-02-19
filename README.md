@@ -162,22 +162,15 @@ addr:
 ## 文字と文字列について
 - １文字を扱うときには、 **'** で囲んでください。
 - 文字列を扱うときには、 **"** で囲んでください。
-- 文字コードの指定（実装済みですが、リリース時には仕様が変わる可能性があります）
-	- デフォルト値(SJIS)
-	- 即値指定：DB @<CHARMAP名>:"あいうえお"
-	- 全体で指定する場合：CHARMAP <CHARMAP名>
+- バイナリー変換のルール
+	- CHARMAPで指定した値で、変換内容が決まります。デフォルトは、SJISで変換されます。
+	- CHARMAPの即値指定、文字列に@<CHARMAP名>:"あいうえお" と記述すると即値で変換テーブルを指定できます。
 ```
-	CHARMAP JIS12
-	DB "テスト"	; JIS第一水準で変換
-	DB @SJIS:"テスト"	; SHIFT_JISで変換
+	DB "テスト"        ; SJISで変換、アセンブラのデフォルト値
+	CHARMAP @JIS12    ; JIS第一・二水準で変換
+	DB "テスト"        ; JIS第一・二水準で変換
+	DB @SJIS:"テスト"  ; SHIFT_JISで変換
 ```
-- CHARMAP定義ファイル
-	- 検索順
-		1. 作業ディレクトリ
-		1. EXEディレクトリ
-		1. EXE内リソース（内蔵CHARMAP）
-	- ファイル形式
-		1. Json形式(UTF-8 with BOM) [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
 
 ### エスケープシーケンス
 | エスケープ シーケンス | 表現 | Unicode エンコーディング
@@ -197,9 +190,9 @@ addr:
 ### 内蔵CHARMAP一覧
 | 名前 | デフォルト | 詳細
 ----|----|----
-| SJIS | * | シフトJIS
-| JIS1 |  | JIS第1水準
-| JIS12 |  | JIS第1水準・第2水準
+| @SJIS | * | シフトJIS
+| @JIS1 |  | JIS第1水準
+| @JIS12 |  | JIS第1水準・第2水準
 	
 ## ロケーションカウンタ
 - $  は、現在のプログラム・ロケーションカウンタを参照することができます
@@ -295,12 +288,22 @@ PORT_A  equ $CC
 - 移動により空いた領域には、0 または <式2> の値で埋められます。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
-#### INCLUDE [<ファイル名>], [<ファイルタイプ>], [<開始位置>], [<長さ>], [<CHARMAP:今後実装予定>]
-- ファイル名の内容を、その場所に展開します
-- ファイルタイプ：TEXT と BINARY が選択できます。省略するとTEXTになります。また短縮形 T, B が使えます。
-- 開始位置:ファイルの読み出し開始位置が指定できます。（ファイルタイプがBINARYの時に有効）
-- 長さ:ファイルの読み込み長さが指定できます。（ファイルタイプがBINARYの時に有効）
-- CHARMAP:CHARMAPの仕様によりファイルが展開されます。現在未実装（ファイルタイプがBINARYの時に有効））
+#### CHARMAP [<CHARMAP名>], [<ファイル名>] (ベータリリース9 以降)
+アセンブラ内で利用する、文字列の変換テーブルをロードします。利用個所は、INCLUDE、DB、DWになります。
+- <CHARMAP名>は、先頭に@を付ける形で命名します。例:@SJIS
+- <ファイル名>は、変換テーブルをロードします。省略すると既にロード済みのファイルが選択されます。また、内蔵されたCHARMAPを使うときにも省略します。
+- ファイル形式
+	1. Json形式(UTF-8 with BOM)
+	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
+- [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap_Test/Test.Z80)
+
+#### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<CHARMAP:ベータリリース9 以降>]
+ファイル名の内容を読み取り、その場所に展開します
+- <ファイル名>は、ロードしたいファイル名を指定します。
+- <ファイルタイプ>は、TEXT と BINARY が選択できます。省略するとTEXTになります。また短縮形 T, B が使えます。
+- <開始位置>は、ファイルの読み出し開始位置が指定できます。（ファイルタイプがBINARYの時に有効）
+- <長さ>は、ファイルの読み込み長さが指定できます。（ファイルタイプがBINARYの時に有効）
+- <CHARMAP>は、CHARMAPの仕様によりファイルが展開されます。このオプションを使うときには、ファイルはUTF-8で保存してください。（ファイルタイプがBINARYの時に有効））
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.Z80)
 ```
 include "Test.inc"			; テキストファイルとして展開されます
