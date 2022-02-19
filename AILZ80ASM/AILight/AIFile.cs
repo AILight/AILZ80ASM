@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.AILight
 {
     public static class AIFile
     {

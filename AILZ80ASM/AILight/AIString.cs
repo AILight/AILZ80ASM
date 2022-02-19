@@ -1,10 +1,8 @@
-﻿using AILZ80ASM.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System;
+using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.AILight
 {
     public static class AIString
     {
@@ -13,11 +11,11 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static bool IsString(string target)
+        public static bool IsString(string target, AsmLoad asmLoad)
         {
             if (target.EndsWith('\"'))
             {
-                return TryParseCharMap(target, out var dummy1, out var dummy2);
+                return TryParseCharMap(target, asmLoad, out var dummy1, out var dummy2);
             }
 
             return false;
@@ -28,11 +26,11 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static bool IsChar(string target)
+        public static bool IsChar(string target, AsmLoad asmLoad)
         {
             if (target.EndsWith('\''))
             {
-                return TryParseCharMap(target, out var dummy1, out var dummy2);
+                return TryParseCharMap(target, asmLoad, out var dummy1, out var dummy2);
             }
 
             return false;
@@ -75,12 +73,12 @@ namespace AILZ80ASM
         /// <param name="charpMap"></param>
         /// <param name="resultString"></param>
         /// <returns></returns>
-        public static bool TryParseCharMap(string target, out string charMap, out string resultString)
+        public static bool TryParseCharMap(string target, AsmLoad asmLoad, out string charMap, out string resultString)
         {
-            var result = InternalTryParseCharMap(target, '\"', out charMap, out resultString);
+            var result = InternalTryParseCharMap(target, '\"', asmLoad, out charMap, out resultString);
             if (!result)
             {
-                result = InternalTryParseCharMap(target, '\'', out charMap, out resultString);
+                result = InternalTryParseCharMap(target, '\'', asmLoad, out charMap, out resultString);
                 if (result && resultString.Length != 1)
                 {
                     return false;
@@ -136,7 +134,7 @@ namespace AILZ80ASM
         /// <param name="charpMap"></param>
         /// <param name="resultString"></param>
         /// <returns></returns>
-        private static bool InternalTryParseCharMap(string target, char encloseChar, out string charMap, out string resultString)
+        private static bool InternalTryParseCharMap(string target, char encloseChar, AsmLoad asmLoad, out string charMap, out string resultString)
         {
             charMap = "";
             resultString = "";
@@ -164,7 +162,7 @@ namespace AILZ80ASM
                         return false;
                     }
                     
-                    if (!AIName.ValidateCharMapName(charMap))
+                    if (!AIName.ValidateCharMapName(charMap, asmLoad))
                     {
                         return false;
                     }
@@ -235,7 +233,7 @@ namespace AILZ80ASM
         private static byte[] InternalGetBytesByString(string target, char encloseChar, AsmLoad asmLoad)
         {
             if (!target.EndsWith(encloseChar) ||
-                !TryParseCharMap(target, out var charMap, out var resultString))
+                !TryParseCharMap(target, asmLoad, out var charMap, out var resultString))
             {
                 switch (encloseChar)
                 {

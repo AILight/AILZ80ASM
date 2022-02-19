@@ -1,5 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
+using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {

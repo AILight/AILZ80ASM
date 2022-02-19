@@ -1,6 +1,6 @@
-﻿using AILZ80ASM.Exceptions;
+﻿using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 using System;
-using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {

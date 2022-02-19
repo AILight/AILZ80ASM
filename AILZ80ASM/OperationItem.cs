@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.Assembler;
+using System;
 
 namespace AILZ80ASM
 {

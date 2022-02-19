@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using AILZ80ASM.InstructionSet;
 using AILZ80ASM.Exceptions;
+using AILZ80ASM.AILight;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.Assembler
 {
     public class AsmLoad
     {

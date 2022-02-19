@@ -1,4 +1,6 @@
-﻿using AILZ80ASM.Exceptions;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 

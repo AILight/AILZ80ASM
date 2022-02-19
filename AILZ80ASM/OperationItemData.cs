@@ -1,8 +1,10 @@
-﻿using AILZ80ASM.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 
 namespace AILZ80ASM
 {
@@ -77,7 +79,7 @@ namespace AILZ80ASM
             foreach (var item in ops.Select((value, index) => new { Value = value, Index = index }))
             {
                 //文字列の判断
-                if (AIString.IsChar(item.Value) || AIString.IsString(item.Value))
+                if (AIString.IsChar(item.Value, asmLoad) || AIString.IsString(item.Value, asmLoad))
                 {
                     var bytes = AIString.GetBytesByString(item.Value, asmLoad);
                     dataList.AddRange(bytes.Select(m => m.ToString("0")));

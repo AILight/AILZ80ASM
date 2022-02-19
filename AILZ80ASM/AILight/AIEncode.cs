@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.AILight
 {
     public static class AIEncode
     {
