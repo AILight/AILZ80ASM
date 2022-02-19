@@ -289,7 +289,7 @@ PORT_A  equ $CC
 - 移動により空いた領域には、0 または <式2> の値で埋められます。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
-#### CHARMAP [<CHARMAP名>], [<ファイル名>] (ベータリリース9 以降)
+#### CHARMAP [<CHARMAP名>], [<ファイル名>]
 アセンブラ内で利用する、文字列の変換テーブルをロードします。利用個所は、INCLUDE、DB、DWになります。
 - <CHARMAP名>は、先頭に@を付ける形で命名します。例:@SJIS
 - <ファイル名>は、変換テーブルをロードします。省略すると既にロード済みのファイルが選択されます。また、内蔵されたCHARMAPを使うときにも省略します。
@@ -298,7 +298,7 @@ PORT_A  equ $CC
 	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
 - [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap_Test/Test.Z80)
 	
-#### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<CHARMAP:ベータリリース9 以降>]
+#### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<CHARMAP:実装予定>]
 ファイル名の内容を読み取り、その場所に展開します
 - <ファイル名>は、ロードしたいファイル名を指定します。
 - <ファイルタイプ>は、TEXT と BINARY が選択できます。省略するとTEXTになります。また短縮形 T, B が使えます。
