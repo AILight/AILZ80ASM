@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.Assembler;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -33,6 +34,10 @@ namespace AILZ80ASM
 
             AssembleLoad.OutputTrim = outputTrim;
             AssembleLoad.DisableWarningCodes = disableWarningCodes;
+            AssembleLoad.CharMap = "@SJIS";
+
+            // CharMapの初期化;
+            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.CharMap, AssembleLoad);
 
             foreach (var fileInfo in files)
             {

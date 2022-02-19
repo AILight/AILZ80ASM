@@ -1,6 +1,6 @@
-﻿using AILZ80ASM.Exceptions;
+﻿using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 using System;
-using System.Text.RegularExpressions;
 
 namespace AILZ80ASM
 {
@@ -38,6 +38,11 @@ namespace AILZ80ASM
             if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
                 asmLoad.AddLabel(Label);
+                // ローカルラベルの末尾に「:」がついている場合にはワーニング
+                if (lineItem.LabelString.StartsWith(".") && lineItem.LabelString.EndsWith(":"))
+                {
+                    asmLoad.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W9005));
+                }
             }
         }
 

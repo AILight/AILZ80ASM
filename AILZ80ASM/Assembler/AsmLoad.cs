@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using AILZ80ASM.InstructionSet;
 using AILZ80ASM.Exceptions;
+using AILZ80ASM.AILight;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.Assembler
 {
     public class AsmLoad
     {
@@ -67,7 +68,8 @@ namespace AILZ80ASM
         public ListModeEnum ListMode { get; set; } = ListModeEnum.Full;
         public bool OutputTrim { get; internal set; }
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
-        public string CharMap { get; set; } = "SJIS";
+        public string CharMap { get; set; }
+        public AsmEnd AsmEnd { get; set; } = new AsmEnd() { AssembleEnd = false };
 
         public AsmLoad(ISA isa)
         {
@@ -105,6 +107,7 @@ namespace AILZ80ASM
                 OutputTrim = this.OutputTrim,
                 TirmOperationITems = this.TirmOperationITems,
                 CharMap = this.CharMap,
+                AsmEnd = this.AsmEnd,
             };
             switch (scopeMode)
             {

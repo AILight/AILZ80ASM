@@ -1,6 +1,7 @@
-﻿using System;
+﻿using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using AILZ80ASM.InstructionSet;
+using System;
 
 namespace AILZ80ASM
 {

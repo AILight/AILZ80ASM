@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace AILZ80ASM.Test
@@ -16,18 +19,23 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIMath.IsNumber("%0000_1111"));
             Assert.IsTrue(AIMath.IsNumber("0000_1111b"));
             Assert.IsTrue(AIMath.IsNumber("$FFFF"));
+            Assert.IsTrue(AIMath.IsNumber("0xFFFF"));
+            Assert.IsTrue(AIMath.IsNumber("777o"));
 
             Assert.IsFalse(AIMath.IsNumber("O123"));
             Assert.IsFalse(AIMath.IsNumber("FFF"));
             Assert.IsFalse(AIMath.IsNumber("0000_1111%"));
             Assert.IsFalse(AIMath.IsNumber("0000_1111"));
             Assert.IsFalse(AIMath.IsNumber("0FFF"));
+            Assert.IsFalse(AIMath.IsNumber("0xXFFF"));
+            Assert.IsFalse(AIMath.IsNumber("888o"));
         }
 
         [TestMethod]
         public void Calc_01()
         {
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("1+2*((2+1))+6/2"), 1 + 2 * ((2 + 1)) + 6 / 2);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("-2 + 1"), (UInt16)((-2 + 1) & 0xFFFF));
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("-1 + 1"), -1 + 1);
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("+1 + 1"), +1 + 1);
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("+1 + -1"), +1 + -1);
@@ -109,10 +117,10 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Calc_07()
         {
-            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("FFFFH"), 0xFFFF);
-            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("0xFFFF"), 0xFFFF);
-            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("176O"), 126);
-            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("0101_1010b"), 0x5A);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("FFFFH"), 0xFFFF);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("0xFFFF"), 0xFFFF);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("176O"), 126);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("0101_1010b"), 0x5A);
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("%0101_1010"), 0x5A);
         }
 
@@ -155,21 +163,118 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void Calc_10()
+        public void Calc_UInt32()
+        {
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("1+2*((2+1))+6/2"), (UInt32)(1 + 2 * ((2 + 1)) + 6 / 2));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("-2 + 1"), (UInt32)((-2 + 1) & 0xFFFFFFFF));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("-1 + 1"), (UInt32)(-1 + 1));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("+1 + 1"), (UInt32)(+1 + 1));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("+1 + -1"), (UInt32)(+1 + -1));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("6%1"), (UInt32)(6 % 1));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("6%5"), (UInt32)(6 % 5));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("6%6"), (UInt32)(6 % 6));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("5<<1"), (UInt32)(5 << 1));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("5<<5"), (UInt32)(5 << 5));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("5>>1"), (UInt32)(5 >> 1));
+            Assert.AreEqual(AIMath.ConvertTo<UInt32>("5>>5"), (UInt32)(5 >> 5));
+        }
+
+        [TestMethod]
+        public void Calc_Label()
         {
             var asmAddress = new AsmAddress();
             asmAddress.Program = 0x8000;
-            asmAddress.Output = 0x8000;
+            asmAddress.Output = 0x8100;
 
             var asmLoad = new AsmLoad(new InstructionSet.Z80());
-            var label = new Label("LB", "0xAA02", asmLoad);
-            label.SetValue(asmLoad);
-
-            asmLoad.AddLabel(label);
-
+            {
+                var label = new Label("LB", "0xAA02", asmLoad);
+                label.SetValue(asmLoad);
+                asmLoad.AddLabel(label);
+            }
+            {
+                var label = new Label("LB2", "LABEL", asmLoad);
+                label.SetArgument();
+                asmLoad.AddLabel(label);
+            }
             Assert.AreEqual(AIMath.ConvertTo<byte>("-1", asmLoad), 0xFF);
             Assert.AreEqual(AIMath.ConvertTo<byte>("-1 * -1", asmLoad), 1);
             Assert.AreEqual(AIMath.ConvertTo<UInt16>("-LB", asmLoad), 0x55FE);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@H", asmLoad), 0xAA);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@HIGH", asmLoad), 0xAA);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@L", asmLoad), 0x02);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@LOW", asmLoad), 0x02);
+            Assert.IsTrue(AIMath.ConvertTo<bool>("LB2.@T == \"LABEL\"", asmLoad));
+            Assert.IsTrue(AIMath.ConvertTo<bool>("LB2.@TEXT == \"LABEL\"", asmLoad));
+            Assert.IsFalse(AIMath.ConvertTo<bool>("LB2.@T == \"LABEL1\"", asmLoad));
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("$", asmLoad, asmAddress), 0x8000);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("$$", asmLoad, asmAddress), 0x8100);
+        }
+
+        [TestMethod]
+        public void Calc_Exception()
+        {
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>(""); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("1**1"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("1++"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("1@1"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("(1+)"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("(1)*("); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("*3+2"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("ABC+2"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("0xG0"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("$G0"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("0000222b"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("\"0\""); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("\"0"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("(1+1 * (3 + 1)"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("(1+1 * (3 + 1)))"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("\"'\""); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("'AB'"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<Double>("0"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("LB + 1"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("0 == 1 ? 5"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("\"ABC\" = \"ABC\""); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("\"ABC\" == 0"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("0 == \"ABC\""); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("1 + FUNC(0)"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("LB"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("$"); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.ConvertTo<UInt16>("$$"); });
+        }
+
+        [TestMethod]
+        public void Calc_String()
+        {
+            Assert.AreEqual(AIMath.ConvertTo<byte>("'0' + 1"), 0x31);
+            Assert.AreEqual(AIMath.ConvertTo<bool>("\"012\" + \"3\" == \"0123\""), true);
+            Assert.AreEqual(AIMath.ConvertTo<bool>("\"012\" + \"4\" != \"0123\""), true);
+        }
+
+        [TestMethod]
+        public void TryParse_Test()
+        {
+            {
+                Assert.IsTrue(AIMath.TryParse<byte>("0 + 1", out var result));
+                Assert.AreEqual(result, 1);
+            }
+            {
+                Assert.IsFalse(AIMath.TryParse<byte>("0 ** 1", out var result));
+            }
+            {
+                var asmAddress = new AsmAddress();
+                asmAddress.Program = 0x8000;
+                asmAddress.Output = 0x8000;
+
+                var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                var label = new Label("LB", "0xAA02", asmLoad);
+                label.SetValue(asmLoad);
+
+                asmLoad.AddLabel(label);
+
+                Assert.IsTrue(AIMath.TryParse<UInt16>("LB + 1", asmLoad, asmAddress, out var result));
+                Assert.AreEqual(result, 0xAA02 + 1);
+            }
         }
     }
 }

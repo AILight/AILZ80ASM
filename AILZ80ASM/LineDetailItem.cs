@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.Assembler;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -62,6 +63,7 @@ namespace AILZ80ASM
             }
             else
             {
+                lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);

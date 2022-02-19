@@ -1,4 +1,6 @@
-﻿using AILZ80ASM.Exceptions;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -10,73 +12,81 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void IsCharTrueTest()
         {
-            Assert.IsTrue(AIString.IsChar("'0'"));
-            Assert.IsTrue(AIString.IsChar("'1'"));
-            Assert.IsTrue(AIString.IsChar("'2'"));
-            Assert.IsTrue(AIString.IsChar("'3'"));
-            Assert.IsTrue(AIString.IsChar("'a'"));
-            Assert.IsTrue(AIString.IsChar("'b'"));
-            Assert.IsTrue(AIString.IsChar("'X'"));
-            Assert.IsTrue(AIString.IsChar("'Y'"));
-            Assert.IsTrue(AIString.IsChar("'\0'"));
-            Assert.IsTrue(AIString.IsChar("'石'"));
-            Assert.IsTrue(AIString.IsChar("@SJIS:'Y'"));
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+
+            Assert.IsTrue(AIString.IsChar("'0'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'1'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'2'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'3'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'a'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'b'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'X'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'Y'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'\0'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("'石'", asmLoad));
+            Assert.IsTrue(AIString.IsChar("@SJIS:'Y'", asmLoad));
         }
 
         [TestMethod]
         public void IsCharFalseTest()
         {
-            Assert.IsFalse(AIString.IsChar("'"));
-            Assert.IsFalse(AIString.IsChar("0'"));
-            Assert.IsFalse(AIString.IsChar("'00'"));
-            Assert.IsFalse(AIString.IsChar("'石野'"));
-            Assert.IsFalse(AIString.IsChar("'\r\n'"));
-            Assert.IsFalse(AIString.IsChar("@JIS'3'"));
-            Assert.IsFalse(AIString.IsChar("JIS::'3'"));
-            Assert.IsFalse(AIString.IsChar("\0\""));
-            Assert.IsFalse(AIString.IsChar("'''"));
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
 
-            Assert.IsFalse(AIString.IsChar(":'Y'"));
-            Assert.IsFalse(AIString.IsChar("@:'Y'"));
-            Assert.IsFalse(AIString.IsChar("JIS:'Y'"));
-            Assert.IsFalse(AIString.IsChar("@SJIS'Y'"));
-            Assert.IsFalse(AIString.IsChar("@!!!:'Y'"));
+            Assert.IsFalse(AIString.IsChar("'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("0'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("'00'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("'石野'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("'\r\n'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("@JIS'3'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("JIS::'3'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("\0\"", asmLoad));
+            Assert.IsFalse(AIString.IsChar("'''", asmLoad));
+
+            Assert.IsFalse(AIString.IsChar(":'Y'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("@:'Y'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("JIS:'Y'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("@SJIS'Y'", asmLoad));
+            Assert.IsFalse(AIString.IsChar("@!!!:'Y'", asmLoad));
         }
 
         [TestMethod]
         public void IsStringTrueTest()
         {
-            Assert.IsTrue(AIString.IsString("\"0\""));
-            Assert.IsTrue(AIString.IsString("\"1\""));
-            Assert.IsTrue(AIString.IsString("\"2\""));
-            Assert.IsTrue(AIString.IsString("\"3\""));
-            Assert.IsTrue(AIString.IsString("\"a\""));
-            Assert.IsTrue(AIString.IsString("\"b\""));
-            Assert.IsTrue(AIString.IsString("\"X\""));
-            Assert.IsTrue(AIString.IsString("\"Y\""));
-            Assert.IsTrue(AIString.IsString("\"\n\r\""));
-            Assert.IsTrue(AIString.IsString("\"\0\""));
-            Assert.IsTrue(AIString.IsString("\"石\""));
-            Assert.IsTrue(AIString.IsString("@SJIS:\"ABC\""));
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
 
-            Assert.IsTrue(AIString.IsString("\"00\""));
-            Assert.IsTrue(AIString.IsString("\"石野\""));
-            Assert.IsTrue(AIString.IsString("\"\r\n\""));
+            Assert.IsTrue(AIString.IsString("\"0\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"1\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"2\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"3\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"a\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"b\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"X\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"Y\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"\n\r\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"\0\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"石\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("@SJIS:\"ABC\"", asmLoad));
+
+            Assert.IsTrue(AIString.IsString("\"00\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"石野\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"\r\n\"", asmLoad));
         }
 
         [TestMethod]
         public void IsStringFalseTest()
         {
-            Assert.IsFalse(AIString.IsString("\""));
-            Assert.IsFalse(AIString.IsString("ABC\""));
-            Assert.IsFalse(AIString.IsString("\"'''''"));
-            Assert.IsFalse(AIString.IsString("\"'''''\\\""));
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
 
-            Assert.IsFalse(AIString.IsString(":\"ABC\""));
-            Assert.IsFalse(AIString.IsString("@:\"ABC\""));
-            Assert.IsFalse(AIString.IsString("SJIS:\"ABC\""));
-            Assert.IsFalse(AIString.IsString("@SJIS\"ABC\""));
-            Assert.IsFalse(AIString.IsString("@!!!:\"ABC\""));
+            Assert.IsFalse(AIString.IsString("\"", asmLoad));
+            Assert.IsFalse(AIString.IsString("ABC\"", asmLoad));
+            Assert.IsFalse(AIString.IsString("\"'''''", asmLoad));
+            Assert.IsFalse(AIString.IsString("\"'''''\\\"", asmLoad));
+
+            Assert.IsFalse(AIString.IsString(":\"ABC\"", asmLoad));
+            Assert.IsFalse(AIString.IsString("@:\"ABC\"", asmLoad));
+            Assert.IsFalse(AIString.IsString("SJIS:\"ABC\"", asmLoad));
+            Assert.IsFalse(AIString.IsString("@SJIS\"ABC\"", asmLoad));
+            Assert.IsFalse(AIString.IsString("@!!!:\"ABC\"", asmLoad));
         }
 
         [TestMethod]
@@ -101,20 +111,25 @@ namespace AILZ80ASM.Test
         public void TryParseCharMapTrueTest()
         {
             {
-                Assert.IsTrue(AIString.TryParseCharMap("\'A\'", out var charMap, out var resultString));
+                var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                Assert.IsTrue(AIString.TryParseCharMap("\'A\'", asmLoad, out var charMap, out var resultString));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "A");
             }
 
             {
-                Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", out var charMap, out var resultString));
+                var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "ABC");
             }
 
             {
-                Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", out var charMap, out var resultString));
-                Assert.AreEqual(charMap, "SJIS");
+                var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
+                Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString));
+                Assert.AreEqual(charMap, "@SJIS");
                 Assert.AreEqual(resultString, "ABC");
             }
         }
@@ -124,12 +139,18 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByChar("'A'", asmLoad);
                 Assert.AreEqual(bytes[0], 0x41);
             }
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByChar("'石'", asmLoad);
                 Assert.AreEqual(bytes[0], 0xCE);
                 Assert.AreEqual(bytes[1], 0x90);
@@ -137,6 +158,9 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByChar("@SJIS:'野'", asmLoad);
                 Assert.AreEqual(bytes[0], 0xEC);
                 Assert.AreEqual(bytes[1], 0x96);
@@ -148,12 +172,18 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByString("\"A\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0x41);
             }
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByString("\"石野\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0xCE);
                 Assert.AreEqual(bytes[1], 0x90);
@@ -163,6 +193,9 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByString("@SJIS:\"石野\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0xCE);
                 Assert.AreEqual(bytes[1], 0x90);
@@ -177,6 +210,8 @@ namespace AILZ80ASM.Test
             {
                 Assert.ThrowsException<InvalidAIStringException>(() => {
                     var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                    CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                     AIString.GetBytesByString("@SJIS:\'石野\'", asmLoad);
                 });
             }
@@ -184,6 +219,8 @@ namespace AILZ80ASM.Test
             {
                 Assert.ThrowsException<InvalidAIStringException>(() => {
                     var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                    CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                     AIString.GetBytesByString("@SJIS \"石野\"", asmLoad);
                 });
             }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.Assembler
 {
     public static class AsmCommandLine
     {

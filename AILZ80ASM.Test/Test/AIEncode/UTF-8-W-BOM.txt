@@ -1,0 +1,9 @@
+﻿■UTF-8 with BOM テストファイル
+
+Z80 Assembler 'AILZ80ASM' ベータ版
+Build Status
+
+AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラです。
+
+読み方
+「あいるぜっとはちまるあせむ」

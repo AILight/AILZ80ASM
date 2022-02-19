@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace AILZ80ASM
 {

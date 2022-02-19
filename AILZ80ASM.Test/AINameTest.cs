@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace AILZ80ASM.Test
@@ -82,5 +84,37 @@ namespace AILZ80ASM.Test
 
             Assert.AreEqual(arguments[0], "\"0123456789:;<=>? \"");
         }
+
+        [TestMethod]
+        public void CharMapNameValidateTest()
+        {
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            Assert.IsTrue(AIName.ValidateCharMapName("@ABC", asmLoad));
+            Assert.IsFalse(AIName.ValidateCharMapName("", asmLoad));
+            Assert.IsFalse(AIName.ValidateCharMapName("@@ABC", asmLoad));
+            Assert.IsFalse(AIName.ValidateCharMapName("@漢字", asmLoad));
+        }
+
+        /*
+        [TestMethod]
+        public void ReservedWordTest()
+        {
+            // TODO:AsmReservedWordの実装が終わってからテストを有効にする
+
+            var reservedWords = new[] { "ORG" };
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+
+            foreach (var reservedWord in reservedWords)
+            {
+                Assert.IsFalse(AIName.ValidateCharMapName(reservedWord, asmLoad));
+                Assert.IsFalse(AIName.ValidateFunctionName(reservedWord, asmLoad));
+                Assert.IsFalse(AIName.ValidateFunctionArgument(reservedWord, asmLoad));
+                Assert.IsFalse(AIName.ValidateMacroName(reservedWord, asmLoad));
+                Assert.IsFalse(AIName.ValidateMacroArgument(reservedWord, asmLoad));
+                Assert.IsFalse(AIName.DeclareLabelValidate(reservedWord, asmLoad));
+            }
+
+        }
+        */
     }
 }

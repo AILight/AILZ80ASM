@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.Assembler
 {
     public struct AsmLength
     {

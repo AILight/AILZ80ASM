@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 
 namespace AILZ80ASM

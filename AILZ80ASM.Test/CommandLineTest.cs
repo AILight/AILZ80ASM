@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AILZ80ASM.Assembler;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,6 +48,16 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(outputFiles.Count, 1);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
             }
+        }
+
+        [TestMethod]
+        public void Test_CommandLine_Version()
+        {
+            var rootCommand = AsmCommandLine.SettingRootCommand();
+            var arguments = new[] { "-v" };
+
+            Assert.IsFalse(rootCommand.Parse(arguments));
+            Assert.IsTrue(Version.TryParse(rootCommand.ParseMessage, out var dummy));
         }
 
         [TestMethod]
@@ -558,6 +569,35 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.BIN].Name, "Main.bin");
                 Assert.AreEqual(outputFiles[AsmLoad.OutputModeEnum.SYM].Name, "Symbol.sym");
+            }
+
+        }
+
+        [TestMethod]
+        public void Test_CommandLine_Help()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-h" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.HelpMessage.IndexOf("AILZ80ASM:") >= 0);
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-h", "--input-mode" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.ParseMessage.IndexOf("入力ファイルのモードを選択します。") > 0);
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-h", "-om" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.ParseMessage.IndexOf("Shortcut Usage:") > 0);
             }
 
         }

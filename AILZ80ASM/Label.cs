@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -27,7 +29,7 @@ namespace AILZ80ASM
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!--/-/<-@^-`{-~]+))\](\s+|$)";
         private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):+(\s+|$)";
         private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):?";
-        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))(\s+|$)";
+        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:?))(\s+|$)";
         private static readonly string RegexPatternValueLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))\s+equ\s+(?<value>(.+))";
         private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
@@ -96,7 +98,13 @@ namespace AILZ80ASM
                         var matchedSubLabel = Regex.Match(labelName, RegexPatternSubLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                         if (matchedSubLabel.Success)
                         {
-                            SubLabelName = matchedSubLabel.Groups["label"].Value.Substring(1);
+                            var subLabelName = matchedSubLabel.Groups["label"].Value.Substring(1);
+                            if (subLabelName.EndsWith(":"))
+                            {
+                                subLabelName = subLabelName.Substring(0, subLabelName.Length - 1);
+                            }
+
+                            SubLabelName = subLabelName;
                             LabelLevel = LabelLevelEnum.SubLabel;
                         }
                     }

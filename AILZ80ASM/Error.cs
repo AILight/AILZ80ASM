@@ -63,6 +63,11 @@ namespace AILZ80ASM
             // CharMap
             E2101,
             E2102,
+            E2103,
+            E2104,
+            E2105,
+            E2106,
+            E2107,
 
             // マクロ
             E3001,
@@ -91,6 +96,7 @@ namespace AILZ80ASM
             W9002,
             W9003,
             W9004,
+            W9005,
 
             I0001,
         }
@@ -177,7 +183,12 @@ namespace AILZ80ASM
 
             // CharMap
             [ErrorCodeEnum.E2101] = "CharMap ファイルが見つかりませんでした。[{0}]",
-            [ErrorCodeEnum.E2102] = "CharMap 変換テーブルに値が見つかりませんでした。[{0}]",
+            [ErrorCodeEnum.E2102] = "CharMap 内蔵ファイルが見つかりませんでした。[{0}]",
+            [ErrorCodeEnum.E2103] = "CharMap ファイルの指定が間違っています。\"\"で囲って下さい。[{0}]",
+            [ErrorCodeEnum.E2104] = "CharMap ファイルの変換に失敗しました。[{0}]",
+            [ErrorCodeEnum.E2105] = "CharMap 変換テーブルに値が見つかりませんでした。[{0}]",
+            [ErrorCodeEnum.E2106] = "CharMap 変換テーブルが見つかりませんでした。[{0}]",
+            [ErrorCodeEnum.E2107] = "CharMap ラベルは設定できません。",
 
             // マクロ
             [ErrorCodeEnum.E3001] = "MACROに対応するEND MACROが見つかりませんでした。",
@@ -208,6 +219,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.W9002] = "(IY)は、(IY+0)として処理されました。",
             [ErrorCodeEnum.W9003] = "SUB A,は、SUBとして処理されました。",
             [ErrorCodeEnum.W9004] = "EX HL,DE は、EX DE,HLとして処理されました。",
+            [ErrorCodeEnum.W9005] = "ローカルラベルの「:」は、無いものとして処理されました。",
 
             [ErrorCodeEnum.I0001] = "未定義"
         };

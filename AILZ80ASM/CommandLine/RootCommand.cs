@@ -191,7 +191,15 @@ namespace AILZ80ASM.CommandLine
                 {
                     if (args.Any(m => option.Aliases.Any(n => string.Compare(n, m, true) == 0)))
                     {
-                        this.ParseMessage = option.OptionFunc.Invoke(new string[] { GetValue<string>(option.Name) });
+                        if (option.GetType()?.GenericTypeArguments?.FirstOrDefault() == typeof(bool))
+                        {
+                            this.ParseMessage = option.OptionFunc.Invoke(new string[] { "" });
+                        }
+                        else
+                        {
+                            this.ParseMessage = option.OptionFunc.Invoke(new string[] { GetValue<string>(option.Name) });
+                        }
+
                         return false;
                     }
                 }

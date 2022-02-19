@@ -1,9 +1,10 @@
-﻿using System;
+﻿using AILZ80ASM.Assembler;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.AILight
 {
     public static class AIName
     {
@@ -12,13 +13,15 @@ namespace AILZ80ASM
         private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+$";
         private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+$";
         private static readonly string RegexPatternLabelInvalid = @"^[0-9]";
-        private static readonly string RegexPatternCharMapInvalid = @"^[a-zA-Z0-9_]+$";
+        private static readonly string RegexPatternCharMapInvalid = @"^@[a-zA-Z0-9_]+$";
 
         public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
         {
             if (target.StartsWith(".") && target.EndsWith(":"))
             {
-                return false;
+                target = target.Substring(1, target.Length - 2);
+
+                return ValidateNameForLocalLabel(target, asmLoad);
             }
 
             // ラベルの名称だけを取得
@@ -55,11 +58,15 @@ namespace AILZ80ASM
         public static bool ValidateMacroName(string target, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(target))
+            {
                 return false;
+            }
 
             // 先頭に()は使えない
             if (target.StartsWith("(") || target.StartsWith(")"))
+            {
                 return false;
+            }
 
             return ValidateNameForMacroName(target, asmLoad);
         }
@@ -72,7 +79,9 @@ namespace AILZ80ASM
         public static bool ValidateMacroArgument(string target, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(target))
+            {
                 return false;
+            }
 
             return ValidateName(target, asmLoad);
         }
@@ -80,11 +89,15 @@ namespace AILZ80ASM
         public static bool ValidateFunctionName(string target, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(target))
+            {
                 return false;
+            }
 
             // ()は使えない
             if (target.IndexOfAny(new[] { '(', ')' }) != -1)
+            {
                 return false;
+            }
 
             return ValidateNameForFunction(target, asmLoad);
         }
@@ -97,7 +110,9 @@ namespace AILZ80ASM
         public static bool ValidateFunctionArgument(string target, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(target))
+            {
                 return false;
+            }
 
             return ValidateName(target, asmLoad);
         }
@@ -187,10 +202,13 @@ namespace AILZ80ASM
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static bool ValidateCharMapName(string target)
+        public static bool ValidateCharMapName(string target, AsmLoad asmLoad)
         {
-            if (string.IsNullOrEmpty(target))
+            //先頭は@から始まるので、@を抜いて判断
+            if (target.Length <= 1 || !ValidateName(target.Substring(1), asmLoad))
+            {
                 return false;
+            }
 
             return Regex.Match(target, RegexPatternCharMapInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
@@ -230,7 +248,7 @@ namespace AILZ80ASM
             }
 
             return  Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                   !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+                   !Regex.Match(target, RegexPatternLabelInvalid,  RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
 
         /// <summary>
