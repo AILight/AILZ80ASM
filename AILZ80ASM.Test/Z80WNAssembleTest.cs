@@ -38,6 +38,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestWN_Local_Label()
+        {
+            var warnings = Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+
+            Assert.AreEqual(warnings.Length, 1);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W9005, 23, "Test.Z80", warnings);
+        }
+
+        [TestMethod]
         public void TestWN_SUB()
         {
             var warnings = Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

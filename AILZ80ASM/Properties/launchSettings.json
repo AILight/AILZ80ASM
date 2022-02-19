@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": " .\\angle.z80 "
+      "commandLineArgs": " .\\main.asm"
     }
   }
 }

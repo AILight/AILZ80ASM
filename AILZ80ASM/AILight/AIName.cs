@@ -19,7 +19,9 @@ namespace AILZ80ASM.AILight
         {
             if (target.StartsWith(".") && target.EndsWith(":"))
             {
-                return false;
+                target = target.Substring(1, target.Length - 2);
+
+                return ValidateNameForLocalLabel(target, asmLoad);
             }
 
             // ラベルの名称だけを取得

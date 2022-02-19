@@ -96,6 +96,7 @@ namespace AILZ80ASM
             W9002,
             W9003,
             W9004,
+            W9005,
 
             I0001,
         }
@@ -218,6 +219,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.W9002] = "(IY)は、(IY+0)として処理されました。",
             [ErrorCodeEnum.W9003] = "SUB A,は、SUBとして処理されました。",
             [ErrorCodeEnum.W9004] = "EX HL,DE は、EX DE,HLとして処理されました。",
+            [ErrorCodeEnum.W9005] = "ローカルラベルの「:」は、無いものとして処理されました。",
 
             [ErrorCodeEnum.I0001] = "未定義"
         };

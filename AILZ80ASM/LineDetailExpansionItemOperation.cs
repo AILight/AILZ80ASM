@@ -38,6 +38,11 @@ namespace AILZ80ASM
             if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
                 asmLoad.AddLabel(Label);
+                // ローカルラベルの末尾に「:」がついている場合にはワーニング
+                if (lineItem.LabelString.StartsWith(".") && lineItem.LabelString.EndsWith(":"))
+                {
+                    asmLoad.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W9005));
+                }
             }
         }
 
