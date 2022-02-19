@@ -69,6 +69,7 @@ namespace AILZ80ASM.Assembler
         public bool OutputTrim { get; internal set; }
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
         public string CharMap { get; set; }
+        public AsmEnd AsmEnd { get; set; } = new AsmEnd() { AssembleEnd = false };
 
         public AsmLoad(ISA isa)
         {
@@ -106,6 +107,7 @@ namespace AILZ80ASM.Assembler
                 OutputTrim = this.OutputTrim,
                 TirmOperationITems = this.TirmOperationITems,
                 CharMap = this.CharMap,
+                AsmEnd = this.AsmEnd,
             };
             switch (scopeMode)
             {
