@@ -194,6 +194,7 @@ addr:
 | @JIS1 |  | JIS第1水準
 | @JIS12 |  | JIS第1水準・第2水準
 	
+
 ## ロケーションカウンタ
 - $  は、現在のプログラム・ロケーションカウンタを参照することができます
 - $$ は、現在のアウトプット・ロケーションカウンタを参照することができます
@@ -296,7 +297,7 @@ PORT_A  equ $CC
 	1. Json形式(UTF-8 with BOM)
 	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
 - [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap_Test/Test.Z80)
-
+	
 #### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<CHARMAP:ベータリリース9 以降>]
 ファイル名の内容を読み取り、その場所に展開します
 - <ファイル名>は、ロードしたいファイル名を指定します。
