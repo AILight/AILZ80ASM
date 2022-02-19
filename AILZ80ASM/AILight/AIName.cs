@@ -13,7 +13,7 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+$";
         private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+$";
         private static readonly string RegexPatternLabelInvalid = @"^[0-9]";
-        private static readonly string RegexPatternCharMapInvalid = @"^[a-zA-Z0-9_]+$";
+        private static readonly string RegexPatternCharMapInvalid = @"^@[a-zA-Z0-9_]+$";
 
         public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
         {
@@ -202,7 +202,8 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool ValidateCharMapName(string target, AsmLoad asmLoad)
         {
-            if (!ValidateName(target, asmLoad))
+            //先頭は@から始まるので、@を抜いて判断
+            if (target.Length <= 1 || !ValidateName(target.Substring(1), asmLoad))
             {
                 return false;
             }

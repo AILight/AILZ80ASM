@@ -81,8 +81,19 @@ namespace AILZ80ASM
                 //文字列の判断
                 if (AIString.IsChar(item.Value, asmLoad) || AIString.IsString(item.Value, asmLoad))
                 {
-                    var bytes = AIString.GetBytesByString(item.Value, asmLoad);
-                    dataList.AddRange(bytes.Select(m => m.ToString("0")));
+                    try
+                    {
+                        var bytes = AIString.GetBytesByString(item.Value, asmLoad);
+                        dataList.AddRange(bytes.Select(m => m.ToString("0")));
+                    }
+                    catch (CharMapNotFoundException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                    }
+                    catch (CharMapConvertException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                    }
                 }
                 else if(Regex.IsMatch(item.Value, RegexPatternDataFunction))
                 {

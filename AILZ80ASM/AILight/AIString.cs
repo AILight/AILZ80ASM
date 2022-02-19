@@ -156,7 +156,7 @@ namespace AILZ80ASM.AILight
                         return false;
                     }
 
-                    charMap = target.Substring(1, colonIndex - 1).Trim();
+                    charMap = target.Substring(0, colonIndex).Trim();
                     if (string.IsNullOrEmpty(charMap))
                     {
                         return false;

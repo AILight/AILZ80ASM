@@ -86,8 +86,21 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void CharMapNameValidateTest()
+        {
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            Assert.IsTrue(AIName.ValidateCharMapName("@ABC", asmLoad));
+            Assert.IsFalse(AIName.ValidateCharMapName("", asmLoad));
+            Assert.IsFalse(AIName.ValidateCharMapName("@@ABC", asmLoad));
+            Assert.IsFalse(AIName.ValidateCharMapName("@漢字", asmLoad));
+        }
+
+        /*
+        [TestMethod]
         public void ReservedWordTest()
         {
+            // TODO:AsmReservedWordの実装が終わってからテストを有効にする
+
             var reservedWords = new[] { "ORG" };
             var asmLoad = new AsmLoad(new InstructionSet.Z80());
 
@@ -102,5 +115,6 @@ namespace AILZ80ASM.Test
             }
 
         }
+        */
     }
 }

@@ -68,7 +68,7 @@ namespace AILZ80ASM.Assembler
         public ListModeEnum ListMode { get; set; } = ListModeEnum.Full;
         public bool OutputTrim { get; internal set; }
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
-        public string CharMap { get; set; } = "SJIS";
+        public string CharMap { get; set; }
 
         public AsmLoad(ISA isa)
         {

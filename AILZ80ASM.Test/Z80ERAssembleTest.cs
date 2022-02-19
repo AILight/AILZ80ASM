@@ -40,6 +40,25 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_CharMap()
+        {
+            var errors = Assemble("CharMap.Z80");
+
+            Assert.AreEqual(errors.Length, 11);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2102, 2, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2101, 6, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 7, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 8, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 9, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 10, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 11, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 12, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 13, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2105, 17, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2106, 19, "CharMap.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Conditional()
         {
             var errors = Assemble("Conditional.Z80");

@@ -126,8 +126,10 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString));
-                Assert.AreEqual(charMap, "SJIS");
+                Assert.AreEqual(charMap, "@SJIS");
                 Assert.AreEqual(resultString, "ABC");
             }
         }
@@ -137,12 +139,18 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByChar("'A'", asmLoad);
                 Assert.AreEqual(bytes[0], 0x41);
             }
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByChar("'石'", asmLoad);
                 Assert.AreEqual(bytes[0], 0xCE);
                 Assert.AreEqual(bytes[1], 0x90);
@@ -150,6 +158,9 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByChar("@SJIS:'野'", asmLoad);
                 Assert.AreEqual(bytes[0], 0xEC);
                 Assert.AreEqual(bytes[1], 0x96);
@@ -161,12 +172,18 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByString("\"A\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0x41);
             }
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByString("\"石野\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0xCE);
                 Assert.AreEqual(bytes[1], 0x90);
@@ -176,6 +193,9 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                asmLoad.CharMap = "@SJIS";
+                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                 var bytes = AIString.GetBytesByString("@SJIS:\"石野\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0xCE);
                 Assert.AreEqual(bytes[1], 0x90);
@@ -190,6 +210,8 @@ namespace AILZ80ASM.Test
             {
                 Assert.ThrowsException<InvalidAIStringException>(() => {
                     var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                    CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                     AIString.GetBytesByString("@SJIS:\'石野\'", asmLoad);
                 });
             }
@@ -197,6 +219,8 @@ namespace AILZ80ASM.Test
             {
                 Assert.ThrowsException<InvalidAIStringException>(() => {
                     var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                    CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
+
                     AIString.GetBytesByString("@SJIS \"石野\"", asmLoad);
                 });
             }
