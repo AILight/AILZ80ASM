@@ -430,6 +430,7 @@ Function ABS(value) => value < 0 ? value * -1 : value
 - (IY) → (IY+0)
 - SUB A, → SUB
 - EX HL,DE → EX DE,HL
+- .local: → .local
 
 ## エラー
  - レベル分けされており、E:Error,W:Warning,I:Information があります。
