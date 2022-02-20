@@ -13,6 +13,7 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 ## 入手方法 
 - 本ソースコードを、Visual Studio 2022でビルドする。
 - 実行形式をダウンロードして利用する。 [ダウンロード](https://github.com/AILight/AILZ80ASM/releases)
+	- 実行形式: win-x64版、osx-x64版、linux-x64版
 
 ※ 実行形式は、「[自己完結型の実行可能ファイル](https://docs.microsoft.com/ja-jp/dotnet/core/deploying/#publish-self-contained)」になっています。.NETの環境を用意する必要はありません。
 
