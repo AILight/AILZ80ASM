@@ -190,7 +190,7 @@ namespace AILZ80ASM.Assembler
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",
                 Required = false,
-                OptionFunc = (argument) => { return System.Environment.Version.ToString(); }
+                OptionFunc = (argument) => { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
             });
 
             rootCommand.AddOption(new Option<FileInfo>()
