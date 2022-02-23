@@ -7,12 +7,6 @@ namespace AILZ80ASM.Test
     public class Z80OPAssembleTest
     {
         [TestMethod]
-        public void TestLN_Comment()
-        {
-            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
-        }
-
-        [TestMethod]
         public void TestOP_ADC_16BitR_16BitR()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

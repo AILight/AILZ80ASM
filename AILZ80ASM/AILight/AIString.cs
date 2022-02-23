@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 
@@ -89,32 +90,83 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
-        /// 文字列をスキップしつつ、targetの文字位置を調べる
+        /// 文字列をスキップしてその中でvalueの文字位置を調べる
         /// </summary>
         /// <param name="target"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
         public static int IndexOfSkipString(string target, char value)
+        {
+            return IndexOfSkipString(target, value, 0);
+        }
+
+        /// <summary>
+        /// 文字列をスキップしてその中でvalueの文字位置を調べる
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="value"></param>
+        /// <param name="startIndex"></param>
+        /// <returns></returns>
+        public static int IndexOfSkipString(string target, char value, int startIndex)
+        {
+            return IndexOfAnySkipString(target, new []{ value }, startIndex);
+        }
+
+        /// <summary>
+        /// 文字列をスキップしてその中でvalueの文字位置を調べる
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="anyOf"></param>
+        /// <returns></returns>
+        public static int IndexOfAnySkipString(string target, char[] anyOf)
+        {
+            return IndexOfAnySkipString(target, anyOf, 0);
+        }
+
+        /// <summary>
+        /// 文字列をスキップしてその中でvalueの文字位置を調べる
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="anyOf"></param>
+        /// <param name="startIndex"></param>
+        /// <returns></returns>
+        public static int IndexOfAnySkipString(string target, char[] anyOf, int startIndex)
         {
             var skip = false;
             var mode = 0;
             var result = -1;
-            for (var index = 0; index < target.Length; index++)
+
+            for (var index = startIndex; index < target.Length; index++)
             {
                 if (skip)
                 {
                     skip = false;
                 }
-                else if (mode == 0 && target[index] == value)
+                else if (mode == 0 && anyOf.Any(m => m == target[index]))
                 {
                     return index;
                 }
-                if (target[index] == '\'' && (mode == 0 || mode == 1))
+                else if (target[index] == '\'' && (mode == 0 || mode == 1))
                 {
-                    mode = (mode == 0 ? 1 : 0);
+                    if (mode == 0 && (index > 0 && char.IsLetterOrDigit(target[index - 1])))
+                    {
+                        // アルファベットと数字に続く文字列開始記号は、無効とする
+                    }
+                    else
+                    {
+                        mode = (mode == 0 ? 1 : 0);
+                    }
                 }
                 else if (target[index] == '\"' && (mode == 0 || mode == 2))
                 {
-                    mode = (mode == 0 ? 2 : 0);
+                    if (mode == 0 && (index > 0 && char.IsLetterOrDigit(target[index - 1])))
+                    {
+                        // アルファベットと数字に続く文字列開始記号は、無効とする
+                    }
+                    else
+                    {
+                        mode = (mode == 0 ? 2 : 0);
+                    }
                 }
                 else if (mode > 0 && target[index] == '\\')
                 {

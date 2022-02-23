@@ -1,3 +1,4 @@
 ﻿	ld a, 0
 	;ld b, 0
 	ld c, 1
+	EX AF,AF'  ;コメントテスト

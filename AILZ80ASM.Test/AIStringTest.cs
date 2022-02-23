@@ -225,5 +225,31 @@ namespace AILZ80ASM.Test
                 });
             }
         }
+
+        [TestMethod]
+        public void IndexOfSkipStringTest()
+        {
+            Assert.AreEqual(AIString.IndexOfSkipString("ABC \"aaa,bbb\"", ','), -1);
+            Assert.AreEqual(AIString.IndexOfSkipString("EX AF,AF'  ; ABC", ';'), 11);
+            Assert.AreEqual(AIString.IndexOfSkipString("LD A,'\0'  ; ABC", ';'), 10);
+
+            // 開始位置のテスト
+            Assert.AreEqual(AIString.IndexOfSkipString("ABC \"A\\\"BC\", A,B,C", 'A', 0), 0);
+            Assert.AreEqual(AIString.IndexOfSkipString("ABC \"A\\\"BC\", A,B,C", 'A', 1), 13);
+        }
+
+        [TestMethod]
+        public void IndexOfAnySkipStringTest()
+        {
+            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"aaa,bbb\"", new[] { ',', '(' }), -1);
+            Assert.AreEqual(AIString.IndexOfAnySkipString("EX AF,AF'  ; ABC", new[] { ';', '(' }), 11);
+            Assert.AreEqual(AIString.IndexOfAnySkipString("LD A,'\0'  ; ABC", new[] { ';', '(' }), 10);
+
+            // 開始位置のテスト
+            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 0), 1);
+            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 1), 1);
+            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 3), 15);
+        }
+
     }
 }
