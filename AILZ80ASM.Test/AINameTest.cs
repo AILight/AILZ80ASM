@@ -86,6 +86,36 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void ArgumentTest_09()
+        {
+            var arguments = AIName.ParseArguments("ABC(A)(B),DEF(G,H)");
+
+            Assert.AreEqual(arguments[0], "ABC(A)(B)");
+            Assert.AreEqual(arguments[1], "DEF(G,H)");
+        }
+
+        [TestMethod]
+        public void ArgumentTest_10()
+        {
+            {
+                var arguments = AIName.ParseArguments("ABC(A)(B),DEF(G,H),");
+
+                Assert.AreEqual(arguments[0], "ABC(A)(B)");
+                Assert.AreEqual(arguments[1], "DEF(G,H)");
+                Assert.AreEqual(arguments[2], "");
+            }
+
+            {
+                var arguments = AIName.ParseArguments("A,B,C,");
+
+                Assert.AreEqual(arguments[0], "A");
+                Assert.AreEqual(arguments[1], "B");
+                Assert.AreEqual(arguments[2], "C");
+                Assert.AreEqual(arguments[3], "");
+            }
+        }
+
+        [TestMethod]
         public void CharMapNameValidateTest()
         {
             var asmLoad = new AsmLoad(new InstructionSet.Z80());

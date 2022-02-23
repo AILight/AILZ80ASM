@@ -52,7 +52,10 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    OutputStart();
+                    if (!rootCommand.GetSelected("version"))
+                    {
+                        OutputStart();
+                    }
                     Trace.WriteLine(rootCommand.ParseMessage);
 
                     return 2;

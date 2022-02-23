@@ -9,6 +9,6 @@ namespace AILZ80ASM
         public static string ProductName => $"AILZ80ASM";
         public static Version ProductVersion => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         public static string ProductLongName => $"*** {ProductName} *** Z-80 Assembler, version {ProductVersion}";
-        public static string Copyright => $"Copyright (C) 2021 by M.Ishino (AILight)";
+        public static string Copyright => $"Copyright (C) 2022 by M.Ishino (AILight)";
     }
 }
