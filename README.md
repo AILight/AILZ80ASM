@@ -277,6 +277,7 @@ LB2000:
 
 #### <ラベル> EQU <式>
 - 指定したラベルに、<式> の値を持たせます。
+　- 即値、式、$、$$、（文字、文字列、#TRUE or #FALSE version:1.0.0以降）
 - ローカルラベルで利用することも可能です。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
 
@@ -307,13 +308,13 @@ PORT_A  equ $CC
 	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
 - [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap_Test/Test.Z80)
 	
-#### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<CHARMAP:実装予定>]
+#### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<文字変換:実装予定>]
 ファイル名の内容を読み取り、その場所に展開します
 - <ファイル名>は、ロードしたいファイル名を指定します。
 - <ファイルタイプ>は、TEXT と BINARY が選択できます。省略するとTEXTになります。また短縮形 T, B が使えます。
 - <開始位置>は、ファイルの読み出し開始位置が指定できます。（ファイルタイプがBINARYの時に有効）
 - <長さ>は、ファイルの読み込み長さが指定できます。（ファイルタイプがBINARYの時に有効）
-- <CHARMAP:実装予定>は、CHARMAPの仕様によりファイルが展開されます。このオプションを使うときには、ファイルはUTF-8で保存してください。（ファイルタイプがBINARYの時に有効））
+- <文字変換:実装予定>は、CHARMAP名を指定します。指定したCHARMAPのルールに従ってバイナリー展開されます。このオプションを使うときには、ファイルはUTF-8で保存してください。（ファイルタイプがBINARYの時に有効））
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.Z80)
 ```
 include "Test.inc"			; テキストファイルとして展開されます
@@ -408,6 +409,8 @@ TestArg MACRO a1, a2
 - #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
 - #ENDIF: 条件付きアセンブルを終了します。
 - #ERROR: 無条件にエラーを発生させます。
+- #TRUE: 真(bool型：version 1.0.0以降)
+- #FALSE: 偽(bool型：version 1.0.0以降)
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
 
 ```
