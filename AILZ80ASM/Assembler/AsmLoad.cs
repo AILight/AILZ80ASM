@@ -345,27 +345,12 @@ namespace AILZ80ASM.Assembler
 
         public static System.Text.Encoding GetEncoding(EncodeModeEnum encodeMode)
         {
-            var encoding = default(System.Text.Encoding);
-
-            switch (encodeMode)
+            var encoding = encodeMode switch
             {
-                case EncodeModeEnum.UTF_8:
-                    encoding = System.Text.Encoding.UTF8;
-                    break;
-                case EncodeModeEnum.SHIFT_JIS:
-                    try
-                    {
-                        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                        encoding = System.Text.Encoding.GetEncoding("SHIFT_JIS");
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("お使いの環境では、SHIFT_JISをご利用いただくことは出来ません。", ex);
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+                EncodeModeEnum.UTF_8 => AIEncode.GetEncodingUTF8(),
+                EncodeModeEnum.SHIFT_JIS => AIEncode.GetEncodingSJIS(),
+                _ => throw new NotImplementedException()
+            };
 
             return encoding;
         }

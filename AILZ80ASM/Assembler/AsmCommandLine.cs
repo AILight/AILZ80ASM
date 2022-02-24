@@ -203,6 +203,14 @@ namespace AILZ80ASM.Assembler
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".dbg"); }
             });
 
+            rootCommand.AddOption(new Option<bool>()
+            {
+                Name = "fileDiff",
+                Aliases = new[] { "-df", "--diff" },
+                Description = "アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。",
+                Required = false,
+            });
+
             rootCommand.AddOption(new Option<string>()
             {
                 Name = "help",
