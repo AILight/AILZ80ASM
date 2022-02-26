@@ -1,6 +1,0 @@
-                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
-000000 0000 ED4A          15      adc hl,bc
-000002 0002 ED5A          15      adc hl,de
-000004 0004 ED6A          15      adc hl,hl
-000006 0006 ED7A          15      adc hl,sp
-[EOF:Test.Z80:UTF_8]

@@ -11,10 +11,9 @@ namespace AILZ80ASM.Test
         {
             var targetDirectoryName = Path.Combine(".", "Test", "TestER");
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
-            using var memoryStream1 = new MemoryStream();
-            using var memoryStream2 = new MemoryStream();
+            var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmLoad.OutputModeEnum, FileInfo>>();
 
-            return Lib.Assemble(inputFiles, memoryStream1, memoryStream2, false, true);
+            return Lib.Assemble(inputFiles, outputFiles, false, true);
         }
 
         [TestMethod]

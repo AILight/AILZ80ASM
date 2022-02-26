@@ -1,4 +1,0 @@
-                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
-000000 0000 2F             4      cpl
-000001 0001 ED44           8      neg
-[EOF:Test.Z80:UTF_8]

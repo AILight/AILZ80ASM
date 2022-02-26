@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AILZ80ASM.IO
 {
-    public class CMTBinaryWriter : BinaryWriter
+    public class CMTBinaryWriter : AIBinaryWriter
     {
         private UInt32 Elapse { get; set; } = 0;
         private UInt16 StartAddress { get; set; }

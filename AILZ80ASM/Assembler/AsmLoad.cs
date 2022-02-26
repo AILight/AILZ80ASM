@@ -34,6 +34,12 @@ namespace AILZ80ASM.Assembler
             DBG,
         }
 
+        public enum OutputModeFileTypeEnum
+        {
+            Binary,
+            Text,
+        }
+
         public enum ListModeEnum
         {
             Simple,
@@ -343,6 +349,12 @@ namespace AILZ80ASM.Assembler
             return encoding;
         }
 
+        /// <summary>
+        /// エンコードモードにしたがって、.NETのEncodingを返す
+        /// </summary>
+        /// <param name="encodeMode"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public static System.Text.Encoding GetEncoding(EncodeModeEnum encodeMode)
         {
             var encoding = encodeMode switch
@@ -354,6 +366,30 @@ namespace AILZ80ASM.Assembler
 
             return encoding;
         }
+
+        /// <summary>
+        /// アウトプットモードのファイルタイプを返す
+        /// </summary>
+        /// <param name="outputMode"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static OutputModeFileTypeEnum GetFileType(OutputModeEnum outputMode)
+        {
+            var fileType = outputMode switch
+            {
+                OutputModeEnum.BIN => OutputModeFileTypeEnum.Binary,
+                OutputModeEnum.HEX => OutputModeFileTypeEnum.Text,
+                OutputModeEnum.T88 => OutputModeFileTypeEnum.Binary,
+                OutputModeEnum.CMT => OutputModeFileTypeEnum.Binary,
+                OutputModeEnum.LST => OutputModeFileTypeEnum.Text,
+                OutputModeEnum.SYM => OutputModeFileTypeEnum.Text,
+                OutputModeEnum.DBG => OutputModeFileTypeEnum.Text,
+                _ => throw new NotImplementedException()
+            };
+
+            return fileType;
+        }
+
 
     }
 }

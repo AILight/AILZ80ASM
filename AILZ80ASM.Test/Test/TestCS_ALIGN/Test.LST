@@ -1,8 +1,0 @@
-                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
-000000 8000                       org $8000
-000000 8000 3E00           7      LD  A, 0
-000100 8100                       ALIGN 256
-000100 8100 3E01           7      LD  A, 1
-000200 8200                       ALIGN 256, $AA
-000200 8200 3E02           7      LD  A, 2
-[EOF:Test.Z80:UTF_8]

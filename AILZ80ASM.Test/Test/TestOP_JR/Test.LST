@@ -1,9 +1,0 @@
-                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
-000000 0000 00             4      NOP
-000001 0001 10FD          13      DJNZ $-1
-000003 0003 20FD          12      JR NZ, $-1
-000005 0005 30FD          12      JR NC, $-1
-000007 0007 18FF          12      JR $+1
-000009 0009 28FD          12      JR Z, $-1
-00000B 000B 38FD          12      JR C, $-1
-[EOF:Test.Z80:UTF_8]

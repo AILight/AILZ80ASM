@@ -1,8 +1,0 @@
-                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
-000000 0000 2A3412        16      ld hl, ($1234)
-000003 0003 DD2A7856      20      ld ix, ($5678)
-000007 0007 FD2ABC9A      20      ld iy, ($9abc)
-00000B 000B ED4B2301      20      ld bc, ($0123)
-00000F 000F ED5B6745      20      ld de, ($4567)
-000013 0013 ED7BEFCD      20      ld sp, ($cdef)
-[EOF:Test.Z80:UTF_8]
