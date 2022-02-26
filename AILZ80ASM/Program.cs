@@ -76,6 +76,7 @@ namespace AILZ80ASM
                             rootCommand.GetListMode(),
                             rootCommand.GetValue<bool>("outputTrim"),
                             rootCommand.GetValue<FileInfo>("error"),
+                            rootCommand.GetValue<bool>("fileDiff"),
                             rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode"));
         }
 
@@ -91,7 +92,14 @@ namespace AILZ80ASM
         /// <param name="list"></param>
         /// <returns></returns>
         public static bool Assember(
-                FileInfo[] inputs, AsmLoad.EncodeModeEnum encodeMode, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, AsmLoad.ListModeEnum listMode, bool outputTrim, FileInfo traceFile, Error.ErrorCodeEnum[] disableWarningCodes)
+                FileInfo[] inputs, 
+                AsmLoad.EncodeModeEnum encodeMode, 
+                Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, 
+                AsmLoad.ListModeEnum listMode, 
+                bool outputTrim, 
+                FileInfo traceFile, 
+                bool fileDiff,
+                Error.ErrorCodeEnum[] disableWarningCodes)
         {
             var assembleResult = false;
             try
@@ -159,20 +167,41 @@ namespace AILZ80ASM
                     }
                 }
 
-                // アセンブル実行
+                // ファイルの差分表示モード
+                if (fileDiff)
+                {
+                    Trace.WriteLine("出力ファイル差分確認モード");
+                    Trace.WriteLine("");
+                }
 
+                // アセンブル実行
                 var package = new Package(inputs, encodeMode, listMode, outputTrim, disableWarningCodes, AsmISA.Z80);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
                     if (package.Errors.Length == 0)
                     {
-                        package.SaveOutput(outputFiles);
+                        if (fileDiff)
+                        {
+                            package.DiffOutput(outputFiles);
+                        }
+                        else
+                        {
+                            package.SaveOutput(outputFiles);
+                        }
+
                         assembleResult = true;
                     }
                 }
-
                 package.OutputError();
+
+                if (fileDiff)
+                {
+                    if (package.Errors.Length > 0)
+                    {
+                        Trace.WriteLine("アセンブル時にエラーが発生したため、ファイルの比較が中止されました。");
+                    }
+                }
             }
             catch (Exception)
             {
@@ -208,6 +237,14 @@ namespace AILZ80ASM
             Trace.WriteLine(ProductInfo.Copyright);
             Trace.WriteLine("");
             //OutputDebug(new[] { ProductInfo.ProductLongName, ProductInfo.Copyright, $"Assemble start:{DateTime.Now}", "" }, fileInfo, false);
+        }
+
+        private static void OutputFileList(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        {
+            foreach (var outputFile in outputFiles)
+            {
+                Trace.WriteLine($"{outputFile.Value.Name}");
+            }
         }
 
         private static void OutputDebug(string[] targets, FileInfo fileInfo)

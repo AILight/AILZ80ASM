@@ -34,6 +34,12 @@ namespace AILZ80ASM.Assembler
             DBG,
         }
 
+        public enum OutputModeFileTypeEnum
+        {
+            Binary,
+            Text,
+        }
+
         public enum ListModeEnum
         {
             Simple,
@@ -343,32 +349,47 @@ namespace AILZ80ASM.Assembler
             return encoding;
         }
 
+        /// <summary>
+        /// エンコードモードにしたがって、.NETのEncodingを返す
+        /// </summary>
+        /// <param name="encodeMode"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public static System.Text.Encoding GetEncoding(EncodeModeEnum encodeMode)
         {
-            var encoding = default(System.Text.Encoding);
-
-            switch (encodeMode)
+            var encoding = encodeMode switch
             {
-                case EncodeModeEnum.UTF_8:
-                    encoding = System.Text.Encoding.UTF8;
-                    break;
-                case EncodeModeEnum.SHIFT_JIS:
-                    try
-                    {
-                        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                        encoding = System.Text.Encoding.GetEncoding("SHIFT_JIS");
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("お使いの環境では、SHIFT_JISをご利用いただくことは出来ません。", ex);
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+                EncodeModeEnum.UTF_8 => AIEncode.GetEncodingUTF8(),
+                EncodeModeEnum.SHIFT_JIS => AIEncode.GetEncodingSJIS(),
+                _ => throw new NotImplementedException()
+            };
 
             return encoding;
         }
+
+        /// <summary>
+        /// アウトプットモードのファイルタイプを返す
+        /// </summary>
+        /// <param name="outputMode"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static OutputModeFileTypeEnum GetFileType(OutputModeEnum outputMode)
+        {
+            var fileType = outputMode switch
+            {
+                OutputModeEnum.BIN => OutputModeFileTypeEnum.Binary,
+                OutputModeEnum.HEX => OutputModeFileTypeEnum.Text,
+                OutputModeEnum.T88 => OutputModeFileTypeEnum.Binary,
+                OutputModeEnum.CMT => OutputModeFileTypeEnum.Binary,
+                OutputModeEnum.LST => OutputModeFileTypeEnum.Text,
+                OutputModeEnum.SYM => OutputModeFileTypeEnum.Text,
+                OutputModeEnum.DBG => OutputModeFileTypeEnum.Text,
+                _ => throw new NotImplementedException()
+            };
+
+            return fileType;
+        }
+
 
     }
 }

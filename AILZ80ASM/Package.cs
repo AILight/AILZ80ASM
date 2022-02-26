@@ -209,6 +209,112 @@ namespace AILZ80ASM
             }
         }
 
+        public void DiffOutput(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        {
+            foreach (var item in outputFiles)
+            {
+                using var fileStream = item.Value.OpenRead();
+
+                try
+                {
+                    DiffOutput(fileStream, item);
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.Message);
+                }
+                fileStream.Close();
+            }
+        }
+
+        public void DiffOutput(Stream stream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        {
+            using var assembledStream = new MemoryStream();
+            using var originalStream = new MemoryStream();
+            stream.CopyTo(originalStream);
+
+            SaveOutput(assembledStream, outputFile);
+            DiffOutput(originalStream.ToArray(), assembledStream.ToArray(), outputFile);
+        }
+
+        public void DiffOutput(byte[] original, byte[] assembled, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        {
+            var resultString = "一致";
+
+            Trace.Write($"{outputFile.Value.Name}: ");
+
+            if (outputFile.Key == AsmLoad.OutputModeEnum.LST)
+            {
+                // テキスト比較
+                var originals = AILight.AIEncode.GetString(original).Replace("\r","").Split('\n');
+                var assembleds = AILight.AIEncode.GetString(assembled).Replace("\r", "").Split('\n');
+                if (original.Length != assembled.Length)
+                {
+                    resultString = $"不一致 {originals.Length:#,##0} -> {assembleds.Length:#,##0}行数";
+                    resultString += $"{Environment.NewLine}";
+                }
+                else
+                {
+                    var byteDiffCounter = 0;
+                    var tmpResultStream = "";
+
+                    for (var index = 0; index < originals.Length && index < assembleds.Length; index++)
+                    {
+                        if (originals[index] != assembleds[index])
+                        {
+                            if (byteDiffCounter < 20)
+                            {
+                                tmpResultStream += $"{Environment.NewLine}{index+1:#0}: {originals[index]}";
+                                tmpResultStream += $"{Environment.NewLine}{index+1:#0}: {assembleds[index]}";
+                            }
+                            byteDiffCounter++;
+                        }
+                    }
+                    if (byteDiffCounter > 0)
+                    {
+                        resultString = $"不一致 ({byteDiffCounter:#,##0}/{originals.Length:#,##0})" + tmpResultStream;
+                        resultString += $"{Environment.NewLine}";
+                    }
+                }
+
+
+                AILight.AIEncode.IsSHIFT_JIS(assembled);
+
+            }
+            else
+            {
+                // バイナリー比較
+                if (original.Length != assembled.Length)
+                {
+                    resultString = $"不一致 {original.Length:#,##0} -> {assembled.Length:#,##0} bytes";
+                    resultString += $"{Environment.NewLine}";
+                }
+                else
+                {
+                    var byteDiffCounter = 0;
+                    var tmpResultStream = "";
+                    for (var index = 0; index < original.Length; index++)
+                    {
+                        if (original[index] != assembled[index])
+                        {
+                            if (byteDiffCounter < 20)
+                            {
+                                tmpResultStream += $"{Environment.NewLine}{index:X6}: {original[index]:X} -> {assembled[index]:X}";
+                            }
+                            byteDiffCounter++;
+                        }
+                    }
+                    if (byteDiffCounter > 0)
+                    {
+                        resultString = $"不一致 ({byteDiffCounter:#,##0}/{original.Length:#,##0})" + tmpResultStream;
+                        resultString += $"{Environment.NewLine}";
+                    }
+                }
+            }
+
+            Trace.WriteLine(resultString);
+        }
+
         public void SaveBin(Stream stream)
         {
             foreach (var item in FileItems)

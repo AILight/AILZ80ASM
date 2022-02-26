@@ -1,6 +1,0 @@
-                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
-000000 0000 EDA0          16      ldi
-000002 0002 EDB0                  ldir
-000004 0004 EDA8          16      ldd
-000006 0006 EDB8                  lddr
-[EOF:Test.Z80:UTF_8]

@@ -210,5 +210,45 @@ namespace AILZ80ASM.AILight
             }
             return true;
         }
+
+        /// <summary>
+        /// Encodeを自動判定して、文字列を返す
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public static string GetString(byte[] buffer)
+        {
+            var encording = !IsUTF8(buffer) && IsSHIFT_JIS(buffer) ?
+                GetEncodingSJIS() : GetEncodingUTF8();
+
+            return encording.GetString(buffer, 0, buffer.Length);
+        }
+
+        /// <summary>
+        /// UTF8のエンコーディングを返します
+        /// </summary>
+        /// <returns></returns>
+        public static System.Text.Encoding GetEncodingUTF8()
+        {
+            return System.Text.Encoding.UTF8;
+        }
+
+        /// <summary>
+        /// SHIFTJISのエンコーディングを返します
+        /// </summary>
+        /// <returns></returns>
+        public static System.Text.Encoding GetEncodingSJIS()
+        {
+            try
+            {
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                return System.Text.Encoding.GetEncoding("SHIFT_JIS");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("お使いの環境では、SHIFT_JISをご利用いただくことは出来ません。", ex);
+            }
+        }
+
     }
 }

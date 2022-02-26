@@ -1,8 +1,0 @@
-                              *** AILZ80ASM *** Z-80 Assembler, version 0.9.4.0
-000000 0000 C5            11      push bc
-000001 0001 D5            11      push de
-000002 0002 E5            11      push hl
-000003 0003 F5            11      push af 
-000004 0004 DDE5          15      push ix
-000006 0006 FDE5          15      push iy
-[EOF:Test.Z80:UTF_8]

@@ -35,5 +35,27 @@ namespace AILZ80ASM.Test
             Assert.IsFalse(AIEncode.IsSHIFT_JIS(bytes));
             Assert.IsTrue(AIEncode.IsUTF8(bytes));
         }
+
+        [TestMethod]
+        public void GetStringUTF8Test()
+        {
+            var path = Path.Combine(".", "Test", "AIEncode", "UTF-8.txt");
+            var bytes = File.ReadAllBytes(path);
+            var originalString = File.ReadAllText(path, AIEncode.GetEncodingUTF8());
+            var testString = AIEncode.GetString(bytes);
+            
+            Assert.AreEqual(testString, originalString);
+        }
+
+        [TestMethod]
+        public void GetStringSJISTest()
+        {
+            var path = Path.Combine(".", "Test", "AIEncode", "SHIFT_JIS.txt");
+            var bytes = File.ReadAllBytes(path);
+            var originalString = File.ReadAllText(path, AIEncode.GetEncodingSJIS());
+            var testString = AIEncode.GetString(bytes);
+
+            Assert.AreEqual(testString, originalString);
+        }
     }
 }

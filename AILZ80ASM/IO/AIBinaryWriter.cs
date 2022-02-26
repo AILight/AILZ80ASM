@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace AILZ80ASM.IO
 {
-    public abstract class BinaryWriter
+    public abstract class AIBinaryWriter
     {
         private Stream Stream { get; set; }
 
-        public BinaryWriter(Stream stream)
+        public AIBinaryWriter(Stream stream)
         {
             Stream = stream;
         }
@@ -31,6 +31,7 @@ namespace AILZ80ASM.IO
             Stream.Write(buffer, offset, count);
         }
 
+        /* Endianがあるので今後の課題
         public void WriteStream(UInt16 target)
         {
             Stream.Write(new byte[] { (byte)target, (byte)(target >> 8) });
@@ -40,5 +41,6 @@ namespace AILZ80ASM.IO
         {
             Stream.Write(new byte[] { (byte)target, (byte)((target >> 8) & 0xFF), (byte)((target >> 16) & 0xFF), (byte)((target >> 24) & 0xFF) });
         }
+        */
     }
 }
