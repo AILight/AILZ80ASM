@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using AILZ80ASM.Assembler;
 
 namespace AILZ80ASM.CommandLine
 {

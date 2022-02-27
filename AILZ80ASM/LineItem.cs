@@ -86,21 +86,6 @@ namespace AILZ80ASM
             LineDetailItem.PreAssemble(ref address);
         }
 
-        public void BuildAddressLabel()
-        {
-            LineDetailItem.BuildAddressLabel();
-        }
-
-        public void BuildArgumentLabel()
-        {
-            LineDetailItem.BuildArgumentLabel();
-        }
-
-        public void BuildValueLabel()
-        {
-            LineDetailItem.BuildValueLabel();
-        }
-
         public void Assemble()
         {
             LineDetailItem.Assemble();

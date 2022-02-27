@@ -164,6 +164,12 @@
     <None Update="Test\TestLB_DBDW_Test\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestLB_Enhance_EQU_Test\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_Enhance_EQU_Test\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestLB_EQU_Test\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -173,13 +179,13 @@
     <None Update="Test\TestLB_EQU_Test\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_JP_And_JR\Test.BIN">
+    <None Update="Test\TestLB_JP_And_JR_And_Call\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_JP_And_JR\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_JP_And_JR\Test.Z80">
+    <None Update="Test\TestLB_JP_And_JR_And_Call\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_LD_Address\Test.BIN">

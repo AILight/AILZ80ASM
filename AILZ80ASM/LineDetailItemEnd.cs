@@ -18,9 +18,9 @@ namespace AILZ80ASM
         public static LineDetailItemEnd Create(LineItem lineItem, AsmLoad asmLoad)
         {
             var matched = Regex.Match(lineItem.OperationString, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (asmLoad.AsmEnd.AssembleEnd || matched.Success)
+            if (asmLoad.AsmEnd || matched.Success)
             {
-                asmLoad.AsmEnd.AssembleEnd = true;
+                asmLoad.AsmEnd = true;
 
                 return new LineDetailItemEnd(lineItem, asmLoad);
             }
@@ -33,18 +33,6 @@ namespace AILZ80ASM
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress)
-        {
-        }
-
-        public override void BuildAddressLabel()
-        {
-        }
-
-        public override void BuildArgumentLabel()
-        {
-        }
-
-        public override void BuildValueLabel()
         {
         }
 

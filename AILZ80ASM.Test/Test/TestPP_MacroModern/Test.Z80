@@ -14,6 +14,8 @@ ADDR: TestArg 0, 1
 	MACRO_IN_MACRO ADDR, 0, 1
 	READ_LABEL
 	REPEAT_JR 3
+	TESTSTOP()
+	TESTRESUME()
 
 MACRO ALLLD
 	ld a,1
@@ -81,3 +83,26 @@ END REPEAT
 
 end macro
 
+MACRO TESTSTOP() 
+		nop		;コメントテスト
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+END MACRO
+
+MACRO TESTRESUME() 
+		XOR A
+		XOR A
+		XOR A
+		XOR A
+		XOR A
+		XOR A
+		XOR A
+		XOR A
+END MACRO
+
+		END

@@ -20,6 +20,10 @@ namespace AILZ80ASM.AILight
             if (target.StartsWith(".") && target.EndsWith(":"))
             {
                 target = target.Substring(1, target.Length - 2);
+                while (target.EndsWith(":"))
+                {
+                    target = target.Substring(0, target.Length - 1);
+                }
 
                 return ValidateNameForLocalLabel(target, asmLoad);
             }
@@ -46,7 +50,20 @@ namespace AILZ80ASM.AILight
             }
             else
             {
-                return ValidateName(target, asmLoad);
+                var splits = target.Split('.');
+                if (splits.Length > 3)
+                {
+                    return false;
+                }
+                foreach (var item in splits)
+                {
+                    if (!ValidateName(item, asmLoad))
+                    {
+                        return false;
+                    }
+
+                }
+                return true;
             }
         }
 

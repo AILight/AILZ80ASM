@@ -62,13 +62,24 @@ AtmarkTest: dw .@1, .@2, .@3
 
 	ld	bc, EqualTest1.@1 * 256 + EqualTest2.@1
 	;ld	bc, %00110110 * 256 + %00001100
+	ld	a, EqualTest1.All
+	ld	a, EqualTest2.All
+	ld  hl, SF.FST
+	ld  hl, SF.MAP
 
 EqualTest1:
 .@1	equ	%00110110	; 1
 .@2	equ	%01110110	; 2
 .@3	equ	%10110110	; 3
+.All	equ	(.@1 | .@2 | .@3)
 
 EqualTest2:
 .@1	equ	%00001100	; 1
 .@2	equ	%00001101	; 2
 .@3	equ	%00001110	; 3
+.All	equ	(.@1 | .@2 | .@3)
+
+SF:		equ 00000H
+SF.RS	equ 00000H
+SF.FST	equ 00005H
+SF.MAP:	equ 0C000H

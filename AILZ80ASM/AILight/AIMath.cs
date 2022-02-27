@@ -693,6 +693,7 @@ namespace AILZ80ASM.AILight
                     {
                         var functionName = item.Substring(0, startIndex).Trim();
                         var function = asmLoad.FindFunction(functionName);
+
                         var lastIndex = item.LastIndexOf(')');
                         if (function == default || lastIndex == -1)
                         {
@@ -718,7 +719,6 @@ namespace AILZ80ASM.AILight
             var macroValue = MacroValueEnum.None;
             var tmpLabel = target;
             var optionIndex = target.IndexOf(".@");
-            var hasValue = true;
             if (optionIndex > 0)
             {
                 var option = target.Substring(optionIndex);
@@ -738,16 +738,23 @@ namespace AILZ80ASM.AILight
                          string.Compare(option, ".@TEXT", true) == 0)
                 {
                     tmpLabel = target.Substring(0, optionIndex);
-                    hasValue = false;
                     macroValue = MacroValueEnum.Text;
                 }
             }
 
-            var label = asmLoad.FindLabel(tmpLabel, hasValue);
+            var label = asmLoad.FindLabel(tmpLabel);
             if (label == default)
             {
                 throw new Exception($"未定義のラベルが指定されています。{target}");
             }
+            else
+            {
+                if (macroValue != MacroValueEnum.Text)
+                {
+                    label.Calculation();
+                }
+            }
+
             var value = (int)label.Value;
 
             switch (macroValue)

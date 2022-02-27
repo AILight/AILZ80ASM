@@ -32,17 +32,18 @@ namespace AILZ80ASM
             if (matched.Success)
             {
                 var labelValue = matched.Groups["value"].Value.Trim();
+                var localAsmLoad = asmLoad.Clone();
 
-                var label = new Label(lineItem.LabelString, labelValue, asmLoad);
+                var label = new Label(lineItem.LabelString, labelValue, localAsmLoad);
                 if (label.Invalidate)
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
                 }
+                localAsmLoad.AddLabel(label);
 
-                label.SetValue(asmLoad);
-                asmLoad.AddLabel(label);
+                asmLoad.SetScope(localAsmLoad);
 
-                return new LineDetailItemEqual(lineItem, asmLoad) { EquLabel = label };
+                return new LineDetailItemEqual(lineItem, localAsmLoad) { EquLabel = label };
             }
 
             return default;
@@ -50,11 +51,14 @@ namespace AILZ80ASM
 
         public override void ExpansionItem()
         {
+            var lineDetailExpansionItem = new LineDetailExpansionItem(this.LineItem);
+            EquLabel.SetLineDetailExpansionItem(lineDetailExpansionItem);
+
             LineDetailScopeItems = new[]
             {
                 new LineDetailScopeItem(AsmLoad)
                 {
-                    LineDetailExpansionItems = new [] { new LineDetailExpansionItem(this.LineItem) }
+                    LineDetailExpansionItems = new [] { lineDetailExpansionItem }
                 }
             };
 
@@ -64,24 +68,8 @@ namespace AILZ80ASM
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             AsmAddress = asmAddress;
-            if (!EquLabel.HasValue)
-            {
-                try
-                {
-                    EquLabel.SetValueAndAddress(AsmAddress, AsmLoad);
-                }
-                catch { }
-            }
 
             base.PreAssemble(ref asmAddress);
-        }
-
-        public override void BuildAddressLabel()
-        {
-            if (!EquLabel.HasValue)
-            {
-                EquLabel.SetValueAndAddress(AsmAddress, AsmLoad);
-            }
         }
     }
 }

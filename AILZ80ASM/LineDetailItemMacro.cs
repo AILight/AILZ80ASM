@@ -45,45 +45,13 @@ namespace AILZ80ASM
 
         }
 
-        /*
-        public override void ExpansionItem()
-        {
-            var foundItem = Macro.Find(LineItem, AsmLoad);
-            if (foundItem == default)
-            {
-                // グローバル名
-                foundItem = Macro.FindWithoutLongName(LineItem, AsmLoad);
-                if (foundItem == default)
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
-                }
-                else
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E3009, foundItem.Macro.FullName);
-                }
-            }
-
-            this.LineDetailScopeItems = foundItem.Macro.Expansion(LineItem, foundItem.Arguments, AsmLoad);
-
-            base.ExpansionItem();
-        }
-        */
-
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             var foundItem = Macro.Find(LineItem, AsmLoad);
             if (foundItem == default)
             {
-                // グローバル名
-                foundItem = Macro.FindWithoutLongName(LineItem, AsmLoad);
-                if (foundItem == default)
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
-                }
-                else
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E3009, foundItem.Macro.FullName);
-                }
+                // マクロが見つからないケースは、エラーとする
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
             }
 
             this.LineDetailScopeItems = foundItem.Macro.Expansion(LineItem, foundItem.Arguments, AsmLoad, ref asmAddress);

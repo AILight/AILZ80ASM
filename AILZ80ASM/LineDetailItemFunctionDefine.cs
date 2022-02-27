@@ -30,14 +30,14 @@ namespace AILZ80ASM
 
                 if (!AIName.ValidateFunctionName(functionName, asmLoad))
                 {
-                    asmLoad.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E4002));
+                    asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E4002));
                 }
 
                 foreach (var item in arguments)
                 {
                     if (!AIName.ValidateFunctionArgument(item, asmLoad))
                     {
-                        asmLoad.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E4005, item));
+                        asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E4005, item));
                     }
                 }
 

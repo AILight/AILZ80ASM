@@ -21,6 +21,13 @@ addr2:
 .test
 	nop
 	ret
+addr3:::
+	call .test
+	nop
+	nop
+.test:: 
+	nop
+	ret
 
 
 	

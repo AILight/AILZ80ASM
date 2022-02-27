@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.Assembler
 {
     public static class Error
     {
@@ -199,7 +199,7 @@ namespace AILZ80ASM
             [ErrorCodeEnum.E3006] = "MACROでは、ローカルラベル以外は使えません。",
             [ErrorCodeEnum.E3007] = "MACROの名前が有効ではありません。",
             [ErrorCodeEnum.E3008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
-            [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。[{0}]",
+            [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。[{0}]",
             [ErrorCodeEnum.E3010] = "同名のMACROが既に定義されています。",
 
             // ファンクション

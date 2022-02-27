@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -626,7 +627,7 @@ namespace AILZ80ASM.InstructionSet
                     }
                     else
                     {
-                        if (item.StartsWith("(") && item.EndsWith(")"))
+                        if (IsAddress(item))
                         {
                             var tmpValue = item.Substring(1, item.Length - 2).Trim();
                             if (IsMatchRegisterName(tmpValue))
@@ -677,6 +678,34 @@ namespace AILZ80ASM.InstructionSet
             }
 
             return assembleParseResult;
+        }
+
+        private static bool IsAddress(string target)
+        {
+            if (target.StartsWith('(') && target.EndsWith(')'))
+            {
+                var parentheseCounter = 0;
+                for (var index = 1; index < target.Length - 1; index++)
+                {
+                    if (target[index] == '(')
+                    {
+                        parentheseCounter++;
+                    }
+                    else if (target[index] == ')')
+                    {
+                        parentheseCounter--;
+                    }
+                    if (parentheseCounter < 0)
+                    {
+                        break;
+                    }
+                }
+                if (parentheseCounter == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

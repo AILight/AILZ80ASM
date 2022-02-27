@@ -36,11 +36,6 @@ namespace AILZ80ASM
             Address = asmAddress;
         }
 
-        public virtual void BuildAddressLabel(AsmLoad asmLoad)
-        {
-            Label?.SetValueAndAddress(Address, asmLoad);
-        }
-
         public virtual void Assemble(AsmLoad asmLoad)
         {
         }

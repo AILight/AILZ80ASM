@@ -8,7 +8,7 @@ namespace AILZ80ASM
 {
     public class LineDetailItemMacroDefineCompatible : LineDetailItemMacroDefine
     {
-        private static readonly string RegexPatternMacroStart = @"^(?<macro_name>[a-zA-Z0-9_()]+)\s+Macro($|\s+(?<args>.+)$)";
+        private static readonly string RegexPatternMacroStart = @"^(?<macro_name>[a-zA-Z0-9_\(\)]+)\s+Macro($|\s+(?<args>.+)$)";
         private static readonly string RegexPatternMacroEnd = @"^\s*Endm\s*$";
 
         private LineDetailItemMacroDefineCompatible(LineItem lineItem, AsmLoad asmLoad)
