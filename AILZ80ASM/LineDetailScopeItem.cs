@@ -45,41 +45,8 @@ namespace AILZ80ASM
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    AsmLoad.Errors.Add(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
+                    AsmLoad.AddError(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
                 }
-            }
-        }
-
-        public virtual void BuildAddressLabel()
-        {
-            if (LineDetailExpansionItems == default)
-                return;
-
-            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
-            {
-                lineDetailExpansionItem.BuildAddressLabel(AsmLoad);
-            }
-        }
-
-        public virtual void BuildArgumentLabel()
-        {
-            if (LineDetailExpansionItems == default)
-                return;
-
-            foreach (var label in AsmLoad.LocalLabels.Where(m => m.DataType == Label.DataTypeEnum.ProcessingForArgument))
-            {
-                label.SetArgument();
-            }
-
-        }
-
-        public virtual void BuildValueLabel()
-        {
-            var labels = AsmLoad.AllLabels.Where(m => m.DataType == Label.DataTypeEnum.ProcessingForValue);
-
-            foreach (var label in labels)
-            {
-                label.SetValue(AsmLoad);
             }
         }
 
@@ -96,7 +63,7 @@ namespace AILZ80ASM
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    AsmLoad.Errors.Add(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
+                    AsmLoad.AddError(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
                 }
             }
         }

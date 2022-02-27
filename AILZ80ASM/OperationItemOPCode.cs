@@ -2,6 +2,7 @@
 using AILZ80ASM.Exceptions;
 using AILZ80ASM.InstructionSet;
 using System;
+using System.Linq;
 
 namespace AILZ80ASM
 {
@@ -68,7 +69,7 @@ namespace AILZ80ASM
 
                 if (AssembleResult.InstructionItem.ErrorCode.HasValue)
                 {
-                    asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, AssembleResult.InstructionItem.ErrorCode.Value));
+                    asmLoad.AddError(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, AssembleResult.InstructionItem.ErrorCode.Value));
                 }
 
                 if (AssembleResult.InnerAssembleException is AssembleOutOfRangeException exception)
@@ -77,13 +78,13 @@ namespace AILZ80ASM
                     switch (exception.InstructionRegisterMode)
                     {
                         case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
-                            asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0001, exception.Value));
+                            asmLoad.AddError(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0001, exception.Value));
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
-                            asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0002, exception.Value));
+                            asmLoad.AddError(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0002, exception.Value));
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value8BitSigned:
-                            asmLoad.Errors.Add(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0003, exception.Value));
+                            asmLoad.AddError(new ErrorLineItem(LineDetailExpansionItemOperation.LineItem, Error.ErrorCodeEnum.W0003, exception.Value));
                             break;
                         default:
                             throw new NotImplementedException();

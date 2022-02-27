@@ -9,9 +9,8 @@ namespace AILZ80ASM
         {
             this.LineDetailScopeItems = new[]
             {
-                new LineDetailScopeItem(this.LineItem, this.AsmLoad)
+                new LineDetailScopeItem(this.LineItem, asmLoad)
             };
-            asmLoad.SetScope(this.AsmLoad);
         }
 
         public static LineDetailItem Create(LineItem lineItem, AsmLoad asmLoad)

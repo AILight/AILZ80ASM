@@ -46,7 +46,20 @@ namespace AILZ80ASM.AILight
             }
             else
             {
-                return ValidateName(target, asmLoad);
+                var splits = target.Split('.');
+                if (splits.Length > 3)
+                {
+                    return false;
+                }
+                foreach (var item in splits)
+                {
+                    if (!ValidateName(item, asmLoad))
+                    {
+                        return false;
+                    }
+
+                }
+                return true;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
 using System;
 using System.Collections.Generic;
 using System.Linq;

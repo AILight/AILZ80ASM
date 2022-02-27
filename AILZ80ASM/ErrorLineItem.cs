@@ -1,4 +1,6 @@
-﻿namespace AILZ80ASM
+﻿using AILZ80ASM.Assembler;
+
+namespace AILZ80ASM
 {
     public class ErrorLineItem
     {

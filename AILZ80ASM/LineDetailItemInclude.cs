@@ -116,51 +116,6 @@ namespace AILZ80ASM
             }
         }
 
-        public override void BuildValueLabel()
-        {
-            switch (FileType)
-            {
-                case FileTypeEnum.Text:
-                    FileItem.BuildValueLabel();
-                    break;
-                case FileTypeEnum.Binary:
-                    base.BuildValueLabel();
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        public override void BuildAddressLabel()
-        {
-            switch (FileType)
-            {
-                case FileTypeEnum.Text:
-                    FileItem.BuildAddressLabel();
-                    break;
-                case FileTypeEnum.Binary:
-                    base.BuildAddressLabel();
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        public override void BuildArgumentLabel()
-        {
-            switch (FileType)
-            {
-                case FileTypeEnum.Text:
-                    FileItem.BuildArgumentLabel();
-                    break;
-                case FileTypeEnum.Binary:
-                    base.BuildArgumentLabel();
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
         public override void Assemble()
         {
             switch (FileType)

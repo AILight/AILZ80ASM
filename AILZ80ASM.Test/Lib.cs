@@ -92,7 +92,7 @@ namespace AILZ80ASM.Test
                 throw new Exception(package.Errors[0].ErrorMessage);
             }
 
-            return package.Errors.Union(package.Warnings).Union(package.Informations).ToArray();
+            return package.Errors.Union(package.Warnings).Union(package.Information).ToArray();
         }
 
 

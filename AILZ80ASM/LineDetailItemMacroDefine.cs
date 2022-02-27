@@ -66,16 +66,17 @@ namespace AILZ80ASM
                     var lineDetailItemMacro = asmLoad_LineDetailItemMacro;
                     var macro = new Macro(lineDetailItemMacro.MacroName, lineDetailItemMacro.MacroArgs, lineDetailItemMacro.MacroLines.ToArray(), asmLoad);
                     //同名マクロチェック
-                    if (asmLoad.Macros.Any(m => string.Compare(m.FullName, macro.FullName, true) == 0))
+                    if (asmLoad.FindMacro(macro.FullName) != default)
                     {
                         asmLoad.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(asmLoad_LineDetailItemMacro.LineItem, Error.ErrorCodeEnum.E3010));
                     }
 
                     if (asmLoad.LineDetailItemForExpandItem.Errors.Count == 0)
                     {
-                        asmLoad.Macros.Add(macro);
+                        asmLoad.AddMacro(macro);
                     }
-                    asmLoad.Errors.AddRange(asmLoad.LineDetailItemForExpandItem.Errors);
+
+                    asmLoad.AddErrors(asmLoad.LineDetailItemForExpandItem.Errors);
 
                     // 終了
                     asmLoad.LineDetailItemForExpandItem = default;

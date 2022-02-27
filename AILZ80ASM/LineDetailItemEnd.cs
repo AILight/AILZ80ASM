@@ -36,18 +36,6 @@ namespace AILZ80ASM
         {
         }
 
-        public override void BuildAddressLabel()
-        {
-        }
-
-        public override void BuildArgumentLabel()
-        {
-        }
-
-        public override void BuildValueLabel()
-        {
-        }
-
         public override void ExpansionItem()
         {
         }

@@ -97,40 +97,6 @@ namespace AILZ80ASM
             }
         }
 
-        public virtual void BuildAddressLabel()
-        {
-            if (LineDetailScopeItems == default)
-                return;
-
-            foreach (var item in LineDetailScopeItems)
-            {
-                item.BuildAddressLabel();
-            }
-        }
-
-        public virtual void BuildArgumentLabel()
-        {
-            if (LineDetailScopeItems == default)
-                return;
-
-            foreach (var item in LineDetailScopeItems)
-            {
-                item.BuildArgumentLabel();
-            }
-        }
-
-        public virtual void BuildValueLabel()
-        {
-            if (LineDetailScopeItems == default)
-                return;
-
-            foreach (var item in LineDetailScopeItems)
-            {
-                item.BuildValueLabel();
-            }
-        }
-
-
         public virtual void Assemble()
         {
             if (LineDetailScopeItems == default)

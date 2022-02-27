@@ -41,7 +41,7 @@ namespace AILZ80ASM
                 // ローカルラベルの末尾に「:」がついている場合にはワーニング
                 if (lineItem.LabelString.StartsWith(".") && lineItem.LabelString.EndsWith(":"))
                 {
-                    asmLoad.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W9005));
+                    asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W9005));
                 }
             }
         }
@@ -78,9 +78,6 @@ namespace AILZ80ASM
                     }
                 }
             }
-
-            // ラベル設定
-            Label.SetAddressLabel(Address);
         }
 
         public override void Assemble(AsmLoad asmLoad)

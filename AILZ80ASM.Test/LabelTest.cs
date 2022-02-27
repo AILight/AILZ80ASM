@@ -1,19 +1,23 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AILZ80ASM.Assembler;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AILZ80ASM.Test
 {
+    [TestClass]
     public class LabelTest
     {
         [TestMethod]
-        public void IsLabel()
+        public void LabelNameTest()
         {
-            //Assert.IsTrue(Label.IsLabel("ABC"));
-        }
+            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            var globalLabel = new Label("[NS_Main]", asmLoad);
+            asmLoad.AddLabel(globalLabel);
 
-        [TestMethod]
-        public void IsNotLabel()
-        {
-            //Assert.IsFalse(Label.IsLabel("ABC"));
+            Assert.AreEqual(new Label("ABC:", "", asmLoad).LabelFullName, "NS_Main.ABC");
+            Assert.AreEqual(new Label("ABC::", "", asmLoad).LabelFullName, "NS_Main.ABC");
+            Assert.AreEqual(new Label("ABC.DEF", "", asmLoad).LabelFullName, "NS_Main.ABC.DEF");
+            Assert.AreEqual(new Label("ABC.DEF.GHI", "", asmLoad).LabelFullName, "ABC.DEF.GHI");
+
         }
 
     }

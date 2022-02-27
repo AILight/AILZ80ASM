@@ -57,11 +57,11 @@ namespace AILZ80ASM
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                    AssembleLoad.AddError(new ErrorLineItem(item, ex));
                 }
                 catch (Exception ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                    AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
 
@@ -81,11 +81,11 @@ namespace AILZ80ASM
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                    AssembleLoad.AddError(new ErrorLineItem(item, ex));
                 }
                 catch (Exception ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                    AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace AILZ80ASM
                     }
                     catch (Exception ex)
                     {
-                        AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                        AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                     }
                 }
 
@@ -130,70 +130,13 @@ namespace AILZ80ASM
                     }
                     catch (Exception ex)
                     {
-                        AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                        AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                     }
                 }
 
                 lists.Add(AsmList.CreateFileInfoEOF(FileInfo, EncodeMode));
 
                 return lists.ToArray();
-            }
-        }
-
-        public void BuildAddressLabel()
-        {
-            foreach (var item in Items)
-            {
-                try
-                {
-                    item.BuildAddressLabel();
-                }
-                catch (ErrorAssembleException ex)
-                {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
-                }
-                catch (Exception ex)
-                {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
-                }
-            }
-        }
-
-        public void BuildArgumentLabel()
-        {
-            foreach (var item in Items)
-            {
-                try
-                {
-                    item.BuildArgumentLabel();
-                }
-                catch (ErrorAssembleException ex)
-                {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
-                }
-                catch (Exception ex)
-                {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
-                }
-            }
-        }
-
-        public void BuildValueLabel()
-        {
-            foreach (var item in Items)
-            {
-                try
-                {
-                    item.BuildValueLabel();
-                }
-                catch (ErrorAssembleException ex)
-                {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
-                }
-                catch (Exception ex)
-                {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
-                }
             }
         }
 
@@ -208,11 +151,11 @@ namespace AILZ80ASM
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                    AssembleLoad.AddError(new ErrorLineItem(item, ex));
                 }
                 catch (Exception ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                    AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
         }
@@ -227,11 +170,11 @@ namespace AILZ80ASM
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, ex));
+                    AssembleLoad.AddError(new ErrorLineItem(item, ex));
                 }
                 catch (Exception ex)
                 {
-                    AssembleLoad.Errors.Add(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                    AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
         }

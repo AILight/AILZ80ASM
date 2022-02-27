@@ -12,10 +12,9 @@ namespace AILZ80ASM
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         public AsmLoad AssembleLoad { get; private set; }
-
-        public ErrorLineItem[] Errors => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error && (AssembleLoad.DisableWarningCodes == default || !AssembleLoad.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
-        public ErrorLineItem[] Warnings => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning && (AssembleLoad.DisableWarningCodes == default || !AssembleLoad.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
-        public ErrorLineItem[] Informations => AssembleLoad.Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Information && (AssembleLoad.DisableWarningCodes == default || !AssembleLoad.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+        public ErrorLineItem[] Errors => AssembleLoad.AssembleErrors;
+        public ErrorLineItem[] Warnings => AssembleLoad.AssembleWarnings;
+        public ErrorLineItem[] Information => AssembleLoad.AssembleInformation;
 
         public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmLoad.ListModeEnum listMode, bool outputTrim, Error.ErrorCodeEnum[] disableWarningCodes, AsmISA asmISA)
         {
@@ -49,22 +48,11 @@ namespace AILZ80ASM
 
         public void Assemble()
         {
-            // 値のラベルを処理する
-            BuildValueLabel();
-
             // 命令を展開する
             ExpansionItem();
 
-            // 命令展開後に値のラベルを処理する
-            BuildValueLabel();
-
             // プレアセンブル
             PreAssemble();
-
-            // アドレスラベルを処理する
-            BuildAddressLabel();
-            BuildValueLabel();
-            BuildArgumentLabel();
 
             // アセンブルを行う
             InternalAssemble();
@@ -98,58 +86,6 @@ namespace AILZ80ASM
         }
 
         /// <summary>
-        /// 値ラベルを作りこむ
-        /// </summary>
-        private void BuildValueLabel()
-        {
-            var labelCount = 0;
-
-            do
-            {
-                labelCount = AssembleLoad.AllLabels.Count(m => m.HasValue);
-                foreach (var label in AssembleLoad.AllLabels.Where(m => !m.HasValue))
-                {
-                    label.SetValue(AssembleLoad);
-                }
-
-            } while (labelCount != AssembleLoad.AllLabels.Count(m => m.HasValue));
-
-            foreach (var fileItem in FileItems)
-            {
-                fileItem.BuildValueLabel();
-            }
-        }
-
-        /// <summary>
-        /// アドレスラベルを作りこむ
-        /// </summary>
-        private void BuildAddressLabel()
-        {
-            var labelCount = 0;
-
-            do
-            {
-                labelCount = AssembleLoad.AllLabels.Count(m => m.HasValue);
-                foreach (var fileItem in FileItems)
-                {
-                    fileItem.BuildAddressLabel();
-                }
-
-            } while (labelCount != AssembleLoad.AllLabels.Count(m => m.HasValue));
-        }
-
-        /// <summary>
-        /// 引数ラベルを作りこむ
-        /// </summary>
-        private void BuildArgumentLabel()
-        {
-            foreach (var fileItem in FileItems)
-            {
-                fileItem.BuildArgumentLabel();
-            }
-        }
-
-        /// <summary>
         /// アセンブルを実行する
         /// </summary>
         private void InternalAssemble()
@@ -165,7 +101,7 @@ namespace AILZ80ASM
         /// </summary>
         private void TrimData()
         {
-            foreach (var operationItem in AssembleLoad.TirmOperationITems)
+            foreach (var operationItem in AssembleLoad.TirmOperationItems)
             {
                 operationItem.TrimData();
             }
@@ -370,16 +306,7 @@ namespace AILZ80ASM
 
         public void SaveSYM(Stream stream)
         {
-            using var streamWriter = new StreamWriter(stream);
-
-            foreach (var label in AssembleLoad.AllLabels.Where(m => m.HasValue))
-            {
-                streamWriter.WriteLine($"{label.Value:X4} {label.LabelName}");
-            }
-            foreach (var label in AssembleLoad.AllLabels.Where(m => m.HasValue))
-            {
-                streamWriter.WriteLine($"{label.Value:X4} {label.LongLabelName}");
-            }
+            AssembleLoad.OutputLabels(stream);
         }
 
         public void SaveLST(FileInfo list)
@@ -409,16 +336,22 @@ namespace AILZ80ASM
 
         public void OutputError()
         {
-            if (AssembleLoad.Errors.Count > 0)
+            var errors = AssembleLoad.AssembleErrors;
+            var warnings = AssembleLoad.AssembleWarnings;
+            var informations = AssembleLoad.AssembleInformation;
+
+            if (errors.Length > 0 ||
+                warnings.Length > 0 ||
+                informations.Length > 0)
             {
                 Trace.WriteLine($"");
-                OutputError(Errors, "Error");
-                OutputError(Warnings, "Warning");
-                OutputError(Informations, "Information");
+                OutputError(errors, "Error");
+                OutputError(warnings, "Warning");
+                OutputError(informations, "Information");
             }
 
             Trace.WriteLine($"");
-            Trace.WriteLine($" {Errors.Length:0} error(s), {Warnings.Length} warning(s), {Informations.Length} information");
+            Trace.WriteLine($" {errors.Length:0} error(s), {warnings.Length} warning(s), {informations.Length} information");
         }
 
         /// <summary>

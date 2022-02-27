@@ -127,9 +127,8 @@ namespace AILZ80ASM
                 foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
                     var lineItems = default(LineItem[]);
-                    var localAsmLoad = AsmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
-                    var localLabel = new Label($"REPEAT_{Guid.NewGuid():N}:", localAsmLoad);
-                    localAsmLoad.AddLabel(localLabel);
+                    var guid = $"{Guid.NewGuid():N}";
+                    var localAsmLoad = AsmLoad.CloneWithNewScore($"repeat_{guid}", $"label_{guid}");
 
                     if (repeatCounter == count)
                     {
@@ -166,7 +165,7 @@ namespace AILZ80ASM
                         }
                         catch (ErrorAssembleException ex)
                         {
-                            AsmLoad.Errors.Add(new ErrorLineItem(lineItem, ex));
+                            AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
                         }
                     }
                 }

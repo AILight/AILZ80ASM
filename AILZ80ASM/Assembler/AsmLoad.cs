@@ -10,12 +10,6 @@ namespace AILZ80ASM.Assembler
 {
     public class AsmLoad
     {
-        public enum ScopeModeEnum
-        {
-            Global,
-            Local
-        }
-
         public enum EncodeModeEnum
         {
             AUTO,
@@ -47,25 +41,18 @@ namespace AILZ80ASM.Assembler
             Full,
         }
 
-        private ScopeModeEnum ScopeMode { get; set; } = ScopeModeEnum.Global;
-
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
 
         public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include循環展開チェック用
-        public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
 
-        public Label[] AllLabels => Labels.Union(LocalLabels).ToArray();
-        public Function[] AllFunctions => Functions.Union(LocalFunctions).ToArray();
+        public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
+        
+        // 出力制御用
+        public List<OperationItem> TirmOperationItems { get; private set; } = new List<OperationItem>(); // トリム用アイテムにマーク
+
         public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
-        public List<Label> Labels { get; private set; } = new List<Label>();
-        public List<Label> LocalLabels { get; private set; } = new List<Label>();
-        public List<Macro> Macros { get; private set; } = new List<Macro>();
-        public List<Function> Functions { get; private set; } = new List<Function>();
-        public List<Function> LocalFunctions { get; private set; } = new List<Function>();
-        public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
-        public List<AsmLoad> AsmLoads { get; private set; } = new List<AsmLoad>();
-        public List<OperationItem> TirmOperationITems { get; private set; } = new List<OperationItem>();
+        //public List<AsmLoad> AsmLoads { get; private set; } = new List<AsmLoad>();
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
         public ISA ISA { get; private set; }
@@ -77,9 +64,49 @@ namespace AILZ80ASM.Assembler
         public string CharMap { get; set; }
         public AsmEnd AsmEnd { get; set; } = new AsmEnd() { AssembleEnd = false };
 
+        public ErrorLineItem[] AssembleErrors
+        {
+            get
+            {
+                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error && (DisableWarningCodes == default || !DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+            }
+        }
+
+        public ErrorLineItem[] AssembleWarnings
+        {
+            get
+            {
+                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning && (DisableWarningCodes == default || !DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+            }
+        }
+
+        public ErrorLineItem[] AssembleInformation
+        {
+            get
+            {
+                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Information && (DisableWarningCodes == default || !DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+            }
+        }
+
+        // 制御、マクロ用
+        private List<Label> Labels { get; set; } = default;
+        private List<Macro> Macros { get; set; } = default;
+        private List<Function> Functions { get; set; } = default;
+        private List<ErrorLineItem> Errors { get; set; } = default;
+        // ネームスペースの保存
+        private List<string> GlobalLabelNames { get; set; } = default;
+        // スコープの親
+        private AsmLoad ParentAsmLoad { get; set; } = default;
+
         public AsmLoad(ISA isa)
         {
             ISA = isa;
+
+            Labels = new List<Label>();
+            Macros = new List<Macro>();
+            Functions = new List<Function>();
+            Errors = new List<ErrorLineItem>();
+            GlobalLabelNames = new List<string>();
         }
 
         /// <summary>
@@ -88,10 +115,40 @@ namespace AILZ80ASM.Assembler
         /// <returns></returns>
         public AsmLoad Clone()
         {
-            return Clone(this.ScopeMode);
+            var clone = InternalClone();
+
+            clone.ParentAsmLoad = this.ParentAsmLoad;
+
+            clone.Labels = this.Labels;
+            clone.Functions = this.Functions;
+            clone.Macros = this.Macros;
+            clone.GlobalLabelNames = this.GlobalLabelNames;
+
+            return clone;
         }
 
-        public AsmLoad Clone(ScopeModeEnum scopeMode)
+        /// <summary>
+        /// 新しいスコープのクローン
+        /// </summary>
+        /// <param name="globalLabelName"></param>
+        /// <returns></returns>
+        public AsmLoad CloneWithNewScore(string globalLabelName, string labelName)
+        {
+            var clone = InternalClone();
+            clone.ParentAsmLoad = this;
+            clone.GlobalLabelName = globalLabelName;
+            clone.LabelName = labelName;
+
+            clone.Labels = new List<Label>();
+            clone.Functions = new List<Function>();
+            clone.Macros = new List<Macro>();
+            clone.GlobalLabelNames = new List<string>();
+            clone.GlobalLabelNames.Add(globalLabelName);
+
+            return clone;
+        }
+
+        private AsmLoad InternalClone()
         {
             var asmLoad = new AsmLoad(this.ISA)
             {
@@ -100,188 +157,192 @@ namespace AILZ80ASM.Assembler
                 AsmAddresses = this.AsmAddresses,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
-                Macros = this.Macros,
                 LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
-
-                Labels = this.Labels,
-                LocalLabels = scopeMode == ScopeModeEnum.Global ? this.LocalLabels : new List<Label>(),
-
-                Functions = this.Functions,
-                LocalFunctions = scopeMode == ScopeModeEnum.Global ? this.LocalFunctions : new List<Function>(),
 
                 Errors = this.Errors,
                 OutputTrim = this.OutputTrim,
-                TirmOperationITems = this.TirmOperationITems,
+                TirmOperationItems = this.TirmOperationItems,
                 CharMap = this.CharMap,
                 AsmEnd = this.AsmEnd,
             };
-            switch (scopeMode)
-            {
-                case ScopeModeEnum.Global:
-                    asmLoad.ScopeMode = ScopeModeEnum.Global;
-                    asmLoad.LocalLabels = this.LocalLabels;
-                    asmLoad.LocalFunctions = this.LocalFunctions;
-                    break;
-                case ScopeModeEnum.Local:
-                    switch (this.ScopeMode)
-                    {
-                        case ScopeModeEnum.Global:
-                            asmLoad.ScopeMode = ScopeModeEnum.Local;
-                            asmLoad.LocalLabels = new List<Label>();
-                            asmLoad.LocalFunctions = new List<Function>();
-                            break;
-                        case ScopeModeEnum.Local:
-                            asmLoad.ScopeMode = ScopeModeEnum.Local;
-                            asmLoad.LocalLabels = this.LocalLabels;
-                            asmLoad.LocalFunctions = this.LocalFunctions;
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-
-            asmLoad.AsmLoads.AddRange(this.AsmLoads);
-            asmLoad.AsmLoads.Add(this);
 
             return asmLoad;
         }
 
-        public void LoadCloseValidate()
-        {
-            if (this.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
-            {
-                this.Errors.Add(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E3001));
-            }
-
-            if (this.LineDetailItemForExpandItem is LineDetailItemRepeat)
-            {
-                this.Errors.Add(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1011));
-            }
-
-            if (this.LineDetailItemForExpandItem is LineDetailItemConditional)
-            {
-                this.Errors.Add(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1021));
-            }
-        }
-
+        /// <summary>
+        /// クローン後にスコープが変わったものを戻す
+        /// </summary>
+        /// <param name="asmLoad"></param>
         public void SetScope(AsmLoad asmLoad)
         {
             this.GlobalLabelName = asmLoad.GlobalLabelName;
             this.LabelName = asmLoad.LabelName;
         }
 
+        public void LoadCloseValidate()
+        {
+            if (this.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
+            {
+                this.AddError(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E3001));
+            }
+
+            if (this.LineDetailItemForExpandItem is LineDetailItemRepeat)
+            {
+                this.AddError(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1011));
+            }
+
+            if (this.LineDetailItemForExpandItem is LineDetailItemConditional)
+            {
+                this.AddError(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1021));
+            }
+        }
+
+        /*
+        public string GetlFullName(string target)
+        {
+            return Label.GetLabelFullName(target, this);
+        }
+
+        public string GetFunctionFullName(string target)
+        {
+            return Function.GetFunctionFullName(target, this);
+        }
+
+        public string GetMacroFullName(string target)
+        {
+            return Macro.GetMacroFullName(target, this);
+        }
+        */
+
+        public void AddError(ErrorLineItem errorLineItem)
+        {
+            Errors.Add(errorLineItem);
+        }
+
+        public void AddErrors(IEnumerable<ErrorLineItem> errorLineItems)
+        {
+            Errors.AddRange(errorLineItems);
+        }
+
         public void AddLabel(Label label)
         {
             // 同一名のラベル
-            if (label.LabelLevel != Label.LabelLevelEnum.GlobalLabel &&
-                this.AllLabels.Any(m => string.Compare(m.LongLabelName, label.LongLabelName, true) == 0))
+            if (this.Labels.Any(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014);
             }
-            // グローバルラベルとの比較
-            switch (label.LabelLevel)
+            if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
             {
-                case Label.LabelLevelEnum.GlobalLabel:
-                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.Label &&
-                        string.Compare(m.LabelName, label.GlobalLabelName, true) == 0))
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
-                    }
-                    this.GlobalLabelName = label.GlobalLabelName;
-                    this.LabelName = "";
-                    break;
-                case Label.LabelLevelEnum.Label:
-                    if (this.AllLabels.Any(m => m.LabelLevel == Label.LabelLevelEnum.GlobalLabel &&
-                        string.Compare(m.GlobalLabelName, label.LabelName, true) == 0))
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
-                    }
-                    this.LabelName = label.LabelName;
-                    break;
-                case Label.LabelLevelEnum.SubLabel:
-                    // 何もしない
-                    break;
-                default:
-                    throw new InvalidOperationException();
+                // ラベルと同じ名前は付けられない
+                if (this.Labels.Any(m => string.Compare(m.LabelName, label.LabelFullName, true) == 0))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
+                }
+
+                if (!this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
+                {
+                    // ネームスペースが変わるときには保存する
+                    this.GlobalLabelNames.Add(label.LabelFullName);
+                }
+                this.GlobalLabelName = label.GlobalLabelName;
+                this.LabelName = label.LabelName;
+            }
+            else
+            {
+                // ネームスペースとと同じ名前は付けられない
+                if (this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
+                }
+                this.Labels.Add(label);
+                this.LabelName = label.LabelName;
             }
 
-
-            switch (ScopeMode)
-            {
-                case ScopeModeEnum.Global:
-                    Labels.Add(label);
-                    break;
-                case ScopeModeEnum.Local:
-                    LocalLabels.Add(label);
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
         }
 
         public void AddFunction(Function function)
         {
-            if (this.AllFunctions.Any(m => string.Compare(m.FullName, function.FullName, true) == 0))
+            if (this.Functions.Any(m => string.Compare(m.FullName, function.FullName, true) == 0))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E4001);
             }
+            this.Functions.Add(function);
+        }
 
-            switch (ScopeMode)
+        public void AddMacro(Macro macro)
+        {
+            if (this.Macros.Any(m => string.Compare(m.FullName, macro.FullName, true) == 0))
             {
-                case ScopeModeEnum.Global:
-                    Functions.Add(function);
-                    break;
-                case ScopeModeEnum.Local:
-                    LocalFunctions.Add(function);
-                    break;
-                default:
-                    throw new InvalidOperationException();
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E3010);
             }
+            this.Macros.Add(macro);
+        }
+
+        public string FindGlobalLabelName(string target)
+        {
+            var targetAsmLoad = this;
+
+            while (targetAsmLoad != default)
+            {
+                var name = targetAsmLoad.GlobalLabelNames.Where(m => string.Compare(m, target, true) == 0).FirstOrDefault();
+                if (name != default)
+                {
+                    return name;
+                }
+                targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+            }
+            return default;
         }
 
         public Label FindLabel(string target)
         {
-            return FindLabel(target, true);
-        }
+            var targetAsmLoad = this;
 
-        public Label FindLabel(string target, bool hasValue)
-        {
-            var longLabelName = Label.GetLongLabelName(target, this);
-            var label = AllLabels.Where(m => (m.HasValue || !hasValue) && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
-            if (label == default && this.ScopeMode == ScopeModeEnum.Local &&
-                !AllLabels.Any(m => string.Compare(m.LongLabelName, longLabelName, true) == 0))
+            while (targetAsmLoad != default)
             {
-                var asmLoad = this.AsmLoads.LastOrDefault(m => m.ScopeMode == ScopeModeEnum.Global);
-                if (asmLoad != default)
+                var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                var label = targetAsmLoad.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0).FirstOrDefault();
+                if (label != default)
                 {
-                    longLabelName = Label.GetLongLabelName(target, asmLoad);
-                    label = AllLabels.Where(m => (m.HasValue || !hasValue) && string.Compare(m.LongLabelName, longLabelName, true) == 0).FirstOrDefault();
+                    return label;
                 }
+                targetAsmLoad = targetAsmLoad.ParentAsmLoad;
             }
-
-            return label;
+            return default;
         }
 
         public Function FindFunction(string target)
         {
-            var longFunctionName = Function.GetLongFunctionName(target, this);
-            var function = Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
-            if (function == default && this.ScopeMode == ScopeModeEnum.Local &&
-                !Functions.Any(m => string.Compare(m.FullName, longFunctionName, true) == 0))
-            {
-                var asmLoad = this.AsmLoads.LastOrDefault(m => m.ScopeMode == ScopeModeEnum.Global);
-                if (asmLoad != default)
-                {
-                    longFunctionName = Function.GetLongFunctionName(target, asmLoad);
-                    function = Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
-                }
-            }
+            var targetAsmLoad = this;
 
-            return function;
+            while (targetAsmLoad != default)
+            {
+                var longFunctionName = Function.GetFunctionFullName(target, targetAsmLoad);
+                var function = targetAsmLoad.Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
+                if (function != default)
+                {
+                    return function;
+                }
+                targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+            }
+            return default;
+        }
+
+        public Macro FindMacro(string target)
+        {
+            var targetAsmLoad = this;
+
+            while (targetAsmLoad != default)
+            {
+                var longMacroName = Macro.GetMacroFullName(target, targetAsmLoad);
+                var function = targetAsmLoad.Macros.Where(m => string.Compare(m.FullName, longMacroName, true) == 0).FirstOrDefault();
+                if (function != default)
+                {
+                    return function;
+                }
+                targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+            }
+            return default;
         }
 
         public void AddAsmAddress(AsmAddress asmAddress)
@@ -291,12 +352,12 @@ namespace AILZ80ASM.Assembler
 
         public void AddTrimOperationItem(OperationItem operationItem)
         {
-            TirmOperationITems.Add(operationItem);
+            TirmOperationItems.Add(operationItem);
         }
 
         public void ClearTrimOperationItem()
         {
-            TirmOperationITems.Clear();
+            TirmOperationItems.Clear();
         }
 
 
@@ -390,6 +451,18 @@ namespace AILZ80ASM.Assembler
             return fileType;
         }
 
+        public void OutputLabels(Stream stream)
+        {
+            using var streamWriter = new StreamWriter(stream);
 
+            foreach (var label in Labels.Where(m => !m.Invalidate))
+            {
+                streamWriter.WriteLine($"{label.Value:X4} {label.LabelName}");
+            }
+            foreach (var label in Labels.Where(m => !m.Invalidate))
+            {
+                streamWriter.WriteLine($"{label.Value:X4} {label.LabelFullName}");
+            }
+        }
     }
 }

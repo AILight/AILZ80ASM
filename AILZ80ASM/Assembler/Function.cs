@@ -1,11 +1,10 @@
 ﻿using AILZ80ASM.AILight;
-using AILZ80ASM.Assembler;
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AILZ80ASM
+namespace AILZ80ASM.Assembler
 {
     public class Function
     {
@@ -35,46 +34,7 @@ namespace AILZ80ASM
             {
                 var functionName = operationMatched.Groups["function"].Value;
                 var functionArgs = operationMatched.Groups["args"].Value;
-                var function = default(Function);
-
-                try
-                {
-                    functionName = Function.GetLongFunctionName(functionName, asmLoad);
-                    function = asmLoad.Functions.Where(m => string.Compare(m.FullName, functionName, true) == 0).SingleOrDefault();
-                }
-                catch
-                {
-                    return default;
-                }
-
-                if (function == default)
-                {
-                    return default;
-                }
-                var arguments = string.IsNullOrEmpty(functionArgs) ? Array.Empty<string>() : functionArgs.Split(',').Select(m => m.Trim()).ToArray();
-
-                return (function, arguments);
-            }
-            return default;
-        }
-
-        public static (Function function, string[] Arguments) FindWithoutLongName(LineItem lineItem, AsmLoad asmLoad)
-        {
-            var operationMatched = Regex.Match(lineItem.OperationString, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (operationMatched.Success)
-            {
-                var functionName = operationMatched.Groups["function"].Value;
-                var functionArgs = operationMatched.Groups["args"].Value;
-                var function = default(Function);
-
-                try
-                {
-                    function = asmLoad.Functions.Where(m => string.Compare(m.FullName, functionName, true) == 0).SingleOrDefault();
-                }
-                catch
-                {
-                    return default;
-                }
+                var function = asmLoad.FindFunction(functionName);
 
                 if (function == default)
                 {
@@ -101,16 +61,12 @@ namespace AILZ80ASM
                 throw new Exception($"引数の数が不一致です。Function:{this.Name}");
             }
 
-            
-            var localAsmLoad = asmLoad.Clone(AsmLoad.ScopeModeEnum.Local);
             var guid = $"{Guid.NewGuid():N}";
-            var globalLabel = new Label($"[faunction_{guid}]", localAsmLoad);
-            localAsmLoad.AddLabel(globalLabel);
+            var localAsmLoad = asmLoad.CloneWithNewScore($"function_{guid}", $"label_{guid}");
 
             foreach (var index in Enumerable.Range(0, arguments.Length))
             {
-                var label = new Label(Args[index], AIMath.ConvertTo<int>(arguments[index], asmLoad, asmAddress).ToString(), localAsmLoad);
-                label.SetValue(asmLoad);
+                var label = new Label(Args[index], arguments[index], localAsmLoad);
                 localAsmLoad.AddLabel(label);
             }
 
@@ -123,7 +79,7 @@ namespace AILZ80ASM
         /// <param name="labelName"></param>
         /// <param name="asmLoad"></param>
         /// <returns></returns>
-        public static string GetLongFunctionName(string functionName, AsmLoad asmLoad)
+        public static string GetFunctionFullName(string functionName, AsmLoad asmLoad)
         {
             if (functionName.Contains("."))
             {
