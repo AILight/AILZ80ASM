@@ -862,7 +862,7 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="asmLoads"></param>
+        /// <param name="asmLoad"></param>
         /// <param name="asmAddress"></param>
         /// <returns></returns>
         private static T InternalConvertTo<T>(string value, AsmLoad asmLoad, AsmAddress? asmAddress)

@@ -50,9 +50,7 @@ namespace AILZ80ASM.Assembler
         
         // 出力制御用
         public List<OperationItem> TirmOperationItems { get; private set; } = new List<OperationItem>(); // トリム用アイテムにマーク
-
         public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
-        //public List<AsmLoad> AsmLoads { get; private set; } = new List<AsmLoad>();
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
         public ISA ISA { get; private set; }

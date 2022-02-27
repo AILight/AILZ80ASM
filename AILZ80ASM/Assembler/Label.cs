@@ -12,22 +12,8 @@ namespace AILZ80ASM.Assembler
             None,
             Marker,
             Invalidate,
-
-
-            ProcessingForAddress,
-            ProcessingForValue,
-            ProcessingForArgument,
-            Value,
-            ADDR,
-        }
-        /*
-        public enum DataTypeEnum
-        {
-            None,
-            Invalidate,
             Value,
         }
-        */
 
         public enum LabelLevelEnum
         {
