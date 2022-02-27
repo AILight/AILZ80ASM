@@ -62,7 +62,7 @@ namespace AILZ80ASM.Assembler
         public bool OutputTrim { get; internal set; }
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
         public string CharMap { get; set; }
-        public AsmEnd AsmEnd { get; set; } = new AsmEnd() { AssembleEnd = false };
+        public bool AsmEnd { get; set; } = false;
 
         public ErrorLineItem[] AssembleErrors
         {
@@ -177,6 +177,7 @@ namespace AILZ80ASM.Assembler
         {
             this.GlobalLabelName = asmLoad.GlobalLabelName;
             this.LabelName = asmLoad.LabelName;
+            this.AsmEnd = asmLoad.AsmEnd;
         }
 
         public void LoadCloseValidate()

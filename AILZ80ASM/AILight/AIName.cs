@@ -20,6 +20,10 @@ namespace AILZ80ASM.AILight
             if (target.StartsWith(".") && target.EndsWith(":"))
             {
                 target = target.Substring(1, target.Length - 2);
+                while (target.EndsWith(":"))
+                {
+                    target = target.Substring(0, target.Length - 1);
+                }
 
                 return ValidateNameForLocalLabel(target, asmLoad);
             }

@@ -40,8 +40,9 @@ namespace AILZ80ASM.Assembler
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!--/-/<-@^-`{-~]+))\](\s+|$)";
         private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):+(\s+|$)";
         //private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):?";
-        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:?))(\s+|$)";
-        private static readonly string RegexPatternValueLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+))\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:*))(\s+|$)";
+        private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:*))\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:*))\s+equ\s+(?<value>(.+))";
         //private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
@@ -180,10 +181,16 @@ namespace AILZ80ASM.Assembler
             {
                 return matchedSubLabel.Groups["label"].Value;
             }
-            var matchedValueLabel = Regex.Match(lineString, RegexPatternValueLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (matchedValueLabel.Success)
+            var matchedValueLabel1 = Regex.Match(lineString, RegexPatternValueLabel1, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedValueLabel1.Success)
             {
-                return matchedValueLabel.Groups["label"].Value;
+                return matchedValueLabel1.Groups["label"].Value;
+            }
+
+            var matchedValueLabel2 = Regex.Match(lineString, RegexPatternValueLabel2, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedValueLabel2.Success)
+            {
+                return matchedValueLabel2.Groups["label"].Value;
             }
 
             return "";
