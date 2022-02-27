@@ -196,13 +196,13 @@ namespace AILZ80ASM.Test
                 var label = new Label("LB2", "LABEL", asmLoad);
                 asmLoad.AddLabel(label);
             }
-            //Assert.AreEqual(AIMath.ConvertTo<byte>("-1", asmLoad), 0xFF);
-            //Assert.AreEqual(AIMath.ConvertTo<byte>("-1 * -1", asmLoad), 1);
-            //Assert.AreEqual(AIMath.ConvertTo<UInt16>("-LB", asmLoad), 0x55FE);
-            //Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@H", asmLoad), 0xAA);
-            //Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@HIGH", asmLoad), 0xAA);
-            //Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@L", asmLoad), 0x02);
-            //Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@LOW", asmLoad), 0x02);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("-1", asmLoad), 0xFF);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("-1 * -1", asmLoad), 1);
+            Assert.AreEqual(AIMath.ConvertTo<UInt16>("-LB", asmLoad), 0x55FE);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@H", asmLoad), 0xAA);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@HIGH", asmLoad), 0xAA);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@L", asmLoad), 0x02);
+            Assert.AreEqual(AIMath.ConvertTo<byte>("LB.@LOW", asmLoad), 0x02);
             Assert.IsTrue(AIMath.ConvertTo<bool>("LB2.@T == \"LABEL\"", asmLoad));
             Assert.IsTrue(AIMath.ConvertTo<bool>("LB2.@TEXT == \"LABEL\"", asmLoad));
             Assert.IsFalse(AIMath.ConvertTo<bool>("LB2.@T == \"LABEL1\"", asmLoad));
