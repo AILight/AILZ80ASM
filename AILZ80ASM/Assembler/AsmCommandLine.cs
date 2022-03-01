@@ -194,19 +194,20 @@ namespace AILZ80ASM.Assembler
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".dbg"); }
             });
 
+            rootCommand.AddOption(new Option<DirectoryInfo>()
+            {
+                Name = "changeDirectory",
+                ArgumentName = "directory",
+                Aliases = new[] { "-cd", "--change-dir" },
+                Description = "アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。",
+                Required = false,
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "fileDiff",
                 Aliases = new[] { "-df", "--diff" },
                 Description = "アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。",
-                Required = false,
-            });
-
-            rootCommand.AddOption(new Option<DirectoryInfo>()
-            {
-                Name = "currentDirectory",
-                Aliases = new[] { "-cd", "--current-directory" },
-                Description = "アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。",
                 Required = false,
             });
 

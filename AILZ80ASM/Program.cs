@@ -49,7 +49,7 @@ namespace AILZ80ASM
                 {
                     var currentDirectory = "";
                     // 実行時のディレクトリを変更する
-                    var directoryInfo = rootCommand.GetValue<DirectoryInfo>("currentDirectory");
+                    var directoryInfo = rootCommand.GetValue<DirectoryInfo>("changeDirectory");
                     if (directoryInfo != default)
                     {
                         currentDirectory = System.Environment.CurrentDirectory;
