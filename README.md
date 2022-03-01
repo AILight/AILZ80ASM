@@ -41,6 +41,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - -t, --trim                   DSで確保したメモリが、出力データの最後にある場合にトリムされます。
 - -dw,                         Warning、Informationをオフにするコードをスペース区切りで指定します。
 - --disable-warning <codes>
+- -df, --diff                  アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 - -v, --version                バージョンを表示します。
 - -?, -h, --help <help>        ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
 
@@ -91,6 +92,14 @@ EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
   ]
 }
 ```
+## 新バージョン導入の手順
+ 1. 新バージョンを入手
+ 1. インストール済みのAILZ80ASMでアセンブルを行う
+ 1. インストール済みのAILZ80ASMを退避
+ 1. 新バージョンでAILZ80ASMを置き換える
+ 1. 新バージョンでコマンドラインオプションに「-df」を付け、差分確認アセンブルを行う
+ 1. アセンブル結果が一致しているが表示される
+ 1. アセンブル結果が一致していたら置き換え可能、一致していなければ置き換え不可なので退避したプログラムを元に戻す
 
 # ソースコード書式
 
@@ -155,8 +164,8 @@ addr:
 ```
 
 ## 即値
-- 2進数、10進数、16進数
 - 2進数：先頭に%、もしくは末尾にbを付けます。また _ を含める事が出来ます。
+- 8進数：末尾にoを付けます
 - 10進数：何もつけません
 - 16進数：先頭に$ or 0x もしくは末尾にHを付けます
 
@@ -269,6 +278,7 @@ LB2000:
 
 #### <ラベル> EQU <式>
 - 指定したラベルに、<式> の値を持たせます。
+	- 即値、式、$、$$、（文字、文字列、#TRUE or #FALSE version:1.0.0以降）
 - ローカルラベルで利用することも可能です。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
 
@@ -299,13 +309,13 @@ PORT_A  equ $CC
 	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
 - [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap_Test/Test.Z80)
 	
-#### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<CHARMAP:実装予定>]
+#### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<文字変換:実装予定>]
 ファイル名の内容を読み取り、その場所に展開します
 - <ファイル名>は、ロードしたいファイル名を指定します。
 - <ファイルタイプ>は、TEXT と BINARY が選択できます。省略するとTEXTになります。また短縮形 T, B が使えます。
 - <開始位置>は、ファイルの読み出し開始位置が指定できます。（ファイルタイプがBINARYの時に有効）
 - <長さ>は、ファイルの読み込み長さが指定できます。（ファイルタイプがBINARYの時に有効）
-- <CHARMAP>は、CHARMAPの仕様によりファイルが展開されます。このオプションを使うときには、ファイルはUTF-8で保存してください。（ファイルタイプがBINARYの時に有効））
+- <文字変換:実装予定>は、CHARMAP名を指定します。指定したCHARMAPのルールに従ってバイナリー展開されます。このオプションを使うときには、ファイルはUTF-8で保存してください。（ファイルタイプがBINARYの時に有効））
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.Z80)
 ```
 include "Test.inc"			; テキストファイルとして展開されます
@@ -400,6 +410,8 @@ TestArg MACRO a1, a2
 - #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
 - #ENDIF: 条件付きアセンブルを終了します。
 - #ERROR: 無条件にエラーを発生させます。
+- #TRUE: 真(bool型：version 1.0.0以降)
+- #FALSE: 偽(bool型：version 1.0.0以降)
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
 
 ```
