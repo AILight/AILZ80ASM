@@ -173,6 +173,12 @@ namespace AILZ80ASM.CommandLine
         {
             try
             {
+                // 設定をクリアする
+                foreach (var item in Options)
+                {
+                    item.Clear();
+                }
+
                 // デフォルト値の設定
                 foreach (var item in Options.Where(m => !string.IsNullOrEmpty(m.DefaultValue)))
                 {

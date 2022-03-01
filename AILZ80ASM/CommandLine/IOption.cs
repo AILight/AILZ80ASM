@@ -20,6 +20,7 @@ namespace AILZ80ASM.CommandLine
         Func<string[], string> OptionFunc { get; set; }
         Func<IOption[], string[]> DefaultFunc { get; set; }
 
+        void Clear();
         void SetValue(string[] values);
     }
 

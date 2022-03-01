@@ -184,15 +184,6 @@ namespace AILZ80ASM.Assembler
                 Required = false,
             });
 
-            rootCommand.AddOption(new Option<bool>()
-            {
-                Name = "version",
-                Aliases = new[] { "-v", "--version" },
-                Description = "バージョンを表示します。",
-                Required = false,
-                OptionFunc = (argument) => { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
-            });
-
             rootCommand.AddOption(new Option<FileInfo>()
             {
                 Name = "debug",
@@ -209,6 +200,23 @@ namespace AILZ80ASM.Assembler
                 Aliases = new[] { "-df", "--diff" },
                 Description = "アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。",
                 Required = false,
+            });
+
+            rootCommand.AddOption(new Option<DirectoryInfo>()
+            {
+                Name = "currentDirectory",
+                Aliases = new[] { "-cd", "--current-directory" },
+                Description = "アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。",
+                Required = false,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
+                Name = "version",
+                Aliases = new[] { "-v", "--version" },
+                Description = "バージョンを表示します。",
+                Required = false,
+                OptionFunc = (argument) => { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
             });
 
             rootCommand.AddOption(new Option<string>()
