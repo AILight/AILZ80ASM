@@ -1,4 +1,4 @@
-                                *** AILZ80ASM *** Z-80 Assembler, version 0.9.9.1
+                                *** AILZ80ASM *** Z-80 Assembler, version 0.9.9.3
                                     ; 00
                                 LB00:
 000000 0000 00               4      NOP
@@ -462,7 +462,7 @@
 0002C4 02C4 FDE3            23      EX (SP),IY
 0002C6 02C6 FDE5            15      PUSH IY
 0002C8 02C8 FDE9             8      JP (IY)                     
-0002CA 02CA FDF9            10      LD SP,IY    
+0002CA 02CA FDF9            10      LD SP,IY        
                                 
                                     ;その他 ED
 0002CC 02CC ED40            12      IN B,(C)
