@@ -63,7 +63,7 @@ namespace AILZ80ASM.Assembler
         }
         public static AsmList CreateLineItemEqual(Label equLabel, LineItem lineItem)
         {
-            return CreateLineItem(default(UInt32?), (ushort)(equLabel.Value & ushort.MaxValue), default(byte[]), "", lineItem);
+            return CreateLineItem(default(UInt32?), equLabel.DataType == Label.DataTypeEnum.Value ? (ushort ?)(equLabel.Value & ushort.MaxValue) : default(ushort?) , default(byte[]), "", lineItem);
         }
 
         public static AsmList CreateLineItemORG(AsmAddress address, AsmLength length, LineItem lineItem)
@@ -201,7 +201,12 @@ namespace AILZ80ASM.Assembler
             {
                 if (item == '\t')
                 {
-                    result.AddRange(new string(' ', tabLength - counter).ToArray());
+                    var spaceCount = tabLength;
+                    if (spaceCount != counter)
+                    {
+                        spaceCount -= counter;
+                    }
+                    result.AddRange(new string(' ', spaceCount).ToArray());
                     counter = 0;
                 }
                 else if (item <= 0x7F)

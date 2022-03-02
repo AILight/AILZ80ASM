@@ -67,7 +67,11 @@ namespace AILZ80ASM
                     finally
                     {
                         // 保存したディレクトリに戻る
-                        System.Environment.CurrentDirectory = currentDirectory;
+                        if (!string.IsNullOrEmpty(currentDirectory) &&
+                            Directory.Exists(currentDirectory))
+                        {
+                            System.Environment.CurrentDirectory = currentDirectory;
+                        }
                     }
                 }
                 else

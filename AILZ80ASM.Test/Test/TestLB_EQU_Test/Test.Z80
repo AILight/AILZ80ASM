@@ -83,3 +83,5 @@ SF:		equ 00000H
 SF.RS	equ 00000H
 SF.FST	equ 00005H
 SF.MAP:	equ 0C000H
+
+ABCLabel	equ $1234	; リスティングファイル検証用
