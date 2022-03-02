@@ -47,8 +47,32 @@ namespace AILZ80ASM
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
                 if (rootCommand.Parse(args))
                 {
-                    var result = Assember(rootCommand);
-                    return result ? 0 : 1;
+                    var currentDirectory = "";
+                    // 実行時のディレクトリを変更する
+                    var directoryInfo = rootCommand.GetValue<DirectoryInfo>("changeDirectory");
+                    if (directoryInfo != default)
+                    {
+                        currentDirectory = System.Environment.CurrentDirectory;
+                        System.Environment.CurrentDirectory = directoryInfo.FullName;
+
+                        // 再度パースを行う。ディレクトリを再設定するため。
+                        rootCommand.Parse(args);
+                    }
+
+                    try
+                    {
+                        var result = Assember(rootCommand);
+                        return result ? 0 : 1;
+                    }
+                    finally
+                    {
+                        // 保存したディレクトリに戻る
+                        if (!string.IsNullOrEmpty(currentDirectory) &&
+                            Directory.Exists(currentDirectory))
+                        {
+                            System.Environment.CurrentDirectory = currentDirectory;
+                        }
+                    }
                 }
                 else
                 {

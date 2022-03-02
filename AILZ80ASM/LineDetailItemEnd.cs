@@ -9,6 +9,17 @@ namespace AILZ80ASM
     {
         private static readonly string RegexPatternCharMap = @"^\s*END$";
 
+        public override AsmList[] Lists
+        {
+            get
+            {
+                return new[]
+                {
+                    AsmList.CreateLineItem(LineItem)
+                };
+            }
+        }
+
         private LineDetailItemEnd(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {

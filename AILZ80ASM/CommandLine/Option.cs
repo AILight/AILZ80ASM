@@ -24,6 +24,13 @@ namespace AILZ80ASM.CommandLine
         public Func<IOption[], string[]> DefaultFunc { get; set; }
         public T Value { get; set; } = default(T);
 
+        public void Clear()
+        {
+            Selected = false;
+            HasValue = false;
+            Value = default(T);
+        }
+
         public void SetValue(string[] values)
         {
             Selected = true;
@@ -52,6 +59,16 @@ namespace AILZ80ASM.CommandLine
                 }
 
                 Value = (T)(object)localValues.Select(m => new FileInfo(m)).ToArray();
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(DirectoryInfo))
+            {
+                if (localValues.Count != 1)
+                {
+                    throw new Exception($"{Name}に、ディレクトリを指定する必要があります。（1ディレクトリのみ指定可能）");
+                }
+
+                Value = (T)(object)new DirectoryInfo(localValues.First());
                 HasValue = true;
             }
             else if (typeof(T) == typeof(bool))
