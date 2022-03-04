@@ -8,6 +8,17 @@ namespace AILZ80ASM.Assembler
 {
     public class AsmOption
     {
+        // 出力結果にトリムをするか
+        public bool OutputTrim { get; set; }
+        // ワーニングのオフになる対象一覧
+        public Error.ErrorCodeEnum[] DisableWarningCodes { get; set; }
+        // 入力Encode
+        public AsmEnum.EncodeModeEnum InputEncodeMode { get; set; }
+        // 出力Encode
+        public AsmEnum.EncodeModeEnum OutputEncodeMode { get; set; } = AsmEnum.EncodeModeEnum.UTF_8;
+        // リストのモード
+        public AsmEnum.ListFormatEnum ListMode { get; set; } = AsmEnum.ListFormatEnum.Full;
+
         /*
         public 
 

@@ -118,7 +118,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void CharMapNameValidateTest()
         {
-            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
             Assert.IsTrue(AIName.ValidateCharMapName("@ABC", asmLoad));
             Assert.IsFalse(AIName.ValidateCharMapName("", asmLoad));
             Assert.IsFalse(AIName.ValidateCharMapName("@@ABC", asmLoad));

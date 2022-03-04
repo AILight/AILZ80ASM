@@ -78,7 +78,7 @@ namespace AILZ80ASM
                 {
                     CharMapName = charMap
                 };
-                asmLoad.CharMap = charMap;
+                asmLoad.DefaultCharMap = charMap;
 
                 return lineDetailItemCharMap;
 

@@ -162,7 +162,7 @@ namespace AILZ80ASM.Test
         {
             var targetDirectoryName = Path.Combine(".", "Test", directoryName);
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Test.Z80")) };
-            var outputFiles = Enum.GetValues<AsmEnum.FileTypeEnum>()
+            var outputFiles = Enum.GetValues<AsmEnum.FileTypeEnum>().Where(m => m != AsmEnum.FileTypeEnum.Z80)
                                   .ToDictionary(m => m, n => new FileInfo(Path.Combine(targetDirectoryName, $"Test.{n}")));
 
             return Lib.Assemble_AreSame(inputFiles, outputFiles, dataTrim);

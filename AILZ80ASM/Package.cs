@@ -21,22 +21,22 @@ namespace AILZ80ASM
             switch (asmISA)
             {
                 case AsmISA.Z80:
-                    AssembleLoad = new AsmLoad(new InstructionSet.Z80());
+                    AssembleLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
                     break;
                 default:
                     throw new NotImplementedException();
             }
             var label = new Label("[NS_Main]", AssembleLoad);
             AssembleLoad.AddLabel(label);
-            AssembleLoad.InputEncodeMode = encodeMode;
-            AssembleLoad.ListMode = listMode;
+            AssembleLoad.AssembleOption.InputEncodeMode = encodeMode;
+            AssembleLoad.AssembleOption.ListMode = listMode;
 
-            AssembleLoad.OutputTrim = outputTrim;
-            AssembleLoad.DisableWarningCodes = disableWarningCodes;
-            AssembleLoad.CharMap = "@SJIS";
+            AssembleLoad.AssembleOption.OutputTrim = outputTrim;
+            AssembleLoad.AssembleOption.DisableWarningCodes = disableWarningCodes;
+            AssembleLoad.DefaultCharMap = "@SJIS";
 
             // CharMapの初期化;
-            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.CharMap, AssembleLoad);
+            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.DefaultCharMap, AssembleLoad);
 
             foreach (var fileInfo in files)
             {
@@ -323,7 +323,7 @@ namespace AILZ80ASM
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream);
 
-            streamWriter.WriteLine(AsmList.CreateSource($"{ProductInfo.ProductLongName}").ToString(AssembleLoad.ListMode));
+            streamWriter.WriteLine(AsmList.CreateSource($"{ProductInfo.ProductLongName}").ToString(AssembleLoad.AssembleOption.ListMode));
 
             foreach (var item in FileItems)
             {

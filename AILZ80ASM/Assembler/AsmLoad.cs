@@ -10,32 +10,37 @@ namespace AILZ80ASM.Assembler
 {
     public class AsmLoad
     {
+        public ISA ISA { get; private set; } // 命令セット
+
+        // 実行ラベル
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
 
-        public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>(); //Include循環展開チェック用
+        // アセンブル終了フラグ
+        public bool AsmEnd { get; set; } = false;
 
-        public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>(); //マクロ循環展開チェック用
-        
+        // デフォルトキャラクターマップ
+        public string DefaultCharMap { get; set; }
+
+        // 循環展開確認用
+        public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>();
+        public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>();
+
+        // 展開判断用
+        public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
+
         // 出力制御用
         public List<OperationItem> TirmOperationItems { get; private set; } = new List<OperationItem>(); // トリム用アイテムにマーク
         public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
 
-        public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
-        public ISA ISA { get; private set; }
-        public AsmEnum.EncodeModeEnum InputEncodeMode { get; set; }
-        public AsmEnum.EncodeModeEnum OutputEncodeMode { get; set; } = AsmEnum.EncodeModeEnum.UTF_8;
-        public AsmEnum.ListFormatEnum ListMode { get; set; } = AsmEnum.ListFormatEnum.Full;
-        public bool OutputTrim { get; internal set; }
-        public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
-        public string CharMap { get; set; }
-        public bool AsmEnd { get; set; } = false;
+        // アセンブルオプション
+        public AsmOption AssembleOption { get; private set; }
 
         public ErrorLineItem[] AssembleErrors
         {
             get
             {
-                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error && (DisableWarningCodes == default || !DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error && (AssembleOption.DisableWarningCodes == default || !AssembleOption.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
             }
         }
 
@@ -43,7 +48,7 @@ namespace AILZ80ASM.Assembler
         {
             get
             {
-                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning && (DisableWarningCodes == default || !DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning && (AssembleOption.DisableWarningCodes == default || !AssembleOption.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
             }
         }
 
@@ -51,7 +56,7 @@ namespace AILZ80ASM.Assembler
         {
             get
             {
-                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Information && (DisableWarningCodes == default || !DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
+                return Errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Information && (AssembleOption.DisableWarningCodes == default || !AssembleOption.DisableWarningCodes.Any(n => m.ErrorCode == n))).ToArray();
             }
         }
 
@@ -65,7 +70,7 @@ namespace AILZ80ASM.Assembler
         // スコープの親
         private AsmLoad ParentAsmLoad { get; set; } = default;
 
-        public AsmLoad(ISA isa)
+        public AsmLoad(ISA isa, AsmOption assembleOption)
         {
             ISA = isa;
 
@@ -74,6 +79,7 @@ namespace AILZ80ASM.Assembler
             Functions = new List<Function>();
             Errors = new List<ErrorLineItem>();
             GlobalLabelNames = new List<string>();
+            AssembleOption = assembleOption;
         }
 
         /// <summary>
@@ -117,7 +123,7 @@ namespace AILZ80ASM.Assembler
 
         private AsmLoad InternalClone()
         {
-            var asmLoad = new AsmLoad(this.ISA)
+            var asmLoad = new AsmLoad(this.ISA, this.AssembleOption)
             {
                 GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
@@ -127,9 +133,8 @@ namespace AILZ80ASM.Assembler
                 LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
 
                 Errors = this.Errors,
-                OutputTrim = this.OutputTrim,
                 TirmOperationItems = this.TirmOperationItems,
-                CharMap = this.CharMap,
+                DefaultCharMap = this.DefaultCharMap,
                 AsmEnd = this.AsmEnd,
             };
 
@@ -331,7 +336,7 @@ namespace AILZ80ASM.Assembler
 
         public AsmEnum.EncodeModeEnum GetEncodMode(FileInfo fileInfo)
         {
-            var encodeMode = InputEncodeMode;
+            var encodeMode =　AssembleOption.InputEncodeMode;
             if (encodeMode == AsmEnum.EncodeModeEnum.AUTO)
             {
                 using var readStream = fileInfo.OpenRead();
@@ -365,7 +370,7 @@ namespace AILZ80ASM.Assembler
                 throw new ArgumentException("encodeMode:AUTOは指定できません");
             }
 
-            OutputEncodeMode = encodeMode;
+            AssembleOption.OutputEncodeMode = encodeMode;
             var encoding = GetEncoding(encodeMode);
 
             return encoding;
@@ -374,7 +379,7 @@ namespace AILZ80ASM.Assembler
 
         public System.Text.Encoding GetOutputEncoding()
         {
-            var encoding = GetEncoding(OutputEncodeMode);
+            var encoding = GetEncoding(AssembleOption.OutputEncodeMode);
             return encoding;
         }
 
