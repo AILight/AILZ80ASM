@@ -117,9 +117,9 @@ namespace AILZ80ASM
         /// <returns></returns>
         public static bool Assember(
                 FileInfo[] inputs, 
-                AsmLoad.EncodeModeEnum encodeMode, 
-                Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, 
-                AsmLoad.ListModeEnum listMode, 
+                AsmEnum.EncodeModeEnum encodeMode, 
+                Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles,
+                AsmEnum.ListFormatEnum listMode, 
                 bool outputTrim, 
                 FileInfo traceFile, 
                 bool fileDiff,
@@ -263,7 +263,7 @@ namespace AILZ80ASM
             //OutputDebug(new[] { ProductInfo.ProductLongName, ProductInfo.Copyright, $"Assemble start:{DateTime.Now}", "" }, fileInfo, false);
         }
 
-        private static void OutputFileList(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        private static void OutputFileList(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
             foreach (var outputFile in outputFiles)
             {

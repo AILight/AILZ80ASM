@@ -16,7 +16,7 @@ namespace AILZ80ASM
         public ErrorLineItem[] Warnings => AssembleLoad.AssembleWarnings;
         public ErrorLineItem[] Information => AssembleLoad.AssembleInformation;
 
-        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmLoad.ListModeEnum listMode, bool outputTrim, Error.ErrorCodeEnum[] disableWarningCodes, AsmISA asmISA)
+        public Package(FileInfo[] files, AsmEnum.EncodeModeEnum encodeMode, AsmEnum.ListFormatEnum listMode, bool outputTrim, Error.ErrorCodeEnum[] disableWarningCodes, AsmISA asmISA)
         {
             switch (asmISA)
             {
@@ -107,7 +107,7 @@ namespace AILZ80ASM
             }
         }
 
-        public void SaveOutput(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        public void SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
             foreach (var item in outputFiles)
             {
@@ -121,23 +121,23 @@ namespace AILZ80ASM
 
         }
 
-        public void SaveOutput(Stream stream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        public void SaveOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
             switch (outputFile.Key)
             {
-                case AsmLoad.OutputModeEnum.BIN:
+                case AsmEnum.FileTypeEnum.BIN:
                     SaveBin(stream);
                     break;
-                case AsmLoad.OutputModeEnum.T88:
+                case AsmEnum.FileTypeEnum.T88:
                     SaveT88(stream, outputFile.Value.Name);
                     break;
-                case AsmLoad.OutputModeEnum.CMT:
+                case AsmEnum.FileTypeEnum.CMT:
                     SaveCMT(stream);
                     break;
-                case AsmLoad.OutputModeEnum.LST:
+                case AsmEnum.FileTypeEnum.LST:
                     SaveLST(stream);
                     break;
-                case AsmLoad.OutputModeEnum.SYM:
+                case AsmEnum.FileTypeEnum.SYM:
                     SaveSYM(stream);
                     break;
                 default:
@@ -145,7 +145,7 @@ namespace AILZ80ASM
             }
         }
 
-        public void DiffOutput(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        public void DiffOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
             foreach (var item in outputFiles)
             {
@@ -163,7 +163,7 @@ namespace AILZ80ASM
             }
         }
 
-        public void DiffOutput(Stream stream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        public void DiffOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
             using var assembledStream = new MemoryStream();
             using var originalStream = new MemoryStream();
@@ -173,13 +173,13 @@ namespace AILZ80ASM
             DiffOutput(originalStream.ToArray(), assembledStream.ToArray(), outputFile);
         }
 
-        public void DiffOutput(byte[] original, byte[] assembled, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        public void DiffOutput(byte[] original, byte[] assembled, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
             var resultString = "一致";
 
             Trace.Write($"{outputFile.Value.Name}: ");
 
-            if (outputFile.Key == AsmLoad.OutputModeEnum.LST)
+            if (outputFile.Key == AsmEnum.FileTypeEnum.LST)
             {
                 // テキスト比較
                 var originals = AILight.AIEncode.GetString(original).Replace("\r","").Split('\n');

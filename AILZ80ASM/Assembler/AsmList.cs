@@ -32,7 +32,7 @@ namespace AILZ80ASM.Assembler
         {
         }
 
-        public static AsmList CreateFileInfoBOF(FileInfo fileInfo, AsmLoad.EncodeModeEnum encodeMode)
+        public static AsmList CreateFileInfoBOF(FileInfo fileInfo, AsmEnum.EncodeModeEnum encodeMode)
         {
             return CreateSourceOnly($"[BOF:{fileInfo.Name}:{encodeMode}]");
         }
@@ -42,7 +42,7 @@ namespace AILZ80ASM.Assembler
             return CreateSourceOnly($"[EOF:{fileInfo.Name}:{length}]");
         }
 
-        public static AsmList CreateFileInfoEOF(FileInfo fileInfo, AsmLoad.EncodeModeEnum encodeMode)
+        public static AsmList CreateFileInfoEOF(FileInfo fileInfo, AsmEnum.EncodeModeEnum encodeMode)
         {
             return CreateSourceOnly($"[EOF:{fileInfo.Name}:{encodeMode}]");
         }
@@ -101,10 +101,10 @@ namespace AILZ80ASM.Assembler
 
         public override string ToString()
         {
-            return ToString(AsmLoad.ListModeEnum.Full);
+            return ToString(AsmEnum.ListFormatEnum.Full);
         }
 
-        public string ToString(AsmLoad.ListModeEnum listMode)
+        public string ToString(AsmEnum.ListFormatEnum listFormat)
         {
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
             var address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
@@ -130,9 +130,9 @@ namespace AILZ80ASM.Assembler
             switch (this.ListStatus)
             {
                 case ListStatusEnum.Normal:
-                    var binaryLength = listMode switch
+                    var binaryLength = listFormat switch
                     {
-                        AsmLoad.ListModeEnum.Simple => 14,
+                        AsmEnum.ListFormatEnum.Simple => 14,
                         _ => 16,
                     };
 
@@ -144,15 +144,15 @@ namespace AILZ80ASM.Assembler
                         codeType = codeType.PadLeft(1);
                         var binaryString = item.PadRight(binaryLength);
 
-                        switch (listMode)
+                        switch (listFormat)
                         {
-                            case AsmLoad.ListModeEnum.Simple:
+                            case AsmEnum.ListFormatEnum.Simple:
                                 results.Add($"  {address2}  {binaryString} {codeType}{source}");
                                 break;
-                            case AsmLoad.ListModeEnum.Middle:
+                            case AsmEnum.ListFormatEnum.Middle:
                                 results.Add($"{address2} {binaryString}{status} {codeType}{source}");
                                 break;
-                            case AsmLoad.ListModeEnum.Full:
+                            case AsmEnum.ListFormatEnum.Full:
                                 results.Add($"{address1} {address2} {binaryString}{status} {codeType}{source}");
                                 break;
                             default:

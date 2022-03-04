@@ -12,7 +12,7 @@ namespace AILZ80ASM.Test
         {
             var targetDirectoryName = Path.Combine(".", "Test", "TestER");
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
-            var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmLoad.OutputModeEnum, FileInfo>>();
+            var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmEnum.FileTypeEnum, FileInfo>>();
 
             return Lib.Assemble(inputFiles, outputFiles, false, true);
         }

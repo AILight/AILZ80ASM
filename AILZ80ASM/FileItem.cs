@@ -12,7 +12,7 @@ namespace AILZ80ASM
     public class FileItem
     {
         private AsmLoad AssembleLoad { get; set; }
-        private AsmLoad.EncodeModeEnum EncodeMode { get; set; }
+        private AsmEnum.EncodeModeEnum EncodeMode { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
 

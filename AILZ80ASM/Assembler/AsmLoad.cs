@@ -10,37 +10,6 @@ namespace AILZ80ASM.Assembler
 {
     public class AsmLoad
     {
-        public enum EncodeModeEnum
-        {
-            AUTO,
-            UTF_8,
-            SHIFT_JIS,
-        }
-
-        public enum OutputModeEnum
-        {
-            BIN,
-            HEX,
-            T88,
-            CMT,
-            LST,
-            SYM,
-            DBG,
-        }
-
-        public enum OutputModeFileTypeEnum
-        {
-            Binary,
-            Text,
-        }
-
-        public enum ListModeEnum
-        {
-            Simple,
-            Middle,
-            Full,
-        }
-
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
 
@@ -54,9 +23,9 @@ namespace AILZ80ASM.Assembler
 
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
         public ISA ISA { get; private set; }
-        public EncodeModeEnum InputEncodeMode { get; set; }
-        public EncodeModeEnum OutputEncodeMode { get; set; } = EncodeModeEnum.UTF_8;
-        public ListModeEnum ListMode { get; set; } = ListModeEnum.Full;
+        public AsmEnum.EncodeModeEnum InputEncodeMode { get; set; }
+        public AsmEnum.EncodeModeEnum OutputEncodeMode { get; set; } = AsmEnum.EncodeModeEnum.UTF_8;
+        public AsmEnum.ListFormatEnum ListMode { get; set; } = AsmEnum.ListFormatEnum.Full;
         public bool OutputTrim { get; internal set; }
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; internal set; }
         public string CharMap { get; set; }
@@ -360,10 +329,10 @@ namespace AILZ80ASM.Assembler
         }
 
 
-        public EncodeModeEnum GetEncodMode(FileInfo fileInfo)
+        public AsmEnum.EncodeModeEnum GetEncodMode(FileInfo fileInfo)
         {
             var encodeMode = InputEncodeMode;
-            if (encodeMode == EncodeModeEnum.AUTO)
+            if (encodeMode == AsmEnum.EncodeModeEnum.AUTO)
             {
                 using var readStream = fileInfo.OpenRead();
                 using var memoryStream = new MemoryStream();
@@ -372,10 +341,10 @@ namespace AILZ80ASM.Assembler
 
                 var isUTF8 = AIEncode.IsUTF8(bytes);
                 var isSHIFT_JIS = AIEncode.IsSHIFT_JIS(bytes);
-                encodeMode = EncodeModeEnum.UTF_8;
+                encodeMode = AsmEnum.EncodeModeEnum.UTF_8;
                 if (!isUTF8 && isSHIFT_JIS)
                 {
-                    encodeMode = EncodeModeEnum.SHIFT_JIS;
+                    encodeMode = AsmEnum.EncodeModeEnum.SHIFT_JIS;
                 }
             }
             return encodeMode;
@@ -389,9 +358,9 @@ namespace AILZ80ASM.Assembler
             return encoding;
         }
 
-        public System.Text.Encoding GetInputEncoding(EncodeModeEnum encodeMode)
+        public System.Text.Encoding GetInputEncoding(AsmEnum.EncodeModeEnum encodeMode)
         {
-            if (encodeMode == EncodeModeEnum.AUTO)
+            if (encodeMode == AsmEnum.EncodeModeEnum.AUTO)
             {
                 throw new ArgumentException("encodeMode:AUTOは指定できません");
             }
@@ -415,12 +384,12 @@ namespace AILZ80ASM.Assembler
         /// <param name="encodeMode"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public static System.Text.Encoding GetEncoding(EncodeModeEnum encodeMode)
+        public static System.Text.Encoding GetEncoding(AsmEnum.EncodeModeEnum encodeMode)
         {
             var encoding = encodeMode switch
             {
-                EncodeModeEnum.UTF_8 => AIEncode.GetEncodingUTF8(),
-                EncodeModeEnum.SHIFT_JIS => AIEncode.GetEncodingSJIS(),
+                AsmEnum.EncodeModeEnum.UTF_8 => AIEncode.GetEncodingUTF8(),
+                AsmEnum.EncodeModeEnum.SHIFT_JIS => AIEncode.GetEncodingSJIS(),
                 _ => throw new NotImplementedException()
             };
 
@@ -433,21 +402,21 @@ namespace AILZ80ASM.Assembler
         /// <param name="outputMode"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public static OutputModeFileTypeEnum GetFileType(OutputModeEnum outputMode)
+        public static AsmEnum.FileDataTypeEnum GetFileType(AsmEnum.FileTypeEnum fileType)
         {
-            var fileType = outputMode switch
+            var dataType = fileType switch
             {
-                OutputModeEnum.BIN => OutputModeFileTypeEnum.Binary,
-                OutputModeEnum.HEX => OutputModeFileTypeEnum.Text,
-                OutputModeEnum.T88 => OutputModeFileTypeEnum.Binary,
-                OutputModeEnum.CMT => OutputModeFileTypeEnum.Binary,
-                OutputModeEnum.LST => OutputModeFileTypeEnum.Text,
-                OutputModeEnum.SYM => OutputModeFileTypeEnum.Text,
-                OutputModeEnum.DBG => OutputModeFileTypeEnum.Text,
+                AsmEnum.FileTypeEnum.BIN => AsmEnum.FileDataTypeEnum.Binary,
+                AsmEnum.FileTypeEnum.HEX => AsmEnum.FileDataTypeEnum.Text,
+                AsmEnum.FileTypeEnum.T88 => AsmEnum.FileDataTypeEnum.Binary,
+                AsmEnum.FileTypeEnum.CMT => AsmEnum.FileDataTypeEnum.Binary,
+                AsmEnum.FileTypeEnum.LST => AsmEnum.FileDataTypeEnum.Text,
+                AsmEnum.FileTypeEnum.SYM => AsmEnum.FileDataTypeEnum.Text,
+                AsmEnum.FileTypeEnum.DBG => AsmEnum.FileDataTypeEnum.Text,
                 _ => throw new NotImplementedException()
             };
 
-            return fileType;
+            return dataType;
         }
 
         public void OutputLabels(Stream stream)

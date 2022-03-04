@@ -233,24 +233,24 @@ namespace AILZ80ASM.Assembler
             return rootCommand;
         }
 
-        public static Dictionary<AsmLoad.OutputModeEnum, FileInfo> GetOutputFiles(this RootCommand rootCommand)
+        public static Dictionary<AsmEnum.FileTypeEnum, FileInfo> GetOutputFiles(this RootCommand rootCommand)
         {
-            var result = new Dictionary<AsmLoad.OutputModeEnum, FileInfo>();
+            var result = new Dictionary<AsmEnum.FileTypeEnum, FileInfo>();
 
             var output = rootCommand.GetValue<FileInfo>("output");
             var outputSelected = rootCommand.GetSelected("output");
             var outputMode = rootCommand.GetValue<string>("outputMode");
             var outputModeSelected = rootCommand.GetSelected("outputMode");
             
-            var outputDic = new Dictionary<AsmLoad.OutputModeEnum, string>
+            var outputDic = new Dictionary<AsmEnum.FileTypeEnum, string>
             {
-                [AsmLoad.OutputModeEnum.BIN] = "outputBin",
-                //[AsmLoad.OutputModeEnum.HEX] = "outputHex",
-                [AsmLoad.OutputModeEnum.T88] = "outputT88",
-                [AsmLoad.OutputModeEnum.CMT] = "outputCMT",
-                [AsmLoad.OutputModeEnum.SYM] = "symbol",
-                [AsmLoad.OutputModeEnum.LST] = "list",
-                [AsmLoad.OutputModeEnum.DBG] = "debug",
+                [AsmEnum.FileTypeEnum.BIN] = "outputBin",
+                //[AsmEnum.FileTypeEnum.HEX] = "outputHex",
+                [AsmEnum.FileTypeEnum.T88] = "outputT88",
+                [AsmEnum.FileTypeEnum.CMT] = "outputCMT",
+                [AsmEnum.FileTypeEnum.SYM] = "symbol",
+                [AsmEnum.FileTypeEnum.LST] = "list",
+                [AsmEnum.FileTypeEnum.DBG] = "debug",
             };
 
             foreach (var item in outputDic)
@@ -267,10 +267,10 @@ namespace AILZ80ASM.Assembler
             {
                 var outputModeEnum = outputMode switch
                 {
-                    "bin" => AsmLoad.OutputModeEnum.BIN,
-                    "hex" => AsmLoad.OutputModeEnum.HEX,
-                    "t88" => AsmLoad.OutputModeEnum.T88,
-                    "cmt" => AsmLoad.OutputModeEnum.CMT,
+                    "bin" => AsmEnum.FileTypeEnum.BIN,
+                    "hex" => AsmEnum.FileTypeEnum.HEX,
+                    "t88" => AsmEnum.FileTypeEnum.T88,
+                    "cmt" => AsmEnum.FileTypeEnum.CMT,
                     _ => throw new InvalidOperationException()
                 };
                 result.Add(outputModeEnum, output);
@@ -279,30 +279,30 @@ namespace AILZ80ASM.Assembler
             return result;
         }
 
-        public static AsmLoad.EncodeModeEnum GetEncodeMode(this RootCommand rootCommand)
+        public static AsmEnum.EncodeModeEnum GetEncodeMode(this RootCommand rootCommand)
         {
             var outputMode = rootCommand.GetValue<string>("encodeMode");
 
             var encodeMode = outputMode switch
             {
-                "auto" => AsmLoad.EncodeModeEnum.AUTO,
-                "utf-8" => AsmLoad.EncodeModeEnum.UTF_8,
-                "shift_jis" => AsmLoad.EncodeModeEnum.SHIFT_JIS,
+                "auto" => AsmEnum.EncodeModeEnum.AUTO,
+                "utf-8" => AsmEnum.EncodeModeEnum.UTF_8,
+                "shift_jis" => AsmEnum.EncodeModeEnum.SHIFT_JIS,
                 _ => throw new InvalidOperationException()
             };
 
             return encodeMode;
         }
 
-        public static AsmLoad.ListModeEnum GetListMode(this RootCommand rootCommand)
+        public static AsmEnum.ListFormatEnum GetListMode(this RootCommand rootCommand)
         {
             var listMode = rootCommand.GetValue<string>("listMode");
 
             var encodeMode = listMode switch
             {
-                "simple" => AsmLoad.ListModeEnum.Simple,
-                "middle" => AsmLoad.ListModeEnum.Middle,
-                "full" => AsmLoad.ListModeEnum.Full,
+                "simple" => AsmEnum.ListFormatEnum.Simple,
+                "middle" => AsmEnum.ListFormatEnum.Middle,
+                "full" => AsmEnum.ListFormatEnum.Full,
                 _ => throw new InvalidOperationException()
             };
 
