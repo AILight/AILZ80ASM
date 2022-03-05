@@ -233,6 +233,15 @@ namespace AILZ80ASM.Assembler
             return rootCommand;
         }
 
+        public static Dictionary<AsmEnum.FileTypeEnum, FileInfo[]> GetInputFiles(this RootCommand rootCommand)
+        {
+            var result = new Dictionary<AsmEnum.FileTypeEnum, FileInfo[]>();
+
+            result.Add(AsmEnum.FileTypeEnum.Z80, rootCommand.GetValue<FileInfo[]>("input"));
+
+            return result;
+        }
+
         public static Dictionary<AsmEnum.FileTypeEnum, FileInfo> GetOutputFiles(this RootCommand rootCommand)
         {
             var result = new Dictionary<AsmEnum.FileTypeEnum, FileInfo>();

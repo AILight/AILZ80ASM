@@ -16,29 +16,24 @@ namespace AILZ80ASM
         public ErrorLineItem[] Warnings => AssembleLoad.AssembleWarnings;
         public ErrorLineItem[] Information => AssembleLoad.AssembleInformation;
 
-        public Package(FileInfo[] files, AsmEnum.EncodeModeEnum encodeMode, AsmEnum.ListFormatEnum listMode, bool outputTrim, Error.ErrorCodeEnum[] disableWarningCodes, AsmISA asmISA)
+        public Package(AsmOption asmOption, AsmISA asmISA)
         {
             switch (asmISA)
             {
                 case AsmISA.Z80:
-                    AssembleLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                    AssembleLoad = new AsmLoad(asmOption, new InstructionSet.Z80());
                     break;
                 default:
                     throw new NotImplementedException();
             }
             var label = new Label("[NS_Main]", AssembleLoad);
             AssembleLoad.AddLabel(label);
-            AssembleLoad.AssembleOption.InputEncodeMode = encodeMode;
-            AssembleLoad.AssembleOption.ListMode = listMode;
-
-            AssembleLoad.AssembleOption.OutputTrim = outputTrim;
-            AssembleLoad.AssembleOption.DisableWarningCodes = disableWarningCodes;
             AssembleLoad.DefaultCharMap = "@SJIS";
 
             // CharMapの初期化;
             CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.DefaultCharMap, AssembleLoad);
 
-            foreach (var fileInfo in files)
+            foreach (var fileInfo in asmOption.InputFiles[AsmEnum.FileTypeEnum.Z80])
             {
                 FileItems.Add(new FileItem(fileInfo, AssembleLoad));
             }

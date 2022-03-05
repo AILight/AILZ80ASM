@@ -1,5 +1,7 @@
-﻿using System;
+﻿using AILZ80ASM.CommandLine;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,8 +10,17 @@ namespace AILZ80ASM.Assembler
 {
     public class AsmOption
     {
+        // 入力ファイル
+        public Dictionary<AsmEnum.FileTypeEnum, FileInfo[]> InputFiles { get; set; }
+        // 出力ファイル
+        public Dictionary<AsmEnum.FileTypeEnum, FileInfo> OutputFiles { get; set; }
+
         // 出力結果にトリムをするか
         public bool OutputTrim { get; set; }
+
+        // 出力結果の差分を取るか
+        public bool FileDiff { get; set; }
+
         // ワーニングのオフになる対象一覧
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; set; }
         // 入力Encode
@@ -19,33 +30,54 @@ namespace AILZ80ASM.Assembler
         // リストのモード
         public AsmEnum.ListFormatEnum ListMode { get; set; } = AsmEnum.ListFormatEnum.Full;
 
-        /*
-        public 
+        public AsmOption()
+        {
+
+        }
+
+        /// <summary>
+        /// RootCommandからAsmOptionを作成する
+        /// </summary>
+        /// <param name="rootCommand"></param>
+        public AsmOption(RootCommand rootCommand)
+        {
+            InputFiles = rootCommand.GetInputFiles();
+            InputEncodeMode = rootCommand.GetEncodeMode();
+            OutputFiles = rootCommand.GetOutputFiles();
+            ListMode = rootCommand.GetListMode();
+            OutputTrim = rootCommand.GetValue<bool>("outputTrim");
+            FileDiff = rootCommand.GetValue<bool>("fileDiff");
+            DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode");
+        }
 
         public void Validate()
         {
-            // 入力内容の確認
-            if (inputs == default || inputs.Length == 0)
+                        // 入力内容の確認
+            if (InputFiles == default || InputFiles.Any(m => m.Value == default || m.Value.Length == 0))
             {
                 throw new ArgumentException($"入力ファイルが指定されていません。");
             }
 
-            if (outputFiles == default)
+            if (OutputFiles == default || OutputFiles.Count == 0)
             {
                 throw new ArgumentException($"出力ファイルが指定されていません。");
             }
 
-            foreach (var item in outputFiles)
+            foreach (var outputItem in OutputFiles)
             {
-                if (inputs.Any(m => m.FullName == item.Value.FullName))
+                foreach (var inputItem in InputFiles)
                 {
-                    throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {item.Value.Name}");
+                    if (inputItem.Value.Any(m => m.FullName == outputItem.Value.FullName))
+                    {
+                        throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {outputItem.Value.Name}");
+                    }
                 }
+
             }
 
-            if (disableWarningCodes != default)
+            if (DisableWarningCodes != default)
             {
-                foreach (var item in disableWarningCodes)
+                foreach (var item in DisableWarningCodes)
                 {
                     if (Error.GetErrorType(item) != Error.ErrorTypeEnum.Warning &&
                         Error.GetErrorType(item) != Error.ErrorTypeEnum.Information)
@@ -55,6 +87,5 @@ namespace AILZ80ASM.Assembler
                 }
             }
         }
-        */
     }
 }

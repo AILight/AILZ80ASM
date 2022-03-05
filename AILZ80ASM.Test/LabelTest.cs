@@ -9,7 +9,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void LabelNameTest()
         {
-            var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
             var globalLabel = new Label("[NS_Main]", asmLoad);
             asmLoad.AddLabel(globalLabel);
 

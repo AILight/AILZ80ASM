@@ -92,45 +92,32 @@ namespace AILZ80ASM
             }
         }
 
+        /// <summary>
+        /// アセンブル
+        /// </summary>
+        /// <param name="rootCommand"></param>
+        /// <returns></returns>
         public static bool Assember(RootCommand rootCommand)
         {
-            return Assember(rootCommand.GetValue<FileInfo[]>("input"),
-                            rootCommand.GetEncodeMode(),
-                            rootCommand.GetOutputFiles(),
-                            rootCommand.GetListMode(),
-                            rootCommand.GetValue<bool>("outputTrim"),
-                            rootCommand.GetValue<FileInfo>("error"),
-                            rootCommand.GetValue<bool>("fileDiff"),
-                            rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode"));
+            var asmOption = new AsmOption(rootCommand);
+            return Assember(asmOption);
         }
-
 
         /// <summary>
         /// アセンブル
         /// </summary>
-        /// <param name="inputs"></param>
-        /// <param name="inputMode"></param>
-        /// <param name="output"></param>
-        /// <param name="outputMode"></param>
-        /// <param name="symbol"></param>
-        /// <param name="list"></param>
+        /// <param name="asmOption"></param>
         /// <returns></returns>
-        public static bool Assember(
-                FileInfo[] inputs, 
-                AsmEnum.EncodeModeEnum encodeMode, 
-                Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles,
-                AsmEnum.ListFormatEnum listMode, 
-                bool outputTrim, 
-                FileInfo traceFile, 
-                bool fileDiff,
-                Error.ErrorCodeEnum[] disableWarningCodes)
+        public static bool Assember(AsmOption asmOption)
         {
             var assembleResult = false;
             try
             {
                 // Traceの書き出し先を設定
-                if (traceFile != default)
+                if (asmOption.OutputFiles.ContainsKey(AsmEnum.FileTypeEnum.ERR))
                 {
+                    var traceFile = asmOption.OutputFiles[AsmEnum.FileTypeEnum.ERR];
+
                     traceFile.Delete();
                     Trace.Listeners.Add(new TextWriterTraceListener(traceFile.FullName, "error"));
                     Trace.AutoFlush = true;
@@ -159,59 +146,30 @@ namespace AILZ80ASM
 
                 }
                 */
-                
-                // 入力内容の確認
-                if (inputs == default || inputs.Length == 0)
-                {
-                    throw new ArgumentException($"入力ファイルが指定されていません。");
-                }
 
-                if (outputFiles == default)
-                {
-                    throw new ArgumentException($"出力ファイルが指定されていません。");
-                }
-
-                foreach (var item in outputFiles)
-                {
-                    if (inputs.Any(m => m.FullName == item.Value.FullName))
-                    {
-                        throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {item.Value.Name}");
-                    }
-                }
-
-                if (disableWarningCodes != default)
-                {
-                    foreach (var item in disableWarningCodes)
-                    {
-                        if (Error.GetErrorType(item) != Error.ErrorTypeEnum.Warning &&
-                            Error.GetErrorType(item) != Error.ErrorTypeEnum.Information)
-                        {
-                            throw new ArgumentException($"ワーニング出力のキャンセルに以下のコードは指定できません。コード: {item}");
-                        }
-                    }
-                }
+                asmOption.Validate();
 
                 // ファイルの差分表示モード
-                if (fileDiff)
+                if (asmOption.FileDiff)
                 {
                     Trace.WriteLine("出力ファイル差分確認モード");
                     Trace.WriteLine("");
                 }
 
                 // アセンブル実行
-                var package = new Package(inputs, encodeMode, listMode, outputTrim, disableWarningCodes, AsmISA.Z80);
+                var package = new Package(asmOption, AsmISA.Z80);
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
                     if (package.Errors.Length == 0)
                     {
-                        if (fileDiff)
+                        if (asmOption.FileDiff)
                         {
-                            package.DiffOutput(outputFiles);
+                            package.DiffOutput(asmOption.OutputFiles);
                         }
                         else
                         {
-                            package.SaveOutput(outputFiles);
+                            package.SaveOutput(asmOption.OutputFiles);
                         }
 
                         assembleResult = true;
@@ -219,7 +177,7 @@ namespace AILZ80ASM
                 }
                 package.OutputError();
 
-                if (fileDiff)
+                if (asmOption.FileDiff)
                 {
                     if (package.Errors.Length > 0)
                     {

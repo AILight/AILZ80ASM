@@ -12,7 +12,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void IsCharTrueTest()
         {
-            var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
             Assert.IsTrue(AIString.IsChar("'0'", asmLoad));
             Assert.IsTrue(AIString.IsChar("'1'", asmLoad));
@@ -30,7 +30,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void IsCharFalseTest()
         {
-            var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
             Assert.IsFalse(AIString.IsChar("'", asmLoad));
             Assert.IsFalse(AIString.IsChar("0'", asmLoad));
@@ -52,7 +52,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void IsStringTrueTest()
         {
-            var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
             Assert.IsTrue(AIString.IsString("\"0\"", asmLoad));
             Assert.IsTrue(AIString.IsString("\"1\"", asmLoad));
@@ -75,7 +75,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void IsStringFalseTest()
         {
-            var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
             Assert.IsFalse(AIString.IsString("\"", asmLoad));
             Assert.IsFalse(AIString.IsString("ABC\"", asmLoad));
@@ -111,21 +111,21 @@ namespace AILZ80ASM.Test
         public void TryParseCharMapTrueTest()
         {
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 Assert.IsTrue(AIString.TryParseCharMap("\'A\'", asmLoad, out var charMap, out var resultString));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "A");
             }
 
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "ABC");
             }
 
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString));
@@ -138,7 +138,7 @@ namespace AILZ80ASM.Test
         public void GetBytesByCharTest()
         {
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
@@ -147,7 +147,7 @@ namespace AILZ80ASM.Test
             }
 
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
@@ -157,7 +157,7 @@ namespace AILZ80ASM.Test
             }
 
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
@@ -171,7 +171,7 @@ namespace AILZ80ASM.Test
         public void GetBytesByStringTest()
         {
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
@@ -180,7 +180,7 @@ namespace AILZ80ASM.Test
             }
 
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
@@ -192,7 +192,7 @@ namespace AILZ80ASM.Test
             }
 
             {
-                var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
@@ -209,7 +209,7 @@ namespace AILZ80ASM.Test
         {
             {
                 Assert.ThrowsException<InvalidAIStringException>(() => {
-                    var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                    var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                     CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                     AIString.GetBytesByString("@SJIS:\'石野\'", asmLoad);
@@ -218,7 +218,7 @@ namespace AILZ80ASM.Test
 
             {
                 Assert.ThrowsException<InvalidAIStringException>(() => {
-                    var asmLoad = new AsmLoad(new InstructionSet.Z80(), new AsmOption());
+                    var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                     CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                     AIString.GetBytesByString("@SJIS \"石野\"", asmLoad);

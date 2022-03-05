@@ -74,10 +74,18 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static ErrorLineItem[] Assemble(FileInfo[] Files, Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>> outputFiles, bool dataTrim, bool testError)
+        public static ErrorLineItem[] Assemble(FileInfo[] files, Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>> outputFiles, bool outputTrim, bool testError)
         {
-            var package = new Package(Files, AsmEnum.EncodeModeEnum.UTF_8, AsmEnum.ListFormatEnum.Full, dataTrim, default(Error.ErrorCodeEnum[]), AsmISA.Z80);
+            var asmOption = new AsmOption();
+            asmOption.InputFiles = new Dictionary<AsmEnum.FileTypeEnum, FileInfo[]>()
+            {
+                [AsmEnum.FileTypeEnum.Z80] = files,
+            };
+            asmOption.InputEncodeMode = AsmEnum.EncodeModeEnum.UTF_8;
+            asmOption.ListMode = AsmEnum.ListFormatEnum.Full;
+            asmOption.OutputTrim = outputTrim;
 
+            var package = new Package(asmOption, AsmISA.Z80);
             package.Assemble();
 
             if (package.Errors.Length == 0)

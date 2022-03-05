@@ -70,8 +70,9 @@ namespace AILZ80ASM.Assembler
         // スコープの親
         private AsmLoad ParentAsmLoad { get; set; } = default;
 
-        public AsmLoad(ISA isa, AsmOption assembleOption)
+        public AsmLoad(AsmOption assembleOption, ISA isa)
         {
+            AssembleOption = assembleOption;
             ISA = isa;
 
             Labels = new List<Label>();
@@ -79,7 +80,6 @@ namespace AILZ80ASM.Assembler
             Functions = new List<Function>();
             Errors = new List<ErrorLineItem>();
             GlobalLabelNames = new List<string>();
-            AssembleOption = assembleOption;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace AILZ80ASM.Assembler
 
         private AsmLoad InternalClone()
         {
-            var asmLoad = new AsmLoad(this.ISA, this.AssembleOption)
+            var asmLoad = new AsmLoad(this.AssembleOption, this.ISA)
             {
                 GlobalLabelName = this.GlobalLabelName,
                 LabelName = this.LabelName,
@@ -169,23 +169,6 @@ namespace AILZ80ASM.Assembler
                 this.AddError(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1021));
             }
         }
-
-        /*
-        public string GetlFullName(string target)
-        {
-            return Label.GetLabelFullName(target, this);
-        }
-
-        public string GetFunctionFullName(string target)
-        {
-            return Function.GetFunctionFullName(target, this);
-        }
-
-        public string GetMacroFullName(string target)
-        {
-            return Macro.GetMacroFullName(target, this);
-        }
-        */
 
         public void AddError(ErrorLineItem errorLineItem)
         {
