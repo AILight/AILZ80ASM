@@ -5,7 +5,6 @@ namespace AILZ80ASM
 {
     public class LineDetailExpansionItem
     {
-        public Label Label { get; set; }
         public bool IsAssembled { get; set; }
         public LineItem LineItem { get; private set; }
         public AsmAddress Address { get; protected set; }

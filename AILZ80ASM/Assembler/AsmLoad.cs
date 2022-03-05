@@ -101,6 +101,22 @@ namespace AILZ80ASM.Assembler
         }
 
         /// <summary>
+        /// 新しいスコープで処理をする
+        /// </summary>
+        /// <param name="func"></param>
+        public void CreateScope(Action<AsmLoad> func)
+        {
+            var asmLoad = Clone();
+            
+            func.Invoke(asmLoad);
+
+            // スコープが戻るときにラベルを上書きする
+            this.GlobalLabelName = asmLoad.GlobalLabelName;
+            this.LabelName = asmLoad.LabelName;
+            this.AsmEnd = asmLoad.AsmEnd;
+        }
+
+        /// <summary>
         /// 新しいスコープのクローン
         /// </summary>
         /// <param name="globalLabelName"></param>
@@ -141,6 +157,7 @@ namespace AILZ80ASM.Assembler
             return asmLoad;
         }
 
+        /*
         /// <summary>
         /// クローン後にスコープが変わったものを戻す
         /// </summary>
@@ -151,6 +168,7 @@ namespace AILZ80ASM.Assembler
             this.LabelName = asmLoad.LabelName;
             this.AsmEnd = asmLoad.AsmEnd;
         }
+        */
 
         public void LoadCloseValidate()
         {

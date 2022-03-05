@@ -31,19 +31,21 @@ namespace AILZ80ASM
             var matched = Regex.Match(lineItem.OperationString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
-                var labelValue = matched.Groups["value"].Value.Trim();
-                var localAsmLoad = asmLoad.Clone();
-
-                var label = new Label(lineItem.LabelString, labelValue, localAsmLoad);
-                if (label.Invalidate)
+                var lineDetailItemEqual = default(LineDetailItemEqual);
+                asmLoad.CreateScope(localAsmLoad => 
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
-                }
-                localAsmLoad.AddLabel(label);
+                    var labelValue = matched.Groups["value"].Value.Trim();
 
-                asmLoad.SetScope(localAsmLoad);
+                    var label = new Label(lineItem.LabelString, labelValue, localAsmLoad);
+                    if (label.Invalidate)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
+                    }
+                    localAsmLoad.AddLabel(label);
 
-                return new LineDetailItemEqual(lineItem, localAsmLoad) { EquLabel = label };
+                    lineDetailItemEqual = new LineDetailItemEqual(lineItem, localAsmLoad) { EquLabel = label };
+                });
+                return lineDetailItemEqual;
             }
 
             return default;

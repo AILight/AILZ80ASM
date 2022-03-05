@@ -30,14 +30,14 @@ namespace AILZ80ASM
             OperationItem = default(OperationItem);
 
             // ラベルを処理する
-            Label = new Label(this, asmLoad);
-            if (Label.Invalidate)
+            var label = new Label(this, asmLoad);
+            if (label.Invalidate)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
             }
             if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
-                asmLoad.AddLabel(Label);
+                asmLoad.AddLabel(label);
                 // ローカルラベルの末尾に「:」がついている場合にはワーニング
                 if (lineItem.LabelString.StartsWith(".") && lineItem.LabelString.EndsWith(":"))
                 {
