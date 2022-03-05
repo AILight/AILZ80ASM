@@ -16,10 +16,13 @@ namespace AILZ80ASM.Assembler
         public Dictionary<AsmEnum.FileTypeEnum, FileInfo> OutputFiles { get; set; }
 
         // 出力結果にトリムをするか
-        public bool OutputTrim { get; set; }
+        public bool OutputTrim { get; set; } = false;
 
         // 出力結果の差分を取るか
-        public bool FileDiff { get; set; }
+        public bool FileDiff { get; set; } = false;
+
+        // タブサイズ
+        public int TabSize { get; set; } = 4;
 
         // ワーニングのオフになる対象一覧
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; set; }

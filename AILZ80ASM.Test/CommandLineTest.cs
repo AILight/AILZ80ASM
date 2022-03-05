@@ -463,7 +463,7 @@ namespace AILZ80ASM.Test
         {
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "-l" };
+                var arguments = new[] { "Main.z80", "-bin", "-lst" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -482,7 +482,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "--list", "-lm", "simple" };
+                var arguments = new[] { "Main.z80", "-bin", "-lst", "-lm", "simple" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -501,7 +501,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "--list", "List.lst", "--list-mode", "middle" };
+                var arguments = new[] { "Main.z80", "-bin", "-lst", "List.lst", "--list-mode", "middle" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -525,7 +525,7 @@ namespace AILZ80ASM.Test
         {
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "-s" };
+                var arguments = new[] { "Main.z80", "-bin", "-sym" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -541,7 +541,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "--symbol" };
+                var arguments = new[] { "Main.z80", "-bin", "-sym" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -557,7 +557,7 @@ namespace AILZ80ASM.Test
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "--symbol", "Symbol.sym" };
+                var arguments = new[] { "Main.z80", "-bin", "-sym", "Symbol.sym" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -573,6 +573,58 @@ namespace AILZ80ASM.Test
 
         }
 
+        [TestMethod]
+        public void Test_CommandLine_Error()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-err" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.ERR].Name, "Main.err");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-err" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.ERR].Name, "Main.err");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-err", "Error.txt" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.ERR].Name, "Error.txt");
+            }
+
+        }
         [TestMethod]
         public void Test_CommandLine_Help()
         {

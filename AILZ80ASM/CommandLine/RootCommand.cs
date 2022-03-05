@@ -7,6 +7,8 @@ namespace AILZ80ASM.CommandLine
 {
     public class RootCommand
     {
+        private const int COMMAND_WIDTH = 27;
+
         private string Description { get; set; }
         private List<IOption> Options { get; set; } = new();
         private string ApplicationName => Assembly.GetExecutingAssembly().GetName().Name;
@@ -27,65 +29,36 @@ namespace AILZ80ASM.CommandLine
         {
             get
             {
-                var result = default(string);
-                result += $"{HelpTitleMessage}\n";
-                result += $"Usage:\n";
-                result += $"  {ApplicationName} [options]\n\n";
-                result += $"Options:\n";
-                foreach (var item in Options.Where(m => !m.IsHide))
-                {
-                    var commandList = new List<string>();
-                    var commandWidth = 27;
-                    var descriptionList = new List<string>();
-
-                    // コマンド作成
-                    var tmpList = new List<string>();
-                    for (var index = 0; index < item.Aliases.Length; index++)
-                    {
-                        var outputAliase = item.Aliases[index];
-                        if (index < item.Aliases.Length - 1)
-                        {
-                            outputAliase += ", ";
-                        }
-                        else if (index == item.Aliases.Length - 1 && item.GetType().GenericTypeArguments[0] != typeof(bool))
-                        {
-                            outputAliase += $" <{item.ArgumentName}>";
-                        }
-
-                        tmpList.Add(outputAliase);
-                    }
-  
-                    // コマンド側のリストを作成
-                    foreach (var command in tmpList)
-                    {
-                        if (commandList.Count == 0 || (commandList.Last() + command).Length > commandWidth)
-                        {
-                            commandList.Add("");
-                        }
-                        commandList[commandList.Count - 1] += command;
-                    }
-
-                    // 説明文の作成
-                    var description = item.Description;
-                    if (item.IsDefineOptional)
-                    {
-                        description += "(オプション名の省略が可能）";
-                    }
-
-                    descriptionList.Add(description);
-
-                    // 表示処理を作成
-                    foreach (var index in Enumerable.Range(0, Math.Max(commandList.Count, descriptionList.Count)))
-                    {
-                        var tmpComand = (commandList.Count > index ? commandList[index] : "").PadRight(commandWidth);
-                        var tmpDescription = descriptionList.Count > index ? descriptionList[index] : "";
-
-                        result += $"  {tmpComand}{tmpDescription}\n";
-                    }
-                }
-
-                return result;
+                return CreateHelpMessage(false);
             }
+        }
+
+        public string CreateHelpMessage(bool simpleMessage)
+        {
+            var result = default(string);
+            result += $"{HelpTitleMessage}\n";
+            result += $"Usage:\n";
+            result += $"  {ApplicationName} [options]\n\n";
+
+            // オプション
+            result += $"Options:\n";
+            foreach (var item in Options.Where(m => !m.IsHide && !m.IsShortCut && (!simpleMessage || m.IsSimple)))
+            {
+                result += OptionToString(item);
+            }
+
+            // ショートカット
+            var options = Options.Where(m => !m.IsHide && m.IsShortCut && (!simpleMessage || m.IsSimple));
+            if (options.Any())
+            {
+                result += $"\n";
+                result += $"ShortCut Options:\n";
+                foreach (var item in options)
+                {
+                    result += OptionToString(item);
+                }
+            }
+            return result;
         }
 
         public string HelpCommand(string[] arguments)
@@ -232,7 +205,7 @@ namespace AILZ80ASM.CommandLine
             }
             catch (Exception ex)
             {
-                this.ParseMessage = $"{ex.Message}\n\n{this.HelpMessage}";
+                this.ParseMessage = $"{ex.Message}\n\n{CreateHelpMessage(true)}";
                 return false;
             }
 
@@ -364,6 +337,70 @@ namespace AILZ80ASM.CommandLine
                     existOptionForParameter.Add(option);
                 }
             }
+        }
+
+        public static string OptionToString(IOption option)
+        {
+            var commandList = new List<string>();
+            var descriptionList = new List<string>();
+            var result = "";
+
+            // コマンド作成
+            var tmpList = new List<string>();
+            for (var index = 0; index < option.Aliases.Length; index++)
+            {
+                var outputAliase = option.Aliases[index];
+                if (index < option.Aliases.Length - 1)
+                {
+                    outputAliase += ", ";
+                }
+                else if (index == option.Aliases.Length - 1 && option.GetType().GenericTypeArguments[0] != typeof(bool))
+                {
+                    outputAliase += $" <{option.ArgumentName}>";
+                }
+
+                tmpList.Add(outputAliase);
+            }
+
+            // コマンド側のリストを作成
+            foreach (var command in tmpList)
+            {
+                if (commandList.Count == 0 || (commandList.Last() + command).Length > COMMAND_WIDTH)
+                {
+                    commandList.Add("");
+                }
+                commandList[commandList.Count - 1] += command;
+            }
+
+            // 説明文の作成
+            var description = option.Description;
+            if (option.IsDefineOptional)
+            {
+                description += "(オプション名の省略が可能）";
+            }
+
+            descriptionList.Add(description);
+
+            // 表示処理を作成
+            foreach (var index in Enumerable.Range(0, Math.Max(commandList.Count, descriptionList.Count)))
+            {
+                var tmpComand = (commandList.Count > index ? commandList[index] : "").PadRight(COMMAND_WIDTH);
+                var tmpDescription = descriptionList.Count > index ? descriptionList[index] : "";
+                
+                if (option.Parameters != default && option.Parameters.Length > 0)
+                {
+                    tmpDescription += $" [{string.Join(", ", option.Parameters.Select(m => m.Name))}]";
+                }
+
+                if (!string.IsNullOrEmpty(option.DefaultValue))
+                {
+                    tmpDescription += $" デフォルト:{option.DefaultValue}";
+                }
+
+                result += $"  {tmpComand}{tmpDescription}\n";
+            }
+
+            return result;
         }
     }
 }

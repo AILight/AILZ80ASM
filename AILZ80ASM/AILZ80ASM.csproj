@@ -32,4 +32,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Documents\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\README.md" Link="Documents\README.md" />
+  </ItemGroup>
+
 </Project>
