@@ -219,6 +219,14 @@ namespace AILZ80ASM.Assembler
                 Required = false,
             });
 
+            rootCommand.AddOption(new Option<bool>()
+            {
+                Name = "unUsedLabel",
+                Aliases = new[] { "-ul", "--unused-label" },
+                Description = "未使用ラベルを確認します。",
+                Required = false,
+            });
+
             rootCommand.AddOption(new Option<DirectoryInfo>()
             {
                 Name = "changeDirectory",
@@ -319,6 +327,10 @@ namespace AILZ80ASM.Assembler
                     "hex" => AsmEnum.FileTypeEnum.HEX,
                     "t88" => AsmEnum.FileTypeEnum.T88,
                     "cmt" => AsmEnum.FileTypeEnum.CMT,
+                    "lst" => AsmEnum.FileTypeEnum.LST,
+                    "sym" => AsmEnum.FileTypeEnum.SYM,
+                    "dbg" => AsmEnum.FileTypeEnum.DBG,
+                    "err" => AsmEnum.FileTypeEnum.ERR,
                     _ => throw new InvalidOperationException()
                 };
                 result.Add(outputModeEnum, output);

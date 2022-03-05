@@ -33,18 +33,18 @@
 000025 8025 310000          10      LD   SP, 0
                                 
                                 LocalLabel:
-                                .C  equ 0
-                                .CP equ 1
-                                .D  equ 2
-                                .DP equ 3
-                                .E  equ 4
-                                .F  equ 5
-                                .FP equ 6
-                                .G  equ 7
-                                .GP equ 8
-                                .A  equ 9
-                                .AP equ 10
-                                .B  equ 11
+       0000                     .C  equ 0
+       0001                     .CP equ 1
+       0002                     .D  equ 2
+       0003                     .DP equ 3
+       0004                     .E  equ 4
+       0005                     .F  equ 5
+       0006                     .FP equ 6
+       0007                     .G  equ 7
+       0008                     .GP equ 8
+       0009                     .A  equ 9
+       000A                     .AP equ 10
+       000B                     .B  equ 11
                                 
 000028 8028 00               4      NOP
 000029 8029 308033803680        AtmarkTest: dw .@1, .@2, .@3
@@ -80,10 +80,10 @@
        000E                     .@3 equ %00001110   ; 3
        000F                     .All    equ (.@1 | .@2 | .@3)
                                 
-                                SF:     equ 00000H
-                                SF.RS   equ 00000H
+       0000                     SF:     equ 00000H
+       0000                     SF.RS   equ 00000H
        0005                     SF.FST  equ 00005H
        C000                     SF.MAP: equ 0C000H
                                 
-                                ABCLabel    equ $1234   ; リスティングファイル検証用
+       1234                     ABCLabel    equ $1234   ; リスティングファイル検証用
 [EOF:Test.Z80:UTF_8]

@@ -74,12 +74,13 @@ namespace AILZ80ASM.Test
         public void TestER_Conditional_Label()
         {
             var errors = Assemble("Conditional_Label.Z80");
-            Assert.AreEqual(errors.Length, 5);
+            Assert.AreEqual(errors.Length, 6);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 5, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 9, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 14, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 16, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 15, "Conditional_Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.I0001, 3, "Conditional_Label.Z80", errors);
         }
 
         [TestMethod]
@@ -97,8 +98,9 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Equ.Z80");
 
-            Assert.AreEqual(errors.Length, 1);
+            Assert.AreEqual(errors.Length, 2);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "Equ.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.I0001, 1, "Equ.Z80", errors);
         }
 
         [TestMethod]
@@ -129,16 +131,18 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Label.Z80");
 
-            Assert.AreEqual(errors.Length, 9);
+            Assert.AreEqual(errors.Length, 11);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 1, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 3, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 4, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 5, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 6, "Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.I0001, 7, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 8, "Label.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0017, 14, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0018, 11, "Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.I0001, 13, "Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0017, 14, "Label.Z80", errors);
         }
 
         [TestMethod]

@@ -2,7 +2,7 @@
 
 	NOP
 	
-MyName	equ "アセンブラ"
-Char	equ '山'
-TRUE	equ #TRUE
-FALSE	equ #FALSE
+;MyName	equ "アセンブラ"
+;Char	equ '山'
+;TRUE	equ #TRUE
+;FALSE	equ #FALSE

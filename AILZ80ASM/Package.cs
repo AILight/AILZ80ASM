@@ -54,6 +54,9 @@ namespace AILZ80ASM
 
             // データのトリムを行う
             TrimData();
+
+            // 未使用ラベルの値確定
+            BuildLabel();
         }
 
         /// <summary>
@@ -100,6 +103,14 @@ namespace AILZ80ASM
             {
                 operationItem.TrimData();
             }
+        }
+
+        /// <summary>
+        /// 未確定ラベルを確定させる
+        /// </summary>
+        private void BuildLabel()
+        {
+            AssembleLoad.BuildLabel();
         }
 
         public void SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
@@ -301,7 +312,14 @@ namespace AILZ80ASM
 
         public void SaveSYM(Stream stream)
         {
-            AssembleLoad.OutputLabels(stream);
+            using var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream);
+
+            AssembleLoad.OutputLabels(streamWriter);
+
+            streamWriter.Flush();
+            memoryStream.Position = 0;
+            memoryStream.CopyTo(stream);
         }
 
         public void SaveLST(FileInfo list)

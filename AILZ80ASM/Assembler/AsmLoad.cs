@@ -157,18 +157,16 @@ namespace AILZ80ASM.Assembler
             return asmLoad;
         }
 
-        /*
         /// <summary>
-        /// クローン後にスコープが変わったものを戻す
+        /// ラベルをビルドする（値を確定させる）
         /// </summary>
-        /// <param name="asmLoad"></param>
-        public void SetScope(AsmLoad asmLoad)
+        public void BuildLabel()
         {
-            this.GlobalLabelName = asmLoad.GlobalLabelName;
-            this.LabelName = asmLoad.LabelName;
-            this.AsmEnd = asmLoad.AsmEnd;
+            foreach (var item in Labels.Where(m => m.DataType == Label.DataTypeEnum.None))
+            {
+                item.BuildLabel();
+            }
         }
-        */
 
         public void LoadCloseValidate()
         {
@@ -425,17 +423,30 @@ namespace AILZ80ASM.Assembler
             return dataType;
         }
 
-        public void OutputLabels(Stream stream)
+        public void OutputLabels(StreamWriter streamWriter)
         {
-            using var streamWriter = new StreamWriter(stream);
+            var globalLabels = Labels.GroupBy(m => m.GlobalLabelName).Select(m => m.Key);
+            var globalLabelMode = globalLabels.Count() > 1;
 
-            foreach (var label in Labels.Where(m => !m.Invalidate))
+            foreach (var globalLabelName in globalLabels)
             {
-                streamWriter.WriteLine($"{label.Value:X4} {label.LabelName}");
+                if (globalLabelMode)
+                {
+                    streamWriter.WriteLine($"[{globalLabelName}]");
+                }
+                foreach (var label in Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.GlobalLabelName == globalLabelName))
+                {
+                    streamWriter.WriteLine($"{label.Value:X4} {label.LabelShortName}");
+                }
+                streamWriter.WriteLine();
             }
-            foreach (var label in Labels.Where(m => !m.Invalidate))
+
+            if (globalLabelMode)
             {
-                streamWriter.WriteLine($"{label.Value:X4} {label.LabelFullName}");
+                foreach (var label in Labels.Where(m => m.DataType == Label.DataTypeEnum.Value))
+                {
+                    streamWriter.WriteLine($"{label.Value:X4} {label.LabelFullName}");
+                }
             }
         }
     }

@@ -24,6 +24,9 @@ namespace AILZ80ASM.Assembler
         // タブサイズ
         public int TabSize { get; set; } = 4;
 
+        // 未使用ラベルのチェック
+        public bool CheckUnuseLabel { get; set; } = false;
+
         // ワーニングのオフになる対象一覧
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; set; }
         // 入力Encode
@@ -50,7 +53,17 @@ namespace AILZ80ASM.Assembler
             ListMode = rootCommand.GetListMode();
             OutputTrim = rootCommand.GetValue<bool>("outputTrim");
             FileDiff = rootCommand.GetValue<bool>("fileDiff");
-            DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode");
+            CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
+            DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
+            // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
+            if (!CheckUnuseLabel)
+            {
+                DisableWarningCodes = DisableWarningCodes.Concat(new[] { Error.ErrorCodeEnum.I0001 }).Distinct().ToArray();
+            }
+            else
+            {
+                DisableWarningCodes = DisableWarningCodes.Where(m => m != Error.ErrorCodeEnum.I0001).ToArray();
+            }
         }
 
         public void Validate()
