@@ -402,7 +402,17 @@ namespace AILZ80ASM.Assembler
                 return Array.Empty<string>();
             }
 
-            var fileName = Path.ChangeExtension(inputOption.Value.First().FullName, extension);
+            var inputfile = inputOption.Value.First();
+            if  (inputfile.Extension.ToUpper() == inputfile.Extension)
+            {
+                extension = extension.ToUpper();
+            }
+            else
+            {
+                extension = extension.ToLower();
+            }
+
+            var fileName = Path.ChangeExtension(inputfile.FullName, extension);
 
             return new[] { fileName };
         }
