@@ -3,12 +3,20 @@ using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace AILZ80ASM.Test
 {
     [TestClass]
     public class AIMathTest
     {
+        [TestMethod]
+        public void BoolType_Test()
+        {
+            Assert.IsTrue(AIMath.ConvertTo<bool>("#TRUE"));
+            Assert.IsFalse(AIMath.ConvertTo<bool>("#FALSE"));
+        }
+
         [TestMethod]
         public void IsNumber()
         {
@@ -159,6 +167,22 @@ namespace AILZ80ASM.Test
 
                 var character = (char)(byte)item;
                 Assert.AreEqual(AIMath.ConvertTo<byte>($"'{character}'"), (byte)item);
+            }
+        }
+
+        [TestMethod]
+        public void Calc_10()
+        {
+            foreach (var item in System.Linq.Enumerable.Range(0x20, 95))
+            {
+                var escape = "";
+                if (item == 0x22 || item == 0x27 || item == 0x5C)
+                {
+                    escape = "\\";
+                }
+
+                var character = (char)(byte)item;
+                Assert.AreEqual(AIMath.ConvertTo<byte>($"'{escape}{character}'+80H"), (byte)(item + 0x80), $"{character}:{item}");
             }
         }
 

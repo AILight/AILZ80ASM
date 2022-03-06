@@ -257,7 +257,7 @@ namespace AILZ80ASM.AILight
                 var tmpString = terms[index];
                 if (tmpString == "+" || tmpString == "-" || tmpString == "%")
                 {
-                    if (index == 0 || terms[index - 1] != ")" && Regex.Match(terms[index - 1], RegexPatternFormulaChar, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
+                    if (index == 0 || terms[index - 1] != ")" && Regex.Match(terms[index - 1], "^" + RegexPatternFormulaChar + "$", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success)
                     {
                         if (index >= terms.Count - 1)
                         {
@@ -649,12 +649,8 @@ namespace AILZ80ASM.AILight
                         }
                         else
                         {
-                            stack.Push(value switch
-                            {
-                                "\\0" => 0,
-                                "\\'" => 0x27,
-                                _ => throw new Exception()
-                            });
+                            var escapedChars = AIString.EscapeSequence(value).ToArray();
+                            stack.Push(Convert.ToInt32(escapedChars[0]));
                         }
 
                     }
@@ -680,6 +676,14 @@ namespace AILZ80ASM.AILight
                     }
                     // アウトプット・ロケーションカウンター
                     stack.Push((int)asmAddress.Value.Output);
+                }
+                else if (string.Compare(item, "#TRUE", true) == 0)
+                {
+                    stack.Push(true);
+                }
+                else if (string.Compare(item, "#FALSE", true) == 0)
+                {
+                    stack.Push(false);
                 }
                 else
                 {
