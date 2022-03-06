@@ -78,10 +78,10 @@ namespace AILZ80ASM.CommandLine
                 {
                     continue;
                 }
-                result += $"  {ApplicationName} {argument} <parameter>{Environment.NewLine}{Environment.NewLine}";
+                result += $"  {ApplicationName} {argument} <{option.ArgumentName}>{Environment.NewLine}{Environment.NewLine}";
 
                 // ショートカット
-                var shortcuts = option.Parameters.Where(m => !string.IsNullOrEmpty(m.ShortCut));
+                var shortcuts = option.Parameters?.Where(m => !string.IsNullOrEmpty(m.ShortCut)) ?? Array.Empty<Parameter>();
                 if (shortcuts.Count() > 0)
                 {
                     result += $"Shortcut Usage:{Environment.NewLine}";

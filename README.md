@@ -50,7 +50,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - --change-dir <directory>
 - -fd, --file-diff           アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 - -v, --version              バージョンを表示します。
-- -?, -h, --help <help>      ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
+- -?, -h, --help <help>      ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --output-mode
 - -??, --readme              Readme.mdを表示します。
 
 ```
