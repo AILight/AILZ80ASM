@@ -1,0 +1,24 @@
+﻿        INCLUDE "define.inc" 
+
+SP_WORK_START   equ $F000
+
+        ORG		$4000
+
+MAIN:
+        call INIT_SCREEN
+        call INIT_INTERUPT
+        call INIT_MEM
+
+        ; スタックポインターを設定
+        ld      sp, SP_WORK_START
+        jp      START_GAME
+
+        include "Screen.z80"
+        include "Interupt.z80"
+        include "Memory.z80"
+        include "Dummy1.z80"
+        include "Dummy2.z80"
+
+START_GAME:
+
+        end

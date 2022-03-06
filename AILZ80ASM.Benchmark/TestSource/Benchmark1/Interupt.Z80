@@ -1,0 +1,77 @@
+INIT_INTERUPT:
+        ; 割込みの処理
+        ld      hl, INTERRUPT_TABLE
+        ld      a, h
+        ld      i, a
+        ret
+
+        ALIGN   16
+
+INTERRUPT_TABLE:
+        dw  INTERRUPT_Dt0
+        dw  INTERRUPT_KeyIn1
+        dw  INTERRUPT_Dt0
+        dw  INTERRUPT_Timer
+        dw  INTERRUPT_Dt1
+        dw  INTERRUPT_Dt0
+        dw  INTERRUPT_Dt0
+        dw  INTERRUPT_Dt0
+        dw  INTERRUPT_Dt0
+        dw  INTERRUPT_Dt0
+        dw  INTERRUPT_KeyIn2
+        dw  INTERRUPT_GameKey
+
+WORK:
+.KeyData1       db 0    ; キーボード ASCII
+.KeyData2       db 0    ; ファンクションキー等
+.GameKeyData    db 0    ; bit7-0：[SPC] ["L"] [←] [→] [↓] [↑] [STOP] [SHIFT]
+.TimerCounter   db 0    ; タイマーカウンター
+.MyCharXY       dw 0    ; 自キャラポジション
+
+INTERRUPT_Dt0:
+INTERRUPT_Dt1:
+        ei
+        ret
+
+INTERRUPT_Timer:
+        push    af
+
+        ld	a, (WORK.TimerCounter)
+	inc	a
+	and	$03
+	ld	(WORK.TimerCounter), a
+	jr	nz, .next
+
+        ld      a, 0          ; キー読み取り指示
+        call    INTERRUPT_SUBCPU_SEND
+
+.next
+        pop     af
+        ei
+        ret
+
+INTERRUPT_SUBCPU_SEND:
+INTERRUPT_KeyIn1:
+        push    af
+        call    INTERRUPT_SUBCPU_RECV
+        ld      (WORK.KeyData1), a
+        pop     af
+        ei
+        ret
+
+INTERRUPT_SUBCPU_RECV:
+INTERRUPT_KeyIn2:
+        push    af
+        call    INTERRUPT_SUBCPU_RECV
+        ld      (WORK.KeyData2), a
+        pop     af
+        ei
+        ret
+
+INTERRUPT_GameKey:
+        push    af
+        call    INTERRUPT_SUBCPU_RECV
+        ld      (WORK.GameKeyData), a
+        pop     af
+        ei
+        ret

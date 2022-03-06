@@ -1,0 +1,23 @@
+INIT_MEM:
+
+        REPT 1000
+
+       ; メモリ設定をする
+        ld      a, IOD_RMEM_ROM34_IMEM
+        out     (IOP_RMEM_SELECT_L), a       
+        ld      a, IOD_RMEM_IMEM_IMEM
+        out     (IOP_RMEM_SELECT_H), a
+        ld      a, IOP_WMEM_IMEM
+        out     (IOP_WMEM_SELECT), a
+
+        ld      a, IOD_CARD_ROM | IOD_CARD_ROM_SET_0 | IOD_CARD_ROM_BANK_1
+        out     (IOP_CARD_ADR_6000_7FFF), a
+
+        ld      hl, $6000
+        ld      de, ADR_PROGRAM
+        ld      bc, SIZ_BANK
+        ldir
+
+        ENDM
+
+        ret

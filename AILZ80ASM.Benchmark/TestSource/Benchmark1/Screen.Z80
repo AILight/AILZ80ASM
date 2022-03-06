@@ -1,0 +1,22 @@
+INIT_SCREEN:
+
+        REPT 1000
+
+        ld      a, IOD_HDDCRTKEY_CRT_0000        ; 画面の設定
+        out     (IOP_HDDCRTKEY), a      
+
+        ld      a, IOD_HDDCRTKEY_CRT_4000        ; 画面の設定
+        out     (IOP_HDDCRTKEY), a      
+
+        ld      a, IOD_HDDCRTKEY_CRT_8000        ; 画面の設定
+        out     (IOP_HDDCRTKEY), a      
+
+        ld      a, IOD_HDDCRTKEY_CRT_C000        ; 画面の設定
+        out     (IOP_HDDCRTKEY), a      
+
+        ld      a, IOD_HDDCRTKEY_HDD_OFF | IOD_HDDCRTKEY_CRT_8000 | IOD_HDDCRTKEY_KEY_OFF 
+        out     (IOP_HDDCRTKEY), a 
+
+        ENDM
+
+        ret

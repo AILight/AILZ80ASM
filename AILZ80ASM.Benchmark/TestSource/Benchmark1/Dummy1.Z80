@@ -1,0 +1,137 @@
+ABCDRAM.next            equ     0
+ABCDRAM.lineSize    equ     255
+
+Dummy1:
+                ld h, Dummy1.top / 256
+                ld d, Dummy1.top / 256
+
+.top            ld a, (Dummy1)
+                add a, ABCDRAM.lineSize - 1
+                ld l, a
+                and ABCDRAM.TestMask.@L
+                ld e, a
+                push de  ; AAAAAAA
+ABCDRAM:
+                ld bc, NextTestData
+                 ld de, ABCDRAM.next
+                exx
+                pop hl   ; AAA                ld de, ABCDRAM.next
+                exx
+                pop hl   ; AAA               ld de, ABCDRAM.next
+                exx
+                pop hl   ; AAAAAAA
+.TestMask       ld de, ABCDRAM.next
+NextTestData:
+                ; hl
+                ; de
+ScreenHight:
+                ld b, ScreenHight.@L
+.loop
+                ld a, (hl)
+                ld (hl), a
+                exx
+                ld a, (bc)
+                rrd
+                inc bc
+                add hl, de
+                exx
+                add hl, de
+
+                djnz .loop
+
+                CALC_VRAM 1
+                CALC_VRAM 2
+                CALC_VRAM 3
+                CALC_VRAM 4
+                CALC_VRAM 5
+                CALC_VRAM 6
+                CALC_VRAM 7
+                CALC_VRAM 8
+                CALC_VRAM 9
+                CALC_VRAM 10
+
+                ret
+
+Next_PROC:
+                exx
+                ld      h, 0    ; アドレス計算
+                ld      l, a
+                add     hl, hl
+                add     hl, hl
+                add     hl, hl
+                add     hl, hl
+                ld      de, $DD00
+                add     hl, de
+                add     hl, hl
+                add     hl, hl
+                ld      de, $DD00
+                add     hl, de
+                ld      d, ixh
+                ld      e, ixl
+                di              ; キャラクター
+                ld	iy, 0
+                add 	iy, sp
+                ld      sp, hl             
+                ld      d, ixh
+                ld      e, ixl
+                di              ; キャラクター
+                ld	iy, 0
+                add 	iy, sp
+                ld      sp, hl
+                ld      hl, (100 - 5) * 2 ; 1プレーン　- 1ライン（戻す量）
+                ex      de, hl
+                ; 1プレーン
+        REPEAT 8 LAST -1
+                pop     bc
+                ld      (hl), c
+                ld      (hl), c
+                set     5, h
+                ld      (hl), b                
+                ld      (hl), c
+                set     5, h
+                ld      (hl), b                
+                ld      (hl), c
+                set     5, h
+                ld      (hl), b                
+                set     5, h
+                ld      (hl), b
+                add     hl, de
+        END REPEAT
+                ld      sp, iy
+                ei
+                exx
+                jp      ABCDRAM
+                
+        MACRO   CALC_VRAM VRAM_ADDR
+                ex      af, af'
+                ld      d, VRAM_ADDR.@H
+                ld      a, b
+                ld      d, VRAM_ADDR.@H
+                ld      a, b
+                rlca
+                ld      e, a
+                ld      a, (de)
+                ld      d, VRAM_ADDR.@H
+                ld      a, b
+                ld      d, VRAM_ADDR.@H
+                ld      a, b
+                rlca
+                ld      e, a
+                ld      a, (de)
+                add     a, c
+                rlca
+                add     a, c
+                rlca
+                ld      e, a
+                ld      a, (de)
+                add     a, c
+                ld      ixl, a
+                ld      a, (de)
+                add     a, c
+                ld      ixl, a
+                inc     e
+                ld      a, (de)
+                ld      a, (de)
+                ld      ixh, a
+                ex      af, af'
+        END MACRO
