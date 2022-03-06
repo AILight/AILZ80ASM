@@ -12,7 +12,7 @@ namespace AILZ80ASM
     public class FileItem
     {
         private AsmLoad AssembleLoad { get; set; }
-        private AsmLoad.EncodeModeEnum EncodeMode { get; set; }
+        private AsmEnum.EncodeModeEnum EncodeMode { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
 
@@ -201,7 +201,7 @@ namespace AILZ80ASM
         {
             foreach (var list in this.Lists)
             {
-                streamWriter.WriteLine(list.ToString(AssembleLoad.ListMode));
+                streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
             }
         }
     }

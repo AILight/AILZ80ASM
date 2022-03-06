@@ -17,7 +17,9 @@ namespace AILZ80ASM.CommandLine
         public Func<string[], string> OptionFunc { get; set; }
         public bool HasValue { get; set; }
         public bool Selected { get; set; }
-        public bool IsHide { get;set; }
+        public bool IsHide { get;set; }                                 // 非表示
+        public bool IsSimple { get; set; }                              // シンプルヘルプ
+        public bool IsShortCut { get; set; }                            // ショートカット
         public bool IsHelp { get; set; }                                // ヘルプコマンド
         public string DefaultValue { get; set; }
         public Parameter[] Parameters { get; set; }
@@ -69,6 +71,16 @@ namespace AILZ80ASM.CommandLine
                 }
 
                 Value = (T)(object)new DirectoryInfo(localValues.First());
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(int))
+            {
+                if (localValues.Count != 1)
+                {
+                    throw new Exception($"{Name}に、数値を指定する必要があります。");
+                }
+
+                Value = (T)(object)Convert.ToInt32(localValues[0]);
                 HasValue = true;
             }
             else if (typeof(T) == typeof(bool))

@@ -138,7 +138,7 @@ namespace AILZ80ASM.CharMaps
 
                     using (var reader = new StreamReader(stream))
                     {
-                        if (stream == default)
+                        if (reader == default)
                         {
                             throw new CharMapJsonReadException($"CharMap用のファイルが読み込めませんでした。{resourceName}");
                         }

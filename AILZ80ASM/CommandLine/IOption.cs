@@ -12,6 +12,8 @@ namespace AILZ80ASM.CommandLine
         bool Required { get; set; }
         bool IsDefineOptional { get; set; }
         bool IsHide { get; set; }
+        bool IsSimple { get; set; }
+        bool IsShortCut { get; set; }
         bool IsHelp { get; set; }
         string DefaultValue { get; set; }
         Parameter[] Parameters { get; set; }

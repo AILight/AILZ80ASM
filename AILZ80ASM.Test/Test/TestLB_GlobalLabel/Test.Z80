@@ -1,0 +1,7 @@
+﻿	org $8000
+	LD HL,NS1.LB
+	LD DE,NS2.LB
+[NS1]
+LB	equ $1234
+[NS2]
+LB	equ $5678

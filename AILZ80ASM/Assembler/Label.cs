@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Exceptions;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -35,6 +36,13 @@ namespace AILZ80ASM.Assembler
         public string LabelName { get; private set; }
         public string SubLabelName { get; private set; }
         public string LabelFullName { get; private set; }
+        public string LabelShortName => LabelLevel switch
+        {
+            LabelLevelEnum.GlobalLabel => GlobalLabelName,
+            LabelLevelEnum.Label => LabelName,
+            LabelLevelEnum.SubLabel => $"{LabelName}.{SubLabelName}",
+            _ => throw new NotSupportedException()
+        };
 
         public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
         public int Value { get; private set; }
@@ -222,6 +230,9 @@ namespace AILZ80ASM.Assembler
             }
         }
 
+        /// <summary>
+        /// ラベルの値を計算する
+        /// </summary>
         public void Calculation()
         {
             if (DataType != DataTypeEnum.None)
@@ -240,6 +251,40 @@ namespace AILZ80ASM.Assembler
             DataType = DataTypeEnum.Value;
         }
 
+        /// <summary>
+        /// ラベルをビルドする（値を確定させる）
+        /// </summary>
+        public void BuildLabel()
+        {
+            try
+            {
+                Calculation();
+                if (LineDetailExpansionItem != default && AsmLoad != default)
+                {
+                    AsmLoad.AddError(new ErrorLineItem(LineDetailExpansionItem.LineItem, Error.ErrorCodeEnum.I0001, $"{LabelShortName}"));
+                }
+            }
+            catch (Exception ex)
+            {
+                if (LineDetailExpansionItem != default && AsmLoad != default)
+                {
+                    var errorLineItem = default(ErrorLineItem);
+                    if (ex is ErrorAssembleException eae)
+                    {
+                        errorLineItem = new ErrorLineItem(LineDetailExpansionItem.LineItem, eae);
+                    }
+                    else
+                    {
+                        errorLineItem = new ErrorLineItem(LineDetailExpansionItem.LineItem, Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    AsmLoad.AddError(errorLineItem);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
 
         public void SetLineDetailExpansionItem(LineDetailExpansionItem lineDetailExpansionItem)
         {

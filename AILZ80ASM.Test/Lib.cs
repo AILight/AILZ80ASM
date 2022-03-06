@@ -11,7 +11,7 @@ namespace AILZ80ASM.Test
     {
         private const int READ_BUFFER_LENGTH = 3;
 
-        public static void AreSameBin(Stream expectedStream, Stream actualStream, AsmLoad.OutputModeEnum outputMode)
+        public static void AreSameBin(Stream expectedStream, Stream actualStream, AsmEnum.FileTypeEnum fileType)
         {
             var expectedBytes = new byte[READ_BUFFER_LENGTH];
             var actualBytes = new byte[READ_BUFFER_LENGTH];
@@ -33,7 +33,7 @@ namespace AILZ80ASM.Test
                     {
                         actual = actualBytes[index];
                     }
-                    Assert.AreEqual(expected, actual, $"{outputMode} Address:{address:X8} expect:{expected:X2} actual:{actual:X2}");
+                    Assert.AreEqual(expected, actual, $"{fileType} Address:{address:X8} expect:{expected:X2} actual:{actual:X2}");
                     address++;
                     index++;
                 }
@@ -49,7 +49,7 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static void AreSameLst(Stream expectedStream, Stream actualStream, AsmLoad.OutputModeEnum outputMode)
+        public static void AreSameLst(Stream expectedStream, Stream actualStream, AsmEnum.FileTypeEnum fileType)
         {
             using var expectedStreamReader = new StreamReader(expectedStream);
             using var actualStreamReader = new StreamReader(actualStream);
@@ -60,7 +60,7 @@ namespace AILZ80ASM.Test
             {
                 if (line > 1)
                 {
-                    Assert.AreEqual(expected, actual, $"{outputMode} Line:{line} expect:{expected} actual:{actual}");
+                    Assert.AreEqual(expected, actual, $"{fileType} Line:{line} expect:{expected} actual:{actual}");
                 }
 
                 expected = expectedStreamReader.ReadLine();
@@ -74,10 +74,18 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static ErrorLineItem[] Assemble(FileInfo[] Files, Dictionary<MemoryStream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo>> outputFiles, bool dataTrim, bool testError)
+        public static ErrorLineItem[] Assemble(FileInfo[] files, Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>> outputFiles, bool outputTrim, bool testError)
         {
-            var package = new Package(Files, AsmLoad.EncodeModeEnum.UTF_8, AsmLoad.ListModeEnum.Full, dataTrim, default(Error.ErrorCodeEnum[]), AsmISA.Z80);
+            var asmOption = new AsmOption();
+            asmOption.InputFiles = new Dictionary<AsmEnum.FileTypeEnum, FileInfo[]>()
+            {
+                [AsmEnum.FileTypeEnum.Z80] = files,
+            };
+            asmOption.InputEncodeMode = AsmEnum.EncodeModeEnum.UTF_8;
+            asmOption.ListMode = AsmEnum.ListFormatEnum.Full;
+            asmOption.OutputTrim = outputTrim;
 
+            var package = new Package(asmOption, AsmISA.Z80);
             package.Assemble();
 
             if (package.Errors.Length == 0)
@@ -96,14 +104,14 @@ namespace AILZ80ASM.Test
         }
 
 
-        public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
             return Assemble_AreSame(inputFiles, outputFiles, false);
         }
 
-        public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles, bool dataTrim)
+        public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles, bool dataTrim)
         {
-            var memoryStreamFiles = new Dictionary<MemoryStream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo>>();
+            var memoryStreamFiles = new Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>>();
             try
             {
                 // テスト項目の積み込み
@@ -125,13 +133,13 @@ namespace AILZ80ASM.Test
                     file.Key.Position = 0;
                     switch (AsmLoad.GetFileType(file.Value.Key))
                     {
-                        case AsmLoad.OutputModeFileTypeEnum.Binary:
+                        case AsmEnum.FileDataTypeEnum.Binary:
                             using (var outputStream = file.Value.Value.OpenRead())
                             {
                                 Lib.AreSameBin(outputStream, file.Key, file.Value.Key);
                             }
                             break;
-                        case AsmLoad.OutputModeFileTypeEnum.Text:
+                        case AsmEnum.FileDataTypeEnum.Text:
                             using (var outputStream = file.Value.Value.OpenRead())
                             {
                                 Lib.AreSameLst(outputStream, file.Key, file.Value.Key);
@@ -162,7 +170,7 @@ namespace AILZ80ASM.Test
         {
             var targetDirectoryName = Path.Combine(".", "Test", directoryName);
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Test.Z80")) };
-            var outputFiles = Enum.GetValues<AsmLoad.OutputModeEnum>()
+            var outputFiles = Enum.GetValues<AsmEnum.FileTypeEnum>().Where(m => m != AsmEnum.FileTypeEnum.Z80)
                                   .ToDictionary(m => m, n => new FileInfo(Path.Combine(targetDirectoryName, $"Test.{n}")));
 
             return Lib.Assemble_AreSame(inputFiles, outputFiles, dataTrim);

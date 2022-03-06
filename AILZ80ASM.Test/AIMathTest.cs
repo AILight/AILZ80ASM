@@ -3,12 +3,20 @@ using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace AILZ80ASM.Test
 {
     [TestClass]
     public class AIMathTest
     {
+        [TestMethod]
+        public void BoolType_Test()
+        {
+            Assert.IsTrue(AIMath.ConvertTo<bool>("#TRUE"));
+            Assert.IsFalse(AIMath.ConvertTo<bool>("#FALSE"));
+        }
+
         [TestMethod]
         public void IsNumber()
         {
@@ -131,7 +139,7 @@ namespace AILZ80ASM.Test
             asmAddress.Program = 0x8000;
             asmAddress.Output = 0x8000;
 
-            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
             asmLoad.AddLabel(new Label("[NS_Main]", "", asmLoad));
             var label = new Label("LB", "0xAA01", asmLoad);
 
@@ -163,6 +171,22 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Calc_10()
+        {
+            foreach (var item in System.Linq.Enumerable.Range(0x20, 95))
+            {
+                var escape = "";
+                if (item == 0x22 || item == 0x27 || item == 0x5C)
+                {
+                    escape = "\\";
+                }
+
+                var character = (char)(byte)item;
+                Assert.AreEqual(AIMath.ConvertTo<byte>($"'{escape}{character}'+80H"), (byte)(item + 0x80), $"{character}:{item}");
+            }
+        }
+
+        [TestMethod]
         public void Calc_UInt32()
         {
             Assert.AreEqual(AIMath.ConvertTo<UInt32>("1+2*((2+1))+6/2"), (UInt32)(1 + 2 * ((2 + 1)) + 6 / 2));
@@ -186,7 +210,7 @@ namespace AILZ80ASM.Test
             asmAddress.Program = 0x8000;
             asmAddress.Output = 0x8100;
 
-            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
             asmLoad.AddLabel(new Label("[NS_Main]", "", asmLoad));
             {
                 var label = new Label("LB", "0xAA02", asmLoad);
@@ -265,7 +289,7 @@ namespace AILZ80ASM.Test
                 asmAddress.Program = 0x8000;
                 asmAddress.Output = 0x8000;
 
-                var asmLoad = new AsmLoad(new InstructionSet.Z80());
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.AddLabel(new Label("[NS_Main]", "", asmLoad));
 
                 var label = new Label("LB", "0xAA02", asmLoad);

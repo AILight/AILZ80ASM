@@ -16,29 +16,24 @@ namespace AILZ80ASM
         public ErrorLineItem[] Warnings => AssembleLoad.AssembleWarnings;
         public ErrorLineItem[] Information => AssembleLoad.AssembleInformation;
 
-        public Package(FileInfo[] files, AsmLoad.EncodeModeEnum encodeMode, AsmLoad.ListModeEnum listMode, bool outputTrim, Error.ErrorCodeEnum[] disableWarningCodes, AsmISA asmISA)
+        public Package(AsmOption asmOption, AsmISA asmISA)
         {
             switch (asmISA)
             {
                 case AsmISA.Z80:
-                    AssembleLoad = new AsmLoad(new InstructionSet.Z80());
+                    AssembleLoad = new AsmLoad(asmOption, new InstructionSet.Z80());
                     break;
                 default:
                     throw new NotImplementedException();
             }
             var label = new Label("[NS_Main]", AssembleLoad);
             AssembleLoad.AddLabel(label);
-            AssembleLoad.InputEncodeMode = encodeMode;
-            AssembleLoad.ListMode = listMode;
-
-            AssembleLoad.OutputTrim = outputTrim;
-            AssembleLoad.DisableWarningCodes = disableWarningCodes;
-            AssembleLoad.CharMap = "@SJIS";
+            AssembleLoad.DefaultCharMap = "@SJIS";
 
             // CharMapの初期化;
-            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.CharMap, AssembleLoad);
+            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.DefaultCharMap, AssembleLoad);
 
-            foreach (var fileInfo in files)
+            foreach (var fileInfo in asmOption.InputFiles[AsmEnum.FileTypeEnum.Z80])
             {
                 FileItems.Add(new FileItem(fileInfo, AssembleLoad));
             }
@@ -59,6 +54,9 @@ namespace AILZ80ASM
 
             // データのトリムを行う
             TrimData();
+
+            // 未使用ラベルの値確定
+            BuildLabel();
         }
 
         /// <summary>
@@ -107,7 +105,15 @@ namespace AILZ80ASM
             }
         }
 
-        public void SaveOutput(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        /// <summary>
+        /// 未確定ラベルを確定させる
+        /// </summary>
+        private void BuildLabel()
+        {
+            AssembleLoad.BuildLabel();
+        }
+
+        public void SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
             foreach (var item in outputFiles)
             {
@@ -121,23 +127,23 @@ namespace AILZ80ASM
 
         }
 
-        public void SaveOutput(Stream stream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        public void SaveOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
             switch (outputFile.Key)
             {
-                case AsmLoad.OutputModeEnum.BIN:
+                case AsmEnum.FileTypeEnum.BIN:
                     SaveBin(stream);
                     break;
-                case AsmLoad.OutputModeEnum.T88:
+                case AsmEnum.FileTypeEnum.T88:
                     SaveT88(stream, outputFile.Value.Name);
                     break;
-                case AsmLoad.OutputModeEnum.CMT:
+                case AsmEnum.FileTypeEnum.CMT:
                     SaveCMT(stream);
                     break;
-                case AsmLoad.OutputModeEnum.LST:
+                case AsmEnum.FileTypeEnum.LST:
                     SaveLST(stream);
                     break;
-                case AsmLoad.OutputModeEnum.SYM:
+                case AsmEnum.FileTypeEnum.SYM:
                     SaveSYM(stream);
                     break;
                 default:
@@ -145,7 +151,7 @@ namespace AILZ80ASM
             }
         }
 
-        public void DiffOutput(Dictionary<AsmLoad.OutputModeEnum, FileInfo> outputFiles)
+        public void DiffOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
             foreach (var item in outputFiles)
             {
@@ -163,7 +169,7 @@ namespace AILZ80ASM
             }
         }
 
-        public void DiffOutput(Stream stream, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        public void DiffOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
             using var assembledStream = new MemoryStream();
             using var originalStream = new MemoryStream();
@@ -173,13 +179,13 @@ namespace AILZ80ASM
             DiffOutput(originalStream.ToArray(), assembledStream.ToArray(), outputFile);
         }
 
-        public void DiffOutput(byte[] original, byte[] assembled, KeyValuePair<AsmLoad.OutputModeEnum, FileInfo> outputFile)
+        public void DiffOutput(byte[] original, byte[] assembled, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
             var resultString = "一致";
 
             Trace.Write($"{outputFile.Value.Name}: ");
 
-            if (outputFile.Key == AsmLoad.OutputModeEnum.LST)
+            if (outputFile.Key == AsmEnum.FileTypeEnum.LST)
             {
                 // テキスト比較
                 var originals = AILight.AIEncode.GetString(original).Replace("\r","").Split('\n');
@@ -306,7 +312,17 @@ namespace AILZ80ASM
 
         public void SaveSYM(Stream stream)
         {
-            AssembleLoad.OutputLabels(stream);
+            using var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
+
+            var title = $"{ProductInfo.ProductLongName}, SYM";
+            streamWriter.WriteLine(title);
+
+            AssembleLoad.OutputLabels(streamWriter);
+
+            streamWriter.Flush();
+            memoryStream.Position = 0;
+            memoryStream.CopyTo(stream);
         }
 
         public void SaveLST(FileInfo list)
@@ -321,9 +337,10 @@ namespace AILZ80ASM
         public void SaveLST(Stream stream)
         {
             using var memoryStream = new MemoryStream();
-            using var streamWriter = new StreamWriter(memoryStream);
+            using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            streamWriter.WriteLine(AsmList.CreateSource($"{ProductInfo.ProductLongName}").ToString(AssembleLoad.ListMode));
+            var title = $"{ProductInfo.ProductLongName}, LST:{AssembleLoad.AssembleOption.ListMode}:{AssembleLoad.AssembleOption.TabSize}";
+            streamWriter.WriteLine(AsmList.CreateSource(title).ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
 
             foreach (var item in FileItems)
             {

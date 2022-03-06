@@ -49,7 +49,7 @@ namespace AILZ80ASM
             operationItem ??= OperationItemDataSpace.Create(lineDetailExpansionItemOperation, address, asmLoad);    // DataSpace
             operationItem ??= OperationItemSystem.Create(lineDetailExpansionItemOperation, address, asmLoad);       // System
 
-            if (asmLoad.OutputTrim && 
+            if (asmLoad.AssembleOption.OutputTrim && 
                 operationItem is IOperationItemDefaultClearable defaultClearble && defaultClearble.IsDefaultValueClear)
             {
                 asmLoad.AddTrimOperationItem(operationItem);
