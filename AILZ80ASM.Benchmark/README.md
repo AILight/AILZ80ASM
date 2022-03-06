@@ -25,7 +25,7 @@ Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical c
 
 |     Method |    Mean |   Error |  StdDev |
 |----------- |--------:|--------:|--------:|
-| Benchmark1 | 10.08 s | 0.114 s | 0.095 s |
+| Benchmark1 | 10.33 s | 0.197 s | 0.194 s |
 ```
 
 ## 項目の説明
