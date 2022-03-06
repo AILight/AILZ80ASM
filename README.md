@@ -11,9 +11,9 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 - ご利用は自己責任でお願いします。利用により損害等が発生したとき、作者は責任をおいかねます。
 
 ##### 連絡方法
-- [不具合:GitHub Issues](https://github.com/AILight/AILZ80ASM/issues)
-- [質問、提案:GitHub Discussions](https://github.com/AILight/AILZ80ASM/discussions)
-- [上記内容+お気軽に:Twitter @AILight](https://twitter.com/AILight)
+- [不具合: GitHub Issues](https://github.com/AILight/AILZ80ASM/issues)
+- [質問、提案: GitHub Discussions](https://github.com/AILight/AILZ80ASM/discussions)
+- [上記内容+お気軽に: Twitter @AILight](https://twitter.com/AILight)
 
 ## 入手方法 
 - 本ソースコードを、Visual Studio 2022でビルドする。
@@ -24,7 +24,7 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 
 ## パフォーマンス
 - アセンブル時間
-	- 処理時間:  10.08 sec
+	- 処理時間:  10.33 sec
 	- 出力結果: 47,735 bytes
 - [ベンチマーク・プロジェクト](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark)
 
