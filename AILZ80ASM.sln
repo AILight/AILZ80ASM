@@ -12,7 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AILZ80ASM.Tools", "AILZ80ASM.Tools\AILZ80ASM.Tools.csproj", "{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AILZ80ASM.Tools", "AILZ80ASM.Tools\AILZ80ASM.Tools.csproj", "{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AILZ80ASM.Benchmark", "AILZ80ASM.Benchmark\AILZ80ASM.Benchmark.csproj", "{C2C66BFF-F793-4C92-9261-089A11C1B551}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5D31A1F-8F0C-40A3-BD0E-A358CB239AD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2C66BFF-F793-4C92-9261-089A11C1B551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2C66BFF-F793-4C92-9261-089A11C1B551}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2C66BFF-F793-4C92-9261-089A11C1B551}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2C66BFF-F793-4C92-9261-089A11C1B551}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
