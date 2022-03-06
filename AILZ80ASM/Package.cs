@@ -313,7 +313,10 @@ namespace AILZ80ASM
         public void SaveSYM(Stream stream)
         {
             using var memoryStream = new MemoryStream();
-            using var streamWriter = new StreamWriter(memoryStream);
+            using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
+
+            var title = $"{ProductInfo.ProductLongName}, SYM";
+            streamWriter.WriteLine(title);
 
             AssembleLoad.OutputLabels(streamWriter);
 
@@ -334,9 +337,10 @@ namespace AILZ80ASM
         public void SaveLST(Stream stream)
         {
             using var memoryStream = new MemoryStream();
-            using var streamWriter = new StreamWriter(memoryStream);
+            using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            streamWriter.WriteLine(AsmList.CreateSource($"{ProductInfo.ProductLongName}").ToString(AssembleLoad.AssembleOption.ListMode));
+            var title = $"{ProductInfo.ProductLongName}, LST:{AssembleLoad.AssembleOption.ListMode}:{AssembleLoad.AssembleOption.TabSize}";
+            streamWriter.WriteLine(AsmList.CreateSource(title).ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
 
             foreach (var item in FileItems)
             {

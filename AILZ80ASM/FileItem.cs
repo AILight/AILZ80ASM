@@ -201,7 +201,7 @@ namespace AILZ80ASM
         {
             foreach (var list in this.Lists)
             {
-                streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode));
+                streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
             }
         }
     }

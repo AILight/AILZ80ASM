@@ -17,8 +17,8 @@ namespace AILZ80ASM.CommandLine
             get
             {
                 var result = default(string);
-                result += $"{ApplicationName}:\n";
-                result += $"  {Description}\n";
+                result += $"{ApplicationName}:{Environment.NewLine}";
+                result += $"  {Description}{Environment.NewLine}";
 
                 return result;
             }
@@ -36,12 +36,12 @@ namespace AILZ80ASM.CommandLine
         public string CreateHelpMessage(bool simpleMessage)
         {
             var result = default(string);
-            result += $"{HelpTitleMessage}\n";
-            result += $"Usage:\n";
-            result += $"  {ApplicationName} [options]\n\n";
+            result += $"{HelpTitleMessage}{Environment.NewLine}";
+            result += $"Usage:{Environment.NewLine}";
+            result += $"  {ApplicationName} [options]{Environment.NewLine}{Environment.NewLine}";
 
             // オプション
-            result += $"Options:\n";
+            result += $"Options:{Environment.NewLine}";
             foreach (var item in Options.Where(m => !m.IsHide && !m.IsShortCut && (!simpleMessage || m.IsSimple)))
             {
                 result += OptionToString(item);
@@ -51,8 +51,8 @@ namespace AILZ80ASM.CommandLine
             var options = Options.Where(m => !m.IsHide && m.IsShortCut && (!simpleMessage || m.IsSimple));
             if (options.Any())
             {
-                result += $"\n";
-                result += $"ShortCut Options:\n";
+                result += $"{Environment.NewLine}";
+                result += $"ShortCut Options:{Environment.NewLine}";
                 foreach (var item in options)
                 {
                     result += OptionToString(item);
@@ -69,8 +69,8 @@ namespace AILZ80ASM.CommandLine
             }
 
             var result = default(string);
-            result += $"{HelpTitleMessage}\n";
-            result += $"Usage:\n";
+            result += $"{HelpTitleMessage}{Environment.NewLine}";
+            result += $"Usage:{Environment.NewLine}";
             foreach (var argument in arguments)
             {
                 var option = this.Options.Where(m => m.Aliases.Contains(argument)).FirstOrDefault();
@@ -78,33 +78,33 @@ namespace AILZ80ASM.CommandLine
                 {
                     continue;
                 }
-                result += $"  {ApplicationName} {argument} <parameter>\n\n";
+                result += $"  {ApplicationName} {argument} <parameter>{Environment.NewLine}{Environment.NewLine}";
 
                 // ショートカット
                 var shortcuts = option.Parameters.Where(m => !string.IsNullOrEmpty(m.ShortCut));
                 if (shortcuts.Count() > 0)
                 {
-                    result += $"Shortcut Usage:\n";
+                    result += $"Shortcut Usage:{Environment.NewLine}";
                     result += $"  {ApplicationName} ";
                     result += string.Join(" ", shortcuts.Select(m => m.ShortCut));
-                    result += $"\n\n";
+                    result += $"{Environment.NewLine}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrEmpty(option.Description))
                 {
-                    result += $"Description:\n";
-                    result += $"  {option.Description}\n\n";
+                    result += $"Description:{Environment.NewLine}";
+                    result += $"  {option.Description}{Environment.NewLine}{Environment.NewLine}";
                 }
 
                 if (!string.IsNullOrEmpty(option.DefaultValue))
                 {
-                    result += $"Default:\n";
-                    result += $"  {option.DefaultValue}\n\n";
+                    result += $"Default:{Environment.NewLine}";
+                    result += $"  {option.DefaultValue}{Environment.NewLine}{Environment.NewLine}";
                 }
 
                 if (option.Parameters != default)
                 {
-                    result += $"Parameters:\n";
+                    result += $"Parameters:{Environment.NewLine}";
                     var maxLength = option.Parameters.Select(m => m.Name.Length).Max();
                     if (maxLength < 5)
                     {
@@ -112,9 +112,9 @@ namespace AILZ80ASM.CommandLine
                     }
                     foreach (var parameter in option.Parameters)
                     {
-                        result += $"  {parameter.Name}".PadRight(maxLength + 3) + $"{parameter.Description}\n";
+                        result += $"  {parameter.Name}".PadRight(maxLength + 3) + $"{parameter.Description}{Environment.NewLine}";
                     }
-                    result += $"\n";
+                    result += $"{Environment.NewLine}";
 
                 }
 
@@ -137,6 +137,18 @@ namespace AILZ80ASM.CommandLine
             if (inputOption.Required && !string.IsNullOrEmpty(inputOption.DefaultValue))
             {
                 throw new Exception("RequiredがTrueですが、DefaultValueが設定されています。");
+            }
+
+            // 既に登録済みの名前だとエラー
+            if (Options.Any(m => m.Name == inputOption.Name))
+            {
+                throw new Exception($"登録済みのオプションです。Name:{inputOption.Name}");
+            }
+
+            // 起動オプション名の重複チェック
+            if (Options.Any(m => m.Aliases.Any(n => inputOption.Aliases.Contains(n))))
+            {
+                throw new Exception($"登録済みのエイリアスです。Alias:{string.Join(",", inputOption.Aliases)}");
             }
 
             Options.Add(inputOption);
@@ -205,7 +217,7 @@ namespace AILZ80ASM.CommandLine
             }
             catch (Exception ex)
             {
-                this.ParseMessage = $"{ex.Message}\n\n{CreateHelpMessage(true)}";
+                this.ParseMessage = $"{ex.Message}{Environment.NewLine}{Environment.NewLine}{CreateHelpMessage(true)}";
                 return false;
             }
 
@@ -397,10 +409,11 @@ namespace AILZ80ASM.CommandLine
                     tmpDescription += $" デフォルト:{option.DefaultValue}";
                 }
 
-                result += $"  {tmpComand}{tmpDescription}\n";
+                result += $"  {tmpComand}{tmpDescription}{Environment.NewLine}";
             }
 
             return result;
         }
+
     }
 }

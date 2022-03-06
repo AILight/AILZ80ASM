@@ -1,4 +1,5 @@
-﻿using AILZ80ASM.Assembler;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
 using AILZ80ASM.CommandLine;
 using System;
 using System.Collections.Generic;
@@ -113,13 +114,25 @@ namespace AILZ80ASM
             var assembleResult = false;
             try
             {
+                // 入力ファイルのエンコードだけ調査する
+                if (asmOption.InputEncodeMode == AsmEnum.EncodeModeEnum.AUTO &&
+                    asmOption.OutputEncodeMode == AsmEnum.EncodeModeEnum.AUTO)
+                {
+                    try
+                    {
+                        asmOption.CheckEncodeMode();
+                    }
+                    catch { }
+                }
+
                 // Traceの書き出し先を設定
                 if (asmOption.OutputFiles.ContainsKey(AsmEnum.FileTypeEnum.ERR))
                 {
                     var traceFile = asmOption.OutputFiles[AsmEnum.FileTypeEnum.ERR];
 
                     traceFile.Delete();
-                    Trace.Listeners.Add(new TextWriterTraceListener(traceFile.FullName, "error"));
+                    var streamWriter = new StreamWriter(traceFile.FullName, true, AsmLoad.GetEncoding(asmOption.DecidedOutputEncodeMode));
+                    Trace.Listeners.Add(new TextWriterTraceListener(streamWriter, "error"));
                     Trace.AutoFlush = true;
                 }
 

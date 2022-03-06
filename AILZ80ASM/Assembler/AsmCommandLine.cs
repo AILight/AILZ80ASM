@@ -40,6 +40,19 @@ namespace AILZ80ASM.Assembler
                 IsHide = true,
             });
 
+            rootCommand.AddOption(new Option<string>()
+            {
+                Name = "inputEncode",
+                ArgumentName = "mode",
+                Aliases = new[] { "-ie", "--input-encode" },
+                Description = "入力ファイルのエンコードを選択します。",
+                DefaultValue = "auto",
+                Parameters = new[] { new Parameter { Name = "auto", Description = "自動判断します。不明な場合はUTF-8で処理します。" },
+                                     new Parameter { Name = "utf-8", Description = "入力ファイルをUTF-8で開きます。" },
+                                     new Parameter { Name = "shift_jis", Description = "入力ファイルをSHIFT_JISで開きます" },},
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<FileInfo>()
             {
                 Name = "output",
@@ -67,6 +80,19 @@ namespace AILZ80ASM.Assembler
                                         new Parameter { Name = "err", ShortCut = "-err", Description = "エラーファイルを出力します。" },
                                         //new Parameter { Name = "dbg", ShortCut = "-dbg", Description = "デバッグファイルを出力します。" },
                                     },
+                Required = false
+            });
+
+            rootCommand.AddOption(new Option<string>()
+            {
+                Name = "outputEncode",
+                ArgumentName = "mode",
+                Aliases = new[] { "-oe", "--output-encode" },
+                Description = "出力ファイルのエンコードを選択します。",
+                DefaultValue = "auto",
+                Parameters = new[] { new Parameter { Name = "auto", Description = "自動判断します。不明な場合はUTF-8で処理します。" },
+                                     new Parameter { Name = "utf-8", Description = "入力ファイルをUTF-8で開きます。" },
+                                     new Parameter { Name = "shift_jis", Description = "入力ファイルをSHIFT_JISで開きます" },},
                 Required = false
             });
 
@@ -165,19 +191,6 @@ namespace AILZ80ASM.Assembler
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".dbg"); }
             });
             */
-
-            rootCommand.AddOption(new Option<string>()
-            {
-                Name = "encodeMode",
-                ArgumentName = "mode",
-                Aliases = new[] { "-en", "--encode" },
-                Description = "ファイルのエンコードを選択します。",
-                DefaultValue = "auto",
-                Parameters = new[] { new Parameter { Name = "auto", Description = "自動判断します。不明な場合はUTF-8で処理します。" },
-                                     new Parameter { Name = "utf-8", Description = "入力ファイルをUTF-8で開きます。" },
-                                     new Parameter { Name = "shift_jis", Description = "入力ファイルをSHIFT_JISで開きます" },},
-                Required = false
-            });
 
             rootCommand.AddOption(new Option<string>()
             {
@@ -339,11 +352,23 @@ namespace AILZ80ASM.Assembler
             return result;
         }
 
-        public static AsmEnum.EncodeModeEnum GetEncodeMode(this RootCommand rootCommand)
+        public static AsmEnum.EncodeModeEnum GetInputEncodeMode(this RootCommand rootCommand)
         {
-            var outputMode = rootCommand.GetValue<string>("encodeMode");
+            var outputMode = rootCommand.GetValue<string>("inputEncode");
 
-            var encodeMode = outputMode switch
+            return GetEncodeMode(outputMode);
+        }
+
+        public static AsmEnum.EncodeModeEnum GetOutputEncodeMode(this RootCommand rootCommand)
+        {
+            var outputMode = rootCommand.GetValue<string>("outputEncode");
+
+            return GetEncodeMode(outputMode);
+        }
+
+        private static AsmEnum.EncodeModeEnum GetEncodeMode(string target)
+        {
+            var encodeMode = target switch
             {
                 "auto" => AsmEnum.EncodeModeEnum.AUTO,
                 "utf-8" => AsmEnum.EncodeModeEnum.UTF_8,
@@ -369,6 +394,13 @@ namespace AILZ80ASM.Assembler
             return encodeMode;
         }
 
+        public static int GetTabSize(this RootCommand rootCommand)
+        {
+            var tabSize = rootCommand.GetValue<int>("tabSize");
+
+            return tabSize;
+        }
+
         private static string[] GetDefaulFilenameForOutput(IOption[] options)
         {
             var inputOption = (Option<FileInfo[]>)options.Where(m => m.Name == "input").FirstOrDefault();
@@ -390,7 +422,9 @@ namespace AILZ80ASM.Assembler
                 return Array.Empty<string>();
             }
 
-            var fileName = Path.ChangeExtension(inputOption.Value.First().FullName, $".{outputModeOption.Value}");
+            var inputFile = inputOption.Value.First();
+            var extension = $".{outputModeOption.Value}";
+            var fileName = GetChangeExtension(inputFile, extension);
 
             return new[] { fileName };
         }
@@ -414,8 +448,15 @@ namespace AILZ80ASM.Assembler
                 return Array.Empty<string>();
             }
 
-            var inputfile = inputOption.Value.First();
-            if  (inputfile.Extension.ToUpper() == inputfile.Extension)
+            var inputFile = inputOption.Value.First();
+            var fileName = GetChangeExtension(inputFile, extension);
+
+            return new[] { fileName };
+        }
+
+        private static string GetChangeExtension(FileInfo fileInfo, string extension)
+        {
+            if (fileInfo.Extension.ToUpper() == fileInfo.Extension)
             {
                 extension = extension.ToUpper();
             }
@@ -424,9 +465,9 @@ namespace AILZ80ASM.Assembler
                 extension = extension.ToLower();
             }
 
-            var fileName = Path.ChangeExtension(inputfile.FullName, extension);
+            var fileName = Path.ChangeExtension(fileInfo.FullName, extension);
 
-            return new[] { fileName };
+            return fileName;
         }
 
         /// <summary>
@@ -465,7 +506,7 @@ namespace AILZ80ASM.Assembler
                     readme = Regex.Replace(readme, "^- ", " ・ ", RegexOptions.Multiline);
                     readme = Regex.Replace(readme, "^ - ", " ・ ", RegexOptions.Multiline);
                     readme = Regex.Replace(readme, "^\t- ", " 　 → ", RegexOptions.Multiline);
-                    readme = Regex.Replace(readme, "^```", $"\n{new String('-', 80)}\n", RegexOptions.Multiline);
+                    readme = Regex.Replace(readme, "^```", $"{Environment.NewLine}{new String('-', 80)}{Environment.NewLine}", RegexOptions.Multiline);
 
                     return readme;
                 }

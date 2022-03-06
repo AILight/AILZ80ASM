@@ -101,17 +101,17 @@ namespace AILZ80ASM.Assembler
 
         public override string ToString()
         {
-            return ToString(AsmEnum.ListFormatEnum.Full);
+            return ToString(AsmEnum.ListFormatEnum.Full, 4);
         }
 
-        public string ToString(AsmEnum.ListFormatEnum listFormat)
+        public string ToString(AsmEnum.ListFormatEnum listFormat, int tabSize)
         {
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
             var address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
             var binary = Bin != default ? string.Concat(Bin.Select(m => $"{m:X2}")) : "";
             var codeType = "";
             var status = this.Status;
-            var source = GetReplaseTab(this.Source, 4);
+            var source = GetReplaseTab(this.Source, tabSize);
             if (this.Bin != default && this.Bin.Length > 16)
             {
                 var startBin = this.Bin[0];

@@ -10,6 +10,11 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 - 現在、ベータ版です。不具合が残っている可能性がありますので、ご注意ください。
 - ご利用は自己責任でお願いします。利用により損害等が発生したとき、作者は責任をおいかねます。
 
+##### 連絡方法
+- [不具合:GitHub Issues](https://github.com/AILight/AILZ80ASM/issues)
+- [質問、提案:GitHub Discussions](https://github.com/AILight/AILZ80ASM/discussions)
+- [上記内容+お気軽に:Twitter @AILight](https://twitter.com/AILight)
+
 ## 入手方法 
 - 本ソースコードを、Visual Studio 2022でビルドする。
 - 実行形式をダウンロードして利用する。 [ダウンロード](https://github.com/AILight/AILZ80ASM/releases)
@@ -27,39 +32,43 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ##### 入力ファイル形式
 - UTF-8、SHIFT_JIS
 - ファイルの形式は自動的に判断されます。
-- 誤認識する場合には、コマンドラインオプション(--encode)をお使いください。
+- 誤認識する場合には、コマンドラインオプション(--input-encode)をお使いください。
 
 ## コマンドラインオプション
-- -i, --input <files>          アセンブリ対象のファイルをスペース区切りで指定します。
-- -en, --encode <mode>         ファイルのエンコードを選択します。（UTF-8、SHIFT_JIS）
-- -o, --output <file>          出力ファイルを指定します。
-- -om, --output-mode <outMode> 出力ファイルのモードを選択します。（デフォルト：BIN、T88、CMT）
-- -s, --symbol <symbol>        シンボルファイルを指定します。
-- -l, --list <list>            リストファイルを指定します。
-- -lm,--list-mode <mode>       リストの出力形式を指定します。（デフォルト：full、simple、middle）
-- -e, --error <file>           アセンブル結果を出力します。
-- -t, --trim                   DSで確保したメモリが、出力データの最後にある場合にトリムされます。
-- -dw,                         Warning、Informationをオフにするコードをスペース区切りで指定します。
+- -i, --input <files>        アセンブリ対象のファイルをスペース区切りで指定します。(オプション名の省略が可能）
+- -ie, --input-encode <mode> 入力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
+- -o, --output <file>        出力ファイルを指定します。
+- -om, --output-mode <mode>  出力ファイルのモードを選択します。 [bin, t88, cmt, sym, lst, err] デフォルト:bin
+- -oe, --output-encode <mode>出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
+- -lm, --list-mode <mode>    リストの出力形式を選択します。 [simple, middle, full] デフォルト:full
+- -ts, --tab-size <size>     TABのサイズを指定します。 デフォルト:4
+- -ot, --output-trim         DSで確保したメモリが、出力データの最後にある場合にトリムされます。
+- -dw,                       Warning、Informationをオフにするコードをスペース区切りで指定します。
 - --disable-warning <codes>
-- -cd,                         アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
+- -ul, --unused-label        未使用ラベルを確認します。
+- -cd,                       アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
 - --change-dir <directory>
-- -df, --diff                  アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
-- -v, --version                バージョンを表示します。
-- -?, -h, --help <help>        ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
+- -fd, --file-diff           アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
+- -v, --version              バージョンを表示します。
+- -?, -h, --help <help>      ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
+- -??, --readme              Readme.mdを表示します。
 
 ```
 ■ sample.z80をアセンブル、出力はBIN形式
 > AILZ80ASM sample.z80
 
 ■ sample.z80をアセンブル、出力はBIN形式、ログファイルを出力
-> AILZ80ASM sample.z80 -e
+> AILZ80ASM sample.z80 -bin -err
+
+■ sample.z80をアセンブル、出力はBIN形式、LST形式、SYM形式、ログファイルを出力
+> AILZ80ASM sample.z80 -bin -lst -sym -err
 
 ■ sample.z80をアセンブル、出力はCMT形式
 > AILZ80ASM sample.z80 -cmt
 > AILZ80ASM sample.z80 -om cmt
 
-■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力（形式：シンプル）、DSをTrim
-> AILZ80ASM sample.z80 -bin -cmt -l -t -lm simple
+■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力（形式：シンプル、タブサイズ8）、DSをTrim
+> AILZ80ASM sample.z80 -bin -cmt -lst -ot -lm simple -ts 8
 
 ■ sample.z80をアセンブル、出力はBIN形式、ファイル名は、output.bin
 > AILZ80ASM sample.z80 -bin output.bin
@@ -84,8 +93,8 @@ EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
 ```
 {
   "default-options": [
-    "-e",
-    "-t"
+    "-err",
+    "-ot"
   ],
   "disable-warnings": [
     "W0001",

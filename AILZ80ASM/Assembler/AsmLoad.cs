@@ -332,24 +332,12 @@ namespace AILZ80ASM.Assembler
             TirmOperationItems.Clear();
         }
 
-
         public AsmEnum.EncodeModeEnum GetEncodMode(FileInfo fileInfo)
         {
             var encodeMode =　AssembleOption.InputEncodeMode;
             if (encodeMode == AsmEnum.EncodeModeEnum.AUTO)
             {
-                using var readStream = fileInfo.OpenRead();
-                using var memoryStream = new MemoryStream();
-                readStream.CopyTo(memoryStream);
-                var bytes = memoryStream.ToArray();
-
-                var isUTF8 = AIEncode.IsUTF8(bytes);
-                var isSHIFT_JIS = AIEncode.IsSHIFT_JIS(bytes);
-                encodeMode = AsmEnum.EncodeModeEnum.UTF_8;
-                if (!isUTF8 && isSHIFT_JIS)
-                {
-                    encodeMode = AsmEnum.EncodeModeEnum.SHIFT_JIS;
-                }
+                encodeMode = AssembleOption.CheckEncodeMode(fileInfo);
             }
             return encodeMode;
         }
