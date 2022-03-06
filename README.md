@@ -22,6 +22,12 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 
 ※ 実行形式は、「[自己完結型の実行可能ファイル](https://docs.microsoft.com/ja-jp/dotnet/core/deploying/#publish-self-contained)」になっています。.NETの環境を用意する必要はありません。
 
+## パフォーマンス
+- アセンブル時間
+	- 処理時間:  10.08 sec
+	- 出力結果: 47,735 bytes
+- [ベンチマーク・プロジェクト](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark)
+
 ## 使い方
 AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等> [ <オプション指定文字列:ファイル名等>]
 ```
