@@ -7,7 +7,7 @@ namespace AILZ80ASM
 {
     public class LineDetailItemEnd : LineDetailItem
     {
-        private static readonly string RegexPatternCharMap = @"^\s*END$";
+        private static readonly string RegexPatternEnd = @"^\s*END$";
 
         public override AsmList[] Lists
         {
@@ -28,7 +28,7 @@ namespace AILZ80ASM
 
         public static LineDetailItemEnd Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = Regex.Match(lineItem.OperationString, RegexPatternEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (asmLoad.AsmEnd || matched.Success)
             {
                 asmLoad.AsmEnd = true;

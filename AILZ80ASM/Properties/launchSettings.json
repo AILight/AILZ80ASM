@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "Test.z80"
+      "commandLineArgs": ".\\SOL3S0B00.z80 -cd .\\di"
     }
   }
 }
