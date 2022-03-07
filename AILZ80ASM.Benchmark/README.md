@@ -15,6 +15,21 @@
 
 ## ベンチマーク結果
 #### v0.9.9.5(開発中): 2022/03/07
+- 各種命令の判断順番の見直しを行った
+```
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1526 (21H1/May2021Update)
+Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK=6.0.200
+  [Host]     : .NET 6.0.2 (6.0.222.6406), X64 RyuJIT
+  DefaultJob : .NET 6.0.2 (6.0.222.6406), X64 RyuJIT
+
+
+|     Method |    Mean |    Error |   StdDev |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 3.879 s | 0.0718 s | 0.1720 s |
+```
+
+#### v0.9.9.5(開発中): 2022/03/07
 - PreAssembleのZ80命令解析部の一次分類分け処理：先頭一文字の判断から命令文字列に変更
 ```
 BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1526 (21H1/May2021Update)
