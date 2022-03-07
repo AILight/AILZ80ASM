@@ -74,10 +74,9 @@ namespace AILZ80ASM.InstructionSet
             }
             else
             {
-                var startChar = instruction[0];
-                if (InstructionSet.InstructionDic.ContainsKey(startChar))
+                if (InstructionSet.InstructionDic.TryGetValue(parseResult.InstructionForDic, out var instructionItem))
                 {
-                    foreach (var item in InstructionSet.InstructionDic[startChar])
+                    foreach (var item in instructionItem)
                     {
                         var matched = item.Match(parseResult.Instruction);
                         if (matched.Success)
