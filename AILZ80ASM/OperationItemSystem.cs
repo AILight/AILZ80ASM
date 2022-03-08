@@ -76,13 +76,13 @@ namespace AILZ80ASM
                         }
                         else if (asmLoad.AsmAddresses.Count > 0)
                         {
-                            if (address.Program > programAddress)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
-                            }
-
                             if (asmLoad.AsmAddresses.Last().Output != lineDetailExpansionItemOperation.Address.Output)
                             {
+                                if (address.Program > programAddress)
+                                {
+                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+                                }
+
                                 var offset = (UInt16)(programAddress - address.Program);
                                 if (offset > 0)
                                 {

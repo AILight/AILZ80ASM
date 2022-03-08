@@ -155,6 +155,12 @@ namespace AILZ80ASM
         {
             foreach (var item in outputFiles)
             {
+                if (!item.Value.Exists)
+                {
+                    Trace.WriteLine($"{item.Value.Name}: 不一致 ファイルが見つかりません。");
+                    continue;
+                }
+
                 using var fileStream = item.Value.OpenRead();
 
                 try

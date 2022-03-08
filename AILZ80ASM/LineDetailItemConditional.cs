@@ -186,5 +186,16 @@ namespace AILZ80ASM
 
             //base.PreAssemble(ref asmAddress);
         }
+
+        public override AsmList[] Lists
+        {
+            get
+            {
+                return new[]
+                {
+                    AsmList.CreateLineItem(LineItem)
+                };
+            }
+        }
     }
 }

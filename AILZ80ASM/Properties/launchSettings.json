@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "Test.z80"
+      "commandLineArgs": "IPL.z80 -cd .\\Sample -lst"
     }
   }
 }

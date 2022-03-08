@@ -69,6 +69,8 @@ namespace AILZ80ASM.Assembler
         private List<string> GlobalLabelNames { get; set; } = default;
         // スコープの親
         private AsmLoad ParentAsmLoad { get; set; } = default;
+        // 出力されたファイルを管理
+        private List<FileInfo> ListedFiles { get; set; } = default;
 
         public AsmLoad(AsmOption assembleOption, ISA isa)
         {
@@ -79,6 +81,8 @@ namespace AILZ80ASM.Assembler
             Macros = new List<Macro>();
             Functions = new List<Function>();
             Errors = new List<ErrorLineItem>();
+            ListedFiles = new List<FileInfo>();
+
             GlobalLabelNames = new List<string>();
         }
 
@@ -146,6 +150,7 @@ namespace AILZ80ASM.Assembler
                 AsmAddresses = this.AsmAddresses,
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
+                ListedFiles = this.ListedFiles,
                 LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
 
                 Errors = this.Errors,
@@ -248,6 +253,16 @@ namespace AILZ80ASM.Assembler
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E3010);
             }
             this.Macros.Add(macro);
+        }
+
+        public void AddListedFile(FileInfo fileInfo)
+        {
+            this.ListedFiles.Add(fileInfo);
+        }
+
+        public bool ListedFileExists(FileInfo fileInfo)
+        {
+            return this.ListedFiles.Any(m => m.FullName == fileInfo.FullName);
         }
 
         public string FindGlobalLabelName(string target)
