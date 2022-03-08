@@ -174,20 +174,33 @@ namespace AILZ80ASM
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
-                    if (package.Errors.Length == 0)
-                    {
-                        if (asmOption.FileDiff)
-                        {
-                            package.DiffOutput(asmOption.OutputFiles);
-                        }
-                        else
-                        {
-                            package.SaveOutput(asmOption.OutputFiles);
-                        }
+                }
 
-                        assembleResult = true;
+                // 出力調整
+                try
+                {
+                    assembleResult = package.Errors.Length == 0;
+                    var outputFiles = asmOption.OutputFiles;
+                    // エラー発生時は、リスティングファイルだけでも出力する
+                    if (package.Errors.Length != 0)
+                    {
+                        outputFiles = asmOption.OutputFiles.Where(m => m.Key == AsmEnum.FileTypeEnum.LST).ToDictionary(k => k.Key, v => v.Value);
+                    }
+                    
+                    if (asmOption.FileDiff)
+                    {
+                        package.DiffOutput(outputFiles);
+                    }
+                    else
+                    {
+                        package.SaveOutput(outputFiles);
                     }
                 }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"ファイル書き込みエラー:{ex.Message}");
+                }
+
                 package.OutputError();
 
                 if (asmOption.FileDiff)

@@ -120,6 +120,12 @@ namespace AILZ80ASM
         {
             get
             {
+                if (this.AssembleLoad.ListedFileExists(this.FileInfo))
+                {
+                    return Array.Empty<AsmList>();
+                }
+
+                this.AssembleLoad.AddListedFile(this.FileInfo);
                 var lists = new List<AsmList>();
 
                 foreach (var item in Items)
@@ -201,7 +207,14 @@ namespace AILZ80ASM
         {
             foreach (var list in this.Lists)
             {
-                streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
+                if (list == null)
+                {
+                    streamWriter.WriteLine();
+                }
+                else
+                {
+                    streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
+                }
             }
         }
     }

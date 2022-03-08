@@ -1,0 +1,12 @@
+﻿include ".\Test\TestPP_Include\Test.inc"
+
+	ld a, TRUE
+	;ld b, 0
+	ld c, FALSE
+include ".\Test\TestPP_Include\Test3.inc"
+	jp	LABEL1
+	DS  5
+
+include ".\Test\TestPP_Include\Test3.bin", B
+include ".\Test\TestPP_Include\Test3.bin", B, START
+include ".\Test\TestPP_Include\Test3.bin", B, , LENGTH

@@ -16,6 +16,7 @@ namespace AILZ80ASM.AILight
             High,
             Low,
             Text,
+            Exists,
         }
 
         private static readonly string RegexPatternHexadecimal_H =   @"^(?<value>([0-9A-Fa-f_]+))H$";
@@ -744,33 +745,48 @@ namespace AILZ80ASM.AILight
                     tmpLabel = target.Substring(0, optionIndex);
                     macroValue = MacroValueEnum.Text;
                 }
-            }
-
-            var label = asmLoad.FindLabel(tmpLabel);
-            if (label == default)
-            {
-                throw new Exception($"未定義のラベルが指定されています。{target}");
-            }
-            else
-            {
-                if (macroValue != MacroValueEnum.Text)
+                else if (string.Compare(option, ".@E", true) == 0 ||
+                         string.Compare(option, ".@EXISTS", true) == 0)
                 {
-                    label.Calculation();
+                    tmpLabel = target.Substring(0, optionIndex);
+                    macroValue = MacroValueEnum.Exists;
                 }
             }
 
-            var value = (int)label.Value;
+            var label = asmLoad.FindLabel(tmpLabel);
 
-            switch (macroValue)
+            if (macroValue == MacroValueEnum.Exists)
             {
-                case MacroValueEnum.High:
-                    return value / 256;
-                case MacroValueEnum.Low:
-                    return value % 256;
-                case MacroValueEnum.Text:
-                    return label.ValueString;
-                default:
-                    return value;
+                // ラベルの存在チェックなので、それに合わせて応答を返す
+                return (label != default);
+            }
+            else
+            {
+                if (label == default)
+                {
+                    throw new Exception($"未定義のラベルが指定されています。{target}");
+                }
+                else
+                {
+                    if (macroValue != MacroValueEnum.Text)
+                    {
+                        label.Calculation();
+                    }
+                }
+
+                var value = (int)label.Value;
+
+                switch (macroValue)
+                {
+                    case MacroValueEnum.High:
+                        return value / 256;
+                    case MacroValueEnum.Low:
+                        return value % 256;
+                    case MacroValueEnum.Text:
+                        return label.ValueString;
+                    default:
+                        return value;
+                }
             }
         }
 
