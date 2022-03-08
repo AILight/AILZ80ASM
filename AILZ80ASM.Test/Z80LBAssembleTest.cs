@@ -61,6 +61,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestLB_Label_Test()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestLB_LD_Address()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
