@@ -180,11 +180,11 @@ namespace AILZ80ASM
                 try
                 {
                     assembleResult = package.Errors.Length == 0;
-                    var outputFiles = asmOption.OutputFiles;
+                    var outputFiles = asmOption.OutputFiles.Where(m => m.Key != AsmEnum.FileTypeEnum.ERR).ToDictionary(k => k.Key, v => v.Value);
                     // エラー発生時は、リスティングファイルだけでも出力する
                     if (package.Errors.Length != 0)
                     {
-                        outputFiles = asmOption.OutputFiles.Where(m => m.Key == AsmEnum.FileTypeEnum.LST).ToDictionary(k => k.Key, v => v.Value);
+                        outputFiles = outputFiles.Where(m => m.Key == AsmEnum.FileTypeEnum.LST).ToDictionary(k => k.Key, v => v.Value);
                     }
                     
                     if (asmOption.FileDiff)
