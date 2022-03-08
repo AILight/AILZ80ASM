@@ -164,8 +164,10 @@ LABLE:			; ラベル指定
 - .@H をラベルに追加すると、上位1バイトを取得 （.@HIGH でも可能）
 - .@L をラベルに追加すると、下位1バイトを取得 （.@LOW  でも可能）
 - .@T をラベルに追加すると、ラベルに指定した名前を文字列として取得 （.@TEXT でも可能）
+- .@E をラベルに追加すると、ラベルが存在すると#TRUE、存在しないと#FALSE （.@EXISTS でも可能）
 - [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
 - [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/74dd29bfbceda9c986ed50fe651b0c0d89127637/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
+- [@Eサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.INC#L1)
 
 #### ラベル指定サンプル
 ```
@@ -428,8 +430,8 @@ TestArg MACRO a1, a2
 - #ENDIF: 条件付きアセンブルを終了します。
 - #PRINT: アセンブル画面に情報を表示します。(version 1.0.0以降)
 - #ERROR: 無条件にエラーを発生させます。
-- #TRUE: 真(bool型：version 1.0.0以降)
-- #FALSE: 偽(bool型：version 1.0.0以降)
+- #TRUE: 真(bool型)
+- #FALSE: 偽(bool型)
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
 
 ```
@@ -441,6 +443,14 @@ TestArg MACRO a1, a2
 	#error "modeの値が範囲外です。"
 #endif
 ```
+
+ラベルの再定義エラーを回避する方法
+```
+#if LABEL.@EXISTS
+LABEL	equ 00FFH
+#endif
+```
+
 ## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
 式をまとめる事が出来ます
 - 複数行にまたがる事は出来ません。
