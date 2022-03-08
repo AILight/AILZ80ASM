@@ -80,11 +80,15 @@ namespace AILZ80ASM
                             {
                                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
                             }
-                            var offset = (UInt16)(programAddress - address.Program);
-                            if (offset > 0)
+
+                            if (asmLoad.AsmAddresses.Last().Output != lineDetailExpansionItemOperation.Address.Output)
                             {
-                                length.Output = offset;
-                                bytes = new byte[length.Output];
+                                var offset = (UInt16)(programAddress - address.Program);
+                                if (offset > 0)
+                                {
+                                    length.Output = offset;
+                                    bytes = new byte[length.Output];
+                                }
                             }
                         }
                         var newAsmAddress = new AsmAddress(programAddress, outputAddress);

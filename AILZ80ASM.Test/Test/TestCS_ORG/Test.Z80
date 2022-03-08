@@ -1,4 +1,6 @@
-﻿	org $8000
+﻿	org $5000
+WORK	equ		$
+	org $8000
 	ADDR equ $2000
 
 	ld a, 0
