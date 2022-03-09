@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": ".\\SOL3S0B00.z80 -cd .\\di"
-    }
-  }
-}
