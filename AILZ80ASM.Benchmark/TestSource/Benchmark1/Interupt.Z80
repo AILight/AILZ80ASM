@@ -9,7 +9,7 @@ INIT_INTERUPT:
 
 INTERRUPT_TABLE:
         dw  INTERRUPT_Dt0
-        dw  INTERRUPT_KeyIn1
+        dw  INTERRUPT_KeyInput1
         dw  INTERRUPT_Dt0
         dw  INTERRUPT_Timer
         dw  INTERRUPT_Dt1
@@ -18,15 +18,15 @@ INTERRUPT_TABLE:
         dw  INTERRUPT_Dt0
         dw  INTERRUPT_Dt0
         dw  INTERRUPT_Dt0
-        dw  INTERRUPT_KeyIn2
+        dw  INTERRUPT_KeyInput2
         dw  INTERRUPT_GameKey
 
 WORK:
-.KeyData1       db 0    ; キーボード ASCII
-.KeyData2       db 0    ; ファンクションキー等
-.GameKeyData    db 0    ; bit7-0：[SPC] ["L"] [←] [→] [↓] [↑] [STOP] [SHIFT]
-.TimerCounter   db 0    ; タイマーカウンター
-.MyCharXY       dw 0    ; 自キャラポジション
+.KeyData1       db 0    ; ■■■■■ AAAAA
+.KeyData2       db 0    ; ■■■■■■■■■■
+.GameKeyData    db 0    ; bit7-0：[AAA] ["B"] [←] [→] [↓] [↑] [AAAA] [AAAAA]
+.TimerCounter   db 0    ; ■■■■■■■■■
+.MyCharXY       dw 0    ; ■■■■■■■■■
 
 INTERRUPT_Dt0:
 INTERRUPT_Dt1:
@@ -51,7 +51,7 @@ INTERRUPT_Timer:
         ret
 
 INTERRUPT_SUBCPU_SEND:
-INTERRUPT_KeyIn1:
+INTERRUPT_KeyInput1:
         push    af
         call    INTERRUPT_SUBCPU_RECV
         ld      (WORK.KeyData1), a
@@ -60,7 +60,7 @@ INTERRUPT_KeyIn1:
         ret
 
 INTERRUPT_SUBCPU_RECV:
-INTERRUPT_KeyIn2:
+INTERRUPT_KeyInput2:
         push    af
         call    INTERRUPT_SUBCPU_RECV
         ld      (WORK.KeyData2), a
