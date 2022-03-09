@@ -23,7 +23,7 @@ namespace AILZ80ASM.Test
             var errors = Assemble("Address.Z80");
 
             Assert.AreEqual(errors.Length, 5);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 8, "Address.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 8, "Address.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 10, "Address.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 7, "Address.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 12, "Address.Z80", errors);

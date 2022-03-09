@@ -598,18 +598,20 @@ namespace AILZ80ASM.InstructionSet
         /// </summary>
         /// <param name="instuction"></param>
         /// <returns></returns>
-        public override AssembleParseResult ParseInstruction(string instuction)
+        public override AssembleParseResult ParseInstruction(string target)
         {
             var assembleParseResult = new AssembleParseResult();
-            instuction = instuction.Replace("\t", " ");
+            var instuction = target.Replace("\t", " ");
             var index = instuction.IndexOf(" ");
             if (index == -1)
             {
                 assembleParseResult.Instruction = instuction;
+                assembleParseResult.InstructionForDic = instuction.ToLower();
             }
             else
             {
                 assembleParseResult.Instruction = instuction.Substring(0, index + 1);
+                assembleParseResult.InstructionForDic = instuction.Substring(0, index).ToLower();
                 instuction = instuction.Substring(index + 1).TrimStart();
 
                 var argument = "";

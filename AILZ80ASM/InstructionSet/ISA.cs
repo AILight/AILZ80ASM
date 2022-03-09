@@ -20,6 +20,7 @@ namespace AILZ80ASM.InstructionSet
 
         protected InstructionSet InstructionSet { get; private set; }
         public EndiannessEnum Endianness { get; protected set; } = EndiannessEnum.LittleEndian;
+        private Dictionary<string, AssembleCacheResult> AssembleCacheResultDic { get; set; } = new Dictionary<string, AssembleCacheResult>();
 
         protected ISA(InstructionSet instructionSet)
         {
@@ -67,18 +68,24 @@ namespace AILZ80ASM.InstructionSet
             }
 
             var parseResult = ParseInstruction(instruction);
-            var startChar = instruction[0];
-            if (InstructionSet.InstructionDic.ContainsKey(startChar))
+            if (AssembleCacheResultDic.TryGetValue(parseResult.Instruction, out var assembleCacheResult))
             {
-                foreach (var item in InstructionSet.InstructionDic[startChar])
+                return new AssembleResult { InstructionItem = assembleCacheResult.InstructionItem, ParseResult = parseResult, PreAssembleMatched = assembleCacheResult.PreAssembleMatched };
+            }
+            else
+            {
+                if (InstructionSet.InstructionDic.TryGetValue(parseResult.InstructionForDic, out var instructionItem))
                 {
-                    var matched = item.Match(parseResult.Instruction);
-                    if (matched.Success)
+                    foreach (var item in instructionItem)
                     {
-                        return new AssembleResult { InstructionItem = item, ParseResult = parseResult, PreAssembleMatched = matched };
+                        var matched = item.Match(parseResult.Instruction);
+                        if (matched.Success)
+                        {
+                            AssembleCacheResultDic.Add(parseResult.Instruction, new AssembleCacheResult { InstructionItem = item, PreAssembleMatched = matched });
+                            return new AssembleResult { InstructionItem = item, ParseResult = parseResult, PreAssembleMatched = matched };
+                        }
                     }
                 }
-
             }
             return default;
         }

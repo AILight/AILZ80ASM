@@ -15,7 +15,7 @@ namespace AILZ80ASM.InstructionSet
         public InstructionRegister[] InstructionRegisters { get; set; }
         public InstructionItem[] InstructionItems { get; set; }
         public string[] InstructionNames { get; set; }
-        public Dictionary<char, InstructionItem[]> InstructionDic { get; set; } = new();
+        public Dictionary<string, InstructionItem[]> InstructionDic { get; set; } = new();
 
         public void MakeDataSet()
         {
@@ -26,7 +26,7 @@ namespace AILZ80ASM.InstructionSet
             {
                 var instructionNames = item.MakeDataSet(SplitChars, InstructionRegisters);
                 instructionList.AddRange(instructionNames);
-                foreach (var key in instructionNames.Select(m => m[0].ToString().ToLower()).Distinct())
+                foreach (var key in instructionNames.Select(m => m.ToLower()).Distinct())
                 {
                     if (!instructionDic.ContainsKey(key))
                     {
@@ -35,11 +35,10 @@ namespace AILZ80ASM.InstructionSet
                     instructionDic[key].Add(item);
                 }
             }
+
             foreach (var item in instructionDic)
             {
-                var instructionItems = item.Value.ToArray();
-                InstructionDic.Add(item.Key.ToLower()[0], instructionItems);
-                InstructionDic.Add(item.Key.ToUpper()[0], instructionItems);
+                InstructionDic.Add(item.Key, item.Value.ToArray());
             }
 
             InstructionNames = instructionList.Distinct().ToArray();

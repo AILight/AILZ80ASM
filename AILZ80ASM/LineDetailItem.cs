@@ -64,6 +64,8 @@ namespace AILZ80ASM
             else
             {
                 lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemOperation.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);
@@ -71,9 +73,7 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemOperation.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない

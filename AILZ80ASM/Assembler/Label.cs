@@ -24,12 +24,12 @@ namespace AILZ80ASM.Assembler
             SubLabel,
         }
 
-        private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!--/-/<-@^-`{-~]+))\](\s+|$)";
-        private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):+(\s+|$)";
-        //private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+)):?";
-        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:*))(\s+|$)";
-        private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:*))\s+equ\s+(?<value>(.+))";
-        private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!--/-/<-@¥[-`{-~]+\.[a-zA-Z0-9!--/-/<-@¥[-`{-~]+:*))\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\](\s+|$)";
+        private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):+(\s+|$)";
+        //private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):?";
+        private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!-/:-@\[-~]+:*))(\s+|$)";
+        private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+:*))\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+\.[a-zA-Z0-9!-/:-@\[-~]+:*))\s+equ\s+(?<value>(.+))";
         //private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
@@ -163,7 +163,7 @@ namespace AILZ80ASM.Assembler
             {
                 var label = matchedLabel.Groups["label"].Value;
                 var startIndex = label.Length;
-                while (lineString.IndexOf(":", startIndex) != -1)
+                while (startIndex < lineString.Length && lineString[startIndex] == ':')
                 {
                     startIndex++;
                 }
