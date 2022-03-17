@@ -72,12 +72,20 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemORG.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemALIGN.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない
             }
+
+            if (lineDetailItem is LineDetailItemORG itemORG)
+            {
+                asmLoad.AddORG(itemORG.AssembleORG);
+            }
+
             return lineDetailItem;
         }
 

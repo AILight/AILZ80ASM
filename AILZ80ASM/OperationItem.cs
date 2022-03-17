@@ -33,7 +33,7 @@ namespace AILZ80ASM
             can = can || OperationItemOPCode.CanCreate(operation, asmLoad);     // OpeCode
             can = can || OperationItemData.CanCreate(operation, asmLoad);       // Data
             can = can || OperationItemDataSpace.CanCreate(operation, asmLoad);  // DataSpace
-            can = can || OperationItemSystem.CanCreate(operation, asmLoad);     // System
+            //can = can || OperationItemSystem.CanCreate(operation, asmLoad);     // System
 
             return can;
         }
@@ -47,7 +47,7 @@ namespace AILZ80ASM
             operationItem ??= OperationItemOPCode.Create(lineDetailExpansionItemOperation, address, asmLoad);       // OpeCode
             operationItem ??= OperationItemData.Create(lineDetailExpansionItemOperation, address, asmLoad);         // Data
             operationItem ??= OperationItemDataSpace.Create(lineDetailExpansionItemOperation, address, asmLoad);    // DataSpace
-            operationItem ??= OperationItemSystem.Create(lineDetailExpansionItemOperation, address, asmLoad);       // System
+            //operationItem ??= OperationItemSystem.Create(lineDetailExpansionItemOperation, address, asmLoad);       // System
 
             if (asmLoad.AssembleOption.OutputTrim && 
                 operationItem is IOperationItemDefaultClearable defaultClearble && defaultClearble.IsDefaultValueClear)

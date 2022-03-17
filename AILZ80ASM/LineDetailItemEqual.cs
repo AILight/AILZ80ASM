@@ -58,10 +58,7 @@ namespace AILZ80ASM
 
             LineDetailScopeItems = new[]
             {
-                new LineDetailScopeItem(AsmLoad)
-                {
-                    LineDetailExpansionItems = new [] { lineDetailExpansionItem }
-                }
+                new LineDetailScopeItem(new[] { lineDetailExpansionItem }, AsmLoad)
             };
 
             base.ExpansionItem();

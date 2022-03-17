@@ -46,11 +46,19 @@ namespace AILZ80ASM
             // 命令を展開する
             ExpansionItem();
 
+
+
+            AssembleLoad.Assemble();
+            /*
+            // ORGを確定
+            BuildORG();
+
             // プレアセンブル
             PreAssemble();
 
             // アセンブルを行う
             InternalAssemble();
+            */
 
             // データのトリムを行う
             TrimData();
@@ -59,6 +67,7 @@ namespace AILZ80ASM
             BuildLabel();
         }
 
+        /*
         /// <summary>
         /// プレアセンブル
         /// </summary>
@@ -71,6 +80,17 @@ namespace AILZ80ASM
                 fileItem.PreAssemble(ref address);
             }
         }
+        */
+
+        /*
+        /// <summary>
+        /// Orgを確定させる
+        /// </summary>
+        private void BuildORG()
+        {
+            AssembleLoad.BuildORG();
+        }
+        */
 
         /// <summary>
         /// 命令の展開
@@ -83,6 +103,7 @@ namespace AILZ80ASM
             }
         }
 
+        /*
         /// <summary>
         /// アセンブルを実行する
         /// </summary>
@@ -93,6 +114,7 @@ namespace AILZ80ASM
                 fileItem.Assemble();
             }
         }
+        */
 
         /// <summary>
         /// データトリムする

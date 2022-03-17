@@ -13,12 +13,11 @@ namespace AILZ80ASM
         public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();
         public AsmList[] Lists => LineDetailExpansionItems.Select(m => m.List).ToArray();
 
-        public LineDetailScopeItem(AsmLoad asmLoad)
-        {
-            AsmLoad = asmLoad.Clone();
-            LineDetailExpansionItems = Array.Empty<LineDetailExpansionItem>();
-        }
-
+        /// <summary>
+        /// 通常展開
+        /// </summary>
+        /// <param name="lineItem"></param>
+        /// <param name="asmLoad"></param>
         public LineDetailScopeItem(LineItem lineItem, AsmLoad asmLoad)
         {
             asmLoad.CreateScope(newAsmLoad =>
@@ -31,6 +30,11 @@ namespace AILZ80ASM
             });
         }
 
+        /// <summary>
+        /// 特殊展開用
+        /// </summary>
+        /// <param name="lineDetailExpansionItems"></param>
+        /// <param name="asmLoad"></param>
         public LineDetailScopeItem(LineDetailExpansionItem[] lineDetailExpansionItems, AsmLoad asmLoad)
         {
             AsmLoad = asmLoad.Clone();

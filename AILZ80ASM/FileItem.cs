@@ -12,6 +12,7 @@ namespace AILZ80ASM
     public class FileItem
     {
         private AsmLoad AssembleLoad { get; set; }
+        //private AsmBin AssembleBin { get; set; }
         private AsmEnum.EncodeModeEnum EncodeMode { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
@@ -196,7 +197,6 @@ namespace AILZ80ASM
             {
                 stream.Write(bin, 0, bin.Length);
             }
-
         }
 
         /// <summary>

@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AILZ80ASM\AILZ80ASM.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Test\AIEncode\SHIFT_JIS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -39,6 +35,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestCS_ORG\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestCS_ORG_Enhanced\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestCS_ORG_Enhanced\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestCS_ORG_Rom\Test.LST">
@@ -948,6 +950,10 @@
 
   <ItemGroup>
     <Folder Include="Test\AIEncode\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AILZ80ASM\AILZ80ASM.csproj" />
   </ItemGroup>
 
 </Project>

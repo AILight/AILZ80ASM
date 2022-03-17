@@ -71,6 +71,8 @@ namespace AILZ80ASM.Assembler
         private AsmLoad ParentAsmLoad { get; set; } = default;
         // 出力されたファイルを管理
         private List<FileInfo> ListedFiles { get; set; } = default;
+        // AsmORG
+        private List<AsmORG> AsmORGs { get; set; } = default;
 
         public AsmLoad(AsmOption assembleOption, ISA isa)
         {
@@ -84,6 +86,7 @@ namespace AILZ80ASM.Assembler
             ListedFiles = new List<FileInfo>();
 
             GlobalLabelNames = new List<string>();
+            AsmORGs = new List<AsmORG>() { new AsmORG() };
         }
 
         /// <summary>
@@ -157,6 +160,7 @@ namespace AILZ80ASM.Assembler
                 TirmOperationItems = this.TirmOperationItems,
                 DefaultCharMap = this.DefaultCharMap,
                 AsmEnd = this.AsmEnd,
+                AsmORGs = this.AsmORGs,
             };
 
             return asmLoad;
@@ -255,6 +259,11 @@ namespace AILZ80ASM.Assembler
             this.Macros.Add(macro);
         }
 
+        public void AddORG(AsmORG asmORG)
+        {
+            this.AsmORGs.Add(asmORG);
+        }
+
         public void AddListedFile(FileInfo fileInfo)
         {
             this.ListedFiles.Add(fileInfo);
@@ -346,6 +355,41 @@ namespace AILZ80ASM.Assembler
         {
             TirmOperationItems.Clear();
         }
+
+        /*
+        public void BuildORG()
+        {
+            var asmORGs = AsmORGs.Where(m => !m.AssembleORG.OutputAddress.HasValue).OrderBy(m => m.AssembleORG.ProgramAddress).ToArray();
+
+            for (var index = 0; index < asmORGs.Length; index++)
+            {
+                var assembleOrg = asmORGs[index].AssembleOrg;
+                if (index == 0)
+                {
+                    assembleOrg.OutputAddress = 0;
+                }
+                else
+                {
+                    var beforeAssembleOrg = asmORGs[index - 1].AssembleOrg;
+                    var outputAddress = assembleOrg.ProgramAddress - beforeAssembleOrg.ProgramAddress;
+                    assembleOrg.OutputAddress = (UInt32?)outputAddress;
+                }
+                asmORGs[index].AssembleOrg = assembleOrg;
+            }
+        }
+        */
+
+        /// <summary>
+        /// アセンブルを行う
+        /// </summary>
+        public void Assemble()
+        {
+            foreach (var asmORG in AsmORGs.OrderBy(m => m.OutputAddress ?? uint.MaxValue).ThenBy(m => m.ProgramAddress))
+            {
+
+            }
+        }
+
 
         public AsmEnum.EncodeModeEnum GetEncodMode(FileInfo fileInfo)
         {
