@@ -25,3 +25,5 @@ MACRO ALLLD mode
 #endif
 
 END MACRO
+
+include ".\Test\TestPP_Conditional\Test.INC"
