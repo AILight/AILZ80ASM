@@ -177,7 +177,7 @@ namespace AILZ80ASM
                     {
                         lineItem.ExpansionItem();
                         lineItem.PreAssemble(ref asmAddress);
-                        lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
+                        lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems ?? Array.Empty<LineDetailScopeItem>());
                     }
                     LineDetailScopeItems = lineDetailScopeItems.ToArray();
                     break;
