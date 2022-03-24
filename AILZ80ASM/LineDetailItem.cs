@@ -12,6 +12,7 @@ namespace AILZ80ASM
 
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
+        public virtual AsmResult[] BinResult => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResult).ToArray();
         public virtual AsmList[] Lists => LineDetailScopeItems == default ? Array.Empty<AsmList>() : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
 
@@ -72,8 +73,8 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemORG.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemALIGN.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemAddressORG.Create(lineItem, asmLoad);
+                lineDetailItem ??= LineDetailItemAddressALIGN.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
@@ -81,10 +82,11 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない
             }
 
-            if (lineDetailItem is LineDetailItemORG itemORG)
+            if (lineDetailItem is LineDetailItemAddress lineDetailItemAddress)
             {
-                asmLoad.AddORG(itemORG.AssembleORG);
+                asmLoad.AddLineDetailItemAddress(lineDetailItemAddress);
             }
+            asmLoad.AddLineDetailItem(lineDetailItem); // 分割アセンブル用
 
             return lineDetailItem;
         }

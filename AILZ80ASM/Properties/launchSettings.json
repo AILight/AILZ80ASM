@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "Test.z80 -bin -lst -sym -cd .\\Repeat"
     }
   }
 }

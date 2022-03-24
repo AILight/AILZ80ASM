@@ -115,61 +115,79 @@ namespace AILZ80ASM
                 if (!string.IsNullOrEmpty(LineItem.LabelString))
                 {
                     var localLineItem = new LineItem(LineItem.LabelString, 0, default(System.IO.FileInfo));
-                    localLineItem.CreateLineDetailItem(this.AsmLoad);
-                    localLineItem.ExpansionItem();
-                    localLineItem.PreAssemble(ref asmAddress);
+                    var localLineDetailItemOperation = LineDetailItemOperation.Create(localLineItem, this.AsmLoad);
+                    localLineDetailItemOperation.ExpansionItem();
+                    localLineDetailItemOperation.PreAssemble(ref asmAddress);
                 }
 
                 var count = AIMath.ConvertTo<UInt16>(RepeatCountLabel, this.AsmLoad, asmAddress);
                 var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertTo<UInt16>(RepeatLastLabel, this.AsmLoad);
                 var repeatLines = RepeatLines.Skip(1).SkipLast(1);
+                var lineItemList = new List<LineItem>();
 
                 foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
                     var lineItems = default(LineItem[]);
                     var guid = $"{Guid.NewGuid():N}";
-                    var localAsmLoad = AsmLoad.CloneWithNewScore($"repeat_{guid}", $"label_{guid}");
+                    AsmLoad.CreateNewScope($"repeat_{guid}", $"label_{guid}", localAsmLoad =>
+                    {
+                        if (repeatCounter == count)
+                        {
+                            var take = repeatLines.Count() + last;
+                            if (take <= 0 || last > 0)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013);
+                            }
+                            //最終ページ処理
+                            lineItems = repeatLines.Take(take).Select(m =>
+                            {
+                                var lineItem = new LineItem(m);
+                                lineItem.CreateLineDetailItem(localAsmLoad);
+                                return lineItem;
+                            }).ToArray();
+                        }
+                        else
+                        {
+                            lineItems = repeatLines.Select(m =>
+                            {
+                                var lineItem = new LineItem(m);
+                                lineItem.CreateLineDetailItem(localAsmLoad);
+                                return lineItem;
+                            }).ToArray();
+                        }
 
-                    if (repeatCounter == count)
-                    {
-                        var take = repeatLines.Count() + last;
-                        if (take <= 0 || last > 0)
+                        foreach (var lineItem in lineItems)
                         {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013);
+                            try
+                            {
+                                lineItem.ExpansionItem();
+                                //lineItem.PreAssemble(ref asmAddress);
+                                //lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
+                            }
+                            catch (ErrorAssembleException ex)
+                            {
+                                AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
+                            }
                         }
-                        //最終ページ処理
-                        lineItems = repeatLines.Take(take).Select(m =>
-                        {
-                            var lineItem = new LineItem(m);
-                            lineItem.CreateLineDetailItem(localAsmLoad);
-                            return lineItem;
-                        }).ToArray();
-                    }
-                    else
-                    {
-                        lineItems = repeatLines.Select(m =>
-                        {
-                            var lineItem = new LineItem(m);
-                            lineItem.CreateLineDetailItem(localAsmLoad);
-                            return lineItem;
-                        }).ToArray();
-                    }
+                        lineItemList.AddRange(lineItems);
+                    });
 
-                    foreach (var lineItem in lineItems)
+                    
+                }
+
+                foreach (var item in lineItemList)
+                {
+                    try
                     {
-                        try
-                        {
-                            lineItem.ExpansionItem();
-                            lineItem.PreAssemble(ref asmAddress);
-                            lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
-                        }
-                        catch (ErrorAssembleException ex)
-                        {
-                            AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
-                        }
+                        item.PreAssemble(ref asmAddress);
+                    }
+                    catch (ErrorAssembleException ex)
+                    {
+                        AsmLoad.AddError(new ErrorLineItem(item, ex));
                     }
                 }
-                LineDetailScopeItems = lineDetailScopeItems.ToArray();
+
+                LineDetailScopeItems = lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems).ToArray();
             }
             else
             {

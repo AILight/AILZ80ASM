@@ -46,19 +46,18 @@ namespace AILZ80ASM
             // 命令を展開する
             ExpansionItem();
 
-
-
-            AssembleLoad.Assemble();
+            //var asmAddress = new AsmAddress();
+            //AssembleLoad.PreAssemble(ref asmAddress);
             /*
             // ORGを確定
             BuildORG();
+            */
 
             // プレアセンブル
             PreAssemble();
 
             // アセンブルを行う
             InternalAssemble();
-            */
 
             // データのトリムを行う
             TrimData();
@@ -67,7 +66,6 @@ namespace AILZ80ASM
             BuildLabel();
         }
 
-        /*
         /// <summary>
         /// プレアセンブル
         /// </summary>
@@ -80,7 +78,6 @@ namespace AILZ80ASM
                 fileItem.PreAssemble(ref address);
             }
         }
-        */
 
         /*
         /// <summary>
@@ -103,7 +100,6 @@ namespace AILZ80ASM
             }
         }
 
-        /*
         /// <summary>
         /// アセンブルを実行する
         /// </summary>
@@ -114,7 +110,6 @@ namespace AILZ80ASM
                 fileItem.Assemble();
             }
         }
-        */
 
         /// <summary>
         /// データトリムする
@@ -287,19 +282,43 @@ namespace AILZ80ASM
 
         public void SaveBin(Stream stream)
         {
-            foreach (var item in FileItems)
+            var asmAddress = new AsmAddress();
+            var binResult = FileItems.SelectMany(m => m.BinResult).OrderBy(m => m.Address.Output);
+
+            foreach (var item in binResult)
             {
-                item.SaveBin(stream);
+                if (item.Address.Output > asmAddress.Output)
+                {
+                    var asmORGs = this.AssembleLoad.FindAsmORGs(asmAddress.Output, item.Address.Output);
+                    var outputAddress = asmAddress.Output;
+                    for (var index = 0; index < asmORGs.Length; index++)
+                    {
+                        var startAsmORG = asmORGs[index];
+                        var endAsmORG = index < asmORGs.Length - 1 ? asmORGs[index + 1] : new AsmORG(UInt16.MaxValue, UInt32.MaxValue, 0);
+
+                        var startOutputAddress = startAsmORG.OutputAddress < outputAddress ? outputAddress : startAsmORG.OutputAddress;
+                        var endOutputAddress = endAsmORG.OutputAddress > item.Address.Output ? item.Address.Output : endAsmORG.OutputAddress;
+
+                        var length = endOutputAddress - startOutputAddress;
+                        var bytes = Enumerable.Repeat<byte>(startAsmORG.FillByte, (int)length).ToArray();
+
+                        stream.Write(bytes, 0, bytes.Length);
+                        outputAddress += length;
+                    }
+                }
+                if (item.Data.Length > 0)
+                {
+                    stream.Write(item.Data, 0, item.Data.Length);
+                    asmAddress.Program = (UInt16)(item.Address.Program + item.Data.Length);
+                    asmAddress.Output = (UInt32)(item.Address.Output + item.Data.Length);
+                }
             }
         }
 
         public void SaveT88(Stream stream, string outputFilename)
         {
             using var memoryStream = new MemoryStream();
-            foreach (var item in FileItems)
-            {
-                item.SaveBin(memoryStream);
-            }
+            SaveBin(memoryStream);
 
             var address = default(UInt16);
             if (AssembleLoad.AsmAddresses.Count > 0)
@@ -314,10 +333,7 @@ namespace AILZ80ASM
         public void SaveCMT(Stream stream)
         {
             using var memoryStream = new MemoryStream();
-            foreach (var item in FileItems)
-            {
-                item.SaveBin(memoryStream);
-            }
+            SaveBin(memoryStream);
 
             var address = default(UInt16);
             if (AssembleLoad.AsmAddresses.Count > 0)

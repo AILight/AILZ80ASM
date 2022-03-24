@@ -22,6 +22,14 @@ namespace AILZ80ASM
             }
         }
 
+        public virtual AsmResult[] BinResult
+        {
+            get 
+            { 
+                return Array.Empty<AsmResult>(); 
+            }
+        }
+
         public virtual AsmList List
         {
             get

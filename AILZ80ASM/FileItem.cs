@@ -117,6 +117,28 @@ namespace AILZ80ASM
             }
         }
 
+        public AsmResult[] BinResult
+        {
+            get
+            {
+                var asmResults = new List<AsmResult>();
+
+                foreach (var item in Items)
+                {
+                    try
+                    {
+                        asmResults.AddRange(item.BinResult);
+                    }
+                    catch (Exception ex)
+                    {
+                        AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                    }
+                }
+
+                return asmResults.ToArray();
+            }
+        }
+
         public AsmList[] Lists
         {
             get
@@ -183,19 +205,6 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
-            }
-        }
-
-        /// <summary>
-        /// バイナリーを保存
-        /// </summary>
-        /// <param name="stream"></param>
-        public void SaveBin(Stream stream)
-        {
-            var bin = this.Bin;
-            if (bin.Length > 0)
-            {
-                stream.Write(bin, 0, bin.Length);
             }
         }
 

@@ -21,6 +21,14 @@ namespace AILZ80ASM
             }
         }
 
+        public override AsmResult[] BinResult
+        {
+            get
+            {
+                return new[] { new AsmResult() { Address = this.Address, Data = _Bin } };
+            }
+        }
+
         public LineDetailExpansionItemBinaryFile(LineItem lineItem, FileInfo fileInfo, string start, string length)
             : base(lineItem)
         {

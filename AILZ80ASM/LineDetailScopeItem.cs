@@ -11,6 +11,7 @@ namespace AILZ80ASM
 
         public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
         public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();
+        public AsmResult[] BinResult => LineDetailExpansionItems.SelectMany(m => m.BinResult).ToArray();
         public AsmList[] Lists => LineDetailExpansionItems.Select(m => m.List).ToArray();
 
         /// <summary>

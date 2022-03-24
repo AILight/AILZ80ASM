@@ -59,66 +59,83 @@ namespace AILZ80ASM.Assembler
             if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
                 var localLineItem = new LineItem(lineItem.LabelString, 0, default(System.IO.FileInfo));
-                localLineItem.CreateLineDetailItem(asmLoad);
-                localLineItem.ExpansionItem();
-                localLineItem.PreAssemble(ref asmAddress);
+                var localLineDetailItemOperation = LineDetailItemOperation.Create(localLineItem, asmLoad);
+                localLineDetailItemOperation.ExpansionItem();
+                localLineDetailItemOperation.PreAssemble(ref asmAddress);
             }
             // Macro展開用のAsmLoadを作成する
             var guid = $"{Guid.NewGuid():N}";
-            var localAsmLoad = asmLoad.CloneWithNewScore($"macro_{guid}", $"label_{guid}");
+            var lineItemList = new List<LineItem>();
 
-            if (arguments.Length > 0)
+            asmLoad.CreateNewScope($"macro_{guid}", $"label_{guid}", localAsmLoad =>
             {
-                if (arguments.Length != this.Args.Length)
+                if (arguments.Length > 0)
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E3004);
-                }
-
-                // 引数の割り当て
-                foreach (var index in Enumerable.Range(0, arguments.Length))
-                {
-                    var argumentLabel = new Label(arguments[index], asmLoad);
-                    var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalidate ?
-                                        argumentLabel.LabelFullName : arguments[index];
-
-                    var label = new Label(this.Args[index], argumentValue, localAsmLoad);
-                    if (label.Invalidate)
+                    if (arguments.Length != this.Args.Length)
                     {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E3004);
                     }
-                    localAsmLoad.AddLabel(label);
+
+                    // 引数の割り当て
+                    foreach (var index in Enumerable.Range(0, arguments.Length))
+                    {
+                        var argumentLabel = new Label(arguments[index], asmLoad);
+                        var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalidate ?
+                                            argumentLabel.LabelFullName : arguments[index];
+
+                        var label = new Label(this.Args[index], argumentValue, localAsmLoad);
+                        if (label.Invalidate)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
+                        }
+                        localAsmLoad.AddLabel(label);
+                    }
                 }
-            }
 
-            // LineItemsを作成
-            var lineItems = this.LineItems.Skip(1).SkipLast(1).Select(m =>
+                // LineItemsを作成
+                var lineItems = this.LineItems.Skip(1).SkipLast(1).Select(m =>
+                    {
+                        var lineItem = new LineItem(m);
+                        lineItem.CreateLineDetailItem(localAsmLoad);
+                        return lineItem;
+                    }).ToArray(); //　シーケンシャルに処理する必要があるため、ToArrayは必須
+
+                // 展開領域
+                asmLoad.LoadMacros.Push(this);
+
+                foreach (var localLineItem in lineItems)
                 {
-                    var lineItem = new LineItem(m);
-                    lineItem.CreateLineDetailItem(localAsmLoad);
-                    return lineItem;
-                }).ToArray(); //　シーケンシャルに処理する必要があるため、ToArrayは必須
+                    try
+                    {
+                        localLineItem.ExpansionItem();
+                        //localLineItem.PreAssemble(ref asmAddress);
+                        //lineDetailScopeItems.AddRange(localLineItem.LineDetailItem.LineDetailScopeItems);
+                    }
+                    catch (ErrorAssembleException ex)
+                    {
+                        asmLoad.AddError(new ErrorLineItem(localLineItem, ex));
+                    }
 
-            // 展開領域
-            asmLoad.LoadMacros.Push(this);
+                }
+                lineItemList.AddRange(lineItems);
 
-            foreach (var localLineItem in lineItems)
+                asmLoad.LoadMacros.Pop();
+            });
+
+
+            foreach (var item in lineItemList)
             {
                 try
                 {
-                    localLineItem.ExpansionItem();
-                    localLineItem.PreAssemble(ref asmAddress);
-                    lineDetailScopeItems.AddRange(localLineItem.LineDetailItem.LineDetailScopeItems);
+                    item.PreAssemble(ref asmAddress);
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    asmLoad.AddError(new ErrorLineItem(localLineItem, ex));
+                    asmLoad.AddError(new ErrorLineItem(item, ex));
                 }
-
             }
 
-            asmLoad.LoadMacros.Pop();
-
-            return lineDetailScopeItems.ToArray();
+            return lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems).ToArray();
         }
 
         /// <summary>

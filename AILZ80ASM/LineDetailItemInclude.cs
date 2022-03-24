@@ -19,6 +19,7 @@ namespace AILZ80ASM
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
         public override byte[] Bin => FileType == FileTypeEnum.Text ? FileItem.Bin : base.Bin;
+        public override AsmResult[] BinResult => FileType == FileTypeEnum.Text ? FileItem.BinResult : base.BinResult;
 
         private static readonly string RegexPatternInclude = @"^include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
         private FileTypeEnum FileType { get; set; } = FileTypeEnum.Text;

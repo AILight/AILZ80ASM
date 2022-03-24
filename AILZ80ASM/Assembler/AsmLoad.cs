@@ -31,6 +31,7 @@ namespace AILZ80ASM.Assembler
 
         // 出力制御用
         public List<OperationItem> TirmOperationItems { get; private set; } = new List<OperationItem>(); // トリム用アイテムにマーク
+
         public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
 
         // アセンブルオプション
@@ -72,6 +73,7 @@ namespace AILZ80ASM.Assembler
         // 出力されたファイルを管理
         private List<FileInfo> ListedFiles { get; set; } = default;
         // AsmORG
+        private List<LineDetailItemAddress> LineDetailItemAddreses { get; set; } = default;
         private List<AsmORG> AsmORGs { get; set; } = default;
 
         public AsmLoad(AsmOption assembleOption, ISA isa)
@@ -86,6 +88,7 @@ namespace AILZ80ASM.Assembler
             ListedFiles = new List<FileInfo>();
 
             GlobalLabelNames = new List<string>();
+            LineDetailItemAddreses = new List<LineDetailItemAddress>();
             AsmORGs = new List<AsmORG>() { new AsmORG() };
         }
 
@@ -122,6 +125,28 @@ namespace AILZ80ASM.Assembler
             this.LabelName = asmLoad.LabelName;
             this.AsmEnd = asmLoad.AsmEnd;
         }
+
+        public void CreateNewScope(string globalLabelName, string labelName, Action<AsmLoad> func)
+        {
+            var asmLoad = CloneWithNewScore(globalLabelName, labelName);
+
+            func.Invoke(asmLoad);
+
+            this.AsmEnd = asmLoad.AsmEnd;
+        }
+
+        /*
+        public void CreateNewScopeAndPreAssemble(string globalLabelName, string labelName, ref AsmAddress asmAddress, byte fillByte, Action<AsmLoad> func)
+        {
+            var asmLoad = CloneWithNewScore(globalLabelName, labelName);
+            asmLoad.AsmORGs = new List<AsmORG>() { new AsmORG(asmAddress.Program, asmAddress.Output, fillByte) };
+
+            func.Invoke(asmLoad);
+            //asmLoad.PreAssemble(ref asmAddress);
+
+            this.AsmEnd = asmLoad.AsmEnd;
+        }
+        */
 
         /// <summary>
         /// 新しいスコープのクローン
@@ -161,6 +186,7 @@ namespace AILZ80ASM.Assembler
                 DefaultCharMap = this.DefaultCharMap,
                 AsmEnd = this.AsmEnd,
                 AsmORGs = this.AsmORGs,
+                LineDetailItemAddreses = this.LineDetailItemAddreses
             };
 
             return asmLoad;
@@ -259,14 +285,24 @@ namespace AILZ80ASM.Assembler
             this.Macros.Add(macro);
         }
 
-        public void AddORG(AsmORG asmORG)
+        public void AddLineDetailItemAddress(LineDetailItemAddress lineDetailItemAddress)
         {
-            this.AsmORGs.Add(asmORG);
+            this.LineDetailItemAddreses.Add(lineDetailItemAddress);
+        }
+
+        public void AddLineDetailItem(LineDetailItem lineDetailItem)
+        {
+            this.AsmORGs.Last().AddScopeItem(lineDetailItem);
         }
 
         public void AddListedFile(FileInfo fileInfo)
         {
             this.ListedFiles.Add(fileInfo);
+        }
+
+        public void AddORG(AsmORG asmORG)
+        {
+            this.AsmORGs.Add(asmORG);
         }
 
         public bool ListedFileExists(FileInfo fileInfo)
@@ -341,6 +377,22 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
+        public AsmORG[] FindAsmORGs(UInt32 outputAddressStart, UInt32 outputAddressEnd)
+        {
+            var resultList = new List<AsmORG>();
+            // 先頭一つを積む
+
+            resultList.Add(this.AsmORGs.Where(m => m.OutputAddress <= outputAddressStart).OrderByDescending(m => m.OutputAddress).Last());
+            resultList.AddRange(this.AsmORGs.Where(m => m.OutputAddress > outputAddressStart && m.OutputAddress < outputAddressEnd).OrderByDescending(m => m.OutputAddress));
+
+            return resultList.ToArray();
+        }
+
+        public AsmORG GetLastAsmORG()
+        {
+            return AsmORGs.Last();
+        }
+
         public void AddAsmAddress(AsmAddress asmAddress)
         {
             AsmAddresses.Add(asmAddress);
@@ -357,39 +409,48 @@ namespace AILZ80ASM.Assembler
         }
 
         /*
-        public void BuildORG()
+        /// <summary>
+        /// プレアセンブルを行う
+        /// </summary>
+        public void PreAssemble(ref AsmAddress asmAddress)
         {
-            var asmORGs = AsmORGs.Where(m => !m.AssembleORG.OutputAddress.HasValue).OrderBy(m => m.AssembleORG.ProgramAddress).ToArray();
+            var beforeAsmAddress = asmAddress;
 
-            for (var index = 0; index < asmORGs.Length; index++)
+            // プレアセンブル
+            foreach (var asmORG in AsmORGs.OrderBy(m => m.OutputAddress ?? uint.MaxValue).ThenBy(m => m.ProgramAddress))
             {
-                var assembleOrg = asmORGs[index].AssembleOrg;
-                if (index == 0)
+                if (asmORG.OutputAddress.HasValue)
                 {
-                    assembleOrg.OutputAddress = 0;
+                    asmAddress.Program = asmORG.ProgramAddress;
+                    asmAddress.Output = asmORG.OutputAddress.Value;
                 }
                 else
                 {
-                    var beforeAssembleOrg = asmORGs[index - 1].AssembleOrg;
-                    var outputAddress = assembleOrg.ProgramAddress - beforeAssembleOrg.ProgramAddress;
-                    assembleOrg.OutputAddress = (UInt32?)outputAddress;
+                    if (beforeAsmAddress.Output == asmAddress.Output)
+                    {
+                        asmAddress.Program = asmORG.ProgramAddress;
+                    }
+                    else
+                    {
+                        var outputAddress = asmORG.ProgramAddress - beforeAsmAddress.Program;
+                        if (asmAddress.Output > (uint)outputAddress)
+                        {
+                            this.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0009));
+                        }
+                        asmAddress.Output = (uint)outputAddress;
+                    }
                 }
-                asmORGs[index].AssembleOrg = assembleOrg;
+                beforeAsmAddress = asmAddress;
+
+                // ここは中で要素が増えるので、foreachは使えない
+                for (var index = 0; index < asmORG.LineDetailItems.Count; index++)
+                {
+                    var lineDetailItem = asmORG.LineDetailItems[index];
+                    lineDetailItem.PreAssemble(ref asmAddress);
+                }
             }
         }
         */
-
-        /// <summary>
-        /// アセンブルを行う
-        /// </summary>
-        public void Assemble()
-        {
-            foreach (var asmORG in AsmORGs.OrderBy(m => m.OutputAddress ?? uint.MaxValue).ThenBy(m => m.ProgramAddress))
-            {
-
-            }
-        }
-
 
         public AsmEnum.EncodeModeEnum GetEncodMode(FileInfo fileInfo)
         {

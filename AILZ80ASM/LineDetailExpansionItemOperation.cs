@@ -16,6 +16,21 @@ namespace AILZ80ASM
             }
         }
 
+        public override AsmResult[] BinResult
+        {
+            get
+            {
+                if (OperationItem == default(OperationItem))
+                {
+                    return Array.Empty<AsmResult>();
+                }
+                else
+                {
+                    return new[] { new AsmResult() { Address = this.Address, Data = OperationItem.Bin } };
+                }
+            }
+        }
+
         public override AsmList List
         {
             get

@@ -14,7 +14,7 @@ PUT_CHR1:
 	ld a, 2
 	ret
 
-	org ADDR, $20
+	org ADDR, $20, $AA
 PUT_CHR2:
 	ld a, 1
 	call PUT_CHR2.test
@@ -23,7 +23,7 @@ PUT_CHR2:
 	ld a, 2
 	ret
 
-	ORG ($ + 255 ) / 256 * 256, ($$ + 255 ) / 256 * 256, $AA
+	ORG ($ + 255 ) / 256 * 256, ($$ + 255 ) / 256 * 256
 
 NEW_LABLE:
 .TEST1	equ	$			; 敵弾
