@@ -383,7 +383,7 @@ namespace AILZ80ASM.Assembler
             // 先頭一つを積む
 
             resultList.Add(this.AsmORGs.Where(m => m.OutputAddress <= outputAddressStart).OrderByDescending(m => m.OutputAddress).Last());
-            resultList.AddRange(this.AsmORGs.Where(m => m.OutputAddress > outputAddressStart && m.OutputAddress < outputAddressEnd).OrderByDescending(m => m.OutputAddress));
+            resultList.AddRange(this.AsmORGs.Where(m => m.OutputAddress >= outputAddressStart && m.OutputAddress < outputAddressEnd).OrderByDescending(m => m.OutputAddress));
 
             return resultList.ToArray();
         }
