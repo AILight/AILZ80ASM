@@ -169,7 +169,18 @@ namespace AILZ80ASM
                     lineItems = Conditions[condition].Select(m =>
                     {
                         var lineItem = new LineItem(m);
-                        lineItem.CreateLineDetailItem(AsmLoad);
+                        try
+                        {
+                            lineItem.CreateLineDetailItem(AsmLoad);
+                        }
+                        catch (ErrorAssembleException ex)
+                        {
+                            this.AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
+                        }
+                        catch (Exception ex)
+                        {
+                            this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                        }
                         return lineItem;
                     }).ToArray();
 
