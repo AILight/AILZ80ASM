@@ -11,6 +11,8 @@ namespace AILZ80ASM
     public class Package
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
+        private AsmOption AssembleOption { get; set; } = default;
+
         public AsmLoad AssembleLoad { get; private set; }
         public ErrorLineItem[] Errors => AssembleLoad.AssembleErrors;
         public ErrorLineItem[] Warnings => AssembleLoad.AssembleWarnings;
@@ -18,6 +20,8 @@ namespace AILZ80ASM
 
         public Package(AsmOption asmOption, AsmISA asmISA)
         {
+            AssembleOption = asmOption;
+
             switch (asmISA)
             {
                 case AsmISA.Z80:
@@ -130,18 +134,63 @@ namespace AILZ80ASM
             AssembleLoad.BuildLabel();
         }
 
-        public void SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
+
+        public void Trace_Information()
         {
+            if (AssembleOption.FileDiff)
+            {
+                Trace.WriteLine("出力ファイル差分確認モード");
+                Trace.WriteLine("");
+            }
+            else
+            {
+                Trace.WriteLine($"# Inputs");
+                Trace.WriteLine("");
+
+                foreach (var item in AssembleOption.InputFiles)
+                {
+                    foreach (var fileInfo in item.Value)
+                    {
+                        Trace.WriteLine($"- {item.Key.ToString()} filename [{fileInfo.Name}]");
+                    }
+                }
+                Trace.WriteLine("");
+            }
+        }
+
+        public bool SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
+        {
+            var result = true;
+
+            Trace.WriteLine($"# Outputs");
+            Trace.WriteLine("");
+
             foreach (var item in outputFiles)
             {
-                item.Value.Delete();
-                using var fileStream = item.Value.OpenWrite();
+                var status = "";
+                try
+                {
 
-                SaveOutput(fileStream, item);
+                    item.Value.Delete();
+                    using var fileStream = item.Value.OpenWrite();
 
-                fileStream.Close();
+                    SaveOutput(fileStream, item);
+
+                    fileStream.Close();
+
+                    status = "Successful.";
+                }
+                catch (Exception ex)
+                {
+                    status = ex.Message;
+                    result = false;
+                }
+
+                Trace.WriteLine($"- {item.Key.ToString()} filename [{item.Value.Name}]: {status}");
             }
+            Trace.WriteLine($"");
 
+            return result;
         }
 
         public void SaveOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
@@ -168,8 +217,9 @@ namespace AILZ80ASM
             }
         }
 
-        public void DiffOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
+        public bool DiffOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
+            var result = true;
             foreach (var item in outputFiles)
             {
                 if (!item.Value.Exists)
@@ -186,10 +236,12 @@ namespace AILZ80ASM
                 }
                 catch (Exception ex)
                 {
+                    result = false;
                     Trace.TraceError(ex.Message);
                 }
                 fileStream.Close();
             }
+            return result;
         }
 
         public void DiffOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
@@ -397,6 +449,8 @@ namespace AILZ80ASM
 
         public void OutputError()
         {
+            Trace.WriteLine($"# Status");
+
             var errors = AssembleLoad.AssembleErrors;
             var warnings = AssembleLoad.AssembleWarnings;
             var informations = AssembleLoad.AssembleInformation;

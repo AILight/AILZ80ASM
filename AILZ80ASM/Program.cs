@@ -162,15 +162,12 @@ namespace AILZ80ASM
 
                 asmOption.Validate();
 
-                // ファイルの差分表示モード
-                if (asmOption.FileDiff)
-                {
-                    Trace.WriteLine("出力ファイル差分確認モード");
-                    Trace.WriteLine("");
-                }
-
                 // アセンブル実行
                 var package = new Package(asmOption, AsmISA.Z80);
+                //　パッケージステータス
+                package.Trace_Information();
+
+                // エラーが無ければアセンブル
                 if (package.Errors.Length == 0)
                 {
                     package.Assemble();
@@ -189,16 +186,17 @@ namespace AILZ80ASM
                     
                     if (asmOption.FileDiff)
                     {
-                        package.DiffOutput(outputFiles);
+                        assembleResult &= package.DiffOutput(outputFiles);
                     }
                     else
                     {
-                        package.SaveOutput(outputFiles);
+                        assembleResult &= package.SaveOutput(outputFiles);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine($"ファイル書き込みエラー:{ex.Message}");
+                    Trace.WriteLine($"ファイルエラー:{ex.Message}");
+                    assembleResult = false;
                 }
 
                 package.OutputError();
