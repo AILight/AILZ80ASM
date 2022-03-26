@@ -186,11 +186,11 @@ namespace AILZ80ASM
                     
                     if (asmOption.FileDiff)
                     {
-                        assembleResult = package.DiffOutput(outputFiles);
+                        assembleResult &= package.DiffOutput(outputFiles);
                     }
                     else
                     {
-                        assembleResult = package.SaveOutput(outputFiles);
+                        assembleResult &= package.SaveOutput(outputFiles);
                     }
                 }
                 catch (Exception ex)
