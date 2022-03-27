@@ -29,9 +29,6 @@ namespace AILZ80ASM.Assembler
         // 展開判断用
         public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
 
-        // 出力制御用
-        public List<OperationItem> TirmOperationItems { get; private set; } = new List<OperationItem>(); // トリム用アイテムにマーク
-
         public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
 
         // アセンブルオプション
@@ -182,7 +179,6 @@ namespace AILZ80ASM.Assembler
                 LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
 
                 Errors = this.Errors,
-                TirmOperationItems = this.TirmOperationItems,
                 DefaultCharMap = this.DefaultCharMap,
                 AsmEnd = this.AsmEnd,
                 AsmORGs = this.AsmORGs,
@@ -380,10 +376,45 @@ namespace AILZ80ASM.Assembler
         public AsmORG[] FindAsmORGs(UInt32 outputAddressStart, UInt32 outputAddressEnd)
         {
             var resultList = new List<AsmORG>();
+            
             // 先頭一つを積む
+            resultList.Add(this.AsmORGs.Where(m => m.OutputAddress <= outputAddressStart).OrderByDescending(m => m.OutputAddress).First());
+            resultList.AddRange(this.AsmORGs.Where(m => m.OutputAddress >= outputAddressStart && m.OutputAddress < outputAddressEnd).OrderBy(m => m.OutputAddress));
 
-            resultList.Add(this.AsmORGs.Where(m => m.OutputAddress <= outputAddressStart).OrderByDescending(m => m.OutputAddress).Last());
-            resultList.AddRange(this.AsmORGs.Where(m => m.OutputAddress >= outputAddressStart && m.OutputAddress < outputAddressEnd).OrderByDescending(m => m.OutputAddress));
+            return resultList.ToArray();
+        }
+
+        public AsmORG[] FindRemainingAsmORGs(UInt32 outputAddress)
+        {
+            var resultList = new List<AsmORG>();
+
+            // 先頭一つを積む
+            resultList.Add(this.AsmORGs.Where(m => m.OutputAddress <= outputAddress).OrderByDescending(m => m.OutputAddress).First());
+            resultList.AddRange(this.AsmORGs.Where(m => m.OutputAddress >= outputAddress).OrderBy(m => m.OutputAddress));
+
+            // 最後
+            while (resultList.Count > 0 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.ORG)
+            {
+                resultList.RemoveAt(resultList.Count - 1);
+            }
+
+            //　Trimモードの時
+            if (this.AssembleOption.OutputTrim)
+            {
+                while (resultList.Count > 0 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.NextORG)
+                {
+                    var beforeLast = resultList[resultList.Count - 2];
+                    if (beforeLast.FillBytes.All(m => m == default(byte)))
+                    {
+                        resultList.RemoveAt(resultList.Count - 1);
+                        resultList.RemoveAt(resultList.Count - 1);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
 
             return resultList.ToArray();
         }
@@ -396,16 +427,6 @@ namespace AILZ80ASM.Assembler
         public void AddAsmAddress(AsmAddress asmAddress)
         {
             AsmAddresses.Add(asmAddress);
-        }
-
-        public void AddTrimOperationItem(OperationItem operationItem)
-        {
-            TirmOperationItems.Add(operationItem);
-        }
-
-        public void ClearTrimOperationItem()
-        {
-            TirmOperationItems.Clear();
         }
 
         /*

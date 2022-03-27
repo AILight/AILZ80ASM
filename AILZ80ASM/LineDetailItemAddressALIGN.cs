@@ -53,7 +53,7 @@ namespace AILZ80ASM
         {
             var lastAsmORG = this.AsmLoad.GetLastAsmORG();
 
-            if (string.IsNullOrEmpty(AlignLabel) || !AIMath.TryParse<UInt16>(AlignLabel, out var align))
+            if (string.IsNullOrEmpty(AlignLabel) || !AIMath.TryParse<UInt16>(AlignLabel, this.AsmLoad, out var align))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, AlignLabel);
             }
@@ -66,18 +66,18 @@ namespace AILZ80ASM
             if (offset > 0)
             {
                 var fillByte = default(byte);
-                if (AIMath.TryParse<byte>(FillByteLabel, out var tempFillByte))
+                if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
                 {
                     fillByte = tempFillByte;
                 }
-                var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte);
+                var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, new[] { fillByte }, AsmORG.ORGTypeEnum.ALIGN);
                 this.AsmLoad.AddORG(asmORG);
 
                 asmAddress.Program += (UInt16)offset;
                 asmAddress.Output += (UInt32)offset;
 
                 // 次のORGを作成する
-                AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, lastAsmORG.FillByte);
+                AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, lastAsmORG.FillBytes, AsmORG.ORGTypeEnum.NextORG);
 
                 this.AsmLoad.AddORG(AssembleORG);
             }

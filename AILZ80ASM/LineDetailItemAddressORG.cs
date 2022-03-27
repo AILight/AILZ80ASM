@@ -13,6 +13,13 @@ namespace AILZ80ASM
         public string ProgramLabel { get; set; }
         public string OutputLabel { get; set; }
         public string FillByteLabel { get; set; }
+        public override AsmList[] Lists
+        {
+            get
+            {
+                return new[] { AsmList.CreateLineItemORG(Address, new AsmLength(), LineItem) };
+            }
+        }
 
         private LineDetailItemAddressORG(LineItem lineItem, string programLabel, string outputLabel, string fillByteLabel, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -59,13 +66,15 @@ namespace AILZ80ASM
                 asmAddress.Output = (UInt32)(asmAddress.Output + diff);
             }
             var fillByte = default(byte);
-            if (AIMath.TryParse<byte>(FillByteLabel, out var tempFillByte))
+            if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
             {
                 fillByte = tempFillByte;
             }
 
-            AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte);
+            AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, new[] { fillByte }, AsmORG.ORGTypeEnum.ORG);
             this.AsmLoad.AddORG(AssembleORG);
+
+            base.PreAssemble(ref asmAddress);
         }
 
         public override void ExpansionItem()

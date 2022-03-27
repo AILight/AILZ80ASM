@@ -100,9 +100,6 @@ namespace AILZ80ASM.Assembler
                         return lineItem;
                     }).ToArray(); //　シーケンシャルに処理する必要があるため、ToArrayは必須
 
-                // 展開領域
-                asmLoad.LoadMacros.Push(this);
-
                 foreach (var localLineItem in lineItems)
                 {
                     try
@@ -119,9 +116,11 @@ namespace AILZ80ASM.Assembler
                 }
                 lineItemList.AddRange(lineItems);
 
-                asmLoad.LoadMacros.Pop();
             });
 
+
+            // 展開領域
+            asmLoad.LoadMacros.Push(this);
 
             foreach (var item in lineItemList)
             {
@@ -135,7 +134,9 @@ namespace AILZ80ASM.Assembler
                 }
             }
 
-            return lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems).ToArray();
+            asmLoad.LoadMacros.Pop();
+
+            return lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems ?? Array.Empty<LineDetailScopeItem>()).ToArray();
         }
 
         /// <summary>
