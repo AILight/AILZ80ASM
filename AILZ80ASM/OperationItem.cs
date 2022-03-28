@@ -32,6 +32,7 @@ namespace AILZ80ASM
             var can = false;
             can = can || OperationItemOPCode.CanCreate(operation, asmLoad);     // OpeCode
             can = can || OperationItemData.CanCreate(operation, asmLoad);       // Data
+            can = can || OperationItemDataFill.CanCreate(operation, asmLoad);   // DataFill
 
             return can;
         }
@@ -44,6 +45,7 @@ namespace AILZ80ASM
             // 命令を判別する
             operationItem ??= OperationItemOPCode.Create(lineDetailExpansionItemOperation, address, asmLoad);       // OpeCode
             operationItem ??= OperationItemData.Create(lineDetailExpansionItemOperation, address, asmLoad);         // Data
+            operationItem ??= OperationItemDataFill.Create(lineDetailExpansionItemOperation, address, asmLoad);     // DataFill
 
             return operationItem;
         }

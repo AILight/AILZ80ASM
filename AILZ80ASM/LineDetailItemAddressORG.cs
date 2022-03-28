@@ -71,7 +71,7 @@ namespace AILZ80ASM
                 fillByte = tempFillByte;
             }
 
-            AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, new[] { fillByte }, AsmORG.ORGTypeEnum.ORG);
+            AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte, AsmORG.ORGTypeEnum.ORG);
             this.AsmLoad.AddORG(AssembleORG);
 
             base.PreAssemble(ref asmAddress);

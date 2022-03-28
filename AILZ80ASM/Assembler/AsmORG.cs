@@ -15,22 +15,22 @@ namespace AILZ80ASM.Assembler
 
         public UInt16 ProgramAddress { get; private set; }
         public UInt32 OutputAddress { get; private set; }
-        public byte[] FillBytes { get; private set; }
+        public byte FillByte { get; private set; }
         public List<LineDetailItem> LineDetailItems { get; private set; }
         public LineItem LineItem { get; private set; } = default;
         public ORGTypeEnum ORGType { get; private set; } = ORGTypeEnum.ORG;
 
         public AsmORG()
-            : this(0, 0, Array.Empty<byte>(), ORGTypeEnum.ORG)
+            : this(0, 0, 0, ORGTypeEnum.ORG)
         {
 
         }
 
-        public AsmORG(UInt16 programAddress, UInt32 outputAddress, byte[] fillBytes, ORGTypeEnum orgType)
+        public AsmORG(UInt16 programAddress, UInt32 outputAddress, byte fillByte, ORGTypeEnum orgType)
         {
             ProgramAddress = programAddress;
             OutputAddress = outputAddress;
-            FillBytes = fillBytes;
+            FillByte = fillByte;
             LineDetailItems = new List<LineDetailItem>();
             ORGType = orgType;
         }

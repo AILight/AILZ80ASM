@@ -404,7 +404,7 @@ namespace AILZ80ASM.Assembler
                 while (resultList.Count > 0 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.NextORG)
                 {
                     var beforeLast = resultList[resultList.Count - 2];
-                    if (beforeLast.FillBytes.All(m => m == default(byte)))
+                    if (beforeLast.FillByte == default(byte))
                     {
                         resultList.RemoveAt(resultList.Count - 1);
                         resultList.RemoveAt(resultList.Count - 1);

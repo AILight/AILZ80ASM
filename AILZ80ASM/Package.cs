@@ -118,6 +118,12 @@ namespace AILZ80ASM
         /// </summary>
         private void ValidateOutputAddress()
         {
+            if (this.Errors.Length > 0)
+            {
+                // アセンブルエラーが発生していてたら確認は行わない
+                return;
+            }
+
             var binResult = FileItems.SelectMany(m => m.BinResult).OrderBy(m => m.Address.Output);
             if (binResult.Count() == 0)
             {
@@ -366,30 +372,13 @@ namespace AILZ80ASM
                     for (var index = 0; index < asmORGs.Length; index++)
                     {
                         var startAsmORG = asmORGs[index];
-                        var endAsmORG = index < asmORGs.Length - 1 ? asmORGs[index + 1] : new AsmORG(UInt16.MaxValue, UInt32.MaxValue, new[] { (byte)0 }, AsmORG.ORGTypeEnum.ORG);
+                        var endAsmORG = index < asmORGs.Length - 1 ? asmORGs[index + 1] : new AsmORG(UInt16.MaxValue, UInt32.MaxValue, default(byte), AsmORG.ORGTypeEnum.ORG);
 
                         var startOutputAddress = startAsmORG.OutputAddress < outputAddress ? outputAddress : startAsmORG.OutputAddress;
                         var endOutputAddress = endAsmORG.OutputAddress > item.Address.Output ? item.Address.Output : endAsmORG.OutputAddress;
 
                         var length = endOutputAddress - startOutputAddress;
-                        var bytes = default(byte[]);
-                        if (startAsmORG.FillBytes.Length == 0)
-                        {
-                            bytes = Enumerable.Repeat<byte>(0, (int)length).ToArray();
-                        }
-                        else if (startAsmORG.FillBytes.Length == 1)
-                        {
-                            bytes = Enumerable.Repeat<byte>(startAsmORG.FillBytes[0], (int)length).ToArray();
-                        }
-                        else
-                        {
-                            var fillBytes = new List<byte>();
-                            for (var counter = 0; counter < length / startAsmORG.FillBytes.Length; counter++)
-                            {
-                                fillBytes.AddRange(startAsmORG.FillBytes);
-                            }
-                            bytes = fillBytes.ToArray();
-                        }
+                        var bytes = Enumerable.Repeat<byte>(startAsmORG.FillByte, (int)length).ToArray();
 
                         stream.Write(bytes, 0, bytes.Length);
                         outputAddress += length;
@@ -420,24 +409,7 @@ namespace AILZ80ASM
                 var endOutputAddress = endAsmORG.OutputAddress;
 
                 var length = endOutputAddress - startOutputAddress;
-                var bytes = default(byte[]);
-                if (startAsmORG.FillBytes.Length == 0)
-                {
-                    bytes = Enumerable.Repeat<byte>(0, (int)length).ToArray();
-                }
-                else if (startAsmORG.FillBytes.Length == 1)
-                {
-                    bytes = Enumerable.Repeat<byte>(startAsmORG.FillBytes[0], (int)length).ToArray();
-                }
-                else
-                {
-                    var fillBytes = new List<byte>();
-                    for (var counter = 0; counter < length / startAsmORG.FillBytes.Length; counter++)
-                    {
-                        fillBytes.AddRange(startAsmORG.FillBytes);
-                    }
-                    bytes = fillBytes.ToArray();
-                }
+                var bytes = Enumerable.Repeat<byte>(startAsmORG.FillByte, (int)length).ToArray();
 
                 stream.Write(bytes, 0, bytes.Length);
                 asmAddress.Output += length;

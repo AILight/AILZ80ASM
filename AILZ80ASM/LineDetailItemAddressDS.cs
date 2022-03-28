@@ -9,7 +9,7 @@ namespace AILZ80ASM
 {
     public class LineDetailItemAddressDS : LineDetailItemAddress
     {
-        private static readonly string RegexPatternDS = @"^(?<op1>(DS|DBS|DWS))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
+        private static readonly string RegexPatternDS = @"^(?<op1>(DS))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
 
         public override AsmList[] Lists
         {
@@ -63,57 +63,22 @@ namespace AILZ80ASM
 
             if (length > 0)
             {
-                var offset = 0;
-                if (string.Compare(Operation, "DS", true) == 0 ||
-                    string.Compare(Operation, "DBS", true) == 0)
+                var offset = length;
+
+                var fillByte = default(byte);
+                if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
                 {
-                    offset = length;
-
-                    var fillByte = default(byte);
-                    if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
-                    {
-                        fillByte = tempFillByte;
-                    }
-
-                    var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, new byte[] { fillByte }, AsmORG.ORGTypeEnum.DS);
-                    this.AsmLoad.AddORG(asmORG);
-
+                    fillByte = tempFillByte;
                 }
-                else if (string.Compare(Operation, "DWS", true) == 0)
-                {
-                    offset = length * 2;
 
-                    var fillBytes = new byte[2];
-                    if (AIMath.TryParse<UInt16>(FillByteLabel, this.AsmLoad, out var value))
-                    {
-                        switch (this.AsmLoad.ISA.Endianness)
-                        {
-                            case InstructionSet.ISA.EndiannessEnum.LittleEndian:
-                                fillBytes[0] = (byte)(value % 256);
-                                fillBytes[1] = (byte)(value / 256);
-                                break;
-                            case InstructionSet.ISA.EndiannessEnum.BigEndian:
-                                fillBytes[0] = (byte)(value / 256);
-                                fillBytes[1] = (byte)(value % 256);
-                                break;
-                            default:
-                                throw new InvalidOperationException();
-                        }
-                    }
-
-                    var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillBytes, AsmORG.ORGTypeEnum.DS);
-                    this.AsmLoad.AddORG(asmORG);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte, AsmORG.ORGTypeEnum.DS);
+                this.AsmLoad.AddORG(asmORG);
 
                 asmAddress.Program += (UInt16)offset;
                 asmAddress.Output += (UInt32)offset;
 
                 // 次のORGを作成する
-                AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, lastAsmORG.FillBytes, AsmORG.ORGTypeEnum.NextORG);
+                AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, lastAsmORG.FillByte, AsmORG.ORGTypeEnum.NextORG);
 
                 this.AsmLoad.AddORG(AssembleORG);
             }
