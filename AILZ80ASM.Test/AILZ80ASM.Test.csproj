@@ -73,6 +73,9 @@
     <None Update="Test\TestER\CharMap.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestER\Org1.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestER\Equ.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

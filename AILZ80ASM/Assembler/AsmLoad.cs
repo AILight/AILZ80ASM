@@ -424,6 +424,11 @@ namespace AILZ80ASM.Assembler
             return AsmORGs.Last();
         }
 
+        public LineDetailItemAddress FindLineDetailItemAddress(UInt32 outputAddress)
+        {
+            return this.LineDetailItemAddreses.Where(m => m.AssembleORG.ORGType == AsmORG.ORGTypeEnum.ORG && m.AssembleORG.OutputAddress <= outputAddress).LastOrDefault();
+        }
+
         public void AddAsmAddress(AsmAddress asmAddress)
         {
             AsmAddresses.Add(asmAddress);

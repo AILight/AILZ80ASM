@@ -207,6 +207,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Org1()
+        {
+            var errors = Assemble("Org1.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0009, 19, "Org1.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Repeat()
         {
             var errors = Assemble("Repeat.Z80");

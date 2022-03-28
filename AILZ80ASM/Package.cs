@@ -65,6 +65,9 @@ namespace AILZ80ASM
 
             // 未使用ラベルの値確定
             BuildLabel();
+
+            // 出力アドレスの重複チェック
+            ValidateOutputAddress();
         }
 
         /// <summary>
@@ -79,16 +82,6 @@ namespace AILZ80ASM
                 fileItem.PreAssemble(ref address);
             }
         }
-
-        /*
-        /// <summary>
-        /// Orgを確定させる
-        /// </summary>
-        private void BuildORG()
-        {
-            AssembleLoad.BuildORG();
-        }
-        */
 
         /// <summary>
         /// 命令の展開
@@ -120,6 +113,47 @@ namespace AILZ80ASM
             AssembleLoad.BuildLabel();
         }
 
+        /// <summary>
+        /// 出力アドレスの重複チェック
+        /// </summary>
+        private void ValidateOutputAddress()
+        {
+            var binResult = FileItems.SelectMany(m => m.BinResult).OrderBy(m => m.Address.Output);
+            if (binResult.Count() == 0)
+            {
+                // 出力データが無い場合は終了
+                return;
+            }
+
+            //var startResult = binResult.OrderByDescending(m => m.Address.Output).First();
+            var endResult = binResult.OrderByDescending(m => m.Address.Output).ThenByDescending(m => m.Data.Length).First();
+            //var startAddress = startResult.Address.Output;
+            var endAddress = endResult.Address.Output + endResult.Data.Length;
+
+            var outputPoints = new int[endAddress];
+            foreach (var item in binResult)
+            {
+                for (var index = 0; index < item.Data.Length; index++)
+                {
+                    var address = item.Address.Output + index;
+                    if (outputPoints[address] > 0)
+                    {
+                        // OutputAddressの衝突
+                        var lineDetailItemAddress = this.AssembleLoad.FindLineDetailItemAddress((UInt32)address);
+                        if (lineDetailItemAddress == default)
+                        {
+                            throw new Exception("出力アドレスで重複がありましたが、それを指定するORGが見つかりませんでした。");
+                        }
+
+                        this.AssembleLoad.AddError(new ErrorLineItem(lineDetailItemAddress.LineItem, Error.ErrorCodeEnum.E0009));
+
+                        return;
+                    }
+                    outputPoints[address]++;
+                }
+            }
+
+        }
 
         public void Trace_Information()
         {
@@ -359,13 +393,19 @@ namespace AILZ80ASM
 
                         stream.Write(bytes, 0, bytes.Length);
                         outputAddress += length;
+                        asmAddress.Output += length;
                     }
                 }
                 if (item.Data.Length > 0)
                 {
+                    if (item.Address.Output != asmAddress.Output)
+                    {
+                        throw new Exception("出力先アドレスが重複したため、BINファイルの出力に失敗ました");
+                    }
+
                     stream.Write(item.Data, 0, item.Data.Length);
                     asmAddress.Program = (UInt16)(item.Address.Program + item.Data.Length);
-                    asmAddress.Output = (UInt32)(item.Address.Output + item.Data.Length);
+                    asmAddress.Output = (UInt32)(asmAddress.Output + item.Data.Length);
                 }
             }
 

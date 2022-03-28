@@ -1,0 +1,35 @@
+﻿	org $8000
+	LD	A, 1
+	LD	A, 2
+	LD	A, 3
+	LD	A, 4
+	LD	A, 5
+	LD	A, 6
+	LD	A, 7
+	LD	A, 8
+	LD	A, 9
+	LD	A, 10
+	LD	A, 11
+	LD	A, 12
+	LD	A, 13
+	LD	A, 14
+	LD	A, 15
+	LD	A, 16
+
+	org $8010
+	LD	B, 1
+	LD	B, 2
+	LD	B, 3
+	LD	B, 4
+	LD	B, 5
+	LD	B, 6
+	LD	B, 7
+	LD	B, 8
+	LD	B, 9
+	LD	B, 10
+	LD	B, 11
+	LD	B, 12
+	LD	B, 13
+	LD	B, 14
+	LD	B, 15
+	LD	B, 16
