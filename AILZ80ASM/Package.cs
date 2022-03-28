@@ -50,13 +50,6 @@ namespace AILZ80ASM
             // 命令を展開する
             ExpansionItem();
 
-            //var asmAddress = new AsmAddress();
-            //AssembleLoad.PreAssemble(ref asmAddress);
-            /*
-            // ORGを確定
-            BuildORG();
-            */
-
             // プレアセンブル
             PreAssemble();
 
@@ -131,10 +124,10 @@ namespace AILZ80ASM
                 return;
             }
 
-            //var startResult = binResult.OrderByDescending(m => m.Address.Output).First();
             var endResult = binResult.OrderByDescending(m => m.Address.Output).ThenByDescending(m => m.Data.Length).First();
-            //var startAddress = startResult.Address.Output;
             var endAddress = endResult.Address.Output + endResult.Data.Length;
+
+
 
             var outputPoints = new int[endAddress];
             foreach (var item in binResult)

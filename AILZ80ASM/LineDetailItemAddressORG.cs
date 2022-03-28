@@ -63,6 +63,12 @@ namespace AILZ80ASM
             }
             else if (asmAddress.Output != amsORG.OutputAddress)
             {
+                if (asmAddress.Output + diff < 0)
+                {
+                    // アドレスの指定に問題があり（将来直す可能性アリ）
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+                }
+
                 asmAddress.Output = (UInt32)(asmAddress.Output + diff);
             }
             var fillByte = default(byte);
