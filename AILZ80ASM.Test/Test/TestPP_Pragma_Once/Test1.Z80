@@ -1,0 +1,3 @@
+﻿INCLUDE ".\Test\TestPP_Pragma_Once\Test.INC"
+
+		LD	A, SCREEN.WIDTH

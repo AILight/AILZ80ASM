@@ -45,7 +45,7 @@ namespace AILZ80ASM
             OperationItem = default(OperationItem);
 
             // ラベルを処理する
-            var label = new Label(this, asmLoad);
+            var label = new LabelAdr(this, asmLoad);
             if (label.Invalidate)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);

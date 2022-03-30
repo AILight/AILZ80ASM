@@ -25,11 +25,18 @@ namespace AILZ80ASM
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
             }
 
+            AssembleLoad = asmLoad;
+            FileInfo = fileInfo;
+
+            // Pramgaチェック
+            if (asmLoad.FindPramgaOnceFile(fileInfo) != default)
+            {
+                return;
+            }
+
             // スタックに読み込みファイルを積む
             asmLoad.LoadFiles.Push(fileInfo);
 
-            AssembleLoad = asmLoad;
-            FileInfo = fileInfo;
             var encodeMode = asmLoad.GetEncodMode(fileInfo);
             EncodeMode = encodeMode;
 

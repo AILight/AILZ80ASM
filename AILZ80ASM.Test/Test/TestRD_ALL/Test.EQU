@@ -1,0 +1,54 @@
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.10, EQU
+
+#pragma once
+
+
+
+                org $0000
+LB00:           
+
+                org $0014
+LB10:           
+
+                org $002A
+LB20:           
+
+                org $0044
+LB30:           
+
+                org $005E
+LB40:           
+
+                org $006E
+LB50:           
+
+                org $007E
+LB60:           
+
+                org $008E
+LB70:           
+
+                org $009E
+LB80:           
+
+                org $00AE
+LB90:           
+
+                org $00BE
+LBA0:           
+
+                org $00CE
+LBB0:           
+
+                org $00DE
+LBC0:           
+
+                org $00FB
+LBD0:           
+
+                org $0116
+LBE0:           
+
+                org $012F
+LBF0:           
+

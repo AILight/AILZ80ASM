@@ -53,11 +53,12 @@ namespace AILZ80ASM.Test
         {
             using var expectedStreamReader = new StreamReader(expectedStream);
             using var actualStreamReader = new StreamReader(actualStream);
-            var expected = expectedStreamReader.ReadLine();
-            var actual = actualStreamReader.ReadLine();
             var line = 1;
-            while (!string.IsNullOrEmpty(expected) && !string.IsNullOrEmpty(actual))
+            while (!expectedStreamReader.EndOfStream && !actualStreamReader.EndOfStream)
             {
+                var expected = expectedStreamReader.ReadLine();
+                var actual = actualStreamReader.ReadLine();
+
                 if (line > 1)
                 {
                     Assert.AreEqual(expected, actual, $"{fileType} Line:{line} expect:{expected} actual:{actual}");
@@ -68,8 +69,11 @@ namespace AILZ80ASM.Test
                 line++;
             }
 
-            if (!string.IsNullOrEmpty(expected) || !string.IsNullOrEmpty(actual))
+            if (!expectedStreamReader.EndOfStream || !expectedStreamReader.EndOfStream)
             {
+                var expected = expectedStreamReader.EndOfStream ? "" : expectedStreamReader.ReadLine();
+                var actual = expectedStreamReader.EndOfStream ? "" : actualStreamReader.ReadLine();
+
                 Assert.AreEqual(expected, actual, $"Line:{line} expect:{expected} actual:{actual}");
             }
         }

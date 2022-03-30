@@ -76,6 +76,7 @@ namespace AILZ80ASM.Assembler
                                         new Parameter { Name = "t88", ShortCut = "-t88", Description = "出力ファイルをT88形式で出力します。" },
                                         new Parameter { Name = "cmt", ShortCut = "-cmt", Description = "出力ファイルをCMT形式で出力します。" },
                                         new Parameter { Name = "sym", ShortCut = "-sym", Description = "シンボルファイルを出力します。" },
+                                        new Parameter { Name = "equ", ShortCut = "-equ", Description = "イコールラベルファイルを出力します。" },
                                         new Parameter { Name = "lst", ShortCut = "-lst", Description = "リストファイルを出力します。" },
                                         new Parameter { Name = "err", ShortCut = "-err", Description = "エラーファイルを出力します。" },
                                         //new Parameter { Name = "dbg", ShortCut = "-dbg", Description = "デバッグファイルを出力します。" },
@@ -154,6 +155,18 @@ namespace AILZ80ASM.Assembler
                 IsShortCut = true,
                 IsSimple = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".sym"); }
+            });
+
+            rootCommand.AddOption(new Option<FileInfo>()
+            {
+                Name = "outputEQU",
+                ArgumentName = "file",
+                Aliases = new[] { "-equ" },
+                Description = "イコールラベルファイルを出力します。（file名を省略可能）",
+                Required = false,
+                IsShortCut = true,
+                IsSimple = true,
+                DefaultFunc = (options) => { return GetDefaulFilename(options, ".equ"); }
             });
 
             rootCommand.AddOption(new Option<FileInfo>()
@@ -317,6 +330,7 @@ namespace AILZ80ASM.Assembler
                 [AsmEnum.FileTypeEnum.T88] = "outputT88",
                 [AsmEnum.FileTypeEnum.CMT] = "outputCMT",
                 [AsmEnum.FileTypeEnum.SYM] = "outputSYM",
+                [AsmEnum.FileTypeEnum.EQU] = "outputEQU",
                 [AsmEnum.FileTypeEnum.LST] = "outputLST",
                 [AsmEnum.FileTypeEnum.ERR] = "outputERR",
                 //[AsmEnum.FileTypeEnum.DBG] = "outputDBG",
@@ -342,6 +356,7 @@ namespace AILZ80ASM.Assembler
                     "cmt" => AsmEnum.FileTypeEnum.CMT,
                     "lst" => AsmEnum.FileTypeEnum.LST,
                     "sym" => AsmEnum.FileTypeEnum.SYM,
+                    "equ" => AsmEnum.FileTypeEnum.EQU,
                     "dbg" => AsmEnum.FileTypeEnum.DBG,
                     "err" => AsmEnum.FileTypeEnum.ERR,
                     _ => throw new InvalidOperationException()

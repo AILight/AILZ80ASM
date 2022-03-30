@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.Assembler
 {
-    public class Label
+    public abstract class Label
     {
         public enum DataTypeEnum
         {
@@ -22,6 +22,13 @@ namespace AILZ80ASM.Assembler
             GlobalLabel,
             Label,
             SubLabel,
+        }
+
+        public enum LabelTypeEnum
+        {
+            Equ,
+            Adr,
+            Arg,
         }
 
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\](\s+|$)";
@@ -50,20 +57,22 @@ namespace AILZ80ASM.Assembler
 
         public DataTypeEnum DataType { get; private set; }
         public LabelLevelEnum LabelLevel { get; private set; }
+        public LabelTypeEnum LabelType { get; private set; }
 
         private AsmLoad AsmLoad { get; set; }
         private LineDetailExpansionItem LineDetailExpansionItem { get; set; }
 
-        public Label(string labelName, AsmLoad asmLoad)
-            : this(labelName, "", asmLoad)
+        public Label(string labelName, AsmLoad asmLoad, LabelTypeEnum labelType)
+            : this(labelName, "", asmLoad, labelType)
         {
         }
 
-        public Label(string labelName, string valueString, AsmLoad asmLoad)
+        public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType)
         {
             GlobalLabelName = asmLoad.GlobalLabelName;
             LabelName = asmLoad.LabelName;
             ValueString = valueString;
+            LabelType = labelType;
             AsmLoad = asmLoad;
             LabelLevel = LabelLevelEnum.None;
             
@@ -139,8 +148,8 @@ namespace AILZ80ASM.Assembler
             }
         }
 
-        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-            : this(lineDetailExpansionItemOperation.LineItem.LabelString, "", asmLoad)
+        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, LabelTypeEnum labelType)
+            : this(lineDetailExpansionItemOperation.LineItem.LabelString, "", asmLoad, labelType)
         {
             if (LabelLevel == LabelLevelEnum.Label ||
                 LabelLevel == LabelLevelEnum.SubLabel)

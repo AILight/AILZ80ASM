@@ -66,7 +66,7 @@ namespace AILZ80ASM.Assembler
 
             foreach (var index in Enumerable.Range(0, arguments.Length))
             {
-                var label = new Label(Args[index], arguments[index], localAsmLoad);
+                var label = new LabelArg(Args[index], arguments[index], localAsmLoad);
                 localAsmLoad.AddLabel(label);
             }
 

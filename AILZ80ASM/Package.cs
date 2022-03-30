@@ -30,7 +30,7 @@ namespace AILZ80ASM
                 default:
                     throw new NotImplementedException();
             }
-            var label = new Label("[NS_Main]", AssembleLoad);
+            var label = new LabelAdr("[NS_Main]", AssembleLoad);
             AssembleLoad.AddLabel(label);
             AssembleLoad.DefaultCharMap = "@SJIS";
 
@@ -230,6 +230,9 @@ namespace AILZ80ASM
                     break;
                 case AsmEnum.FileTypeEnum.SYM:
                     SaveSYM(stream);
+                    break;
+                case AsmEnum.FileTypeEnum.EQU:
+                    SaveEQU(stream);
                     break;
                 default:
                     throw new NotImplementedException($"指定の出力形式は選択できません。{outputFile.Key}");
@@ -454,10 +457,34 @@ namespace AILZ80ASM
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            var title = $"{ProductInfo.ProductLongName}, SYM";
+            var title = $";{ProductInfo.ProductLongName}, SYM";
             streamWriter.WriteLine(title);
 
             AssembleLoad.OutputLabels(streamWriter);
+
+            streamWriter.Flush();
+            memoryStream.Position = 0;
+            memoryStream.CopyTo(stream);
+        }
+
+        public void SaveEQU(FileInfo equal)
+        {
+            using var fileStream = equal.OpenWrite();
+
+            SaveEQU(fileStream);
+
+            fileStream.Close();
+        }
+
+        public void SaveEQU(Stream stream)
+        {
+            using var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
+
+            var title = $";{ProductInfo.ProductLongName}, EQU";
+            streamWriter.WriteLine(title);
+
+            AssembleLoad.OutputEqualLabels(streamWriter);
 
             streamWriter.Flush();
             memoryStream.Position = 0;
@@ -478,7 +505,7 @@ namespace AILZ80ASM
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            var title = $"{ProductInfo.ProductLongName}, LST:{AssembleLoad.AssembleOption.ListMode}:{AssembleLoad.AssembleOption.TabSize}";
+            var title = $";{ProductInfo.ProductLongName}, LST:{AssembleLoad.AssembleOption.ListMode}:{AssembleLoad.AssembleOption.TabSize}";
             streamWriter.WriteLine(AsmList.CreateSource(title).ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
 
             foreach (var item in FileItems)

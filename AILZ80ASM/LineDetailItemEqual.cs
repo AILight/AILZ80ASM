@@ -36,7 +36,7 @@ namespace AILZ80ASM
                 {
                     var labelValue = matched.Groups["value"].Value.Trim();
 
-                    var label = new Label(lineItem.LabelString, labelValue, localAsmLoad);
+                    var label = new LabelEqu(lineItem.LabelString, labelValue, localAsmLoad);
                     if (label.Invalidate)
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);

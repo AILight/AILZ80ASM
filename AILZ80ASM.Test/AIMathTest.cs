@@ -140,8 +140,8 @@ namespace AILZ80ASM.Test
             asmAddress.Output = 0x8000;
 
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            asmLoad.AddLabel(new Label("[NS_Main]", "", asmLoad));
-            var label = new Label("LB", "0xAA01", asmLoad);
+            asmLoad.AddLabel(new LabelAdr("[NS_Main]", "", asmLoad));
+            var label = new LabelAdr("LB", "0xAA01", asmLoad);
 
             asmLoad.AddLabel(label);
 
@@ -211,13 +211,13 @@ namespace AILZ80ASM.Test
             asmAddress.Output = 0x8100;
 
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            asmLoad.AddLabel(new Label("[NS_Main]", "", asmLoad));
+            asmLoad.AddLabel(new LabelAdr("[NS_Main]", "", asmLoad));
             {
-                var label = new Label("LB", "0xAA02", asmLoad);
+                var label = new LabelAdr("LB", "0xAA02", asmLoad);
                 asmLoad.AddLabel(label);
             }
             {
-                var label = new Label("LB2", "LABEL", asmLoad);
+                var label = new LabelAdr("LB2", "LABEL", asmLoad);
                 asmLoad.AddLabel(label);
             }
             Assert.AreEqual(AIMath.ConvertTo<byte>("-1", asmLoad), 0xFF);
@@ -290,9 +290,9 @@ namespace AILZ80ASM.Test
                 asmAddress.Output = 0x8000;
 
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.AddLabel(new Label("[NS_Main]", "", asmLoad));
+                asmLoad.AddLabel(new LabelAdr("[NS_Main]", "", asmLoad));
 
-                var label = new Label("LB", "0xAA02", asmLoad);
+                var label = new LabelAdr("LB", "0xAA02", asmLoad);
                 asmLoad.AddLabel(label);
 
                 Assert.IsTrue(AIMath.TryParse<UInt16>("LB + 1", asmLoad, asmAddress, out var result));

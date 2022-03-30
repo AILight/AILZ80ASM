@@ -72,6 +72,7 @@ namespace AILZ80ASM.Assembler
         // AsmORG
         private List<LineDetailItemAddress> LineDetailItemAddreses { get; set; } = default;
         private List<AsmORG> AsmORGs { get; set; } = default;
+        private AsmPragma AsmPragma { get; set; } = default;        // PRAGMA設定を保持
 
         public AsmLoad(AsmOption assembleOption, ISA isa)
         {
@@ -87,6 +88,9 @@ namespace AILZ80ASM.Assembler
             GlobalLabelNames = new List<string>();
             LineDetailItemAddreses = new List<LineDetailItemAddress>();
             AsmORGs = new List<AsmORG>() { new AsmORG() };
+            AsmPragma = new AsmPragma();
+
+
         }
 
         /// <summary>
@@ -132,19 +136,6 @@ namespace AILZ80ASM.Assembler
             this.AsmEnd = asmLoad.AsmEnd;
         }
 
-        /*
-        public void CreateNewScopeAndPreAssemble(string globalLabelName, string labelName, ref AsmAddress asmAddress, byte fillByte, Action<AsmLoad> func)
-        {
-            var asmLoad = CloneWithNewScore(globalLabelName, labelName);
-            asmLoad.AsmORGs = new List<AsmORG>() { new AsmORG(asmAddress.Program, asmAddress.Output, fillByte) };
-
-            func.Invoke(asmLoad);
-            //asmLoad.PreAssemble(ref asmAddress);
-
-            this.AsmEnd = asmLoad.AsmEnd;
-        }
-        */
-
         /// <summary>
         /// 新しいスコープのクローン
         /// </summary>
@@ -182,6 +173,8 @@ namespace AILZ80ASM.Assembler
                 DefaultCharMap = this.DefaultCharMap,
                 AsmEnd = this.AsmEnd,
                 AsmORGs = this.AsmORGs,
+                AsmPragma = this.AsmPragma,
+
                 LineDetailItemAddreses = this.LineDetailItemAddreses
             };
 
@@ -299,6 +292,11 @@ namespace AILZ80ASM.Assembler
         public void AddORG(AsmORG asmORG)
         {
             this.AsmORGs.Add(asmORG);
+        }
+
+        public void AddPramgaOnceFileInfo(FileInfo fileInfo)
+        {
+            this.AsmPragma.OnceFiles.Add(fileInfo);
         }
 
         public bool ListedFileExists(FileInfo fileInfo)
@@ -422,6 +420,11 @@ namespace AILZ80ASM.Assembler
         public AsmORG GetLastAsmORG()
         {
             return AsmORGs.Last();
+        }
+
+        public FileInfo FindPramgaOnceFile(FileInfo fileInfo)
+        {
+            return AsmPragma.OnceFiles.FirstOrDefault(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity());
         }
 
         public LineDetailItemAddress FindLineDetailItemAddress(UInt32 outputAddress)
@@ -550,6 +553,7 @@ namespace AILZ80ASM.Assembler
                 AsmEnum.FileTypeEnum.CMT => AsmEnum.FileDataTypeEnum.Binary,
                 AsmEnum.FileTypeEnum.LST => AsmEnum.FileDataTypeEnum.Text,
                 AsmEnum.FileTypeEnum.SYM => AsmEnum.FileDataTypeEnum.Text,
+                AsmEnum.FileTypeEnum.EQU => AsmEnum.FileDataTypeEnum.Text,
                 AsmEnum.FileTypeEnum.DBG => AsmEnum.FileDataTypeEnum.Text,
                 _ => throw new NotImplementedException()
             };
@@ -583,5 +587,102 @@ namespace AILZ80ASM.Assembler
                 }
             }
         }
+
+        public void OutputEqualLabels(StreamWriter streamWriter)
+        {
+            var globalLabels = Labels.GroupBy(m => m.GlobalLabelName).Select(m => m.Key);
+            var globalLabelMode = globalLabels.Count() > 1;
+            streamWriter.WriteLine();
+            streamWriter.WriteLine("#pragma once");
+            streamWriter.WriteLine();
+
+            foreach (var globalLabelName in globalLabels)
+            {
+                if (globalLabelMode)
+                {
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine($"[{globalLabelName}]");
+                    streamWriter.WriteLine();
+                }
+
+                var labels = Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.GlobalLabelName == globalLabelName);
+
+                // EQU
+                foreach (var label in labels.Where(m => m.LabelLevel == Label.LabelLevelEnum.Label && m.LabelType == Label.LabelTypeEnum.Equ))
+                {
+                    var labelName = $"{label.LabelName}:";
+                    var equValue = $"${label.Value:X4}";
+                    if (AIMath.TryParse<int>(label.ValueString, out var tmpValue) && label.Value == tmpValue)
+                    {
+                        equValue = label.ValueString;
+                    }
+                    streamWriter.WriteLine($"{labelName.PadRight(16)}equ {equValue} ");
+
+                    // sub equ
+                    foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Equ))
+                    {
+                        var subLabelName = $".{item.SubLabelName}";
+                        var subEquValue = $"${item.Value:X4}";
+                        if (AIMath.TryParse<int>(item.ValueString, out var subTmpValue) && item.Value == subTmpValue)
+                        {
+                            subEquValue = item.ValueString;
+                        }
+                        streamWriter.WriteLine($"{subLabelName.PadRight(16)}equ {subEquValue} ");
+                    }
+                }
+                streamWriter.WriteLine();
+
+                // Label
+                var saveAddress = int.MaxValue;
+                foreach (var address in labels.Where(m => m.LabelType == Label.LabelTypeEnum.Adr).OrderBy(m => m.Value).Select(m => m.Value).Distinct())
+                {
+                    foreach (var label in labels.Where(m => m.Value == address && m.LabelLevel == Label.LabelLevelEnum.Label && m.LabelType == Label.LabelTypeEnum.Adr))
+                    {
+                        if (saveAddress != address)
+                        {
+                            // ORG
+                            streamWriter.WriteLine();
+                            streamWriter.WriteLine($"                org ${address:X4}");
+                            saveAddress = address;
+                        }
+
+                        // Add Label
+                        var labelName = $"{label.LabelName}:";
+                        streamWriter.WriteLine($"{labelName.PadRight(16)}");
+
+                        // sub equ
+                        foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Equ))
+                        {
+                            var subLabelName = $".{item.SubLabelName}";
+                            var equValue = $"${item.Value:X4}";
+                            if (AIMath.TryParse<int>(item.ValueString, out var tmpValue) && item.Value == tmpValue)
+                            {
+                                equValue = item.ValueString;
+                            }
+
+                            streamWriter.WriteLine($"{subLabelName.PadRight(16)}equ {equValue} ");
+                        }
+
+                        // SubAddress
+                        foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Adr))
+                        {
+                            if (saveAddress != item.Value)
+                            {
+                                // ORG
+                                streamWriter.WriteLine();
+                                streamWriter.WriteLine($"                org ${item.Value:X4}");
+                                saveAddress = item.Value;
+                            }
+
+                            var subLabelName = $".{item.SubLabelName}";
+                            streamWriter.WriteLine($"{subLabelName.PadRight(16)}");
+                        }
+                    }
+                }
+
+                streamWriter.WriteLine();
+            }
+        }
+        
     }
 }
