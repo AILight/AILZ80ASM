@@ -62,24 +62,28 @@ namespace AILZ80ASM
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
             }
 
-            var offset = align - (asmAddress.Program % align);
-            if (offset > 0)
+            var remainder = (asmAddress.Program % align);
+            if (remainder != 0)
             {
-                var fillByte = default(byte);
-                if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
+                var offset = align - remainder;
+                if (offset > 0)
                 {
-                    fillByte = tempFillByte;
+                    var fillByte = default(byte);
+                    if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
+                    {
+                        fillByte = tempFillByte;
+                    }
+                    var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte, AsmORG.ORGTypeEnum.ALIGN);
+                    this.AsmLoad.AddORG(asmORG);
+
+                    asmAddress.Program += (UInt16)offset;
+                    asmAddress.Output += (UInt32)offset;
+
+                    // 次のORGを作成する
+                    AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, lastAsmORG.FillByte, AsmORG.ORGTypeEnum.NextORG);
+
+                    this.AsmLoad.AddORG(AssembleORG);
                 }
-                var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte, AsmORG.ORGTypeEnum.ALIGN);
-                this.AsmLoad.AddORG(asmORG);
-
-                asmAddress.Program += (UInt16)offset;
-                asmAddress.Output += (UInt32)offset;
-
-                // 次のORGを作成する
-                AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, lastAsmORG.FillByte, AsmORG.ORGTypeEnum.NextORG);
-
-                this.AsmLoad.AddORG(AssembleORG);
             }
         }
 

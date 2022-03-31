@@ -428,35 +428,6 @@ TestArg MACRO a1, a2
 	ENDM
 ```
 
-## 条件付きアセンブル
-5つの命令を使用して、条件付きアセンブルを制御します
-- #IF: 条件付きアセンブルを開始します。コードは、指定された条件がTRUEの時にアセンブル対象になります。
-- #ELIF: 前の条件付きアセンブルを終了して、指定された条件がTRUEの時にアセンブル対象になります。
-- #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
-- #ENDIF: 条件付きアセンブルを終了します。
-- #PRINT: アセンブル画面に情報を表示します。(version 1.0.0以降)
-- #ERROR: 無条件にエラーを発生させます。
-- #TRUE: 真(bool型)
-- #FALSE: 偽(bool型)
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
-
-```
-#if mode == 1
-	ld a,1
-#elif mode == 2
-	ld d,4
-#else
-	#error "modeの値が範囲外です。"
-#endif
-```
-
-ラベルの再定義エラーを回避する方法
-```
-#if LABEL.@EXISTS
-LABEL	equ 00FFH
-#endif
-```
-
 ## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
 式をまとめる事が出来ます
 - 複数行にまたがる事は出来ません。
@@ -471,6 +442,44 @@ Function ABS(value) => value < 0 ? value * -1 : value
 
 ## END
 アセンブルの実行を中断します。これ以降のソースコードはアセンブルされません。アセンブル結果は出力されます。
+
+## プリプロセッサ
+#### 条件付きアセンブル
+条件付きアセンブルを制御します
+- #IF: 条件付きアセンブルを開始します。コードは、指定された条件がTRUEの時にアセンブル対象になります。
+- #ELIF: 前の条件付きアセンブルを終了して、指定された条件がTRUEの時にアセンブル対象になります。
+- #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
+- #ENDIF: 条件付きアセンブルを終了します。
+- #PRINT: アセンブル画面に情報を表示します。(将来実装予定)
+- #ERROR: 無条件にエラーを発生させます。
+- #TRUE: 真(bool型)
+- #FALSE: 偽(bool型)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
+```
+#if mode == 1
+	ld a,1
+#elif mode == 2
+	ld d,4
+#else
+	#error "modeの値が範囲外です。"
+#endif
+```
+
+ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+```
+#if LABEL.@EXISTS
+LABEL	equ 00FFH
+#endif
+```
+
+#### PRAGMA (プラグマ)
+###### PRAGMA ONCE
+ソースコードをアセンブルするときに、記述があるファイルを1回だけアセンブルすることを指定します
+```
+#pragma once
+
+LABEL	equ 00FFH
+```
 				
 ## 表記の揺れ対応
 - (IX) → (IX+0)

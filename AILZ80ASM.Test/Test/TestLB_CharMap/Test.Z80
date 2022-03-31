@@ -16,6 +16,6 @@
 
 	DB "国語算数理科社会"
 
-	charmap @PPP, ".\Test\TestLB_CharMap_Test\Test.json"
+	charmap @PPP, ".\Test\TestLB_CharMap\Test.json"
 	
 	DB "国語算数理科社会"

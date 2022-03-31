@@ -136,10 +136,25 @@
     <None Update="Test\TestER\Address.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Label_Test\Test.BIN">
+    <None Update="Test\TestLB_CharMap\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Label_Test\Test.Z80">
+    <None Update="Test\TestLB_CharMap\Test.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_CharMap\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_DS\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_DS\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_Label\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_Label\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_CALL_Address\Test.LST">
@@ -160,40 +175,40 @@
     <None Update="Test\TestLB_DSDBSDWS_Test\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.BIN">
+    <None Update="Test\TestLB_DSDBSDWS_Trim\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.Z80">
+    <None Update="Test\TestLB_DSDBSDWS_Trim\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Test\Test.BIN">
+    <None Update="Test\TestLB_DSDBSDWS\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Test\Test.Z80">
+    <None Update="Test\TestLB_DSDBSDWS\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DBDW_Test\Test.BIN">
+    <None Update="Test\TestLB_DBDW\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DBDW_Test\Test.Z80">
+    <None Update="Test\TestLB_DBDW\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Enhance_EQU_Test\Test.BIN">
+    <None Update="Test\TestLB_Enhance_EQU\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Enhance_EQU_Test\Test.Z80">
+    <None Update="Test\TestLB_Enhance_EQU\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_EQU_Test\Test.BIN">
+    <None Update="Test\TestLB_EQU\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_EQU_Test\Test.LST">
+    <None Update="Test\TestLB_EQU\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_EQU_Test\Test.Z80">
+    <None Update="Test\TestLB_EQU\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_GlobalLabel\Test.SYM">

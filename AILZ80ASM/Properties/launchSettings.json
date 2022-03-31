@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "Test.z80 -bin -equ -lst -sym"
+      "commandLineArgs": "angle.z80 -cmt -fd -cd .\\Angle"
     }
   }
 }

@@ -548,7 +548,7 @@ namespace AILZ80ASM
         {
             if (errorLineItems.Length > 0)
             {
-                Trace.WriteLine($"> {title}");
+                Trace.WriteLine($"# {title}");
                 InternalOutputError(errorLineItems, title);
                 Trace.WriteLine("");
             }
