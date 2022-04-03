@@ -34,7 +34,7 @@ namespace AILZ80ASM
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // Conditionalでラベルが存在していたらエラー
-            if (ifMatched.Success || elifMatched.Success || elseMatched.Success || endMatched.Success)
+            if (elifMatched.Success || elseMatched.Success || endMatched.Success)
             {
                 if (!string.IsNullOrEmpty(lineItem.LabelString))
                 {
@@ -43,7 +43,7 @@ namespace AILZ80ASM
             }
 
             // リピート処理中
-            if (asmLoad.LineDetailItemForExpandItem is LineDetailItemConditional asmLoad_LineDetailItemConditional)
+            if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemConditional asmLoad_LineDetailItemConditional)
             {
                 // 終了条件チェック
                 if (endMatched.Success)
@@ -53,7 +53,7 @@ namespace AILZ80ASM
                     // リピートが終了
                     if (asmLoad_LineDetailItemConditional.ConditionalNestedCount == 0)
                     {
-                        asmLoad.LineDetailItemForExpandItem = default;
+                        asmLoad.Share.LineDetailItemForExpandItem = default;
                         return new LineDetailItemConditional(lineItem, asmLoad);
                     }
 
@@ -111,7 +111,7 @@ namespace AILZ80ASM
                     };
                     lineDetailItemConditional.Conditions.Add(lineDetailItemConditional.ConditionKey, new List<LineItem>());
 
-                    asmLoad.LineDetailItemForExpandItem = lineDetailItemConditional;
+                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemConditional;
 
                     return lineDetailItemConditional;
                 }
@@ -156,6 +156,7 @@ namespace AILZ80ASM
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            base.PreAssemble(ref asmAddress);
             // 初期値設定
             LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
             // リピート数が設定されているものを処理する

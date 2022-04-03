@@ -18,10 +18,15 @@ namespace AILZ80ASM.Assembler
         {
         }
 
+        public LabelAdr(LineDetailItem lineDetailItem, AsmLoad asmLoad)
+            : base(lineDetailItem, asmLoad, LabelTypeEnum.Adr)
+        {
+
+        }
+
         public LabelAdr(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
             : base(lineDetailExpansionItemOperation, asmLoad, LabelTypeEnum.Adr)
         {
         }
-
     }
 }

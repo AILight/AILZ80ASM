@@ -45,6 +45,7 @@ namespace AILZ80ASM
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            base.PreAssemble(ref asmAddress);
         }
 
         public override void ExpansionItem()

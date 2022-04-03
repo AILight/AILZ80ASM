@@ -50,6 +50,8 @@ namespace AILZ80ASM
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            base.PreAssemble(ref asmAddress);
+
             var programAddress = AIMath.ConvertTo<UInt16>(ProgramLabel, this.AsmLoad, asmAddress);
             var amsORG = this.AsmLoad.GetLastAsmORG();
             var diff = (int)programAddress - asmAddress.Program;

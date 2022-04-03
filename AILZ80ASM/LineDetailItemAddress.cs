@@ -22,7 +22,6 @@ namespace AILZ80ASM
 
 
         public AsmORG AssembleORG { get; set; }
-        public AsmAddress Address { get; set; }
 
         protected LineDetailItemAddress(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -35,7 +34,7 @@ namespace AILZ80ASM
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
-            Address = asmAddress;
+            base.PreAssemble(ref asmAddress);
         }
 
         public override void ExpansionItem()

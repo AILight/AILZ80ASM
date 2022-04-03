@@ -74,7 +74,11 @@ namespace AILZ80ASM
         public void CreateLineDetailItem(AsmLoad asmLoad)
         {
             // LineDetailItem作成
-            LineDetailItem = LineDetailItem.CreateLineDetailItem(this, asmLoad);
+            asmLoad.CreateScope(localAsmLoad => 
+            {
+                LineDetailItem = LineDetailItem.CreateLineDetailItem(this, localAsmLoad);
+            });
+
         }
 
         public void ExpansionItem()

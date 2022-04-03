@@ -19,15 +19,15 @@ namespace AILZ80ASM.Assembler
         // アセンブル終了フラグ
         public bool AsmEnd { get; set; } = false;
 
-        // デフォルトキャラクターマップ
-        public string DefaultCharMap { get; set; }
-
         // 循環展開確認用
         public Stack<FileInfo> LoadFiles { get; private set; } = new Stack<FileInfo>();
         public Stack<Macro> LoadMacros { get; private set; } = new Stack<Macro>();
 
-        // 展開判断用
-        public LineDetailItem LineDetailItemForExpandItem { get; set; } = null;
+        // 共有データ
+        public AsmLoadShare Share { get; private set; }
+
+        // スコープデータ
+        public AsmLoadScope Scope { get; private set; }
 
         public List<AsmAddress> AsmAddresses { get; private set; } = new List<AsmAddress>();
 
@@ -85,6 +85,9 @@ namespace AILZ80ASM.Assembler
             Errors = new List<ErrorLineItem>();
             ListedFiles = new List<FileInfo>();
 
+            Share = new AsmLoadShare();
+            Scope = new AsmLoadScope();
+
             GlobalLabelNames = new List<string>();
             LineDetailItemAddreses = new List<LineDetailItemAddress>();
             AsmORGs = new List<AsmORG>() { new AsmORG() };
@@ -125,6 +128,8 @@ namespace AILZ80ASM.Assembler
             this.GlobalLabelName = asmLoad.GlobalLabelName;
             this.LabelName = asmLoad.LabelName;
             this.AsmEnd = asmLoad.AsmEnd;
+
+            this.Scope.Restore(asmLoad.Scope);
         }
 
         public void CreateNewScope(string globalLabelName, string labelName, Action<AsmLoad> func)
@@ -167,18 +172,85 @@ namespace AILZ80ASM.Assembler
                 LoadFiles = this.LoadFiles,
                 LoadMacros = this.LoadMacros,
                 ListedFiles = this.ListedFiles,
-                LineDetailItemForExpandItem = this.LineDetailItemForExpandItem,
+                Share = this.Share,
 
                 Errors = this.Errors,
-                DefaultCharMap = this.DefaultCharMap,
                 AsmEnd = this.AsmEnd,
                 AsmORGs = this.AsmORGs,
                 AsmPragma = this.AsmPragma,
+
+                Scope = this.Scope.Clone(),
 
                 LineDetailItemAddreses = this.LineDetailItemAddreses
             };
 
             return asmLoad;
+        }
+
+
+        public void ProcessLabel(LineItem lineItem)
+        {
+            if (string.IsNullOrEmpty(lineItem.LabelString))
+            {
+                return;
+            }
+
+            var label = new LabelAdr(lineItem.LabelString, this);
+            if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
+            {
+                // ラベルと同じ名前は付けられない
+                if (this.Labels.Any(m => string.Compare(m.LabelName, label.LabelFullName, true) == 0))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
+                }
+
+                if (!this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
+                {
+                    // ネームスペースが変わるときには保存する
+                    this.GlobalLabelNames.Add(label.LabelFullName);
+                }
+                this.GlobalLabelName = label.GlobalLabelName;
+                this.LabelName = label.LabelName;
+            }
+            else
+            {
+                // ネームスペースとと同じ名前は付けられない
+                if (this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
+                }
+                this.LabelName = label.LabelName;
+            }
+        }
+
+        public void ProcessLabel(LineDetailItem lineDetailItem)
+        {
+            // ラベルを処理する
+            if (!string.IsNullOrEmpty(lineDetailItem.LineItem.LabelString))
+            {
+                var label = default(Label);
+                if (lineDetailItem is LineDetailItemEqual lineDetailItemEqual)
+                {
+                    label = new LabelEqu(lineDetailItemEqual, this);
+                    lineDetailItemEqual.EquLabel = label;
+                }
+                else
+                {
+                    label = new LabelAdr(lineDetailItem, this);
+                }
+
+                if (label.Invalidate)
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
+                }
+
+                this.AddLabel(label);
+                // ローカルラベルの末尾に「:」がついている場合にはワーニング
+                if (lineDetailItem.LineItem.LabelString.StartsWith(".") && lineDetailItem.LineItem.LabelString.EndsWith(":"))
+                {
+                    this.AddError(new ErrorLineItem(lineDetailItem.LineItem, Error.ErrorCodeEnum.W9005));
+                }
+            }
         }
 
         /// <summary>
@@ -194,19 +266,19 @@ namespace AILZ80ASM.Assembler
 
         public void LoadCloseValidate()
         {
-            if (this.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
+            if (this.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
             {
-                this.AddError(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E3001));
+                this.AddError(new ErrorLineItem(this.Share.LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E3001));
             }
 
-            if (this.LineDetailItemForExpandItem is LineDetailItemRepeat)
+            if (this.Share.LineDetailItemForExpandItem is LineDetailItemRepeat)
             {
-                this.AddError(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1011));
+                this.AddError(new ErrorLineItem(this.Share.LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1011));
             }
 
-            if (this.LineDetailItemForExpandItem is LineDetailItemConditional)
+            if (this.Share.LineDetailItemForExpandItem is LineDetailItemConditional)
             {
-                this.AddError(new ErrorLineItem(LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1021));
+                this.AddError(new ErrorLineItem(this.Share.LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1021));
             }
         }
 

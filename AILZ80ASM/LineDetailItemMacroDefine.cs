@@ -40,10 +40,10 @@ namespace AILZ80ASM
             var startMatched = Regex.Match(lineItem.OperationString, regexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var endMatched = Regex.Match(lineItem.OperationString, regexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            if (asmLoad.LineDetailItemForExpandItem != default &&
-                asmLoad.LineDetailItemForExpandItem.GetType() == lineDetailItemMacroDefine.GetType())
+            if (asmLoad.Share.LineDetailItemForExpandItem != default &&
+                asmLoad.Share.LineDetailItemForExpandItem.GetType() == lineDetailItemMacroDefine.GetType())
             {
-                var asmLoad_LineDetailItemMacro = asmLoad.LineDetailItemForExpandItem as LineDetailItemMacroDefine;
+                var asmLoad_LineDetailItemMacro = asmLoad.Share.LineDetailItemForExpandItem as LineDetailItemMacroDefine;
                 if (startMatched.Success)
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E3001);
@@ -53,7 +53,7 @@ namespace AILZ80ASM
                 if ((lineItem.LabelString.StartsWith("[") && lineItem.LabelString.EndsWith("]")) || 
                     lineItem.LabelString.EndsWith(":"))
                 {
-                    asmLoad.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3006));
+                    asmLoad.Share.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3006));
                 }
                 else
                 {
@@ -68,18 +68,18 @@ namespace AILZ80ASM
                     //同名マクロチェック
                     if (asmLoad.FindMacro(macro.FullName) != default)
                     {
-                        asmLoad.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(asmLoad_LineDetailItemMacro.LineItem, Error.ErrorCodeEnum.E3010));
+                        asmLoad.Share.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(asmLoad_LineDetailItemMacro.LineItem, Error.ErrorCodeEnum.E3010));
                     }
 
-                    if (asmLoad.LineDetailItemForExpandItem.Errors.Count == 0)
+                    if (asmLoad.Share.LineDetailItemForExpandItem.Errors.Count == 0)
                     {
                         asmLoad.AddMacro(macro);
                     }
 
-                    asmLoad.AddErrors(asmLoad.LineDetailItemForExpandItem.Errors);
+                    asmLoad.AddErrors(asmLoad.Share.LineDetailItemForExpandItem.Errors);
 
                     // 終了
-                    asmLoad.LineDetailItemForExpandItem = default;
+                    asmLoad.Share.LineDetailItemForExpandItem = default;
                 }
 
                 return lineDetailItemMacroDefine;
@@ -111,7 +111,7 @@ namespace AILZ80ASM
                     {
                         lineDetailItemMacro.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3005, string.Join(",", errorArgumentNames)));
                     }
-                    asmLoad.LineDetailItemForExpandItem = lineDetailItemMacro;
+                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemMacro;
 
                     return lineDetailItemMacro;
                 }

@@ -19,8 +19,8 @@ namespace AILZ80ASM.Assembler
         {
         }
 
-        public LabelEqu(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-            : base(lineDetailExpansionItemOperation, asmLoad, LabelTypeEnum.Equ)
+        public LabelEqu(LineDetailItemEqual lineDetailItemEqual, AsmLoad asmLoad)
+            : base(lineDetailItemEqual, asmLoad, LabelTypeEnum.Equ)
         {
         }
     }

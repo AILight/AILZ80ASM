@@ -139,7 +139,7 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.DefaultCharMap = "@SJIS";
+                asmLoad.Scope.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByChar("'A'", asmLoad);
@@ -148,7 +148,7 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.DefaultCharMap = "@SJIS";
+                asmLoad.Scope.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByChar("'石'", asmLoad);
@@ -158,7 +158,7 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.DefaultCharMap = "@SJIS";
+                asmLoad.Scope.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByChar("@SJIS:'野'", asmLoad);
@@ -172,7 +172,7 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.DefaultCharMap = "@SJIS";
+                asmLoad.Scope.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByString("\"A\"", asmLoad);
@@ -181,7 +181,7 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.DefaultCharMap = "@SJIS";
+                asmLoad.Scope.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByString("\"石野\"", asmLoad);
@@ -193,7 +193,7 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.DefaultCharMap = "@SJIS";
+                asmLoad.Scope.DefaultCharMap = "@SJIS";
                 CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByString("@SJIS:\"石野\"", asmLoad);

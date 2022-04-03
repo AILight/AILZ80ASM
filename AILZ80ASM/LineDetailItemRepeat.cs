@@ -31,10 +31,10 @@ namespace AILZ80ASM
             var endMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // リピート処理中
-            if (asmLoad.LineDetailItemForExpandItem != default &&
-                asmLoad.LineDetailItemForExpandItem.GetType() == lineDetailItemRepeat.GetType())
+            if (asmLoad.Share.LineDetailItemForExpandItem != default &&
+                asmLoad.Share.LineDetailItemForExpandItem.GetType() == lineDetailItemRepeat.GetType())
             {
-                var asmLoad_LineDetailItemRepeat = asmLoad.LineDetailItemForExpandItem as LineDetailItemRepeat;
+                var asmLoad_LineDetailItemRepeat = asmLoad.Share.LineDetailItemForExpandItem as LineDetailItemRepeat;
 
                 // 終了条件チェック
                 if (endMatched.Success)
@@ -46,7 +46,7 @@ namespace AILZ80ASM
                     {
                         asmLoad_LineDetailItemRepeat.RepeatLines.Add(lineItem);
 
-                        asmLoad.LineDetailItemForExpandItem = default;
+                        asmLoad.Share.LineDetailItemForExpandItem = default;
                         return lineDetailItemRepeat;
                     }
                 }
@@ -83,7 +83,7 @@ namespace AILZ80ASM
                     lineDetailItemRepeat.RepeatLastLabel = startMatched.Groups["last_arg"].Value;
                     lineDetailItemRepeat.RepeatNestedCount = 1;
                     lineDetailItemRepeat.RepeatLines.Add(lineItem);
-                    asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
+                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
                 }
@@ -92,7 +92,7 @@ namespace AILZ80ASM
                     lineDetailItemRepeat.RepeatCountLabel = startSimpleMatched.Groups["count"].Value;
                     lineDetailItemRepeat.RepeatNestedCount = 1;
                     lineDetailItemRepeat.RepeatLines.Add(lineItem);
-                    asmLoad.LineDetailItemForExpandItem = lineDetailItemRepeat;
+                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemRepeat;
 
                     return lineDetailItemRepeat;
                 }
@@ -107,6 +107,8 @@ namespace AILZ80ASM
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            base.PreAssemble(ref asmAddress);
+
             // リピート数が設定されているものを処理する
             if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
             {

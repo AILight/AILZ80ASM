@@ -61,6 +61,7 @@ namespace AILZ80ASM.Assembler
 
         private AsmLoad AsmLoad { get; set; }
         private LineDetailExpansionItem LineDetailExpansionItem { get; set; }
+        private LineDetailItem LineDetailItem { get; set; }
 
         public Label(string labelName, AsmLoad asmLoad, LabelTypeEnum labelType)
             : this(labelName, "", asmLoad, labelType)
@@ -160,6 +161,21 @@ namespace AILZ80ASM.Assembler
 
         }
 
+        public Label(LineDetailItem lineDetailItem, AsmLoad asmLoad, LabelTypeEnum labelType)
+            : this(lineDetailItem.LineItem.LabelString, labelType == LabelTypeEnum.Equ ? ((LineDetailItemEqual)lineDetailItem).LabelValue : "", asmLoad, labelType)
+        {
+            if (labelType == LabelTypeEnum.Adr)
+            {
+                if (LabelLevel == LabelLevelEnum.Label ||
+                    LabelLevel == LabelLevelEnum.SubLabel)
+                {
+                    ValueString = "$";
+                }
+            }
+            LineDetailItem = lineDetailItem;
+
+        }
+
         public static string GetLabelText(string lineString)
         {
             var matchedGlobalLabel = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -249,13 +265,17 @@ namespace AILZ80ASM.Assembler
                 return;
             }
 
-            if (LineDetailExpansionItem == default)
+            if (LineDetailExpansionItem != default)
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad);
+                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailExpansionItem.Address);
+            }
+            else if (LineDetailItem != default)
+            {
+                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailItem.Address);
             }
             else
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailExpansionItem.Address);
+                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad);
             }
             DataType = DataTypeEnum.Value;
         }

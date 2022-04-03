@@ -44,6 +44,7 @@ namespace AILZ80ASM
         {
             OperationItem = default(OperationItem);
 
+            /*
             // ラベルを処理する
             var label = new LabelAdr(this, asmLoad);
             if (label.Invalidate)
@@ -59,6 +60,7 @@ namespace AILZ80ASM
                     asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W9005));
                 }
             }
+            */
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress, AsmLoad asmLoad)

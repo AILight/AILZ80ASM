@@ -21,14 +21,11 @@ namespace AILZ80ASM
         /// <param name="asmLoad"></param>
         public LineDetailScopeItem(LineItem lineItem, AsmLoad asmLoad)
         {
-            asmLoad.CreateScope(newAsmLoad =>
+            AsmLoad = asmLoad;
+            LineDetailExpansionItems = new[]
             {
-                AsmLoad = newAsmLoad;
-                LineDetailExpansionItems = new[]
-                {
-                    new LineDetailExpansionItemOperation(lineItem, AsmLoad)
-                };
-            });
+                new LineDetailExpansionItemOperation(lineItem, AsmLoad)
+            };
         }
 
         /// <summary>

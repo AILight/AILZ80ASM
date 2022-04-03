@@ -7,8 +7,9 @@ namespace AILZ80ASM
     public class LineDetailItemEqual : LineDetailItem
     {
         private static readonly string RegexPatternEqual = @"^equ\s+(?<value>.+)";
-        private Label EquLabel { get; set; }
-        private AsmAddress AsmAddress { get; set; }
+        public Label EquLabel { get; set; }
+        public string LabelValue { get; set; }
+
         public override AsmList[] Lists
         {
             get
@@ -20,10 +21,10 @@ namespace AILZ80ASM
             }
         }
 
-        private LineDetailItemEqual(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemEqual(LineItem lineItem, string labelValue, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
-
+            LabelValue = labelValue;
         }
 
         public static LineDetailItemEqual Create(LineItem lineItem, AsmLoad asmLoad)
@@ -31,44 +32,12 @@ namespace AILZ80ASM
             var matched = Regex.Match(lineItem.OperationString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
-                var lineDetailItemEqual = default(LineDetailItemEqual);
-                asmLoad.CreateScope(localAsmLoad => 
-                {
-                    var labelValue = matched.Groups["value"].Value.Trim();
+                var labelValue = matched.Groups["value"].Value.Trim();
 
-                    var label = new LabelEqu(lineItem.LabelString, labelValue, localAsmLoad);
-                    if (label.Invalidate)
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
-                    }
-                    localAsmLoad.AddLabel(label);
-
-                    lineDetailItemEqual = new LineDetailItemEqual(lineItem, localAsmLoad) { EquLabel = label };
-                });
-                return lineDetailItemEqual;
+                return new LineDetailItemEqual(lineItem, labelValue, asmLoad);
             }
 
             return default;
-        }
-
-        public override void ExpansionItem()
-        {
-            var lineDetailExpansionItem = new LineDetailExpansionItem(this.LineItem);
-            EquLabel.SetLineDetailExpansionItem(lineDetailExpansionItem);
-
-            LineDetailScopeItems = new[]
-            {
-                new LineDetailScopeItem(new[] { lineDetailExpansionItem }, AsmLoad)
-            };
-
-            base.ExpansionItem();
-        }
-
-        public override void PreAssemble(ref AsmAddress asmAddress)
-        {
-            AsmAddress = asmAddress;
-
-            base.PreAssemble(ref asmAddress);
         }
     }
 }

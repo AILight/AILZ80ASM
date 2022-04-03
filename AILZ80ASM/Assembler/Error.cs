@@ -166,7 +166,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
             [ErrorCodeEnum.E1022] = "#ENDIFが先に見つかりました。",
             [ErrorCodeEnum.E1023] = "#ELSEの後に#ELSIF、#ELSEは設定できません。",
-            [ErrorCodeEnum.E1024] = "#IF、#ELSIF、#ELSE、#ENDIFにラベルは設定できません。",
+            [ErrorCodeEnum.E1024] = "#ELSIF、#ELSE、#ENDIFにラベルは設定できません。",
 
             // エラー
             [ErrorCodeEnum.E1031] = "#ERROR:{0}",

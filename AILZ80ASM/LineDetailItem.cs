@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,8 @@ namespace AILZ80ASM
     {
         public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad { get; set; }
-
+        
+        public AsmAddress Address { get; protected set; }
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
         public virtual AsmResult[] BinResult => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResult).ToArray();
@@ -20,7 +22,9 @@ namespace AILZ80ASM
         {
             LineItem = lineItem;
 
-            AsmLoad = asmLoad.Clone();
+            //AsmLoad = asmLoad.Clone();
+            AsmLoad = asmLoad;
+
         }
 
         public static LineDetailItem CreateLineDetailItem(LineItem lineItem, AsmLoad asmLoad)
@@ -28,25 +32,25 @@ namespace AILZ80ASM
             // インクルードのチェック
             var lineDetailItem = default(LineDetailItem);
 
-            if (asmLoad.LineDetailItemForExpandItem != default)
+            if (asmLoad.Share.LineDetailItemForExpandItem != default)
             {
-                if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacroDefineModern)
+                if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefineModern)
                 {
                     lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
                 }
-                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemMacroDefineCompatible)
+                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefineCompatible)
                 {
                     lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
                 }
-                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeatModern)
+                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemRepeatModern)
                 {
                     lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
                 }
-                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemRepeatCompatible)
+                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemRepeatCompatible)
                 {
                     lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                 }
-                else if (asmLoad.LineDetailItemForExpandItem is LineDetailItemConditional)
+                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemConditional)
                 {
                     lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
                 }
@@ -64,6 +68,8 @@ namespace AILZ80ASM
             }
             else
             {
+                asmLoad.ProcessLabel(lineItem);
+
                 lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemOperation.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
@@ -82,6 +88,9 @@ namespace AILZ80ASM
                 lineDetailItem ??= LineDetailItemPragma.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                 lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない
+
+                // ラベル処理
+                asmLoad.ProcessLabel(lineDetailItem);
             }
 
             if (lineDetailItem is LineDetailItemAddress lineDetailItemAddress)
@@ -100,6 +109,8 @@ namespace AILZ80ASM
 
         public virtual void PreAssemble(ref AsmAddress asmAddress)
         {
+            Address = asmAddress;
+
             if (LineDetailScopeItems == default)
                 return;
 

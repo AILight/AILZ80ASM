@@ -54,6 +54,7 @@ namespace AILZ80ASM.Assembler
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E3008);
             }
 
+            /*
             var lineDetailScopeItems = new List<LineDetailScopeItem>();
             // ラベルを処理する
             if (!string.IsNullOrEmpty(lineItem.LabelString))
@@ -63,6 +64,8 @@ namespace AILZ80ASM.Assembler
                 localLineDetailItemOperation.ExpansionItem();
                 localLineDetailItemOperation.PreAssemble(ref asmAddress);
             }
+            */
+
             // Macro展開用のAsmLoadを作成する
             var guid = $"{Guid.NewGuid():N}";
             var lineItemList = new List<LineItem>();

@@ -32,10 +32,10 @@ namespace AILZ80ASM
             }
             var label = new LabelAdr("[NS_Main]", AssembleLoad);
             AssembleLoad.AddLabel(label);
-            AssembleLoad.DefaultCharMap = "@SJIS";
+            AssembleLoad.Scope.DefaultCharMap = "@SJIS";
 
             // CharMapの初期化;
-            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.DefaultCharMap, AssembleLoad);
+            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.Scope.DefaultCharMap, AssembleLoad);
 
             foreach (var fileInfo in asmOption.InputFiles[AsmEnum.FileTypeEnum.Z80])
             {

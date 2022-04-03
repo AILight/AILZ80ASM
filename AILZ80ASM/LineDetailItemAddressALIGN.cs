@@ -51,6 +51,8 @@ namespace AILZ80ASM
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            base.PreAssemble(ref asmAddress);
+
             var lastAsmORG = this.AsmLoad.GetLastAsmORG();
 
             if (string.IsNullOrEmpty(AlignLabel) || !AIMath.TryParse<UInt16>(AlignLabel, this.AsmLoad, out var align))

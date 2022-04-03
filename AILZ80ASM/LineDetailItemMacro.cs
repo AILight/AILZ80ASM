@@ -47,6 +47,8 @@ namespace AILZ80ASM
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            base.PreAssemble(ref asmAddress);
+
             var foundItem = Macro.Find(LineItem, AsmLoad);
             if (foundItem == default)
             {
