@@ -35,7 +35,7 @@ namespace AILZ80ASM
         /// <param name="asmLoad"></param>
         public LineDetailScopeItem(LineDetailExpansionItem[] lineDetailExpansionItems, AsmLoad asmLoad)
         {
-            AsmLoad = asmLoad.Clone();
+            AsmLoad = asmLoad;
             LineDetailExpansionItems = lineDetailExpansionItems;
         }
 

@@ -20,7 +20,7 @@ namespace AILZ80ASM
         public FileItem(FileInfo fileInfo, AsmLoad asmLoad)
         {
             // 重複読み込みチェック
-            if (asmLoad.LoadFiles.Any(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity()))
+            if (asmLoad.Share.LoadFiles.Any(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity()))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
             }
@@ -35,7 +35,7 @@ namespace AILZ80ASM
             }
 
             // スタックに読み込みファイルを積む
-            asmLoad.LoadFiles.Push(fileInfo);
+            asmLoad.Share.LoadFiles.Push(fileInfo);
 
             var encodeMode = asmLoad.GetEncodMode(fileInfo);
             EncodeMode = encodeMode;
@@ -45,7 +45,7 @@ namespace AILZ80ASM
             Read(streamReader);
             streamReader.Close();
 
-            asmLoad.LoadFiles.Pop();
+            asmLoad.Share.LoadFiles.Pop();
 
         }
 

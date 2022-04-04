@@ -34,29 +34,25 @@ namespace AILZ80ASM
 
             if (asmLoad.Share.LineDetailItemForExpandItem != default)
             {
-                if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefineModern)
+                switch (asmLoad.Share.LineDetailItemForExpandItem)
                 {
-                    lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
-                }
-                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefineCompatible)
-                {
-                    lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
-                }
-                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemRepeatModern)
-                {
-                    lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
-                }
-                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemRepeatCompatible)
-                {
-                    lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
-                }
-                else if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemConditional)
-                {
-                    lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
-                }
-                else
-                {
-                    throw new NotImplementedException();
+                    case LineDetailItemMacroDefineModern:
+                        lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
+                        break;
+                    case LineDetailItemMacroDefineCompatible:
+                        lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
+                        break;
+                    case LineDetailItemRepeatModern:
+                        lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
+                        break;
+                    case LineDetailItemRepeatCompatible:
+                        lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
+                        break;
+                    case LineDetailItemConditional:
+                        lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 }
                 /* 例外が切れるので、この処理は使わない
                 var methodInfo = asmLoad.LineDetailItemForExpandItem.GetType().GetMethod("Create");
@@ -68,36 +64,32 @@ namespace AILZ80ASM
             }
             else
             {
-                asmLoad.ProcessLabel(lineItem);
+                asmLoad.ProcessLabel(() =>
+                {
+                    lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemOperation.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemAddressORG.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemAddressALIGN.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemAddressDS.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPragma.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない
 
-                lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemOperation.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemAddressORG.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemAddressALIGN.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemAddressDS.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemPragma.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
-                lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // ここには来ない
+                    return lineDetailItem;
 
-                // ラベル処理
-                asmLoad.ProcessLabel(lineDetailItem);
+                }, lineItem);
+
             }
-
-            if (lineDetailItem is LineDetailItemAddress lineDetailItemAddress)
-            {
-                asmLoad.AddLineDetailItemAddress(lineDetailItemAddress);
-            }
-            asmLoad.AddLineDetailItem(lineDetailItem); // 分割アセンブル用
 
             return lineDetailItem;
         }

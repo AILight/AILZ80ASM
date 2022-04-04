@@ -11,17 +11,6 @@ namespace AILZ80ASM
     {
         private static readonly string RegexPatternALIGN = @"^(?<op1>(ALIGN))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
 
-        public override AsmList[] Lists
-        {
-            get
-            {
-                return new[]
-                {
-                    AsmList.CreateLineItem(LineItem)
-                };
-            }
-        }
-
         public string AlignLabel { get; set; }
         public string FillByteLabel { get; set; }
 

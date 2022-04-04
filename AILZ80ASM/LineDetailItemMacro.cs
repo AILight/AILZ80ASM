@@ -57,8 +57,6 @@ namespace AILZ80ASM
             }
 
             this.LineDetailScopeItems = foundItem.Macro.Expansion(LineItem, foundItem.Arguments, AsmLoad, ref asmAddress);
-
-            //base.PreAssemble(ref asmAddress);
         }
     }
 }

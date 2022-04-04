@@ -29,9 +29,9 @@ namespace AILZ80ASM
         public static LineDetailItemEnd Create(LineItem lineItem, AsmLoad asmLoad)
         {
             var matched = Regex.Match(lineItem.OperationString, RegexPatternEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (asmLoad.AsmEnd || matched.Success)
+            if (asmLoad.Scope.AssembleEndFlg || matched.Success)
             {
-                asmLoad.AsmEnd = true;
+                asmLoad.Scope.AssembleEndFlg = true;
 
                 return new LineDetailItemEnd(lineItem, asmLoad);
             }

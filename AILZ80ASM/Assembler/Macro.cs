@@ -19,7 +19,7 @@ namespace AILZ80ASM.Assembler
 
         public Macro(string macroName, string[] args, LineItem[] lineItems, AsmLoad asmLoad)
         {
-            this.GlobalLabelName = asmLoad.GlobalLabelName;
+            this.GlobalLabelName = asmLoad.Scope.GlobalLabelName;
             this.Name = macroName;
 
             Args = args;
@@ -49,22 +49,10 @@ namespace AILZ80ASM.Assembler
 
         public LineDetailScopeItem[] Expansion(LineItem lineItem, string[] arguments, AsmLoad asmLoad, ref AsmAddress asmAddress)
         {
-            if (asmLoad.LoadMacros.Any(m => this == m))
+            if (asmLoad.Share.LoadMacros.Any(m => this == m))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E3008);
             }
-
-            /*
-            var lineDetailScopeItems = new List<LineDetailScopeItem>();
-            // ラベルを処理する
-            if (!string.IsNullOrEmpty(lineItem.LabelString))
-            {
-                var localLineItem = new LineItem(lineItem.LabelString, 0, default(System.IO.FileInfo));
-                var localLineDetailItemOperation = LineDetailItemOperation.Create(localLineItem, asmLoad);
-                localLineDetailItemOperation.ExpansionItem();
-                localLineDetailItemOperation.PreAssemble(ref asmAddress);
-            }
-            */
 
             // Macro展開用のAsmLoadを作成する
             var guid = $"{Guid.NewGuid():N}";
@@ -108,8 +96,6 @@ namespace AILZ80ASM.Assembler
                     try
                     {
                         localLineItem.ExpansionItem();
-                        //localLineItem.PreAssemble(ref asmAddress);
-                        //lineDetailScopeItems.AddRange(localLineItem.LineDetailItem.LineDetailScopeItems);
                     }
                     catch (ErrorAssembleException ex)
                     {
@@ -123,7 +109,7 @@ namespace AILZ80ASM.Assembler
 
 
             // 展開領域
-            asmLoad.LoadMacros.Push(this);
+            asmLoad.Share.LoadMacros.Push(this);
 
             foreach (var item in lineItemList)
             {
@@ -137,7 +123,7 @@ namespace AILZ80ASM.Assembler
                 }
             }
 
-            asmLoad.LoadMacros.Pop();
+            asmLoad.Share.LoadMacros.Pop();
 
             return lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems ?? Array.Empty<LineDetailScopeItem>()).ToArray();
         }
@@ -155,7 +141,7 @@ namespace AILZ80ASM.Assembler
                 return macroName;
             }
 
-            return $"{asmLoad.GlobalLabelName}.{macroName}";
+            return $"{asmLoad.Scope.GlobalLabelName}.{macroName}";
         }
     }
 }

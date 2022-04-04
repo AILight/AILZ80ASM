@@ -113,15 +113,6 @@ namespace AILZ80ASM
             if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
             {
                 var lineDetailScopeItems = new List<LineDetailScopeItem>();
-                // ラベルを処理する
-                if (!string.IsNullOrEmpty(LineItem.LabelString))
-                {
-                    var localLineItem = new LineItem(LineItem.LabelString, 0, default(System.IO.FileInfo));
-                    var localLineDetailItemOperation = LineDetailItemOperation.Create(localLineItem, this.AsmLoad);
-                    localLineDetailItemOperation.ExpansionItem();
-                    localLineDetailItemOperation.PreAssemble(ref asmAddress);
-                }
-
                 var count = AIMath.ConvertTo<UInt16>(RepeatCountLabel, this.AsmLoad, asmAddress);
                 var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertTo<UInt16>(RepeatLastLabel, this.AsmLoad);
                 var repeatLines = RepeatLines.Skip(1).SkipLast(1);
@@ -163,8 +154,6 @@ namespace AILZ80ASM
                             try
                             {
                                 lineItem.ExpansionItem();
-                                //lineItem.PreAssemble(ref asmAddress);
-                                //lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
                             }
                             catch (ErrorAssembleException ex)
                             {
@@ -195,8 +184,6 @@ namespace AILZ80ASM
             {
                 LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
             }
-
-            //base.PreAssemble(ref asmAddress);
         }
     }
 }

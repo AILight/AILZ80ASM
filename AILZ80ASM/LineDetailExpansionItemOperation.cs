@@ -43,24 +43,6 @@ namespace AILZ80ASM
             : base(lineItem)
         {
             OperationItem = default(OperationItem);
-
-            /*
-            // ラベルを処理する
-            var label = new LabelAdr(this, asmLoad);
-            if (label.Invalidate)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0013);
-            }
-            if (!string.IsNullOrEmpty(lineItem.LabelString))
-            {
-                asmLoad.AddLabel(label);
-                // ローカルラベルの末尾に「:」がついている場合にはワーニング
-                if (lineItem.LabelString.StartsWith(".") && lineItem.LabelString.EndsWith(":"))
-                {
-                    asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W9005));
-                }
-            }
-            */
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress, AsmLoad asmLoad)

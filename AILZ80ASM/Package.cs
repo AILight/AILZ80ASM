@@ -156,23 +156,21 @@ namespace AILZ80ASM
 
         public void Trace_Information()
         {
-            if (AssembleOption.FileDiff)
-            {
-                Trace.WriteLine("出力ファイル差分確認モード");
-                Trace.WriteLine("");
-            }
-            else
-            {
-                Trace.WriteLine($"# Inputs");
-                Trace.WriteLine("");
+            Trace.WriteLine($"# Inputs");
+            Trace.WriteLine("");
 
-                foreach (var item in AssembleOption.InputFiles)
+            foreach (var item in AssembleOption.InputFiles)
+            {
+                foreach (var fileInfo in item.Value)
                 {
-                    foreach (var fileInfo in item.Value)
-                    {
-                        Trace.WriteLine($"- {item.Key.ToString()} filename [{fileInfo.Name}]");
-                    }
+                    Trace.WriteLine($"- {item.Key.ToString()} filename [{fileInfo.Name}]");
                 }
+            }
+            Trace.WriteLine("");
+            
+            if (AssembleOption.DiffFile)
+            {
+                Trace.WriteLine("# 出力ファイル差分確認モード");
                 Trace.WriteLine("");
             }
         }
@@ -263,6 +261,7 @@ namespace AILZ80ASM
                 }
                 fileStream.Close();
             }
+            Trace.WriteLine("");
             return result;
         }
 
@@ -287,9 +286,9 @@ namespace AILZ80ASM
                 // テキスト比較
                 var originals = AILight.AIEncode.GetString(original).Replace("\r","").Split('\n');
                 var assembleds = AILight.AIEncode.GetString(assembled).Replace("\r", "").Split('\n');
-                if (original.Length != assembled.Length)
+                if (originals.Length != assembleds.Length)
                 {
-                    resultString = $"不一致 {originals.Length:#,##0} -> {assembleds.Length:#,##0}行数";
+                    resultString = $"不一致 {originals.Length:0} -> {assembleds.Length:0} 行数";
                     resultString += $"{Environment.NewLine}";
                 }
                 else
@@ -301,7 +300,7 @@ namespace AILZ80ASM
                     {
                         if (originals[index] != assembleds[index])
                         {
-                            if (byteDiffCounter < 20)
+                            if (byteDiffCounter < 100)
                             {
                                 tmpResultStream += $"{Environment.NewLine}{index+1:#0}: {originals[index]}";
                                 tmpResultStream += $"{Environment.NewLine}{index+1:#0}: {assembleds[index]}";
@@ -311,7 +310,7 @@ namespace AILZ80ASM
                     }
                     if (byteDiffCounter > 0)
                     {
-                        resultString = $"不一致 ({byteDiffCounter:#,##0}/{originals.Length:#,##0})" + tmpResultStream;
+                        resultString = $"不一致 ( {byteDiffCounter:0}件 / 全体:{originals.Length:0}行 )" + tmpResultStream;
                         resultString += $"{Environment.NewLine}";
                     }
                 }
@@ -325,7 +324,7 @@ namespace AILZ80ASM
                 // バイナリー比較
                 if (original.Length != assembled.Length)
                 {
-                    resultString = $"不一致 {original.Length:#,##0} -> {assembled.Length:#,##0} bytes";
+                    resultString = $"不一致 {original.Length:0} -> {assembled.Length:0} bytes";
                     resultString += $"{Environment.NewLine}";
                 }
                 else
@@ -336,16 +335,16 @@ namespace AILZ80ASM
                     {
                         if (original[index] != assembled[index])
                         {
-                            if (byteDiffCounter < 20)
+                            if (byteDiffCounter < 100)
                             {
-                                tmpResultStream += $"{Environment.NewLine}{index:X6}: {original[index]:X} -> {assembled[index]:X}";
+                                tmpResultStream += $"{Environment.NewLine}{index:X6}: {original[index]:X2} -> {assembled[index]:X2}";
                             }
                             byteDiffCounter++;
                         }
                     }
                     if (byteDiffCounter > 0)
                     {
-                        resultString = $"不一致 ({byteDiffCounter:#,##0}/{original.Length:#,##0})" + tmpResultStream;
+                        resultString = $"不一致 ( {byteDiffCounter:0}件 / 全体:{original.Length:0} bytes )" + tmpResultStream;
                         resultString += $"{Environment.NewLine}";
                     }
                 }
@@ -419,9 +418,9 @@ namespace AILZ80ASM
             SaveBin(memoryStream);
 
             var address = default(UInt16);
-            if (AssembleLoad.AsmAddresses.Count > 0)
+            if (AssembleLoad.Share.AsmORGs.Count >= 2)
             {
-                address = AssembleLoad.AsmAddresses.FirstOrDefault().Program;
+                address = AssembleLoad.Share.AsmORGs.Skip(1).First().ProgramAddress;
             }
 
             var binaryWriter = new IO.T88BinaryWriter(outputFilename, address, memoryStream.ToArray(), stream);
@@ -434,9 +433,9 @@ namespace AILZ80ASM
             SaveBin(memoryStream);
 
             var address = default(UInt16);
-            if (AssembleLoad.AsmAddresses.Count > 0)
+            if (AssembleLoad.Share.AsmORGs.Count >= 2)
             {
-                address = AssembleLoad.AsmAddresses.FirstOrDefault().Program;
+                address = AssembleLoad.Share.AsmORGs.Skip(1).First().ProgramAddress;
             }
 
             var binaryWriter = new IO.CMTBinaryWriter(address, memoryStream.ToArray(), stream);

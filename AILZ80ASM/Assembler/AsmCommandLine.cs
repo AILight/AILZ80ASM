@@ -264,8 +264,8 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<bool>()
             {
-                Name = "fileDiff",
-                Aliases = new[] { "-fd", "--file-diff" },
+                Name = "diffFile",
+                Aliases = new[] { "-df", "--diff-file" },
                 Description = "アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。",
                 Required = false,
             });

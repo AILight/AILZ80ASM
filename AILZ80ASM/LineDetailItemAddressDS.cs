@@ -11,17 +11,6 @@ namespace AILZ80ASM
     {
         private static readonly string RegexPatternDS = @"^(?<op1>(DS))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
 
-        public override AsmList[] Lists
-        {
-            get
-            {
-                return new[]
-                {
-                    AsmList.CreateLineItem(LineItem)
-                };
-            }
-        }
-
         public string Operation { get; set; }
         public string LengthLabel { get; set; }
         public string FillByteLabel { get; set; }

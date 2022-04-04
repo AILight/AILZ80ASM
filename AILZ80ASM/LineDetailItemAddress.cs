@@ -13,13 +13,9 @@ namespace AILZ80ASM
         {
             get
             {
-                return new[]
-                {
-                    AsmList.CreateLineItem(LineItem)
-                };
+                return new[] { AsmList.CreateLineItemORG(Address, new AsmLength(), LineItem) };
             }
         }
-
 
         public AsmORG AssembleORG { get; set; }
 

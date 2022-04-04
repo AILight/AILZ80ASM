@@ -13,13 +13,6 @@ namespace AILZ80ASM
         public string ProgramLabel { get; set; }
         public string OutputLabel { get; set; }
         public string FillByteLabel { get; set; }
-        public override AsmList[] Lists
-        {
-            get
-            {
-                return new[] { AsmList.CreateLineItemORG(Address, new AsmLength(), LineItem) };
-            }
-        }
 
         private LineDetailItemAddressORG(LineItem lineItem, string programLabel, string outputLabel, string fillByteLabel, AsmLoad asmLoad)
             : base(lineItem, asmLoad)

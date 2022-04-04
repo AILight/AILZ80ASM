@@ -19,7 +19,7 @@ namespace AILZ80ASM.Assembler
 
         public Function(string functionName, string[] args, string formula, AsmLoad asmLoad)
         {
-            this.GlobalLabelName = asmLoad.GlobalLabelName;
+            this.GlobalLabelName = asmLoad.Scope.GlobalLabelName;
             this.Name = functionName;
 
             Args = args;
@@ -62,15 +62,21 @@ namespace AILZ80ASM.Assembler
             }
 
             var guid = $"{Guid.NewGuid():N}";
+            /*
             var localAsmLoad = asmLoad.CloneWithNewScore($"function_{guid}", $"label_{guid}");
 
-            foreach (var index in Enumerable.Range(0, arguments.Length))
+            */
+            return asmLoad.CreateNewScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
             {
-                var label = new LabelArg(Args[index], arguments[index], localAsmLoad);
-                localAsmLoad.AddLabel(label);
-            }
+                foreach (var index in Enumerable.Range(0, arguments.Length))
+                {
+                    var label = new LabelArg(Args[index], arguments[index], localAsmLoad);
+                    localAsmLoad.AddLabel(label);
+                }
 
-            return AIMath.ConvertTo<int>(Formula, localAsmLoad);
+                return AIMath.ConvertTo<int>(Formula, localAsmLoad);
+
+            });
         }
 
         /// <summary>
@@ -86,7 +92,7 @@ namespace AILZ80ASM.Assembler
                 return functionName;
             }
 
-            return $"{asmLoad.GlobalLabelName}.{functionName}";
+            return $"{asmLoad.Scope.GlobalLabelName}.{functionName}";
         }
     }
 }

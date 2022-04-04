@@ -184,7 +184,7 @@ namespace AILZ80ASM
                         outputFiles = outputFiles.Where(m => m.Key == AsmEnum.FileTypeEnum.LST).ToDictionary(k => k.Key, v => v.Value);
                     }
                     
-                    if (asmOption.FileDiff)
+                    if (asmOption.DiffFile)
                     {
                         assembleResult &= package.DiffOutput(outputFiles);
                     }
@@ -201,7 +201,7 @@ namespace AILZ80ASM
 
                 package.OutputError();
 
-                if (asmOption.FileDiff)
+                if (asmOption.DiffFile)
                 {
                     if (package.Errors.Length > 0)
                     {

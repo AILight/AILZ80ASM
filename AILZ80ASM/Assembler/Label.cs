@@ -70,8 +70,8 @@ namespace AILZ80ASM.Assembler
 
         public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType)
         {
-            GlobalLabelName = asmLoad.GlobalLabelName;
-            LabelName = asmLoad.LabelName;
+            GlobalLabelName = asmLoad.Scope.GlobalLabelName;
+            LabelName = asmLoad.Scope.LabelName;
             ValueString = valueString;
             LabelType = labelType;
             AsmLoad = asmLoad;
@@ -113,7 +113,7 @@ namespace AILZ80ASM.Assembler
                             }
                             else
                             {
-                                LabelName = asmLoad.LabelName;
+                                LabelName = asmLoad.Scope.LabelName;
                             }
                             SubLabelName = splits[1];
                             LabelLevel = LabelLevelEnum.SubLabel;
@@ -227,11 +227,11 @@ namespace AILZ80ASM.Assembler
             switch (splits.Length)
             {
                 case 1:
-                    return $"{asmLoad.GlobalLabelName}.{splits[0]}";
+                    return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}";
                 case 2:
                     if (string.IsNullOrEmpty(splits[0]))
                     {
-                        return $"{asmLoad.GlobalLabelName}.{asmLoad.LabelName}.{splits[1]}";
+                        return $"{asmLoad.Scope.GlobalLabelName}.{asmLoad.Scope.LabelName}.{splits[1]}";
                     }
                     else
                     {
@@ -241,7 +241,7 @@ namespace AILZ80ASM.Assembler
                         }
                         else
                         {
-                            return $"{asmLoad.GlobalLabelName}.{splits[0]}.{splits[1]}";
+                            return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}.{splits[1]}";
                         }
                     }
                 case 3:
