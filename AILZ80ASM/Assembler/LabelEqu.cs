@@ -1,5 +1,6 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Exceptions;
+using AILZ80ASM.LineDetailItems;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;

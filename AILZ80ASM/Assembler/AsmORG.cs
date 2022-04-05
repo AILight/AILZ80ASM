@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.LineDetailItems;
+using System;
 using System.Collections.Generic;
 
 namespace AILZ80ASM.Assembler

@@ -66,7 +66,7 @@ namespace AILZ80ASM.Assembler
             var localAsmLoad = asmLoad.CloneWithNewScore($"function_{guid}", $"label_{guid}");
 
             */
-            return asmLoad.CreateNewScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
+            return asmLoad.CreateLocalScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
             {
                 foreach (var index in Enumerable.Range(0, arguments.Length))
                 {

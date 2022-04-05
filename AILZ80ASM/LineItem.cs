@@ -1,5 +1,6 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Assembler;
+using AILZ80ASM.LineDetailItems;
 using System.IO;
 
 namespace AILZ80ASM

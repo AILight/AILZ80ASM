@@ -19,9 +19,11 @@ namespace AILZ80ASM.Assembler
         {
         }
 
+        /*
         public LabelArg(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
             : base(lineDetailExpansionItemOperation, asmLoad, LabelTypeEnum.Arg)
         {
         }
+        */
     }
 }

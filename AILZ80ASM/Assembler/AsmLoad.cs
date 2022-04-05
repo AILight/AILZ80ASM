@@ -5,6 +5,7 @@ using System.Linq;
 using AILZ80ASM.InstructionSet;
 using AILZ80ASM.Exceptions;
 using AILZ80ASM.AILight;
+using AILZ80ASM.LineDetailItems;
 
 namespace AILZ80ASM.Assembler
 {
@@ -22,6 +23,12 @@ namespace AILZ80ASM.Assembler
         // スコープデータ
         public AsmLoadScope Scope { get; private set; }
 
+        // スコープの親
+        private AsmLoad ParentAsmLoad { get; set; } = default;
+
+        /// <summary>
+        /// アセンブルエラー
+        /// </summary>
         public ErrorLineItem[] AssembleErrors
         {
             get
@@ -30,6 +37,9 @@ namespace AILZ80ASM.Assembler
             }
         }
 
+        /// <summary>
+        /// アセンブルワーニング
+        /// </summary>
         public ErrorLineItem[] AssembleWarnings
         {
             get
@@ -38,6 +48,9 @@ namespace AILZ80ASM.Assembler
             }
         }
 
+        /// <summary>
+        /// アセンブルインフォメーション
+        /// </summary>
         public ErrorLineItem[] AssembleInformation
         {
             get
@@ -46,11 +59,11 @@ namespace AILZ80ASM.Assembler
             }
         }
 
-        // ネームスペースの保存
-        private List<string> GlobalLabelNames { get; set; } = default;
-        // スコープの親
-        private AsmLoad ParentAsmLoad { get; set; } = default;
-
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="assembleOption"></param>
+        /// <param name="isa"></param>
         public AsmLoad(AsmOption assembleOption, ISA isa)
         {
             AssembleOption = assembleOption;
@@ -70,8 +83,7 @@ namespace AILZ80ASM.Assembler
             Scope.Labels = new List<Label>();
             Scope.Macros = new List<Macro>();
             Scope.Functions = new List<Function>();
-
-            GlobalLabelNames = new List<string>();
+            Scope.GlobalLabelNames = new List<string>();
         }
 
         /// <summary>
@@ -87,33 +99,37 @@ namespace AILZ80ASM.Assembler
             asmLoad.Scope = this.Scope.CreateScope();
             asmLoad.ParentAsmLoad = this.ParentAsmLoad;
 
-            asmLoad.GlobalLabelNames = this.GlobalLabelNames;
-
             func.Invoke(asmLoad);
 
             this.Scope.Restore(asmLoad.Scope);
         }
 
-        public int CreateNewScope(string globalLabelName, string labelName, Func<AsmLoad, int> func)
+        /// <summary>
+        /// 新しいローカルスコープを作成
+        /// </summary>
+        /// <param name="globalLabelName"></param>
+        /// <param name="labelName"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public int CreateLocalScope(string globalLabelName, string labelName, Func<AsmLoad, int> func)
         {
             var asmLoad = new AsmLoad(this.AssembleOption, this.ISA)
             {
                 Share = this.Share,
             }; 
-            asmLoad.Scope = this.Scope.CreateNewScope();
+            asmLoad.Scope = this.Scope.CreateLocalScope();
             asmLoad.Scope.GlobalLabelName = globalLabelName;
-            asmLoad.Scope.LabelName = labelName;    
+            asmLoad.Scope.LabelName = labelName;
+            asmLoad.Scope.GlobalLabelNames.Add(globalLabelName);
             asmLoad.ParentAsmLoad = this;
 
-            asmLoad.GlobalLabelNames = new List<string>();
-            asmLoad.GlobalLabelNames.Add(globalLabelName);
 
             return func.Invoke(asmLoad);
         }
 
         public void CreateNewScope(string globalLabelName, string labelName, Action<AsmLoad> action)
         {
-            CreateNewScope(globalLabelName, labelName, localAsmLoad => 
+            CreateLocalScope(globalLabelName, labelName, localAsmLoad => 
             {
                 action.Invoke(localAsmLoad);
 
@@ -179,10 +195,10 @@ namespace AILZ80ASM.Assembler
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
                 }
 
-                if (!this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
+                if (!this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
                 {
                     // ネームスペースが変わるときには保存する
-                    this.GlobalLabelNames.Add(label.LabelFullName);
+                    this.Scope.GlobalLabelNames.Add(label.LabelFullName);
                 }
                 this.Scope.GlobalLabelName = label.GlobalLabelName;
                 this.Scope.LabelName = label.LabelName;
@@ -190,7 +206,7 @@ namespace AILZ80ASM.Assembler
             else
             {
                 // ネームスペースとと同じ名前は付けられない
-                if (this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
+                if (this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
                 }
@@ -287,10 +303,10 @@ namespace AILZ80ASM.Assembler
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
                 }
 
-                if (!this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
+                if (!this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
                 {
                     // ネームスペースが変わるときには保存する
-                    this.GlobalLabelNames.Add(label.LabelFullName);
+                    this.Scope.GlobalLabelNames.Add(label.LabelFullName);
                 }
                 this.Scope.GlobalLabelName = label.GlobalLabelName;
                 this.Scope.LabelName = label.LabelName;
@@ -298,7 +314,7 @@ namespace AILZ80ASM.Assembler
             else
             {
                 // ネームスペースとと同じ名前は付けられない
-                if (this.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
+                if (this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
                 }
@@ -362,7 +378,7 @@ namespace AILZ80ASM.Assembler
 
             while (targetAsmLoad != default)
             {
-                var name = targetAsmLoad.GlobalLabelNames.Where(m => string.Compare(m, target, true) == 0).FirstOrDefault();
+                var name = targetAsmLoad.Scope.GlobalLabelNames.Where(m => string.Compare(m, target, true) == 0).FirstOrDefault();
                 if (name != default)
                 {
                     return name;

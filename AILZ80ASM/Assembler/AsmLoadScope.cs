@@ -29,6 +29,9 @@ namespace AILZ80ASM.Assembler
         // ファンクション
         public List<Function> Functions { get; set; } = default;
 
+        // ネームスペースの保存
+        public List<string> GlobalLabelNames { get; set; } = default;
+
         public AsmLoadScope CreateScope()
         {
             var asmLoadScope = new AsmLoadScope();
@@ -37,11 +40,12 @@ namespace AILZ80ASM.Assembler
             asmLoadScope.Labels = Labels;
             asmLoadScope.Macros = Macros;
             asmLoadScope.Functions = Functions;
+            asmLoadScope.GlobalLabelNames = GlobalLabelNames;
 
             return asmLoadScope;
         }
 
-        public AsmLoadScope CreateNewScope()
+        public AsmLoadScope CreateLocalScope()
         {
             var asmLoadScope = new AsmLoadScope();
 
@@ -49,6 +53,7 @@ namespace AILZ80ASM.Assembler
             asmLoadScope.Labels = new List<Label>();
             asmLoadScope.Macros = new List<Macro>();
             asmLoadScope.Functions = new List<Function>();
+            asmLoadScope.GlobalLabelNames = new List<string>();
 
             return asmLoadScope;
         }
