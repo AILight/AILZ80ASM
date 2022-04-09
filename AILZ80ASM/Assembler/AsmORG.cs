@@ -15,8 +15,7 @@ namespace AILZ80ASM.Assembler
             NextORG,
         }
 
-        public AsmAddress NewAddress { get; private set; }
-        public AsmAddress OldAddress { get; private set; }
+        public AsmAddress Address { get; private set; }
         public bool IsRomMode { get; set; }
         public byte FillByte { get; private set; }
         public List<LineDetailScopeItem> LineDetailScopeItems { get; private set; }
@@ -24,15 +23,14 @@ namespace AILZ80ASM.Assembler
         public ORGTypeEnum ORGType { get; private set; } = ORGTypeEnum.ORG;
 
         public AsmORG()
-            : this(new AsmAddress(), new AsmAddress(), false, 0, ORGTypeEnum.ORG)
+            : this(new AsmAddress(), false, 0, ORGTypeEnum.ORG)
         {
 
         }
 
-        public AsmORG(AsmAddress newAddress, AsmAddress oldAddress, bool isRomMode, byte fillByte, ORGTypeEnum orgType)
+        public AsmORG(AsmAddress address, bool isRomMode, byte fillByte, ORGTypeEnum orgType)
         {
-            NewAddress = newAddress;
-            OldAddress = oldAddress;
+            Address = address;
             IsRomMode = isRomMode;
             FillByte = fillByte;
             LineDetailScopeItems = new List<LineDetailScopeItem>();

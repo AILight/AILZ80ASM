@@ -44,30 +44,48 @@ namespace AILZ80ASM.LineDetailItems
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             base.PreAssemble(ref asmAddress);
-            var oldAsmAddress = asmAddress;
 
+            var saveIsUsingOutputAddressVariableProgram = AsmLoad.Share.IsUsingOutputAddressVariable;
+            AsmLoad.Share.IsUsingOutputAddressVariable = false; // 下品なコードでゴメン
             var programAddress = AIMath.ConvertTo<UInt16>(ProgramLabel, this.AsmLoad, asmAddress);
+            if (AsmLoad.Share.IsUsingOutputAddressVariable)
+            {
+                AsmLoad.Share.UsingOutputAddressLineDetailItemAddressList.Add(this);
+            }
+            else
+            {
+                AsmLoad.Share.IsUsingOutputAddressVariable = saveIsUsingOutputAddressVariableProgram;
+            }
+
             var amsORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
-            var diff = (int)programAddress - asmAddress.Program;
+            var diff = (int)programAddress - amsORG.Address.Program;
             var isRomMode = false;
 
             asmAddress.Program = programAddress;
             if (!string.IsNullOrEmpty(OutputLabel))
             {
+                var saveIsUsingOutputAddressVariableOutput = AsmLoad.Share.IsUsingOutputAddressVariable;
+                AsmLoad.Share.IsUsingOutputAddressVariable = false; // 下品なコードでゴメン
                 var outputAddress = AIMath.ConvertTo<UInt32>(OutputLabel, this.AsmLoad, asmAddress);
+                if (AsmLoad.Share.IsUsingOutputAddressVariable)
+                {
+                    AsmLoad.Share.UsingOutputAddressLineDetailItemAddressList.Add(this);
+                }
+                else
+                {
+                    AsmLoad.Share.IsUsingOutputAddressVariable = saveIsUsingOutputAddressVariableOutput;
+                }
                 asmAddress.Output = outputAddress;
                 isRomMode = true;
             }
             else if (asmAddress.Output != amsORG.Address.Output)
             {
-                if (asmAddress.Output + diff < 0)
+                if (amsORG.Address.Output + diff < 0)
                 {
                     this.AsmLoad.Share.NeedResetAddress = true;
-                    // アドレスの指定に問題があり（将来直す可能性アリ）
-                    // throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
                 }
 
-                asmAddress.Output = (UInt32)(asmAddress.Output + diff);
+                asmAddress.Output = (UInt32)(amsORG.Address.Output + diff);
             }
             var fillByte = default(byte);
             if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))

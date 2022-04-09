@@ -1,6 +1,7 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Assembler;
 using AILZ80ASM.CommandLine;
+using AILZ80ASM.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -170,7 +171,20 @@ namespace AILZ80ASM
                 // エラーが無ければアセンブル
                 if (package.Errors.Length == 0)
                 {
-                    package.Assemble();
+                    try
+                    {
+                        package.Assemble();
+                    }
+                    catch (ErrorAssembleException eex)
+                    {
+                        Trace.WriteLine($"アセンブルエラー:{eex.Message}");
+                        assembleResult = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"内部エラー:{ex.Message}");
+                        assembleResult = false;
+                    }
                 }
 
                 // 出力調整

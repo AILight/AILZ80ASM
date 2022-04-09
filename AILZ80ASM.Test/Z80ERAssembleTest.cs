@@ -225,7 +225,7 @@ namespace AILZ80ASM.Test
             var errors = Assemble("Org3.Z80");
 
             Assert.AreEqual(errors.Length, 1);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0009, 19, "Org3.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0024, 19, "Org3.Z80", errors);
         }
 
         [TestMethod]

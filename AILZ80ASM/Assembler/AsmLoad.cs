@@ -78,6 +78,7 @@ namespace AILZ80ASM.Assembler
             Share.ListedFiles = new List<FileInfo>();
             Share.LineDetailItemAddreses = new List<LineDetailItemAddress>();
             Share.PragmaOnceFiles = new List<FileInfo>();
+            Share.UsingOutputAddressLineDetailItemAddressList = new List<LineDetailItemAddress>();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -442,8 +443,8 @@ namespace AILZ80ASM.Assembler
             var resultList = new List<AsmORG>();
             
             // 先頭一つを積む
-            resultList.Add(this.Share.AsmORGs.Where(m => m.NewAddress.Output <= outputAddressStart).OrderByDescending(m => m.NewAddress.Output).First());
-            resultList.AddRange(this.Share.AsmORGs.Where(m => m.NewAddress.Output >= outputAddressStart && m.NewAddress.Output < outputAddressEnd).OrderBy(m => m.NewAddress.Output));
+            resultList.Add(this.Share.AsmORGs.Where(m => m.Address.Output <= outputAddressStart).OrderByDescending(m => m.Address.Output).First());
+            resultList.AddRange(this.Share.AsmORGs.Where(m => m.Address.Output >= outputAddressStart && m.Address.Output < outputAddressEnd).OrderBy(m => m.Address.Output));
 
             return resultList.ToArray();
         }
@@ -453,8 +454,8 @@ namespace AILZ80ASM.Assembler
             var resultList = new List<AsmORG>();
 
             // 先頭一つを積む
-            resultList.Add(this.Share.AsmORGs.Where(m => m.NewAddress.Output <= outputAddress).OrderByDescending(m => m.NewAddress.Output).First());
-            resultList.AddRange(this.Share.AsmORGs.Where(m => m.NewAddress.Output >= outputAddress).OrderBy(m => m.NewAddress.Output));
+            resultList.Add(this.Share.AsmORGs.Where(m => m.Address.Output <= outputAddress).OrderByDescending(m => m.Address.Output).First());
+            resultList.AddRange(this.Share.AsmORGs.Where(m => m.Address.Output >= outputAddress).OrderBy(m => m.Address.Output));
 
             // 最後
             while (resultList.Count > 0 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.ORG)
@@ -495,7 +496,7 @@ namespace AILZ80ASM.Assembler
 
         public LineDetailItemAddress FindLineDetailItemAddress(UInt32 outputAddress)
         {
-            return this.Share.LineDetailItemAddreses.Where(m => m.AssembleORG.ORGType == AsmORG.ORGTypeEnum.ORG && m.AssembleORG.NewAddress.Output <= outputAddress).LastOrDefault();
+            return this.Share.LineDetailItemAddreses.Where(m => m.AssembleORG.ORGType == AsmORG.ORGTypeEnum.ORG && m.AssembleORG.Address.Output <= outputAddress).LastOrDefault();
         }
 
         /*

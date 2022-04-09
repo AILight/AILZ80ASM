@@ -52,5 +52,8 @@ namespace AILZ80ASM.Assembler
 
         // PreAssemble中に$$アドレスを利用したか？
         public bool IsUsingOutputAddressVariable { get; set; } = false;
+
+        // PreAssemble中の$$を利用したLineDetailItemAddressを保存する
+        public List<LineDetailItemAddress> UsingOutputAddressLineDetailItemAddressList { get; set; } = default;
     }
 }

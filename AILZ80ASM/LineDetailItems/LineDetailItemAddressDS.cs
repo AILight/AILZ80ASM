@@ -46,10 +46,26 @@ namespace AILZ80ASM.LineDetailItems
             base.PreAssemble(ref asmAddress);
 
             var lastAsmORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
-
-            if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse<UInt16>(LengthLabel, this.AsmLoad, out var length))
+            var length = default(UInt16);
+            var saveIsUsingOutputAddressVariable = AsmLoad.Share.IsUsingOutputAddressVariable;
+            AsmLoad.Share.IsUsingOutputAddressVariable = false; // 下品なコードでゴメン
+            try
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, LengthLabel);
+                if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse<UInt16>(LengthLabel, this.AsmLoad, out length))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, LengthLabel);
+                }
+            }
+            finally
+            {
+                if (AsmLoad.Share.IsUsingOutputAddressVariable)
+                {
+                    AsmLoad.Share.UsingOutputAddressLineDetailItemAddressList.Add(this);
+                }
+                else
+                {
+                    AsmLoad.Share.IsUsingOutputAddressVariable = saveIsUsingOutputAddressVariable;
+                }
             }
 
             if (length > 0)
