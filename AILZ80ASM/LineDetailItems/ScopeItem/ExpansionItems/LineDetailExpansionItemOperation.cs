@@ -66,7 +66,8 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
                     if (OperationItem != default(OperationItem))
                     {
                         Address = OperationItem.Address;
-                        asmAddress = new AsmAddress(OperationItem.Address, OperationItem.Length);
+                        Length = OperationItem.Length;
+                        asmAddress = new AsmAddress(OperationItem.Address, Length);
                     }
                     else
                     {

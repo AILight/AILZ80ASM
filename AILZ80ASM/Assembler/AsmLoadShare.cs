@@ -10,6 +10,18 @@ namespace AILZ80ASM.Assembler
 {
     public class AsmLoadShare
     {
+        public enum AsmStepEnum
+        {
+            None,
+            ExpansionItem,
+            PreAssemble,
+            ResetAddress,
+            InternalAssemble,
+            BuildLabel,
+            ValidateOutputAddress,
+            Complete,
+        }
+
         // エラー保存用
         public List<ErrorLineItem> Errors { get; set; } = default;
 
@@ -29,7 +41,16 @@ namespace AILZ80ASM.Assembler
         // 出力されたファイルを管理
         public List<FileInfo> ListedFiles { get; set; } = default;
 
-        //Pragma 一度だけファイルをロードする機能用
+        // アセンブル状態
+        public AsmStepEnum AsmStep { get; set; } = AsmStepEnum.None;
+
+        // Pragma 一度だけファイルをロードする機能用
         public List<FileInfo> PragmaOnceFiles { get; set; } = default;
+
+        // アドレスの再配置が必要
+        public bool NeedResetAddress { get; set; } = false;
+
+        // PreAssemble中に$$アドレスを利用したか？
+        public bool IsUsingOutputAddressVariable { get; set; } = false;
     }
 }

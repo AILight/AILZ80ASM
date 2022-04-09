@@ -1,4 +1,4 @@
-﻿	org $8000
+﻿	org $7020
 	LD	A, 1
 	LD	A, 2
 	LD	A, 3
@@ -16,7 +16,7 @@
 	LD	A, 15
 	LD	A, 16
 
-	org $7000, $$ + $2000
+	org $7000
 	LD	B, 1
 	LD	B, 2
 	LD	B, 3
@@ -33,21 +33,3 @@
 	LD	B, 14
 	LD	B, 15
 	LD	B, 16
-
-	org $6000
-	LD	C, 1
-	LD	C, 2
-	LD	C, 3
-	LD	C, 4
-	LD	C, 5
-	LD	C, 6
-	LD	C, 7
-	LD	C, 8
-	LD	C, 9
-	LD	C, 10
-	LD	C, 11
-	LD	C, 12
-	LD	C, 13
-	LD	C, 14
-	LD	C, 15
-	LD	C, 16

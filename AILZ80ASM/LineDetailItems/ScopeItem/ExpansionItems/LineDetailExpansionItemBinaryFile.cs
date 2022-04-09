@@ -62,7 +62,8 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             fileStream.Seek(fileStart, SeekOrigin.Begin);
             fileStream.Read(_Bin, 0, readLength);
 
-            asmAddress = new AsmAddress(asmAddress, new AsmLength(_Bin.Length));
+            Length = new AsmLength(_Bin.Length);
+            asmAddress = new AsmAddress(asmAddress, Length);
 
         }
 

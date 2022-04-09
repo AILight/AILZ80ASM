@@ -42,11 +42,31 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
 
         public virtual void PreAssemble(ref AsmAddress asmAddress)
         {
+            AsmLoad.AddLineDetailScopeItem(this);
+
             foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
             {
                 try
                 {
                     lineDetailExpansionItem.PreAssemble(ref asmAddress, AsmLoad);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AsmLoad.AddError(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
+                }
+            }
+        }
+
+
+        public virtual void ResetAddress(ref AsmAddress asmAddress)
+        {
+            foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
+            {
+                try
+                {
+                    lineDetailExpansionItem.ResetAddress(ref asmAddress);
+                    asmAddress.Program += lineDetailExpansionItem.Length.Program;
+                    asmAddress.Output += lineDetailExpansionItem.Length.Output;
                 }
                 catch (ErrorAssembleException ex)
                 {

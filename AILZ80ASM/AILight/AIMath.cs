@@ -675,6 +675,12 @@ namespace AILZ80ASM.AILight
                     {
                         throw new ArgumentNullException(nameof(asmAddress));
                     }
+                    // PreAssemble中のアウトプット・ロケーションカウンターを参照したかを記録
+                    if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
+                    {
+                        asmLoad.Share.IsUsingOutputAddressVariable = true;
+                    }
+
                     // アウトプット・ロケーションカウンター
                     stack.Push((int)asmAddress.Value.Output);
                 }

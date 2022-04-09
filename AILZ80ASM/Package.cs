@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.Assembler;
+using AILZ80ASM.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,6 +54,9 @@ namespace AILZ80ASM
             // プレアセンブル
             PreAssemble();
 
+            // アドレスの再設定
+            ResetAddress();
+
             // アセンブルを行う
             InternalAssemble();
 
@@ -61,6 +65,9 @@ namespace AILZ80ASM
 
             // 出力アドレスの重複チェック
             ValidateOutputAddress();
+
+            // 完了
+            Complete();
         }
 
         /// <summary>
@@ -68,6 +75,8 @@ namespace AILZ80ASM
         /// </summary>
         private void PreAssemble()
         {
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.PreAssemble;
+
             var address = default(AsmAddress);
 
             foreach (var fileItem in FileItems)
@@ -81,6 +90,8 @@ namespace AILZ80ASM
         /// </summary>
         private void ExpansionItem()
         {
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.ExpansionItem;
+
             foreach (var fileItem in FileItems)
             {
                 fileItem.ExpansionItem();
@@ -88,10 +99,44 @@ namespace AILZ80ASM
         }
 
         /// <summary>
+        /// リセット出力アドレス
+        /// </summary>
+        private void ResetAddress()
+        {
+            if (!this.AssembleLoad.Share.NeedResetAddress)
+            {
+                return;
+            }
+
+            if (this.AssembleLoad.Share.IsUsingOutputAddressVariable)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+            }
+
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.ResetAddress;
+            var asmAddress = new AsmAddress();
+            var saveAddress = asmAddress;
+            foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.Where(m => !m.IsRomMode).OrderBy(m => m.NewAddress.Program))
+            {
+                if (saveAddress.Output != asmAddress.Output || asmORG.ORGType == AsmORG.ORGTypeEnum.NextORG)
+                {
+                    asmAddress.Output = saveAddress.Output + (UInt32)(asmORG.NewAddress.Program - saveAddress.Program);
+                }
+                asmAddress.Program = asmORG.NewAddress.Program;
+                saveAddress = asmAddress;
+
+                asmORG.ResetAddress(ref asmAddress);
+            }
+        }
+
+
+        /// <summary>
         /// アセンブルを実行する
         /// </summary>
         private void InternalAssemble()
         {
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.InternalAssemble;
+
             foreach (var fileItem in FileItems)
             {
                 fileItem.Assemble();
@@ -103,6 +148,8 @@ namespace AILZ80ASM
         /// </summary>
         private void BuildLabel()
         {
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.BuildLabel;
+
             AssembleLoad.BuildLabel();
         }
 
@@ -111,6 +158,8 @@ namespace AILZ80ASM
         /// </summary>
         private void ValidateOutputAddress()
         {
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.ValidateOutputAddress;
+
             if (this.Errors.Length > 0)
             {
                 // アセンブルエラーが発生していてたら確認は行わない
@@ -152,6 +201,11 @@ namespace AILZ80ASM
                 }
             }
 
+        }
+
+        private void Complete()
+        {
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.Complete;
         }
 
         public void Trace_Information()
@@ -367,10 +421,10 @@ namespace AILZ80ASM
                     for (var index = 0; index < asmORGs.Length; index++)
                     {
                         var startAsmORG = asmORGs[index];
-                        var endAsmORG = index < asmORGs.Length - 1 ? asmORGs[index + 1] : new AsmORG(UInt16.MaxValue, UInt32.MaxValue, default(byte), AsmORG.ORGTypeEnum.ORG);
+                        var endAsmORG = index < asmORGs.Length - 1 ? asmORGs[index + 1] : new AsmORG(AsmAddress.MaxValue, AsmAddress.MaxValue, false, default(byte), AsmORG.ORGTypeEnum.ORG);
 
-                        var startOutputAddress = startAsmORG.OutputAddress < outputAddress ? outputAddress : startAsmORG.OutputAddress;
-                        var endOutputAddress = endAsmORG.OutputAddress > item.Address.Output ? item.Address.Output : endAsmORG.OutputAddress;
+                        var startOutputAddress = startAsmORG.NewAddress.Output < outputAddress ? outputAddress : startAsmORG.NewAddress.Output;
+                        var endOutputAddress = endAsmORG.NewAddress.Output > item.Address.Output ? item.Address.Output : endAsmORG.NewAddress.Output;
 
                         var length = endOutputAddress - startOutputAddress;
                         var bytes = Enumerable.Repeat<byte>(startAsmORG.FillByte, (int)length).ToArray();
@@ -400,8 +454,8 @@ namespace AILZ80ASM
                 var startAsmORG = remainingAsmORGs[index - 1];
                 var endAsmORG = remainingAsmORGs[index];
 
-                var startOutputAddress = startAsmORG.OutputAddress < asmAddress.Output ? asmAddress.Output : startAsmORG.OutputAddress;
-                var endOutputAddress = endAsmORG.OutputAddress;
+                var startOutputAddress = startAsmORG.NewAddress.Output < asmAddress.Output ? asmAddress.Output : startAsmORG.NewAddress.Output;
+                var endOutputAddress = endAsmORG.NewAddress.Output;
 
                 var length = endOutputAddress - startOutputAddress;
                 var bytes = Enumerable.Repeat<byte>(startAsmORG.FillByte, (int)length).ToArray();
@@ -420,7 +474,7 @@ namespace AILZ80ASM
             var address = default(UInt16);
             if (AssembleLoad.Share.AsmORGs.Count >= 2)
             {
-                address = AssembleLoad.Share.AsmORGs.Skip(1).First().ProgramAddress;
+                address = AssembleLoad.Share.AsmORGs.Skip(1).First().NewAddress.Program;
             }
 
             var binaryWriter = new IO.T88BinaryWriter(outputFilename, address, memoryStream.ToArray(), stream);
@@ -435,7 +489,7 @@ namespace AILZ80ASM
             var address = default(UInt16);
             if (AssembleLoad.Share.AsmORGs.Count >= 2)
             {
-                address = AssembleLoad.Share.AsmORGs.Skip(1).First().ProgramAddress;
+                address = AssembleLoad.Share.AsmORGs.Skip(1).First().NewAddress.Program;
             }
 
             var binaryWriter = new IO.CMTBinaryWriter(address, memoryStream.ToArray(), stream);

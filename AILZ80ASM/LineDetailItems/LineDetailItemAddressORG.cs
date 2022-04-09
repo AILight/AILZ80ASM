@@ -44,24 +44,27 @@ namespace AILZ80ASM.LineDetailItems
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             base.PreAssemble(ref asmAddress);
+            var oldAsmAddress = asmAddress;
 
             var programAddress = AIMath.ConvertTo<UInt16>(ProgramLabel, this.AsmLoad, asmAddress);
-            var amsORG = this.AsmLoad.GetLastAsmORG();
+            var amsORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
             var diff = (int)programAddress - asmAddress.Program;
+            var isRomMode = false;
 
             asmAddress.Program = programAddress;
             if (!string.IsNullOrEmpty(OutputLabel))
             {
                 var outputAddress = AIMath.ConvertTo<UInt32>(OutputLabel, this.AsmLoad, asmAddress);
                 asmAddress.Output = outputAddress;
-
+                isRomMode = true;
             }
-            else if (asmAddress.Output != amsORG.OutputAddress)
+            else if (asmAddress.Output != amsORG.Address.Output)
             {
                 if (asmAddress.Output + diff < 0)
                 {
+                    this.AsmLoad.Share.NeedResetAddress = true;
                     // アドレスの指定に問題があり（将来直す可能性アリ）
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
+                    // throw new ErrorAssembleException(Error.ErrorCodeEnum.E0009);
                 }
 
                 asmAddress.Output = (UInt32)(asmAddress.Output + diff);
@@ -72,10 +75,9 @@ namespace AILZ80ASM.LineDetailItems
                 fillByte = tempFillByte;
             }
 
-            AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte, AsmORG.ORGTypeEnum.ORG);
+            AssembleORG = new AsmORG(asmAddress, isRomMode, fillByte, AsmORG.ORGTypeEnum.ORG);
             this.AsmLoad.AddORG(AssembleORG);
 
-            base.PreAssemble(ref asmAddress);
         }
 
         public override void ExpansionItem()

@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.LineDetailItems;
+using AILZ80ASM.LineDetailItems.ScopeItem;
 using System;
 using System.Collections.Generic;
 
@@ -14,31 +15,42 @@ namespace AILZ80ASM.Assembler
             NextORG,
         }
 
-        public UInt16 ProgramAddress { get; private set; }
-        public UInt32 OutputAddress { get; private set; }
+        public AsmAddress NewAddress { get; private set; }
+        public AsmAddress OldAddress { get; private set; }
+        public bool IsRomMode { get; set; }
         public byte FillByte { get; private set; }
-        public List<LineDetailItem> LineDetailItems { get; private set; }
+        public List<LineDetailScopeItem> LineDetailScopeItems { get; private set; }
         public LineItem LineItem { get; private set; } = default;
         public ORGTypeEnum ORGType { get; private set; } = ORGTypeEnum.ORG;
 
         public AsmORG()
-            : this(0, 0, 0, ORGTypeEnum.ORG)
+            : this(new AsmAddress(), new AsmAddress(), false, 0, ORGTypeEnum.ORG)
         {
 
         }
 
-        public AsmORG(UInt16 programAddress, UInt32 outputAddress, byte fillByte, ORGTypeEnum orgType)
+        public AsmORG(AsmAddress newAddress, AsmAddress oldAddress, bool isRomMode, byte fillByte, ORGTypeEnum orgType)
         {
-            ProgramAddress = programAddress;
-            OutputAddress = outputAddress;
+            NewAddress = newAddress;
+            OldAddress = oldAddress;
+            IsRomMode = isRomMode;
             FillByte = fillByte;
-            LineDetailItems = new List<LineDetailItem>();
+            LineDetailScopeItems = new List<LineDetailScopeItem>();
             ORGType = orgType;
         }
 
-        public void AddScopeItem(LineDetailItem lineDetailItem)
+        public void AddScopeItem(LineDetailScopeItem lineDetailScopeItem)
         {
-            LineDetailItems.Add(lineDetailItem);
+            LineDetailScopeItems.Add(lineDetailScopeItem);
+        }
+
+        public void ResetAddress(ref AsmAddress asmAddress)
+        {
+            foreach (var lineDetailScopeItem in LineDetailScopeItems)
+            {
+                lineDetailScopeItem.ResetAddress(ref asmAddress);
+
+            }
         }
     }
 }

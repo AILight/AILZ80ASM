@@ -8,6 +8,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         public bool IsAssembled { get; set; }
         public LineItem LineItem { get; private set; }
         public AsmAddress Address { get; protected set; }
+        public AsmLength Length { get; protected set; }
 
         public LineDetailExpansionItem(LineItem lineItem)
         {
@@ -43,8 +44,14 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             Address = asmAddress;
         }
 
+        public virtual void ResetAddress(ref AsmAddress asmAddress)
+        {
+            Address = asmAddress;
+        }
+
         public virtual void Assemble(AsmLoad asmLoad)
         {
         }
+
     }
 }

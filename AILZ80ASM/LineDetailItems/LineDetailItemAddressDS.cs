@@ -45,7 +45,7 @@ namespace AILZ80ASM.LineDetailItems
         {
             base.PreAssemble(ref asmAddress);
 
-            var lastAsmORG = this.AsmLoad.GetLastAsmORG();
+            var lastAsmORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
 
             if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse<UInt16>(LengthLabel, this.AsmLoad, out var length))
             {
@@ -62,14 +62,14 @@ namespace AILZ80ASM.LineDetailItems
                     fillByte = tempFillByte;
                 }
 
-                var asmORG = new AsmORG(asmAddress.Program, asmAddress.Output, fillByte, AsmORG.ORGTypeEnum.DS);
+                var asmORG = new AsmORG(asmAddress, false, fillByte, AsmORG.ORGTypeEnum.DS);
                 this.AsmLoad.AddORG(asmORG);
 
                 asmAddress.Program += (UInt16)offset;
                 asmAddress.Output += (UInt32)offset;
 
                 // 次のORGを作成する
-                AssembleORG = new AsmORG(asmAddress.Program, asmAddress.Output, lastAsmORG.FillByte, AsmORG.ORGTypeEnum.NextORG);
+                AssembleORG = new AsmORG(asmAddress, false, lastAsmORG.FillByte, AsmORG.ORGTypeEnum.NextORG);
 
                 this.AsmLoad.AddORG(AssembleORG);
             }

@@ -6,6 +6,7 @@ using AILZ80ASM.InstructionSet;
 using AILZ80ASM.Exceptions;
 using AILZ80ASM.AILight;
 using AILZ80ASM.LineDetailItems;
+using AILZ80ASM.LineDetailItems.ScopeItem;
 
 namespace AILZ80ASM.Assembler
 {
@@ -167,9 +168,6 @@ namespace AILZ80ASM.Assembler
             {
                 this.AddLineDetailItemAddress(lineDetailItemAddress);
             }
-
-            // 分割アセンブル用
-            this.AddLineDetailItem(lineDetailItem); 
 
             return lineDetailItem;
         }
@@ -347,9 +345,9 @@ namespace AILZ80ASM.Assembler
             this.Share.LineDetailItemAddreses.Add(lineDetailItemAddress);
         }
 
-        public void AddLineDetailItem(LineDetailItem lineDetailItem)
+        public void AddLineDetailScopeItem(LineDetailScopeItem lineDetailScopeItem)
         {
-            this.Share.AsmORGs.Last().AddScopeItem(lineDetailItem);
+            this.Share.AsmORGs.Last().AddScopeItem(lineDetailScopeItem);
         }
 
         public void AddListedFile(FileInfo fileInfo)
@@ -444,8 +442,8 @@ namespace AILZ80ASM.Assembler
             var resultList = new List<AsmORG>();
             
             // 先頭一つを積む
-            resultList.Add(this.Share.AsmORGs.Where(m => m.OutputAddress <= outputAddressStart).OrderByDescending(m => m.OutputAddress).First());
-            resultList.AddRange(this.Share.AsmORGs.Where(m => m.OutputAddress >= outputAddressStart && m.OutputAddress < outputAddressEnd).OrderBy(m => m.OutputAddress));
+            resultList.Add(this.Share.AsmORGs.Where(m => m.NewAddress.Output <= outputAddressStart).OrderByDescending(m => m.NewAddress.Output).First());
+            resultList.AddRange(this.Share.AsmORGs.Where(m => m.NewAddress.Output >= outputAddressStart && m.NewAddress.Output < outputAddressEnd).OrderBy(m => m.NewAddress.Output));
 
             return resultList.ToArray();
         }
@@ -455,8 +453,8 @@ namespace AILZ80ASM.Assembler
             var resultList = new List<AsmORG>();
 
             // 先頭一つを積む
-            resultList.Add(this.Share.AsmORGs.Where(m => m.OutputAddress <= outputAddress).OrderByDescending(m => m.OutputAddress).First());
-            resultList.AddRange(this.Share.AsmORGs.Where(m => m.OutputAddress >= outputAddress).OrderBy(m => m.OutputAddress));
+            resultList.Add(this.Share.AsmORGs.Where(m => m.NewAddress.Output <= outputAddress).OrderByDescending(m => m.NewAddress.Output).First());
+            resultList.AddRange(this.Share.AsmORGs.Where(m => m.NewAddress.Output >= outputAddress).OrderBy(m => m.NewAddress.Output));
 
             // 最後
             while (resultList.Count > 0 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.ORG)
@@ -485,9 +483,9 @@ namespace AILZ80ASM.Assembler
             return resultList.ToArray();
         }
 
-        public AsmORG GetLastAsmORG()
+        public AsmORG GetLastAsmORG_ExcludingRomMode()
         {
-            return this.Share.AsmORGs.Last();
+            return this.Share.AsmORGs.Where(m => !m.IsRomMode).Last();
         }
 
         public FileInfo FindPramgaOnceFile(FileInfo fileInfo)
@@ -497,7 +495,7 @@ namespace AILZ80ASM.Assembler
 
         public LineDetailItemAddress FindLineDetailItemAddress(UInt32 outputAddress)
         {
-            return this.Share.LineDetailItemAddreses.Where(m => m.AssembleORG.ORGType == AsmORG.ORGTypeEnum.ORG && m.AssembleORG.OutputAddress <= outputAddress).LastOrDefault();
+            return this.Share.LineDetailItemAddreses.Where(m => m.AssembleORG.ORGType == AsmORG.ORGTypeEnum.ORG && m.AssembleORG.NewAddress.Output <= outputAddress).LastOrDefault();
         }
 
         /*
