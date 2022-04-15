@@ -601,6 +601,59 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Test_CommandLine_Equal()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-equ" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.EQU].Name, "Main.equ");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-equ" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.EQU].Name, "Main.equ");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-equ", "Address.z80" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.EQU].Name, "Address.z80");
+            }
+
+        }
+
+        [TestMethod]
         public void Test_CommandLine_Error()
         {
             {

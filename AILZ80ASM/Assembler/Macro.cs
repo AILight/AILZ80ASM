@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.Exceptions;
+using AILZ80ASM.LineDetailItems.ScopeItem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace AILZ80ASM.Assembler
 
         public Macro(string macroName, string[] args, LineItem[] lineItems, AsmLoad asmLoad)
         {
-            this.GlobalLabelName = asmLoad.GlobalLabelName;
+            this.GlobalLabelName = asmLoad.Scope.GlobalLabelName;
             this.Name = macroName;
 
             Args = args;
@@ -49,76 +50,83 @@ namespace AILZ80ASM.Assembler
 
         public LineDetailScopeItem[] Expansion(LineItem lineItem, string[] arguments, AsmLoad asmLoad, ref AsmAddress asmAddress)
         {
-            if (asmLoad.LoadMacros.Any(m => this == m))
+            if (asmLoad.Share.LoadMacros.Any(m => this == m))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E3008);
             }
 
-            var lineDetailScopeItems = new List<LineDetailScopeItem>();
-            // ラベルを処理する
-            if (!string.IsNullOrEmpty(lineItem.LabelString))
-            {
-                var localLineItem = new LineItem(lineItem.LabelString, 0, default(System.IO.FileInfo));
-                localLineItem.CreateLineDetailItem(asmLoad);
-                localLineItem.ExpansionItem();
-                localLineItem.PreAssemble(ref asmAddress);
-            }
             // Macro展開用のAsmLoadを作成する
             var guid = $"{Guid.NewGuid():N}";
-            var localAsmLoad = asmLoad.CloneWithNewScore($"macro_{guid}", $"label_{guid}");
+            var lineItemList = new List<LineItem>();
 
-            if (arguments.Length > 0)
+            asmLoad.CreateNewScope($"macro_{guid}", $"label_{guid}", localAsmLoad =>
             {
-                if (arguments.Length != this.Args.Length)
+                if (arguments.Length > 0)
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E3004);
-                }
-
-                // 引数の割り当て
-                foreach (var index in Enumerable.Range(0, arguments.Length))
-                {
-                    var argumentLabel = new Label(arguments[index], asmLoad);
-                    var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalidate ?
-                                        argumentLabel.LabelFullName : arguments[index];
-
-                    var label = new Label(this.Args[index], argumentValue, localAsmLoad);
-                    if (label.Invalidate)
+                    if (arguments.Length != this.Args.Length)
                     {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E3004);
                     }
-                    localAsmLoad.AddLabel(label);
-                }
-            }
 
-            // LineItemsを作成
-            var lineItems = this.LineItems.Skip(1).SkipLast(1).Select(m =>
+                    // 引数の割り当て
+                    foreach (var index in Enumerable.Range(0, arguments.Length))
+                    {
+                        var argumentLabel = new LabelArg(arguments[index], asmLoad);
+                        var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalidate ?
+                                            argumentLabel.LabelFullName : arguments[index];
+
+                        var label = new LabelArg(this.Args[index], argumentValue, localAsmLoad);
+                        if (label.Invalidate)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
+                        }
+                        localAsmLoad.AddLabel(label);
+                    }
+                }
+
+                // LineItemsを作成
+                var lineItems = this.LineItems.Skip(1).SkipLast(1).Select(m =>
+                    {
+                        var lineItem = new LineItem(m);
+                        lineItem.CreateLineDetailItem(localAsmLoad);
+                        return lineItem;
+                    }).ToArray(); //　シーケンシャルに処理する必要があるため、ToArrayは必須
+
+                foreach (var localLineItem in lineItems)
                 {
-                    var lineItem = new LineItem(m);
-                    lineItem.CreateLineDetailItem(localAsmLoad);
-                    return lineItem;
-                }).ToArray(); //　シーケンシャルに処理する必要があるため、ToArrayは必須
+                    try
+                    {
+                        localLineItem.ExpansionItem();
+                    }
+                    catch (ErrorAssembleException ex)
+                    {
+                        asmLoad.AddError(new ErrorLineItem(localLineItem, ex));
+                    }
+
+                }
+                lineItemList.AddRange(lineItems);
+
+            });
+
 
             // 展開領域
-            asmLoad.LoadMacros.Push(this);
+            asmLoad.Share.LoadMacros.Push(this);
 
-            foreach (var localLineItem in lineItems)
+            foreach (var item in lineItemList)
             {
                 try
                 {
-                    localLineItem.ExpansionItem();
-                    localLineItem.PreAssemble(ref asmAddress);
-                    lineDetailScopeItems.AddRange(localLineItem.LineDetailItem.LineDetailScopeItems);
+                    item.PreAssemble(ref asmAddress);
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    asmLoad.AddError(new ErrorLineItem(localLineItem, ex));
+                    asmLoad.AddError(new ErrorLineItem(item, ex));
                 }
-
             }
 
-            asmLoad.LoadMacros.Pop();
+            asmLoad.Share.LoadMacros.Pop();
 
-            return lineDetailScopeItems.ToArray();
+            return lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems ?? Array.Empty<LineDetailScopeItem>()).ToArray();
         }
 
         /// <summary>
@@ -134,7 +142,7 @@ namespace AILZ80ASM.Assembler
                 return macroName;
             }
 
-            return $"{asmLoad.GlobalLabelName}.{macroName}";
+            return $"{asmLoad.Scope.GlobalLabelName}.{macroName}";
         }
     }
 }

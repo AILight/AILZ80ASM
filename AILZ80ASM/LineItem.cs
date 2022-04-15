@@ -1,5 +1,6 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Assembler;
+using AILZ80ASM.LineDetailItems;
 using System.IO;
 
 namespace AILZ80ASM
@@ -13,6 +14,7 @@ namespace AILZ80ASM
         public string LineString { get; private set; }
         public int LineIndex { get; private set; }
         public byte[] Bin => LineDetailItem.Bin;
+        public AsmResult[] BinResult => LineDetailItem.BinResult;
         public AsmList[] Lists => LineDetailItem.Lists;
 
         // 展開情報
@@ -73,7 +75,11 @@ namespace AILZ80ASM
         public void CreateLineDetailItem(AsmLoad asmLoad)
         {
             // LineDetailItem作成
-            LineDetailItem = LineDetailItem.CreateLineDetailItem(this, asmLoad);
+            asmLoad.CreateScope(localAsmLoad => 
+            {
+                LineDetailItem = LineDetailItem.CreateLineDetailItem(this, localAsmLoad);
+            });
+
         }
 
         public void ExpansionItem()

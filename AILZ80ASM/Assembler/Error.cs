@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AILZ80ASM.Assembler
 {
@@ -36,6 +37,7 @@ namespace AILZ80ASM.Assembler
             E0021,
             E0022,
             E0023,
+            E0024,
 
             E1011,
             E1012,
@@ -135,7 +137,7 @@ namespace AILZ80ASM.Assembler
 
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
-            [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{byte.MinValue}～{byte.MaxValue}までです。",
+            [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。",
             [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。[{0}]",
             [ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
             [ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
@@ -154,6 +156,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。[{0}]",
+            [ErrorCodeEnum.E0024] = "出力アドレスの再配置が行われたため、$$の値が不定になりました。ORGを出力順に並べるか、$$変数を不使用にしてください。",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
@@ -166,7 +169,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
             [ErrorCodeEnum.E1022] = "#ENDIFが先に見つかりました。",
             [ErrorCodeEnum.E1023] = "#ELSEの後に#ELSIF、#ELSEは設定できません。",
-            [ErrorCodeEnum.E1024] = "#IF、#ELSIF、#ELSE、#ENDIFにラベルは設定できません。",
+            [ErrorCodeEnum.E1024] = "#ELSIF、#ELSE、#ENDIFにラベルは設定できません。",
 
             // エラー
             [ErrorCodeEnum.E1031] = "#ERROR:{0}",
@@ -210,9 +213,9 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。[{0}]",
 
             // ワーニング
-            [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[{0}]が設定されています。1バイトに丸められます。",
-            [ErrorCodeEnum.W0002] = "2バイトの指定場所に、[{0}]が設定されています。2バイトに丸められます。",
-            [ErrorCodeEnum.W0003] = "1バイト（符号付き）の指定場所に、[{0}]が設定されています。1バイトに丸められます。",
+            [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",
+            [ErrorCodeEnum.W0002] = "2バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。2バイトに丸められます。",
+            [ErrorCodeEnum.W0003] = "1バイト（符号付き）の指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",
 
             // あいまいさの許容
             [ErrorCodeEnum.W9001] = "(IX)は、(IX+0)として処理されました。",

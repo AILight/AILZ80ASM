@@ -4,6 +4,8 @@ namespace AILZ80ASM.Assembler
 {
     public struct AsmAddress
     {
+        public static readonly AsmAddress MaxValue = new AsmAddress(UInt16.MaxValue, UInt32.MaxValue);
+
         public AsmAddress(UInt16 programAddress, UInt32 outputAddress)
         {
             Program = programAddress;

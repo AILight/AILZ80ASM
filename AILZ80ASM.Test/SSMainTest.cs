@@ -16,7 +16,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void TestMainSuccessAllOption()
         {
-            var result = Program.Main(@"./Test/TestSS_Main/Success.Z80", "-bin", "test2.bin", "-err", "test2.err", "-lst", "test2.lst");
+            var result = Program.Main(@"./Test/TestSS_Main/Success.Z80", "-bin", "test2.bin", "-err", "test2.err", "-lst", "test2.lst", "-equ", "test2.equ");
             Assert.AreEqual(result, 0);
         }
 

@@ -19,7 +19,7 @@ namespace AILZ80ASM.Assembler
         public bool OutputTrim { get; set; } = false;
 
         // 出力結果の差分を取るか
-        public bool FileDiff { get; set; } = false;
+        public bool DiffFile { get; set; } = false;
 
         // タブサイズ
         public int TabSize { get; set; } = 4;
@@ -87,7 +87,7 @@ namespace AILZ80ASM.Assembler
 
             ListMode = rootCommand.GetListMode();
             OutputTrim = rootCommand.GetValue<bool>("outputTrim");
-            FileDiff = rootCommand.GetValue<bool>("fileDiff");
+            DiffFile = rootCommand.GetValue<bool>("diffFile");
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();

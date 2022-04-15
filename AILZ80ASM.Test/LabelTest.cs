@@ -10,13 +10,13 @@ namespace AILZ80ASM.Test
         public void LabelNameTest()
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            var globalLabel = new Label("[NS_Main]", asmLoad);
+            var globalLabel = new LabelAdr("[NS_Main]", asmLoad);
             asmLoad.AddLabel(globalLabel);
 
-            Assert.AreEqual(new Label("ABC:", "", asmLoad).LabelFullName, "NS_Main.ABC");
-            Assert.AreEqual(new Label("ABC::", "", asmLoad).LabelFullName, "NS_Main.ABC");
-            Assert.AreEqual(new Label("ABC.DEF", "", asmLoad).LabelFullName, "NS_Main.ABC.DEF");
-            Assert.AreEqual(new Label("ABC.DEF.GHI", "", asmLoad).LabelFullName, "ABC.DEF.GHI");
+            Assert.AreEqual(new LabelAdr("ABC:", "", asmLoad).LabelFullName, "NS_Main.ABC");
+            Assert.AreEqual(new LabelAdr("ABC::", "", asmLoad).LabelFullName, "NS_Main.ABC");
+            Assert.AreEqual(new LabelAdr("ABC.DEF", "", asmLoad).LabelFullName, "NS_Main.ABC.DEF");
+            Assert.AreEqual(new LabelAdr("ABC.DEF.GHI", "", asmLoad).LabelFullName, "ABC.DEF.GHI");
 
         }
 

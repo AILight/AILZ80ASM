@@ -20,6 +20,7 @@ namespace AILZ80ASM.Assembler
             CMT,
             LST,
             SYM,
+            EQU,
             ERR,
             DBG,
         }

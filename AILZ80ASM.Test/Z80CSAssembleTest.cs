@@ -25,6 +25,18 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestCS_ORG_Enhanced()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestCS_ORG_OutputAdjust()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestCS_ORG_Rom()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

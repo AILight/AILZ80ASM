@@ -300,7 +300,7 @@ namespace AILZ80ASM.AILight
 
             if (string.IsNullOrEmpty(charMap))
             {
-                charMap = asmLoad.DefaultCharMap;
+                charMap = asmLoad.Scope.DefaultCharMap;
             }
 
             var bytes = CharMaps.CharMapConverter.ConvertToBytes(charMap, resultString, asmLoad.ISA.Endianness);

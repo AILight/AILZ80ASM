@@ -1,12 +1,14 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Exceptions;
+using AILZ80ASM.LineDetailItems;
+using AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.Assembler
 {
-    public class Label
+    public abstract class Label
     {
         public enum DataTypeEnum
         {
@@ -22,6 +24,13 @@ namespace AILZ80ASM.Assembler
             GlobalLabel,
             Label,
             SubLabel,
+        }
+
+        public enum LabelTypeEnum
+        {
+            Equ,
+            Adr,
+            Arg,
         }
 
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\](\s+|$)";
@@ -50,20 +59,23 @@ namespace AILZ80ASM.Assembler
 
         public DataTypeEnum DataType { get; private set; }
         public LabelLevelEnum LabelLevel { get; private set; }
+        public LabelTypeEnum LabelType { get; private set; }
 
         private AsmLoad AsmLoad { get; set; }
         private LineDetailExpansionItem LineDetailExpansionItem { get; set; }
+        private LineDetailItem LineDetailItem { get; set; }
 
-        public Label(string labelName, AsmLoad asmLoad)
-            : this(labelName, "", asmLoad)
+        public Label(string labelName, AsmLoad asmLoad, LabelTypeEnum labelType)
+            : this(labelName, "", asmLoad, labelType)
         {
         }
 
-        public Label(string labelName, string valueString, AsmLoad asmLoad)
+        public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType)
         {
-            GlobalLabelName = asmLoad.GlobalLabelName;
-            LabelName = asmLoad.LabelName;
+            GlobalLabelName = asmLoad.Scope.GlobalLabelName;
+            LabelName = asmLoad.Scope.LabelName;
             ValueString = valueString;
+            LabelType = labelType;
             AsmLoad = asmLoad;
             LabelLevel = LabelLevelEnum.None;
             
@@ -103,7 +115,7 @@ namespace AILZ80ASM.Assembler
                             }
                             else
                             {
-                                LabelName = asmLoad.LabelName;
+                                LabelName = asmLoad.Scope.LabelName;
                             }
                             SubLabelName = splits[1];
                             LabelLevel = LabelLevelEnum.SubLabel;
@@ -139,8 +151,8 @@ namespace AILZ80ASM.Assembler
             }
         }
 
-        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-            : this(lineDetailExpansionItemOperation.LineItem.LabelString, "", asmLoad)
+        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, LabelTypeEnum labelType)
+            : this(lineDetailExpansionItemOperation.LineItem.LabelString, "", asmLoad, labelType)
         {
             if (LabelLevel == LabelLevelEnum.Label ||
                 LabelLevel == LabelLevelEnum.SubLabel)
@@ -148,6 +160,21 @@ namespace AILZ80ASM.Assembler
                 ValueString = "$";
             }
             LineDetailExpansionItem = lineDetailExpansionItemOperation;
+
+        }
+
+        public Label(LineDetailItem lineDetailItem, AsmLoad asmLoad, LabelTypeEnum labelType)
+            : this(lineDetailItem.LineItem.LabelString, labelType == LabelTypeEnum.Equ ? ((LineDetailItemEqual)lineDetailItem).LabelValue : "", asmLoad, labelType)
+        {
+            if (labelType == LabelTypeEnum.Adr)
+            {
+                if (LabelLevel == LabelLevelEnum.Label ||
+                    LabelLevel == LabelLevelEnum.SubLabel)
+                {
+                    ValueString = "$";
+                }
+            }
+            LineDetailItem = lineDetailItem;
 
         }
 
@@ -202,11 +229,11 @@ namespace AILZ80ASM.Assembler
             switch (splits.Length)
             {
                 case 1:
-                    return $"{asmLoad.GlobalLabelName}.{splits[0]}";
+                    return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}";
                 case 2:
                     if (string.IsNullOrEmpty(splits[0]))
                     {
-                        return $"{asmLoad.GlobalLabelName}.{asmLoad.LabelName}.{splits[1]}";
+                        return $"{asmLoad.Scope.GlobalLabelName}.{asmLoad.Scope.LabelName}.{splits[1]}";
                     }
                     else
                     {
@@ -216,7 +243,7 @@ namespace AILZ80ASM.Assembler
                         }
                         else
                         {
-                            return $"{asmLoad.GlobalLabelName}.{splits[0]}.{splits[1]}";
+                            return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}.{splits[1]}";
                         }
                     }
                 case 3:
@@ -240,13 +267,17 @@ namespace AILZ80ASM.Assembler
                 return;
             }
 
-            if (LineDetailExpansionItem == default)
+            if (LineDetailExpansionItem != default)
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad);
+                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailExpansionItem.Address);
+            }
+            else if (LineDetailItem != default)
+            {
+                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailItem.Address);
             }
             else
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailExpansionItem.Address);
+                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad);
             }
             DataType = DataTypeEnum.Value;
         }

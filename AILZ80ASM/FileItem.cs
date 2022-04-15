@@ -12,6 +12,7 @@ namespace AILZ80ASM
     public class FileItem
     {
         private AsmLoad AssembleLoad { get; set; }
+        //private AsmBin AssembleBin { get; set; }
         private AsmEnum.EncodeModeEnum EncodeMode { get; set; }
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> Items { get; private set; } = new List<LineItem>();
@@ -19,16 +20,23 @@ namespace AILZ80ASM
         public FileItem(FileInfo fileInfo, AsmLoad asmLoad)
         {
             // 重複読み込みチェック
-            if (asmLoad.LoadFiles.Any(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity()))
+            if (asmLoad.Share.LoadFiles.Any(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity()))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2003, fileInfo.Name);
             }
 
-            // スタックに読み込みファイルを積む
-            asmLoad.LoadFiles.Push(fileInfo);
-
             AssembleLoad = asmLoad;
             FileInfo = fileInfo;
+
+            // Pramgaチェック
+            if (asmLoad.FindPramgaOnceFile(fileInfo) != default)
+            {
+                return;
+            }
+
+            // スタックに読み込みファイルを積む
+            asmLoad.Share.LoadFiles.Push(fileInfo);
+
             var encodeMode = asmLoad.GetEncodMode(fileInfo);
             EncodeMode = encodeMode;
 
@@ -37,7 +45,7 @@ namespace AILZ80ASM
             Read(streamReader);
             streamReader.Close();
 
-            asmLoad.LoadFiles.Pop();
+            asmLoad.Share.LoadFiles.Pop();
 
         }
 
@@ -116,6 +124,28 @@ namespace AILZ80ASM
             }
         }
 
+        public AsmResult[] BinResult
+        {
+            get
+            {
+                var asmResults = new List<AsmResult>();
+
+                foreach (var item in Items)
+                {
+                    try
+                    {
+                        asmResults.AddRange(item.BinResult);
+                    }
+                    catch (Exception ex)
+                    {
+                        AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                    }
+                }
+
+                return asmResults.ToArray();
+            }
+        }
+
         public AsmList[] Lists
         {
             get
@@ -183,20 +213,6 @@ namespace AILZ80ASM
                     AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
-        }
-
-        /// <summary>
-        /// バイナリーを保存
-        /// </summary>
-        /// <param name="stream"></param>
-        public void SaveBin(Stream stream)
-        {
-            var bin = this.Bin;
-            if (bin.Length > 0)
-            {
-                stream.Write(bin, 0, bin.Length);
-            }
-
         }
 
         /// <summary>

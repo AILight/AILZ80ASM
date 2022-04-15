@@ -54,7 +54,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - -ul, --unused-label        未使用ラベルを確認します。
 - -cd,                       アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
 - --change-dir <directory>
-- -fd, --file-diff           アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
+- -df, --diff-file           アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 - -v, --version              バージョンを表示します。
 - -?, -h, --help <help>      ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --output-mode
 - -??, --readme              Readme.mdを表示します。
@@ -128,9 +128,9 @@ EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
 ## 未定義命令 (Undocumented Instructions) 
 - [IXH, IXL, IYH, IYLに対応](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestUD_LD/Test.Z80)
 - [SLL](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestUD_SLL/Test.Z80)
-- [IN F,(C)](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L1), [IN (C)](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L3)
-- [OUT (C), 0](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L2)
-- [ビット操作](https://github.com/AILight/AILZ80ASM/blob/e445250854525bc124ff6156ee328d085be31028/AILZ80ASM.Test/ReleaseDecision/InstructionSet.z80#L786)
+- [IN F,(C)](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L1), [IN (C)](https://github.com/AILight/AILZ80ASM/blob/d38775a0854778fe82b36bce6fbf7a6fdf5e0c78/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L3)
+- [OUT (C), 0](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestUD_IN_And_OUT/Test.Z80#L2)
+- [ビット操作](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/ReleaseDecision/InstructionSet.z80#L786)
 
 ## ラベル
 ラベルは、ネームスペース、標準ラベル、ローカルラベルで指定します。ネームスペースを指定しない場合には、 'NS_Main' が割り当てられています。必要に応じて変更をしてください。
@@ -166,7 +166,7 @@ LABLE:			; ラベル指定
 - .@T をラベルに追加すると、ラベルに指定した名前を文字列として取得 （.@TEXT でも可能）
 - .@E をラベルに追加すると、ラベルが存在すると#TRUE、存在しないと#FALSE （.@EXISTS でも可能）
 - [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
-- [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/74dd29bfbceda9c986ed50fe651b0c0d89127637/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
+- [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
 - [@Eサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.INC#L1)
 
 #### ラベル指定サンプル
@@ -259,9 +259,9 @@ addr:
 ## コメント
 - ; 以降はコメントとして処理されます
 
-## 制御命令
+## アドレス・制御命令
 #### ORG <式>, [<式2>], [<式3>]
-本アセンブラの特徴として、アセンブル時のアドレスとアウトプット時のアドレスを別で管理しています。通常モードで利用する場合には、第一引数だけで利用してください。アウトプットアドレスは自動的に制御されます。第二引数を利用した時には、アウトプットアドレスを制御できます。その時にはROM出力モードになり、ラベルに使われるアドレスと出力のアドレスを別々に制御することが出来ます。プログラム・ロケーションカウンターは、アセンブル内でいつでも変更可能になります。1つのソースコードの中でアドレスが重複しても問題ありません。アウトプット時のアドレスは、アウトプット・ロケーションカウンターと呼び、バイナリデータの出力位置を指定します。出力用のアドレスになりますので、重複することは出来ませんし、アドレスを戻すことも出来ません。
+本アセンブラの特徴として、アセンブル時のアドレスとアウトプット時のアドレスを別で管理しています。通常モードで利用する場合には、第一引数だけで利用してください。アウトプットアドレスは自動的に制御されます。第二引数を利用した時には、アウトプットアドレスを制御できます。その時にはROM出力モードになり、ラベルに使われるアドレスと出力のアドレスを別々に制御することが出来ます。プログラム・ロケーションカウンターは、アセンブル内で重複可能になります。アウトプット時のアドレスは、アウトプット・ロケーションカウンターと呼び、バイナリデータの出力位置を指定します。出力用のアドレスになりますので、重複することは出来ません。
 	
 - <式>
   - プログラム・ロケーションカウンターの値を変更します。
@@ -295,6 +295,20 @@ LB2000:
 0020 3A 00 20 00 00 00 00 00 00 00 00 00 00 00 00 00
 ```
 
+#### ALIGN <式>, [<式2>]
+- ロケーションカウンタの値を、<式>で設定したアライメント境界まで移動します。
+- <式>に設定できる値は、2のべき乗である必要があります。
+- 移動により空いた領域には、0 または <式2> の値で埋められます。
+- コマンドラインオプションで、--trim を指定するとトリム出力されます（出力の最後のエリアがALIGNで確保されている場合、且つ式2を指定していない場合）
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
+
+#### DS <式>, [<式2>]
+- ロケーションカウンタの値を、<式>で設定した値を加算した場所に移動します。
+- <式>のバイト数、0で埋めます。<式2>を設定するとその値で埋めます
+- コマンドラインオプションで、--trim を指定するとトリム出力されます（出力の最後のエリアがDSで確保されている場合、且つ式2を指定していない場合）
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
+
+## 制御命令
 #### <ラベル> EQU <式>
 - 指定したラベルに、<式> の値を持たせます。
 	- 即値、式、$、$$、（文字、文字列、#TRUE or #FALSE version:1.0.0以降）
@@ -312,12 +326,6 @@ PORT_A  equ $CC
 	LD A, PORT_A.READ
 	OUT (PORT_A), A
 ```
-
-#### ALIGN <式>, [<式2>]
-- ロケーションカウンタの値を、<式>で設定したアライメント境界まで移動します。
-- <式>に設定できる値は、2のべき乗である必要があります。
-- 移動により空いた領域には、0 または <式2> の値で埋められます。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
 #### CHARMAP [<CHARMAP名>], [<ファイル名>]
 アセンブラ内で利用する、文字列の変換テーブルをロードします。利用個所は、INCLUDE、DB、DWになります。
@@ -346,33 +354,31 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 
 #### DB <式>, [<式>]
 - <式>の1バイト値を設定します
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L4)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L4)
 
 #### DB [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
 - ネストも可能
 - 例：DB [Y=0..2:[X=0..4:Y*8+X]]
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
 
 #### DW <式>, [<式>]
 - <式>の2バイト値を設定します
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L5)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L5)
 
 #### DW [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
 - ネストも可能
 - 例：DW [Y=24..0:$8000 + Y * $140]
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
 
-#### DS <式>, [<式2>] 及び DBS <式>, [<式2>]
+#### DBF <式>, [<式2>]
 - <式>のバイト数、0で埋めます。<式2>を設定するとその値で埋めます
-- コマンドラインオプションで、--trim を指定するとトリム出力されます（出力の最後のエリアがDSで確保されている場合、且つ式2を指定していない場合）
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
 
-#### DWS <式>, [<式2>]
+#### DWF <式>, [<式2>]
 - <式>の２バイト数、0で埋めます。<式2>を設定するとその値で埋めます
-- コマンドラインオプションで、--trim を指定するとトリム出力されます（出力の最後のエリアがDWSで確保されている場合、且つ式2を指定していない場合）
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/31c6fb2d12272e558538f96fd38e05c27bd7943e/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L11)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L11)
 
 ## マクロ
 #### <マクロ名> MACRO [<引数1>, <引数2>]　～ ENDM
@@ -422,35 +428,6 @@ TestArg MACRO a1, a2
 	ENDM
 ```
 
-## 条件付きアセンブル
-5つの命令を使用して、条件付きアセンブルを制御します
-- #IF: 条件付きアセンブルを開始します。コードは、指定された条件がTRUEの時にアセンブル対象になります。
-- #ELIF: 前の条件付きアセンブルを終了して、指定された条件がTRUEの時にアセンブル対象になります。
-- #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
-- #ENDIF: 条件付きアセンブルを終了します。
-- #PRINT: アセンブル画面に情報を表示します。(version 1.0.0以降)
-- #ERROR: 無条件にエラーを発生させます。
-- #TRUE: 真(bool型)
-- #FALSE: 偽(bool型)
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
-
-```
-#if mode == 1
-	ld a,1
-#elif mode == 2
-	ld d,4
-#else
-	#error "modeの値が範囲外です。"
-#endif
-```
-
-ラベルの再定義エラーを回避する方法
-```
-#if LABEL.@EXISTS
-LABEL	equ 00FFH
-#endif
-```
-
 ## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
 式をまとめる事が出来ます
 - 複数行にまたがる事は出来ません。
@@ -465,6 +442,44 @@ Function ABS(value) => value < 0 ? value * -1 : value
 
 ## END
 アセンブルの実行を中断します。これ以降のソースコードはアセンブルされません。アセンブル結果は出力されます。
+
+## プリプロセッサ
+#### 条件付きアセンブル
+条件付きアセンブルを制御します
+- #IF: 条件付きアセンブルを開始します。コードは、指定された条件がTRUEの時にアセンブル対象になります。
+- #ELIF: 前の条件付きアセンブルを終了して、指定された条件がTRUEの時にアセンブル対象になります。
+- #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
+- #ENDIF: 条件付きアセンブルを終了します。
+- #PRINT: アセンブル画面に情報を表示します。(将来実装予定)
+- #ERROR: 無条件にエラーを発生させます。
+- #TRUE: 真(bool型)
+- #FALSE: 偽(bool型)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Conditional/Test.Z80)
+```
+#if mode == 1
+	ld a,1
+#elif mode == 2
+	ld d,4
+#else
+	#error "modeの値が範囲外です。"
+#endif
+```
+
+ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+```
+#if LABEL.@EXISTS
+LABEL	equ 00FFH
+#endif
+```
+
+#### PRAGMA (プラグマ)
+###### PRAGMA ONCE
+ソースコードをアセンブルするときに、記述があるファイルを1回だけアセンブルすることを指定します
+```
+#pragma once
+
+LABEL	equ 00FFH
+```
 				
 ## 表記の揺れ対応
 - (IX) → (IX+0)

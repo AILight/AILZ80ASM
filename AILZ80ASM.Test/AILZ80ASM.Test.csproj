@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AILZ80ASM\AILZ80ASM.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Test\AIEncode\SHIFT_JIS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -39,6 +35,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestCS_ORG\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestCS_ORG_Enhanced\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestCS_ORG_Enhanced\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestCS_ORG_OutputAdjust\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestCS_ORG_OutputAdjust\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestCS_ORG_Rom\Test.LST">
@@ -69,6 +77,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestER\CharMap.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestER\Org3.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestER\Org2.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestER\Org1.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestER\Equ.Z80">
@@ -125,10 +142,25 @@
     <None Update="Test\TestER\Address.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Label_Test\Test.BIN">
+    <None Update="Test\TestLB_CharMap\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Label_Test\Test.Z80">
+    <None Update="Test\TestLB_CharMap\Test.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_CharMap\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_DS\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_DS\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_Label\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestLB_Label\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_CALL_Address\Test.LST">
@@ -149,40 +181,40 @@
     <None Update="Test\TestLB_DSDBSDWS_Test\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.BIN">
+    <None Update="Test\TestLB_DSDBSDWS_Trim\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Trim_Test\Test.Z80">
+    <None Update="Test\TestLB_DSDBSDWS_Trim\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Test\Test.BIN">
+    <None Update="Test\TestLB_DSDBSDWS\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DSDBSDWS_Test\Test.Z80">
+    <None Update="Test\TestLB_DSDBSDWS\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DBDW_Test\Test.BIN">
+    <None Update="Test\TestLB_DBDW\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_DBDW_Test\Test.Z80">
+    <None Update="Test\TestLB_DBDW\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Enhance_EQU_Test\Test.BIN">
+    <None Update="Test\TestLB_Enhance_EQU\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_Enhance_EQU_Test\Test.Z80">
+    <None Update="Test\TestLB_Enhance_EQU\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_EQU_Test\Test.BIN">
+    <None Update="Test\TestLB_EQU\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_EQU_Test\Test.LST">
+    <None Update="Test\TestLB_EQU\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestLB_EQU_Test\Test.Z80">
+    <None Update="Test\TestLB_EQU\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestLB_GlobalLabel\Test.SYM">
@@ -422,6 +454,15 @@
     <None Update="Test\TestPP_MacroModern\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestPP_Pragma_Once\Test3.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestPP_Pragma_Once\Test2.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestPP_Pragma_Once\Test1.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestPP_RepeatCompatible\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -435,6 +476,15 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_RepeatAlign\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestPP_Pragma_Once\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestPP_Pragma_Once\Test.INC">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestPP_Pragma_Once\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_RepeatModern\Test.BIN">
@@ -456,6 +506,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestRD_ALL\Test.CMT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestRD_ALL\Test.EQU">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestRD_ALL\Test.LST">
@@ -954,6 +1007,10 @@
 
   <ItemGroup>
     <Folder Include="Test\AIEncode\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AILZ80ASM\AILZ80ASM.csproj" />
   </ItemGroup>
 
 </Project>

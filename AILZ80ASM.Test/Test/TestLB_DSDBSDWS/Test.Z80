@@ -1,0 +1,21 @@
+﻿	org $8000
+LB:
+	LD DE, CHAR_00
+	DB 0, 1, 2, 20H
+	DW 0, 1, 2, 2000H
+	NOP
+CHAR_00:
+	DS 16
+	DS 16, 1
+	DBF 16, 5
+	DWF 8, 0102H
+
+TEST1:
+.ADDR		equ 0
+.SIZE		equ 4
+
+TEST2:
+.Counter	ds 4
+.PORT1		ds TEST1.SIZE
+.PORT2		ds TEST1.SIZE
+.PORT3		ds TEST1.SIZE
