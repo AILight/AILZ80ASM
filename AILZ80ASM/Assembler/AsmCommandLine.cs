@@ -228,14 +228,6 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
-            rootCommand.AddOption(new Option<bool>()
-            {
-                Name = "outputTrim",
-                Aliases = new[] { "-ot", "--output-trim" },
-                Description = "DSで確保したメモリが、出力データの最後にある場合にトリムされます。",
-                Required = false,
-            });
-
             rootCommand.AddOption(new Option<Error.ErrorCodeEnum[]>()
             {
                 Name = "disableWarningCode",

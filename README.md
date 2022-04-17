@@ -48,7 +48,6 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - -oe, --output-encode <mode>出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
 - -lm, --list-mode <mode>    リストの出力形式を選択します。 [simple, middle, full] デフォルト:full
 - -ts, --tab-size <size>     TABのサイズを指定します。 デフォルト:4
-- -ot, --output-trim         DSで確保したメモリが、出力データの最後にある場合にトリムされます。
 - -dw,                       Warning、Informationをオフにするコードをスペース区切りで指定します。
 - --disable-warning <codes>
 - -ul, --unused-label        未使用ラベルを確認します。
@@ -73,8 +72,8 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 > AILZ80ASM sample.z80 -cmt
 > AILZ80ASM sample.z80 -om cmt
 
-■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力（形式：シンプル、タブサイズ8）、DSをTrim
-> AILZ80ASM sample.z80 -bin -cmt -lst -ot -lm simple -ts 8
+■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力（形式：シンプル、タブサイズ8）
+> AILZ80ASM sample.z80 -bin -cmt -lst -lm simple -ts 8
 
 ■ sample.z80をアセンブル、出力はBIN形式、ファイル名は、output.bin
 > AILZ80ASM sample.z80 -bin output.bin
@@ -99,8 +98,7 @@ EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
 ```
 {
   "default-options": [
-    "-err",
-    "-ot"
+    "-err"
   ],
   "disable-warnings": [
     "W0001",

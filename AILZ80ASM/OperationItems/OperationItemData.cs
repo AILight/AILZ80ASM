@@ -129,7 +129,6 @@ namespace AILZ80ASM.OperationItems
             {
                 ValueStrings = dataList.ToArray(),
                 DataType = dataType,
-                Address = address,
                 ItemDataLength = new AsmLength(dataList.Count * (int)dataType),
                 LineDetailExpansionItemOperation = lineDetailExpansionItemOperation
             };

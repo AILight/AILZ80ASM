@@ -98,7 +98,6 @@ namespace AILZ80ASM.OperationItems
             {
                 ValueStrings = valuesStrings,
                 DataType = dataType,
-                Address = address,
                 ItemDataLength = new AsmLength(valuesStrings.Length * (int)dataType),
                 LineDetailExpansionItemOperation = lineDetailExpansionItemOperation,
                 IsDefaultValueClear = isDefaultValueClear,

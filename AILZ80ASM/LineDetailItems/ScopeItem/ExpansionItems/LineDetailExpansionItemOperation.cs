@@ -36,7 +36,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         {
             get
             {
-                return OperationItem == default(OperationItem) ? AsmList.CreateLineItem(this.LineItem) : OperationItem.List;
+                return OperationItem == default(OperationItem) ? AsmList.CreateLineItem(this.LineItem) : OperationItem.List(this.Address);
             }
         }
 
@@ -65,9 +65,9 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
                     // Addressを設定
                     if (OperationItem != default(OperationItem))
                     {
-                        Address = OperationItem.Address;
+                        //Address = OperationItem.Address;
                         Length = OperationItem.Length;
-                        asmAddress = new AsmAddress(OperationItem.Address, Length);
+                        asmAddress = new AsmAddress(this.Address, Length);
                     }
                     else
                     {

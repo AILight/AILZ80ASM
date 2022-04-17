@@ -123,7 +123,7 @@ namespace AILZ80ASM
             this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.ResetAddress;
             var asmAddress = new AsmAddress();
             var saveAddress = asmAddress;
-            foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.Where(m => !m.IsRomMode).OrderBy(m => m.Address.Program))
+            foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.Where(m => !m.IsRomMode).OrderBy(m => m.Address.Program).ToArray())
             {
                 if (saveAddress.Output != asmAddress.Output || asmORG.ORGType == AsmORG.ORGTypeEnum.NextORG)
                 {
@@ -455,6 +455,7 @@ namespace AILZ80ASM
             }
 
             // 残りのデータ出力に対応
+            /*
             var remainingAsmORGs = this.AssembleLoad.FindRemainingAsmORGs(asmAddress.Output);
             for (var index = 1; index < remainingAsmORGs.Length; index++)
             {
@@ -470,7 +471,7 @@ namespace AILZ80ASM
                 stream.Write(bytes, 0, bytes.Length);
                 asmAddress.Output += length;
             }
-
+            */
         }
 
         public void SaveT88(Stream stream, string outputFilename)

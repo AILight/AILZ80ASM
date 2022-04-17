@@ -57,8 +57,8 @@ namespace AILZ80ASM.LineDetailItems
                 AsmLoad.Share.IsUsingOutputAddressVariable = saveIsUsingOutputAddressVariableProgram;
             }
 
-            var amsORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
-            var diff = (int)programAddress - amsORG.Address.Program;
+            var asmORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
+            var diff = (int)programAddress - asmORG.Address.Program;
             var isRomMode = false;
 
             asmAddress.Program = programAddress;
@@ -78,15 +78,16 @@ namespace AILZ80ASM.LineDetailItems
                 asmAddress.Output = outputAddress;
                 isRomMode = true;
             }
-            else if (asmAddress.Output != amsORG.Address.Output)
+            else if (asmAddress.Output != asmORG.Address.Output)
             {
-                if (amsORG.Address.Output + diff < 0)
+                if (asmORG.Address.Output + diff < 0)
                 {
                     this.AsmLoad.Share.NeedResetAddress = true;
                 }
 
-                asmAddress.Output = (UInt32)(amsORG.Address.Output + diff);
+                asmAddress.Output = (UInt32)(asmORG.Address.Output + diff);
             }
+            
             var fillByte = default(byte);
             if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
             {
