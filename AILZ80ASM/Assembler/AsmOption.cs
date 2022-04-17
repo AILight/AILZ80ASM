@@ -16,7 +16,7 @@ namespace AILZ80ASM.Assembler
         public Dictionary<AsmEnum.FileTypeEnum, FileInfo> OutputFiles { get; set; }
 
         // 出力結果にトリムをするか
-        public bool OutputTrim { get; set; } = false;
+        //public bool OutputTrim { get; set; } = false;
 
         // 出力結果の差分を取るか
         public bool DiffFile { get; set; } = false;
@@ -86,7 +86,6 @@ namespace AILZ80ASM.Assembler
             OutputEncodeMode = rootCommand.GetOutputEncodeMode();
 
             ListMode = rootCommand.GetListMode();
-            OutputTrim = rootCommand.GetValue<bool>("outputTrim");
             DiffFile = rootCommand.GetValue<bool>("diffFile");
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
@@ -108,7 +107,7 @@ namespace AILZ80ASM.Assembler
         /// <exception cref="ArgumentException"></exception>
         public void Validate()
         {
-                        // 入力内容の確認
+            // 入力内容の確認
             if (InputFiles == default || InputFiles.Any(m => m.Value == default || m.Value.Length == 0))
             {
                 throw new ArgumentException($"入力ファイルが指定されていません。");

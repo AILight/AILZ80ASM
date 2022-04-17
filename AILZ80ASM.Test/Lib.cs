@@ -87,7 +87,6 @@ namespace AILZ80ASM.Test
             };
             asmOption.InputEncodeMode = AsmEnum.EncodeModeEnum.UTF_8;
             asmOption.ListMode = AsmEnum.ListFormatEnum.Full;
-            asmOption.OutputTrim = outputTrim;
 
             var package = new Package(asmOption, AsmISA.Z80);
             package.Assemble();

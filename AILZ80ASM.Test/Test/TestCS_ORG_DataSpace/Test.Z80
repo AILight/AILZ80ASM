@@ -1,0 +1,14 @@
+﻿	org     $FE00
+TEST:
+.Work1		ds 1
+.Work2		ds 2
+.Work3		ds 3
+.Work4		ds 4
+
+
+	org $8000
+MAIN:
+	di
+	ld	a, (TEST.Work4)
+	ei
+	ret

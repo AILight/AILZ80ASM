@@ -463,21 +463,18 @@ namespace AILZ80ASM.Assembler
                 resultList.RemoveAt(resultList.Count - 1);
             }
 
-            //　Trimモードの時
-            if (this.AssembleOption.OutputTrim)
+            // 最後のDSを削除する
+            while (resultList.Count >= 2 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.NextORG)
             {
-                while (resultList.Count > 0 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.NextORG)
+                var beforeLast = resultList[resultList.Count - 2];
+                if (beforeLast.FillByte == default(byte))
                 {
-                    var beforeLast = resultList[resultList.Count - 2];
-                    if (beforeLast.FillByte == default(byte))
-                    {
-                        resultList.RemoveAt(resultList.Count - 1);
-                        resultList.RemoveAt(resultList.Count - 1);
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    resultList.RemoveAt(resultList.Count - 1);
+                    resultList.RemoveAt(resultList.Count - 1);
+                }
+                else
+                {
+                    break;
                 }
             }
 
@@ -486,7 +483,7 @@ namespace AILZ80ASM.Assembler
 
         public AsmORG GetLastAsmORG_ExcludingRomMode()
         {
-            return this.Share.AsmORGs.Where(m => !m.IsRomMode).Last();
+            return this.Share.AsmORGs.Where(m => m.ORGType == AsmORG.ORGTypeEnum.ORG && !m.IsRomMode).Last();
         }
 
         public FileInfo FindPramgaOnceFile(FileInfo fileInfo)

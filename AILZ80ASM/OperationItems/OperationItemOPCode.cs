@@ -13,20 +13,17 @@ namespace AILZ80ASM.OperationItems
         private AssembleResult AssembleResult { get; set; }
 
         public override byte[] Bin => AsmLoad?.ISA?.ToBin(AssembleResult) ?? Array.Empty<byte>();
-        public override AsmList List
+        public override AsmList List(AsmAddress asmAddress)
         {
-            get
-            {
-                return AsmList.CreateLineItem(Address, Bin, AssembleResult.InstructionItem.T == 0 ? "" : AssembleResult.InstructionItem.T.ToString(), LineDetailExpansionItemOperation.LineItem);
-            }
+            return AsmList.CreateLineItem(asmAddress, Bin, AssembleResult.InstructionItem.T == 0 ? "" : AssembleResult.InstructionItem.T.ToString(), LineDetailExpansionItemOperation.LineItem);
         }
+
         public override AsmLength Length => new AsmLength(AssembleResult.InstructionItem.OPCode.Length);
 
         private OperationItemOPCode(InstructionSet.AssembleResult assembleResult, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             AssembleResult = assembleResult;
             LineDetailExpansionItemOperation = lineDetailExpansionItemOperation;
-            Address = address;
             AsmLoad = asmLoad;
         }
 

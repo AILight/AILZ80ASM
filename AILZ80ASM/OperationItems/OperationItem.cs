@@ -11,18 +11,15 @@ namespace AILZ80ASM.OperationItems
 
         }
 
-        public AsmAddress Address { get; protected set; }
+        //public AsmAddress Address { get; protected set; }
 
         public LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
 
         public virtual byte[] Bin => throw new NotImplementedException();
 
-        public virtual AsmList List
+        public virtual AsmList List(AsmAddress asmAddress)
         {
-            get
-            {
-                return AsmList.CreateLineItem(Address, Bin, "", LineDetailExpansionItemOperation.LineItem);
-            }
+            return AsmList.CreateLineItem(asmAddress, Bin, "", LineDetailExpansionItemOperation.LineItem);
         }
 
         public virtual AsmLength Length => throw new NotImplementedException();

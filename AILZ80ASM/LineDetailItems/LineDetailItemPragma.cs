@@ -38,10 +38,20 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     case "ONCE":
                         asmLoad.AddPramgaOnceFileInfo(lineItem.FileInfo);
-                        //lineItem.FileInfo
                         break;
+                    /* コマンドライン引数は、こちらでオプション設定をする
+                    case "OPTION":
+                        switch (argument.ToUpper())
+                        {
+                            case "OUTPUT-TRIM":
+                                break;
+                            default:
+                                return default;
+                        }
+                        break;
+                    */
                     default:
-                        break;
+                        return default;
                 }
 
                 return new LineDetailItemPragma(lineItem, asmLoad);

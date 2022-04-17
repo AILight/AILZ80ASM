@@ -44,6 +44,7 @@ namespace AILZ80ASM.Assembler
 
         public void ResetAddress(ref AsmAddress asmAddress)
         {
+            Address = asmAddress;
             foreach (var lineDetailScopeItem in LineDetailScopeItems)
             {
                 lineDetailScopeItem.ResetAddress(ref asmAddress);
