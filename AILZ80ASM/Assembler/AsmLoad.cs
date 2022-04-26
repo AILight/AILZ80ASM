@@ -78,7 +78,6 @@ namespace AILZ80ASM.Assembler
             Share.ListedFiles = new List<FileInfo>();
             Share.LineDetailItemAddreses = new List<LineDetailItemAddress>();
             Share.PragmaOnceFiles = new List<FileInfo>();
-            Share.UsingOutputAddressLineDetailItemAddressList = new List<LineDetailItemAddress>();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -346,9 +345,9 @@ namespace AILZ80ASM.Assembler
             this.Share.LineDetailItemAddreses.Add(lineDetailItemAddress);
         }
 
-        public void AddLineDetailScopeItem(LineDetailScopeItem lineDetailScopeItem)
+        public void AddLineDetailItem(LineDetailItem lineDetailItem)
         {
-            this.Share.AsmORGs.Last().AddScopeItem(lineDetailScopeItem);
+            this.Share.AsmORGs.Last().AddLineDetailItem(lineDetailItem);
         }
 
         public void AddListedFile(FileInfo fileInfo)
@@ -438,6 +437,7 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
+        /*
         public AsmORG[] FindAsmORGs(UInt32 outputAddressStart, UInt32 outputAddressEnd)
         {
             var resultList = new List<AsmORG>();
@@ -480,21 +480,67 @@ namespace AILZ80ASM.Assembler
 
             return resultList.ToArray();
         }
+        */
 
+        /// <summary>
+        /// 出力のスペース領域を埋める
+        /// </summary>
+        /// <param name="fromOutputAddress"></param>
+        /// <param name="toOutputAddress"></param>
+        /// <param name="stream"></param>
+        /// <exception cref="NotSupportedException"></exception>
+        public void OutputORGSpace(ref UInt32 fromOutputAddress, UInt32 toOutputAddress, Stream stream)
+        {
+            var outputAddress = fromOutputAddress;
+            var asmORGs = this.Share.AsmORGs.OrderBy(m => m.OutputAddress).ToList();
+            var startORG = asmORGs.Where(m => m.OutputAddress <= outputAddress).OrderBy(m => m.OutputAddress).LastOrDefault();
+            var endORG = asmORGs.Where(m => m.OutputAddress <= toOutputAddress).OrderBy(m => m.OutputAddress).LastOrDefault();
+            var startIndex = asmORGs.IndexOf(startORG);
+            var endIndex = asmORGs.IndexOf(endORG);
+
+            if (startIndex == -1 || endIndex == -1)
+            {
+                throw new NotSupportedException();
+            }
+
+            for (var index = startIndex; index <= endIndex; index++)
+            {
+                var length = default(UInt32);
+                if (index < endIndex)
+                {
+                    length = asmORGs[index + 1].OutputAddress - outputAddress;
+                }
+                else
+                {
+                    length = toOutputAddress - outputAddress;
+
+                }
+                var bytes = Enumerable.Repeat<byte>(asmORGs[index].FillByte, (int)length).ToArray();
+                stream.Write(bytes, 0, bytes.Length);
+                outputAddress += length;
+            }
+
+            fromOutputAddress = outputAddress;
+        }
+
+        /*
         public AsmORG GetLastAsmORG_ExcludingRomMode()
         {
             return this.Share.AsmORGs.Where(m => m.ORGType == AsmORG.ORGTypeEnum.ORG && !m.IsRomMode).Last();
         }
+        */
 
         public FileInfo FindPramgaOnceFile(FileInfo fileInfo)
         {
             return this.Share.PragmaOnceFiles.FirstOrDefault(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity());
         }
 
+        /*
         public LineDetailItemAddress FindLineDetailItemAddress(UInt32 outputAddress)
         {
             return this.Share.LineDetailItemAddreses.Where(m => m.AssembleORG.ORGType == AsmORG.ORGTypeEnum.ORG && m.AssembleORG.Address.Output <= outputAddress).LastOrDefault();
         }
+        */
 
         /*
         /// <summary>

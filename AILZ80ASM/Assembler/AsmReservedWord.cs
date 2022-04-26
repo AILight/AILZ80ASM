@@ -17,12 +17,14 @@ namespace AILZ80ASM.Assembler
             {
                 new AsmReservedWord { Name = "ORG", IsArgumentPath = false},
                 new AsmReservedWord { Name = "ALIGN", IsArgumentPath = false},
+                new AsmReservedWord { Name = "DS", IsArgumentPath = false},
+                new AsmReservedWord { Name = "EQU", IsArgumentPath = false},
                 new AsmReservedWord { Name = "CHARMAP", IsArgumentPath = true},
                 new AsmReservedWord { Name = "INCLUDE", IsArgumentPath = true},
                 new AsmReservedWord { Name = "DB", IsArgumentPath = false},
                 new AsmReservedWord { Name = "DW", IsArgumentPath = false},
-                new AsmReservedWord { Name = "DS", IsArgumentPath = false},
-                new AsmReservedWord { Name = "DWS", IsArgumentPath = false},
+                new AsmReservedWord { Name = "DBF", IsArgumentPath = false},
+                new AsmReservedWord { Name = "DWF", IsArgumentPath = false},
                 new AsmReservedWord { Name = "MACRO", IsArgumentPath = false},
                 new AsmReservedWord { Name = "ENDM", IsArgumentPath = false},
                 new AsmReservedWord { Name = "REPT", IsArgumentPath = false},
@@ -31,6 +33,11 @@ namespace AILZ80ASM.Assembler
             };
 
             return result;
+        }
+
+        public static AsmReservedWord[] GetReservedWordsForLabel()
+        {
+            return GetReservedWords().Where(m => m.Name != "MACRO").ToArray();
         }
     }
 }

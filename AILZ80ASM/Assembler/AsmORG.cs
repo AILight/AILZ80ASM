@@ -1,6 +1,7 @@
 ﻿using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.LineDetailItems.ScopeItem;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace AILZ80ASM.Assembler
@@ -15,40 +16,50 @@ namespace AILZ80ASM.Assembler
             NextORG,
         }
 
-        public AsmAddress Address { get; private set; }
-        public bool IsRomMode { get; set; }
-        public byte FillByte { get; private set; }
-        public List<LineDetailScopeItem> LineDetailScopeItems { get; private set; }
+        public UInt16 ProgramAddress { get; private set; }
+        public UInt32 OutputAddress { get; private set; }
+        public string OutputAddressLabel { get; private set; }
+        public string FillByteLabel { get; private set; }
+        public bool IsOutputData { get; private set; }
+        public bool IsRomMode => !string.IsNullOrEmpty(OutputAddressLabel);
+        public List<LineDetailItem> LineDetailItems { get; private set; }
         public LineItem LineItem { get; private set; } = default;
         public ORGTypeEnum ORGType { get; private set; } = ORGTypeEnum.ORG;
+        public bool HasBinResult => LineDetailItems.Any(m => m.BinResults.Any());
+
+        public byte FillByte { get; internal set; }
 
         public AsmORG()
-            : this(new AsmAddress(), false, 0, ORGTypeEnum.ORG)
+            : this(0, "", "", default(LineItem), ORGTypeEnum.ORG)
         {
 
         }
 
-        public AsmORG(AsmAddress address, bool isRomMode, byte fillByte, ORGTypeEnum orgType)
+        public AsmORG(UInt16 programAddress, string outputAddressLabel, string fillByteLabel, LineItem lineItem, ORGTypeEnum orgType)
         {
-            Address = address;
-            IsRomMode = isRomMode;
-            FillByte = fillByte;
-            LineDetailScopeItems = new List<LineDetailScopeItem>();
+            ProgramAddress = programAddress;
+            OutputAddressLabel = outputAddressLabel;
+;
+            FillByteLabel = fillByteLabel;
+            IsOutputData = false;
+            LineDetailItems = new List<LineDetailItem>();
+            LineItem = lineItem;
             ORGType = orgType;
         }
 
-        public void AddScopeItem(LineDetailScopeItem lineDetailScopeItem)
+        public void AddLineDetailItem(LineDetailItem lineDetailItem)
         {
-            LineDetailScopeItems.Add(lineDetailScopeItem);
+            LineDetailItems.Add(lineDetailItem);
         }
 
-        public void ResetAddress(ref AsmAddress asmAddress)
+        public void AdjustAssemble(UInt32 outputAddress)
         {
-            Address = asmAddress;
-            foreach (var lineDetailScopeItem in LineDetailScopeItems)
-            {
-                lineDetailScopeItem.ResetAddress(ref asmAddress);
+            IsOutputData = true;
+            OutputAddress = outputAddress;
 
+            foreach (var lineDetailItem in LineDetailItems)
+            {
+                lineDetailItem.AdjustAssemble(ref outputAddress);
             }
         }
     }

@@ -14,7 +14,7 @@ namespace AILZ80ASM
         public string LineString { get; private set; }
         public int LineIndex { get; private set; }
         public byte[] Bin => LineDetailItem.Bin;
-        public AsmResult[] BinResult => LineDetailItem.BinResult;
+        public AsmResult[] BinResults => LineDetailItem.BinResults;
         public AsmList[] Lists => LineDetailItem.Lists;
 
         // 展開情報

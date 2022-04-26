@@ -30,7 +30,8 @@ namespace AILZ80ASM.LineDetailItems
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
-            base.PreAssemble(ref asmAddress);
+            Address = asmAddress;
+            //base.PreAssemble(ref asmAddress);
         }
 
         public override void ExpansionItem()

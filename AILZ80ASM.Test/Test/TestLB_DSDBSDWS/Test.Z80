@@ -4,8 +4,7 @@ LB:
 	DB 0, 1, 2, 20H
 	DW 0, 1, 2, 2000H
 	NOP
-CHAR_00:
-	DS 16
+CHAR_00:	DS 16		; ラベルテスト
 	DS 16, 1
 	DBF 16, 5
 	DWF 8, 0102H

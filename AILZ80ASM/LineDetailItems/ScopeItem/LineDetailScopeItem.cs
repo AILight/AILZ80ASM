@@ -12,7 +12,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
 
         public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
         public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();
-        public AsmResult[] BinResult => LineDetailExpansionItems.SelectMany(m => m.BinResult).ToArray();
+        public AsmResult[] BinResults => LineDetailExpansionItems.SelectMany(m => m.BinResults).ToArray();
         public AsmList[] Lists => LineDetailExpansionItems.Select(m => m.List).ToArray();
 
         /// <summary>
@@ -42,8 +42,6 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
 
         public virtual void PreAssemble(ref AsmAddress asmAddress)
         {
-            AsmLoad.AddLineDetailScopeItem(this);
-
             foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
             {
                 try
@@ -58,15 +56,14 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
         }
 
 
-        public virtual void ResetAddress(ref AsmAddress asmAddress)
+        public virtual void AdjustAssemble(ref UInt32 outputAddress)
         {
             foreach (var lineDetailExpansionItem in LineDetailExpansionItems)
             {
                 try
                 {
-                    lineDetailExpansionItem.ResetAddress(ref asmAddress);
-                    asmAddress.Program += lineDetailExpansionItem.Length.Program;
-                    asmAddress.Output += lineDetailExpansionItem.Length.Output;
+                    lineDetailExpansionItem.AdjustAssemble(ref outputAddress);
+                    outputAddress += lineDetailExpansionItem.Length.Output;
                 }
                 catch (ErrorAssembleException ex)
                 {

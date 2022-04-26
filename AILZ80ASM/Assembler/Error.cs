@@ -37,7 +37,7 @@ namespace AILZ80ASM.Assembler
             E0021,
             E0022,
             E0023,
-            E0024,
+            //E0024,
 
             E1011,
             E1012,
@@ -156,7 +156,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。[{0}]",
-            [ErrorCodeEnum.E0024] = "出力アドレスの再配置が行われたため、$$の値が不定になりました。ORGを出力順に並べるか、$$変数を不使用にしてください。",
+            //[ErrorCodeEnum.E0024] = "出力アドレスの再配置が行われたため、$$の値が不定になりました。ORGを出力順に並べるか、$$変数を不使用にしてください。",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",

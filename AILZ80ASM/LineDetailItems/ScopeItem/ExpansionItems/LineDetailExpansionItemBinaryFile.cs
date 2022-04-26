@@ -21,11 +21,11 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             }
         }
 
-        public override AsmResult[] BinResult
+        public override AsmResult[] BinResults
         {
             get
             {
-                return new[] { new AsmResult() { Address = this.Address, Data = _Bin } };
+                return new[] { new AsmResult() { Address = this.Address, Data = _Bin, LineItem = this.LineItem } };
             }
         }
 

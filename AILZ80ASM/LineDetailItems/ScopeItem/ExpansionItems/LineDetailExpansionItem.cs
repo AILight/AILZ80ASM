@@ -23,7 +23,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             }
         }
 
-        public virtual AsmResult[] BinResult
+        public virtual AsmResult[] BinResults
         {
             get 
             { 
@@ -44,9 +44,9 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             Address = asmAddress;
         }
 
-        public virtual void ResetAddress(ref AsmAddress asmAddress)
+        public virtual void AdjustAssemble(ref UInt32 outputAddress)
         {
-            Address = asmAddress;
+            Address = new AsmAddress(Address.Program, outputAddress);
         }
 
         public virtual void Assemble(AsmLoad asmLoad)

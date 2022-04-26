@@ -210,5 +210,10 @@ namespace AILZ80ASM.LineDetailItems
                 };
             }
         }
+
+        public override void AdjustAssemble(ref uint outputAddress)
+        {
+            Address = new AsmAddress(Address.Program, outputAddress);
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace AILZ80ASM.Assembler
             None,
             ExpansionItem,
             PreAssemble,
-            ResetAddress,
+            AdjustAssemble,
             InternalAssemble,
             BuildLabel,
             ValidateOutputAddress,
@@ -46,14 +46,5 @@ namespace AILZ80ASM.Assembler
 
         // Pragma 一度だけファイルをロードする機能用
         public List<FileInfo> PragmaOnceFiles { get; set; } = default;
-
-        // アドレスの再配置が必要
-        public bool NeedResetAddress { get; set; } = false;
-
-        // PreAssemble中に$$アドレスを利用したか？
-        public bool IsUsingOutputAddressVariable { get; set; } = false;
-
-        // PreAssemble中の$$を利用したLineDetailItemAddressを保存する
-        public List<LineDetailItemAddress> UsingOutputAddressLineDetailItemAddressList { get; set; } = default;
     }
 }
