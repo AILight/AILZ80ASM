@@ -76,7 +76,6 @@ namespace AILZ80ASM.Assembler
             Share.LoadFiles = new Stack<FileInfo>();
             Share.LoadMacros = new Stack<Macro>();
             Share.ListedFiles = new List<FileInfo>();
-            Share.LineDetailItemAddreses = new List<LineDetailItemAddress>();
             Share.PragmaOnceFiles = new List<FileInfo>();
 
             Scope = new AsmLoadScope();
@@ -128,6 +127,12 @@ namespace AILZ80ASM.Assembler
             return func.Invoke(asmLoad);
         }
 
+        /// <summary>
+        /// 新しいスコープを作成する
+        /// </summary>
+        /// <param name="globalLabelName"></param>
+        /// <param name="labelName"></param>
+        /// <param name="action"></param>
         public void CreateNewScope(string globalLabelName, string labelName, Action<AsmLoad> action)
         {
             CreateLocalScope(globalLabelName, labelName, localAsmLoad => 
@@ -136,15 +141,6 @@ namespace AILZ80ASM.Assembler
 
                 return 0;
             });
-        }
-
-        private AsmLoad InternalClone()
-        {
-            var asmLoad = new AsmLoad(this.AssembleOption, this.ISA)
-            {
-                Share = this.Share,
-            };
-            return asmLoad;
         }
 
         /// <summary>
@@ -162,12 +158,6 @@ namespace AILZ80ASM.Assembler
 
             // ラベル後処理
             ProcessLabel_Post(lineDetailItem);
-
-            // ORG処理用
-            if (lineDetailItem is LineDetailItemAddress lineDetailItemAddress)
-            {
-                this.AddLineDetailItemAddress(lineDetailItemAddress);
-            }
 
             return lineDetailItem;
         }
@@ -258,6 +248,9 @@ namespace AILZ80ASM.Assembler
             }
         }
 
+        /// <summary>
+        /// マクロ関連が閉じられているかを確認する
+        /// </summary>
         public void LoadCloseValidate()
         {
             if (this.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefine)
@@ -276,16 +269,29 @@ namespace AILZ80ASM.Assembler
             }
         }
 
+        /// <summary>
+        /// エラーの追加
+        /// </summary>
+        /// <param name="errorLineItem"></param>
         public void AddError(ErrorLineItem errorLineItem)
         {
             Share.Errors.Add(errorLineItem);
         }
 
+        /// <summary>
+        /// 複数エラーの追加
+        /// </summary>
+        /// <param name="errorLineItems"></param>
         public void AddErrors(IEnumerable<ErrorLineItem> errorLineItems)
         {
             Share.Errors.AddRange(errorLineItems);
         }
 
+        /// <summary>
+        /// ラベルの追加
+        /// </summary>
+        /// <param name="label"></param>
+        /// <exception cref="ErrorAssembleException"></exception>
         public void AddLabel(Label label)
         {
             // 同一名のラベル
@@ -322,6 +328,11 @@ namespace AILZ80ASM.Assembler
 
         }
 
+        /// <summary>
+        /// ファンクションの追加
+        /// </summary>
+        /// <param name="function"></param>
+        /// <exception cref="ErrorAssembleException"></exception>
         public void AddFunction(Function function)
         {
             if (this.Scope.Functions.Any(m => string.Compare(m.FullName, function.FullName, true) == 0))
@@ -331,6 +342,11 @@ namespace AILZ80ASM.Assembler
             this.Scope.Functions.Add(function);
         }
 
+        /// <summary>
+        /// マクロの追加
+        /// </summary>
+        /// <param name="macro"></param>
+        /// <exception cref="ErrorAssembleException"></exception>
         public void AddMacro(Macro macro)
         {
             if (this.Scope.Macros.Any(m => string.Compare(m.FullName, macro.FullName, true) == 0))
@@ -340,27 +356,38 @@ namespace AILZ80ASM.Assembler
             this.Scope.Macros.Add(macro);
         }
 
-        public void AddLineDetailItemAddress(LineDetailItemAddress lineDetailItemAddress)
-        {
-            this.Share.LineDetailItemAddreses.Add(lineDetailItemAddress);
-        }
-
+        /// <summary>
+        /// ORGにぶら下がる明細を追加
+        /// </summary>
+        /// <param name="lineDetailItem"></param>
         public void AddLineDetailItem(LineDetailItem lineDetailItem)
         {
             this.Share.AsmORGs.Last().AddLineDetailItem(lineDetailItem);
         }
 
+        /// <summary>
+        /// 読み込みファイルを追加
+        /// </summary>
+        /// <param name="fileInfo"></param>
         public void AddListedFile(FileInfo fileInfo)
         {
             this.Share.ListedFiles.Add(fileInfo);
         }
 
+        /// <summary>
+        /// AsmORGを追加
+        /// </summary>
+        /// <param name="asmORG"></param>
         public void AddORG(AsmORG asmORG)
         {
             this.Share.AsmORGs.Add(asmORG);
         }
 
-        public void AddPramgaOnceFileInfo(FileInfo fileInfo)
+        /// <summary>
+        /// Pragma
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        public void AddPragmaOnceFileInfo(FileInfo fileInfo)
         {
             this.Share.PragmaOnceFiles.Add(fileInfo);
         }
@@ -437,51 +464,6 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
-        /*
-        public AsmORG[] FindAsmORGs(UInt32 outputAddressStart, UInt32 outputAddressEnd)
-        {
-            var resultList = new List<AsmORG>();
-            
-            // 先頭一つを積む
-            resultList.Add(this.Share.AsmORGs.Where(m => m.Address.Output <= outputAddressStart).OrderByDescending(m => m.Address.Output).First());
-            resultList.AddRange(this.Share.AsmORGs.Where(m => m.Address.Output >= outputAddressStart && m.Address.Output < outputAddressEnd).OrderBy(m => m.Address.Output));
-
-            return resultList.ToArray();
-        }
-
-        public AsmORG[] FindRemainingAsmORGs(UInt32 outputAddress)
-        {
-            var resultList = new List<AsmORG>();
-
-            // 先頭一つを積む
-            resultList.Add(this.Share.AsmORGs.Where(m => m.Address.Output <= outputAddress).OrderByDescending(m => m.Address.Output).First());
-            resultList.AddRange(this.Share.AsmORGs.Where(m => m.Address.Output >= outputAddress).OrderBy(m => m.Address.Output));
-
-            // 最後
-            while (resultList.Count > 0 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.ORG)
-            {
-                resultList.RemoveAt(resultList.Count - 1);
-            }
-
-            // 最後のDSを削除する
-            while (resultList.Count >= 2 && resultList.Last().ORGType == AsmORG.ORGTypeEnum.NextORG)
-            {
-                var beforeLast = resultList[resultList.Count - 2];
-                if (beforeLast.FillByte == default(byte))
-                {
-                    resultList.RemoveAt(resultList.Count - 1);
-                    resultList.RemoveAt(resultList.Count - 1);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return resultList.ToArray();
-        }
-        */
-
         /// <summary>
         /// 出力のスペース領域を埋める
         /// </summary>
@@ -523,68 +505,11 @@ namespace AILZ80ASM.Assembler
             fromOutputAddress = outputAddress;
         }
 
-        /*
-        public AsmORG GetLastAsmORG_ExcludingRomMode()
-        {
-            return this.Share.AsmORGs.Where(m => m.ORGType == AsmORG.ORGTypeEnum.ORG && !m.IsRomMode).Last();
-        }
-        */
-
         public FileInfo FindPramgaOnceFile(FileInfo fileInfo)
         {
             return this.Share.PragmaOnceFiles.FirstOrDefault(m => m.GetFullNameCaseSensitivity() == fileInfo.GetFullNameCaseSensitivity());
         }
 
-        /*
-        public LineDetailItemAddress FindLineDetailItemAddress(UInt32 outputAddress)
-        {
-            return this.Share.LineDetailItemAddreses.Where(m => m.AssembleORG.ORGType == AsmORG.ORGTypeEnum.ORG && m.AssembleORG.Address.Output <= outputAddress).LastOrDefault();
-        }
-        */
-
-        /*
-        /// <summary>
-        /// プレアセンブルを行う
-        /// </summary>
-        public void PreAssemble(ref AsmAddress asmAddress)
-        {
-            var beforeAsmAddress = asmAddress;
-
-            // プレアセンブル
-            foreach (var asmORG in AsmORGs.OrderBy(m => m.OutputAddress ?? uint.MaxValue).ThenBy(m => m.ProgramAddress))
-            {
-                if (asmORG.OutputAddress.HasValue)
-                {
-                    asmAddress.Program = asmORG.ProgramAddress;
-                    asmAddress.Output = asmORG.OutputAddress.Value;
-                }
-                else
-                {
-                    if (beforeAsmAddress.Output == asmAddress.Output)
-                    {
-                        asmAddress.Program = asmORG.ProgramAddress;
-                    }
-                    else
-                    {
-                        var outputAddress = asmORG.ProgramAddress - beforeAsmAddress.Program;
-                        if (asmAddress.Output > (uint)outputAddress)
-                        {
-                            this.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0009));
-                        }
-                        asmAddress.Output = (uint)outputAddress;
-                    }
-                }
-                beforeAsmAddress = asmAddress;
-
-                // ここは中で要素が増えるので、foreachは使えない
-                for (var index = 0; index < asmORG.LineDetailItems.Count; index++)
-                {
-                    var lineDetailItem = asmORG.LineDetailItems[index];
-                    lineDetailItem.PreAssemble(ref asmAddress);
-                }
-            }
-        }
-        */
 
         public AsmEnum.EncodeModeEnum GetEncodMode(FileInfo fileInfo)
         {

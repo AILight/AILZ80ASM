@@ -31,9 +31,6 @@ namespace AILZ80ASM.Assembler
         // ORG保存用
         public List<AsmORG> AsmORGs { get; set; } = default;
 
-        // ORG命令の保持
-        public List<LineDetailItemAddress> LineDetailItemAddreses { get; set; } = default;
-
         // 循環展開確認用
         public Stack<FileInfo> LoadFiles { get; set; } = default;
         public Stack<Macro> LoadMacros { get; set; } = default;
