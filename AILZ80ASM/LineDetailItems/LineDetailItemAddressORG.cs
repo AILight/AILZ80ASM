@@ -43,60 +43,15 @@ namespace AILZ80ASM.LineDetailItems
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            // ProgramAddress
+            var programAddress = AIMath.ConvertTo<UInt16>(ProgramLabel, this.AsmLoad, asmAddress);
+            asmAddress.Program = programAddress;
+
             base.PreAssemble(ref asmAddress);
 
-            var saveIsUsingOutputAddressVariableProgram = AsmLoad.Share.IsUsingOutputAddressVariable;
-            AsmLoad.Share.IsUsingOutputAddressVariable = false; // 下品なコードでゴメン
-            var programAddress = AIMath.ConvertTo<UInt16>(ProgramLabel, this.AsmLoad, asmAddress);
-            if (AsmLoad.Share.IsUsingOutputAddressVariable)
-            {
-                AsmLoad.Share.UsingOutputAddressLineDetailItemAddressList.Add(this);
-            }
-            else
-            {
-                AsmLoad.Share.IsUsingOutputAddressVariable = saveIsUsingOutputAddressVariableProgram;
-            }
-
-            var asmORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
-            var diff = (int)programAddress - asmORG.Address.Program;
-            var isRomMode = false;
-
-            asmAddress.Program = programAddress;
-            if (!string.IsNullOrEmpty(OutputLabel))
-            {
-                var saveIsUsingOutputAddressVariableOutput = AsmLoad.Share.IsUsingOutputAddressVariable;
-                AsmLoad.Share.IsUsingOutputAddressVariable = false; // 下品なコードでゴメン
-                var outputAddress = AIMath.ConvertTo<UInt32>(OutputLabel, this.AsmLoad, asmAddress);
-                if (AsmLoad.Share.IsUsingOutputAddressVariable)
-                {
-                    AsmLoad.Share.UsingOutputAddressLineDetailItemAddressList.Add(this);
-                }
-                else
-                {
-                    AsmLoad.Share.IsUsingOutputAddressVariable = saveIsUsingOutputAddressVariableOutput;
-                }
-                asmAddress.Output = outputAddress;
-                isRomMode = true;
-            }
-            else if (asmAddress.Output != asmORG.Address.Output)
-            {
-                if (asmORG.Address.Output + diff < 0)
-                {
-                    this.AsmLoad.Share.NeedResetAddress = true;
-                }
-
-                asmAddress.Output = (UInt32)(asmORG.Address.Output + diff);
-            }
-            
-            var fillByte = default(byte);
-            if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
-            {
-                fillByte = tempFillByte;
-            }
-
-            AssembleORG = new AsmORG(asmAddress, isRomMode, fillByte, AsmORG.ORGTypeEnum.ORG);
-            this.AsmLoad.AddORG(AssembleORG);
-
+            var asmORG = new AsmORG(programAddress, OutputLabel, FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            this.AsmLoad.AddORG(asmORG);
+            this.AsmLoad.AddLineDetailItem(this); // 自分自身を追加する
         }
 
         public override void ExpansionItem()

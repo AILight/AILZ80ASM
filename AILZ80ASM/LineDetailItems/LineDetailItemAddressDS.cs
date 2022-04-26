@@ -45,50 +45,19 @@ namespace AILZ80ASM.LineDetailItems
         {
             base.PreAssemble(ref asmAddress);
 
-            var lastAsmORG = this.AsmLoad.GetLastAsmORG_ExcludingRomMode();
+            var asmORG_DS = new AsmORG(asmAddress.Program, "", FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            this.AsmLoad.AddORG(asmORG_DS);
+            this.AsmLoad.AddLineDetailItem(this); // 自分自身を追加する
+
             var length = default(UInt16);
-            var saveIsUsingOutputAddressVariable = AsmLoad.Share.IsUsingOutputAddressVariable;
-            AsmLoad.Share.IsUsingOutputAddressVariable = false; // 下品なコードでゴメン
-            try
+            if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse<UInt16>(LengthLabel, this.AsmLoad, out length))
             {
-                if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse<UInt16>(LengthLabel, this.AsmLoad, out length))
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, LengthLabel);
-                }
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, LengthLabel);
             }
-            finally
-            {
-                if (AsmLoad.Share.IsUsingOutputAddressVariable)
-                {
-                    AsmLoad.Share.UsingOutputAddressLineDetailItemAddressList.Add(this);
-                }
-                else
-                {
-                    AsmLoad.Share.IsUsingOutputAddressVariable = saveIsUsingOutputAddressVariable;
-                }
-            }
+            asmAddress.Program += length;
 
-            if (length > 0)
-            {
-                var offset = length;
-
-                var fillByte = default(byte);
-                if (AIMath.TryParse<byte>(FillByteLabel, this.AsmLoad, out var tempFillByte))
-                {
-                    fillByte = tempFillByte;
-                }
-
-                var asmORG = new AsmORG(asmAddress, false, fillByte, AsmORG.ORGTypeEnum.DS);
-                this.AsmLoad.AddORG(asmORG);
-
-                asmAddress.Program += (UInt16)offset;
-                asmAddress.Output += (UInt32)offset;
-
-                // 次のORGを作成する
-                AssembleORG = new AsmORG(asmAddress, false, lastAsmORG.FillByte, AsmORG.ORGTypeEnum.NextORG);
-
-                this.AsmLoad.AddORG(AssembleORG);
-            }
+            var asmORG_Next = new AsmORG(asmAddress.Program, "", "", this.LineItem, AsmORG.ORGTypeEnum.NextORG);
+            this.AsmLoad.AddORG(asmORG_Next);
         }
 
         public override void ExpansionItem()

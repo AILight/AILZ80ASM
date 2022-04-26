@@ -186,5 +186,10 @@ namespace AILZ80ASM.LineDetailItems
                 LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
             }
         }
+
+        public override void AdjustAssemble(ref uint outputAddress)
+        {
+            Address = new AsmAddress(Address.Program, outputAddress);
+        }
     }
 }

@@ -124,7 +124,7 @@ namespace AILZ80ASM
             }
         }
 
-        public AsmResult[] BinResult
+        public AsmResult[] BinResults
         {
             get
             {
@@ -134,7 +134,7 @@ namespace AILZ80ASM
                 {
                     try
                     {
-                        asmResults.AddRange(item.BinResult);
+                        asmResults.AddRange(item.BinResults);
                     }
                     catch (Exception ex)
                     {

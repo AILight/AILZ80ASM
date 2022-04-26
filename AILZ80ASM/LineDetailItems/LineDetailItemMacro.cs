@@ -58,5 +58,10 @@ namespace AILZ80ASM.LineDetailItems
 
             this.LineDetailScopeItems = foundItem.Macro.Expansion(LineItem, foundItem.Arguments, AsmLoad, ref asmAddress);
         }
+
+        public override void AdjustAssemble(ref uint outputAddress)
+        {
+            Address = new AsmAddress(Address.Program, outputAddress);
+        }
     }
 }

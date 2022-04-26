@@ -17,7 +17,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             }
         }
 
-        public override AsmResult[] BinResult
+        public override AsmResult[] BinResults
         {
             get
             {
@@ -27,7 +27,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
                 }
                 else
                 {
-                    return new[] { new AsmResult() { Address = this.Address, Data = OperationItem.Bin } };
+                    return new[] { new AsmResult() { Address = this.Address, Data = OperationItem.Bin, LineItem = this.LineItem } };
                 }
             }
         }

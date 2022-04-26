@@ -37,8 +37,8 @@ namespace AILZ80ASM.Assembler
         private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):+(\s+|$)";
         //private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):?";
         private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!-/:-@\[-~]+:*))(\s+|$)";
-        private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+:*))\s+equ\s+(?<value>(.+))";
-        private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+\.[a-zA-Z0-9!-/:-@\[-~]+:*))\s+equ\s+(?<value>(.+))";
+        private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
+        private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+\.[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
         //private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
@@ -203,13 +203,13 @@ namespace AILZ80ASM.Assembler
                 return matchedSubLabel.Groups["label"].Value;
             }
             var matchedValueLabel1 = Regex.Match(lineString, RegexPatternValueLabel1, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (matchedValueLabel1.Success)
+            if (matchedValueLabel1.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Compare(m.Name, matchedValueLabel1.Groups["label"].Value, true) == 0))
             {
                 return matchedValueLabel1.Groups["label"].Value;
             }
 
             var matchedValueLabel2 = Regex.Match(lineString, RegexPatternValueLabel2, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (matchedValueLabel2.Success)
+            if (matchedValueLabel2.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Compare(m.Name, matchedValueLabel2.Groups["label"].Value, true) == 0))
             {
                 return matchedValueLabel2.Groups["label"].Value;
             }

@@ -37,7 +37,7 @@ namespace AILZ80ASM.LineDetailItems
                 switch (name.ToUpper())
                 {
                     case "ONCE":
-                        asmLoad.AddPramgaOnceFileInfo(lineItem.FileInfo);
+                        asmLoad.AddPragmaOnceFileInfo(lineItem.FileInfo);
                         break;
                     /* コマンドライン引数は、こちらでオプション設定をする
                     case "OPTION":

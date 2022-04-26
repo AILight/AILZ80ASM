@@ -241,7 +241,7 @@ namespace AILZ80ASM.InstructionSet
 
         public virtual byte[] ToBin(AssembleResult assembleResult)
         {
-            return assembleResult.AssembledOPCodes.Select(m => Convert.ToByte(m, 2)).ToArray();
+            return assembleResult?.AssembledOPCodes?.Select(m => Convert.ToByte(m, 2)).ToArray();
         }
 
         private static string ConvertTo2BaseString(int value, int length)
