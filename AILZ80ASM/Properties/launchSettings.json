@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": "Main.z80 -bin -lst -equ -cd .\\Sample6"
+      "commandName": "Project"
     }
   }
 }
