@@ -259,7 +259,7 @@ namespace AILZ80ASM
                 }
             }
             Trace.WriteLine("");
-            
+
             if (AssembleOption.DiffFile)
             {
                 Trace.WriteLine("# 出力ファイル差分確認モード");
@@ -324,6 +324,9 @@ namespace AILZ80ASM
                 case AsmEnum.FileTypeEnum.EQU:
                     SaveEQU(stream);
                     break;
+                case AsmEnum.FileTypeEnum.ADR:
+                    SaveADR(stream);
+                    break;
                 default:
                     throw new NotImplementedException($"指定の出力形式は選択できません。{outputFile.Key}");
             }
@@ -376,7 +379,7 @@ namespace AILZ80ASM
             if (outputFile.Key == AsmEnum.FileTypeEnum.LST)
             {
                 // テキスト比較
-                var originals = AILight.AIEncode.GetString(original).Replace("\r","").Split('\n');
+                var originals = AILight.AIEncode.GetString(original).Replace("\r", "").Split('\n');
                 var assembleds = AILight.AIEncode.GetString(assembled).Replace("\r", "").Split('\n');
                 if (originals.Length != assembleds.Length)
                 {
@@ -394,8 +397,8 @@ namespace AILZ80ASM
                         {
                             if (byteDiffCounter < 100)
                             {
-                                tmpResultStream += $"{Environment.NewLine}{index+1:#0}: {originals[index]}";
-                                tmpResultStream += $"{Environment.NewLine}{index+1:#0}: {assembleds[index]}";
+                                tmpResultStream += $"{Environment.NewLine}{index + 1:#0}: {originals[index]}";
+                                tmpResultStream += $"{Environment.NewLine}{index + 1:#0}: {assembleds[index]}";
                             }
                             byteDiffCounter++;
                         }
@@ -470,65 +473,6 @@ namespace AILZ80ASM
                     outputAddress += (UInt32)item.Data.Length;
                 }
             }
-
-            /*
-            var asmAddress = new AsmAddress();
-            var binResult = FileItems.SelectMany(m => m.BinResult).OrderBy(m => m.Address.Output);
-
-            foreach (var item in binResult)
-            {
-                if (item.Address.Output > asmAddress.Output)
-                {
-                    var asmORGs = this.AssembleLoad.FindAsmORGs(asmAddress.Output, item.Address.Output);
-                    var outputAddress = asmAddress.Output;
-                    for (var index = 0; index < asmORGs.Length; index++)
-                    {
-                        var startAsmORG = asmORGs[index];
-                        var endAsmORG = index < asmORGs.Length - 1 ? asmORGs[index + 1] : new AsmORG(AsmAddress.MaxValue, false, default(byte), AsmORG.ORGTypeEnum.ORG);
-
-                        var startOutputAddress = startAsmORG.Address.Output < outputAddress ? outputAddress : startAsmORG.Address.Output;
-                        var endOutputAddress = endAsmORG.Address.Output > item.Address.Output ? item.Address.Output : endAsmORG.Address.Output;
-
-                        var length = endOutputAddress - startOutputAddress;
-                        var bytes = Enumerable.Repeat<byte>(startAsmORG.FillByte, (int)length).ToArray();
-
-                        stream.Write(bytes, 0, bytes.Length);
-                        outputAddress += length;
-                        asmAddress.Output += length;
-                    }
-                }
-                if (item.Data.Length > 0)
-                {
-                    if (item.Address.Output != asmAddress.Output)
-                    {
-                        throw new Exception("出力先アドレスが重複したため、BINファイルの出力に失敗ました");
-                    }
-
-                    stream.Write(item.Data, 0, item.Data.Length);
-                    asmAddress.Program = (UInt16)(item.Address.Program + item.Data.Length);
-                    asmAddress.Output = (UInt32)(asmAddress.Output + item.Data.Length);
-                }
-            }
-            */
-
-            // 残りのデータ出力に対応
-            /*
-            var remainingAsmORGs = this.AssembleLoad.FindRemainingAsmORGs(asmAddress.Output);
-            for (var index = 1; index < remainingAsmORGs.Length; index++)
-            {
-                var startAsmORG = remainingAsmORGs[index - 1];
-                var endAsmORG = remainingAsmORGs[index];
-
-                var startOutputAddress = startAsmORG.Address.Output < asmAddress.Output ? asmAddress.Output : startAsmORG.Address.Output;
-                var endOutputAddress = endAsmORG.Address.Output;
-
-                var length = endOutputAddress - startOutputAddress;
-                var bytes = Enumerable.Repeat<byte>(startAsmORG.FillByte, (int)length).ToArray();
-
-                stream.Write(bytes, 0, bytes.Length);
-                asmAddress.Output += length;
-            }
-            */
         }
 
         public void SaveT88(Stream stream, string outputFilename)
@@ -603,6 +547,30 @@ namespace AILZ80ASM
             streamWriter.WriteLine(title);
 
             AssembleLoad.OutputEqualLabels(streamWriter);
+
+            streamWriter.Flush();
+            memoryStream.Position = 0;
+            memoryStream.CopyTo(stream);
+        }
+
+        public void SaveADR(FileInfo equal)
+        {
+            using var fileStream = equal.OpenWrite();
+
+            SaveADR(fileStream);
+
+            fileStream.Close();
+        }
+
+        public void SaveADR(Stream stream)
+        {
+            using var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
+
+            var title = $";{ProductInfo.ProductLongName}, ADR";
+            streamWriter.WriteLine(title);
+
+            AssembleLoad.OutputAddrLabels(streamWriter);
 
             streamWriter.Flush();
             memoryStream.Position = 0;

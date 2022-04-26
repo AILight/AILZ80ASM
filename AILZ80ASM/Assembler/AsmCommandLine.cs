@@ -171,6 +171,18 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<FileInfo>()
             {
+                Name = "outputADR",
+                ArgumentName = "file",
+                Aliases = new[] { "-adr" },
+                Description = "アドレスラベルファイルを出力します。（file名を省略可能）",
+                Required = false,
+                IsShortCut = true,
+                IsSimple = true,
+                DefaultFunc = (options) => { return GetDefaulFilename(options, ".adr"); }
+            });
+
+            rootCommand.AddOption(new Option<FileInfo>()
+            {
                 Name = "outputLST",
                 ArgumentName = "file",
                 Aliases = new[] { "-lst" },
@@ -323,6 +335,7 @@ namespace AILZ80ASM.Assembler
                 [AsmEnum.FileTypeEnum.CMT] = "outputCMT",
                 [AsmEnum.FileTypeEnum.SYM] = "outputSYM",
                 [AsmEnum.FileTypeEnum.EQU] = "outputEQU",
+                [AsmEnum.FileTypeEnum.ADR] = "outputADR",
                 [AsmEnum.FileTypeEnum.LST] = "outputLST",
                 [AsmEnum.FileTypeEnum.ERR] = "outputERR",
                 //[AsmEnum.FileTypeEnum.DBG] = "outputDBG",
@@ -349,6 +362,7 @@ namespace AILZ80ASM.Assembler
                     "lst" => AsmEnum.FileTypeEnum.LST,
                     "sym" => AsmEnum.FileTypeEnum.SYM,
                     "equ" => AsmEnum.FileTypeEnum.EQU,
+                    "adr" => AsmEnum.FileTypeEnum.ADR,
                     "dbg" => AsmEnum.FileTypeEnum.DBG,
                     "err" => AsmEnum.FileTypeEnum.ERR,
                     _ => throw new InvalidOperationException()

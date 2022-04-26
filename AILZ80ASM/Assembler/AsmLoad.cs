@@ -620,9 +620,19 @@ namespace AILZ80ASM.Assembler
 
         public void OutputEqualLabels(StreamWriter streamWriter)
         {
+            OutputEqualAddrLabels(streamWriter, false);
+        }
+
+        public void OutputAddrLabels(StreamWriter streamWriter)
+        {
+            OutputEqualAddrLabels(streamWriter, true);
+        }
+
+        public void OutputEqualAddrLabels(StreamWriter streamWriter, bool addressMode)
+        {
+            var labelMaxLength = this.AssembleOption.TabSize;
             var globalLabels = this.Scope.Labels.GroupBy(m => m.GlobalLabelName).Select(m => m.Key);
             var globalLabelMode = globalLabels.Count() > 1;
-            streamWriter.WriteLine();
             streamWriter.WriteLine("#pragma once");
             streamWriter.WriteLine();
 
@@ -636,9 +646,16 @@ namespace AILZ80ASM.Assembler
                 }
 
                 var labels = this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.GlobalLabelName == globalLabelName);
+                // addressModeで出し分けをする
+                var equLabels = labels.Where(m => (m.LabelLevel == Label.LabelLevelEnum.Label && (m.LabelType == Label.LabelTypeEnum.Equ || (!addressMode && m.LabelType == Label.LabelTypeEnum.Adr))));
+                // addressModeがTrueの時だけ使う
+                var orgLabels = labels.Where(m => addressMode && m.LabelType == Label.LabelTypeEnum.Adr).OrderBy(m => m.Value).Select(m => m.Value).Distinct();
 
+                // ラベルの最大長を求める
+                labelMaxLength = labels.Max(m => m.LabelName.Length + 2);
+                                 
                 // EQU
-                foreach (var label in labels.Where(m => m.LabelLevel == Label.LabelLevelEnum.Label && m.LabelType == Label.LabelTypeEnum.Equ))
+                foreach (var label in equLabels)
                 {
                     var labelName = $"{label.LabelName}:";
                     var equValue = $"${label.Value:X4}";
@@ -646,10 +663,10 @@ namespace AILZ80ASM.Assembler
                     {
                         equValue = label.ValueString;
                     }
-                    streamWriter.WriteLine($"{labelName.PadRight(16)}equ {equValue} ");
+                    streamWriter.WriteLine($"{labelName.PadRight(labelMaxLength)}equ {equValue}");
 
                     // sub equ
-                    foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Equ))
+                    foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && (m.LabelType == Label.LabelTypeEnum.Equ || (!addressMode && m.LabelType == Label.LabelTypeEnum.Adr))))
                     {
                         var subLabelName = $".{item.SubLabelName}";
                         var subEquValue = $"${item.Value:X4}";
@@ -657,14 +674,17 @@ namespace AILZ80ASM.Assembler
                         {
                             subEquValue = item.ValueString;
                         }
-                        streamWriter.WriteLine($"{subLabelName.PadRight(16)}equ {subEquValue} ");
+                        streamWriter.WriteLine($"{subLabelName.PadRight(labelMaxLength)}equ {subEquValue}");
                     }
                 }
-                streamWriter.WriteLine();
+                if (globalLabels.Any())
+                { 
+                    streamWriter.WriteLine();
+                }
 
-                // Label
+                // ORG
                 var saveAddress = int.MaxValue;
-                foreach (var address in labels.Where(m => m.LabelType == Label.LabelTypeEnum.Adr).OrderBy(m => m.Value).Select(m => m.Value).Distinct())
+                foreach (var address in orgLabels)
                 {
                     foreach (var label in labels.Where(m => m.Value == address && m.LabelLevel == Label.LabelLevelEnum.Label && m.LabelType == Label.LabelTypeEnum.Adr))
                     {
@@ -672,13 +692,13 @@ namespace AILZ80ASM.Assembler
                         {
                             // ORG
                             streamWriter.WriteLine();
-                            streamWriter.WriteLine($"                org ${address:X4}");
+                            streamWriter.WriteLine($"{new string(' ', labelMaxLength)}org ${address:X4}");
                             saveAddress = address;
                         }
 
                         // Add Label
                         var labelName = $"{label.LabelName}:";
-                        streamWriter.WriteLine($"{labelName.PadRight(16)}");
+                        streamWriter.WriteLine($"{labelName.PadRight(labelMaxLength)}");
 
                         // sub equ
                         foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Equ))
@@ -690,7 +710,7 @@ namespace AILZ80ASM.Assembler
                                 equValue = item.ValueString;
                             }
 
-                            streamWriter.WriteLine($"{subLabelName.PadRight(16)}equ {equValue} ");
+                            streamWriter.WriteLine($"{subLabelName.PadRight(labelMaxLength)}equ {equValue} ");
                         }
 
                         // SubAddress
@@ -700,7 +720,7 @@ namespace AILZ80ASM.Assembler
                             {
                                 // ORG
                                 streamWriter.WriteLine();
-                                streamWriter.WriteLine($"                org ${item.Value:X4}");
+                                streamWriter.WriteLine($"{new string(' ', labelMaxLength)}org ${item.Value:X4}");
                                 saveAddress = item.Value;
                             }
 
@@ -709,8 +729,10 @@ namespace AILZ80ASM.Assembler
                         }
                     }
                 }
-
-                streamWriter.WriteLine();
+                if (orgLabels.Any())
+                {
+                    streamWriter.WriteLine();
+                }
             }
         }
         

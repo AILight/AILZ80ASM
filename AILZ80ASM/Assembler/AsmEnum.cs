@@ -21,6 +21,7 @@ namespace AILZ80ASM.Assembler
             LST,
             SYM,
             EQU,
+            ADR,
             ERR,
             DBG,
         }
