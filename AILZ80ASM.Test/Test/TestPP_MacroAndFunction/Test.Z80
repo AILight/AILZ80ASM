@@ -1,0 +1,10 @@
+﻿	ORG	$9000
+
+    ABS_M -1
+
+
+ABS_M   MACRO value
+        ld a, ABS_F(value)
+        ENDM
+
+Function ABS_F(value) => value < 0 ? value * -1 : value

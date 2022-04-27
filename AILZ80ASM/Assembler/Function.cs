@@ -1,6 +1,7 @@
 ﻿using AILZ80ASM.AILight;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -62,15 +63,17 @@ namespace AILZ80ASM.Assembler
             }
 
             var guid = $"{Guid.NewGuid():N}";
-            /*
-            var localAsmLoad = asmLoad.CloneWithNewScore($"function_{guid}", $"label_{guid}");
+            var calcedArguments = new List<string>();
+            foreach (var argument in arguments)
+            {
+                calcedArguments.Add(AIMath.ConvertTo<int>(argument, asmLoad).ToString());
+            }
 
-            */
             return asmLoad.CreateLocalScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
             {
                 foreach (var index in Enumerable.Range(0, arguments.Length))
                 {
-                    var label = new LabelArg(Args[index], arguments[index], localAsmLoad);
+                    var label = new LabelArg(Args[index], calcedArguments[index], localAsmLoad);
                     localAsmLoad.AddLabel(label);
                 }
 
