@@ -83,6 +83,40 @@ namespace AILZ80ASM.Assembler
         }
 
         /// <summary>
+        /// Functionを計算する
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <returns></returns>
+        public AIValue Calculation2(string[] arguments, AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            if (Args.Length != arguments.Length)
+            {
+                throw new Exception($"引数の数が不一致です。Function:{this.Name}");
+            }
+
+            var guid = $"{Guid.NewGuid():N}";
+            var calcedArguments = new List<AIValue>();
+            foreach (var argument in arguments)
+            {
+                calcedArguments.Add(AIMath2.Calculation(argument, asmLoad));
+            }
+
+            return asmLoad.CreateLocalScope2($"function_{guid}", $"label_{guid}", localAsmLoad =>
+            {
+                foreach (var index in Enumerable.Range(0, arguments.Length))
+                {
+                    var label = new LabelArg(Args[index], calcedArguments[index], localAsmLoad);
+                    localAsmLoad.AddLabel(label);
+                }
+
+                return AIMath2.Calculation(Formula, localAsmLoad);
+
+            });
+        }
+
+        /// <summary>
         /// ロングファンクション名を生成する
         /// </summary>
         /// <param name="labelName"></param>

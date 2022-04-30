@@ -55,6 +55,7 @@ namespace AILZ80ASM.Assembler
 
         public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
         public int Value { get; private set; }
+        public AIValue Value2 { get; private set; }
         public string ValueString { get; private set; }
 
         public DataTypeEnum DataType { get; private set; }
@@ -68,6 +69,12 @@ namespace AILZ80ASM.Assembler
         public Label(string labelName, AsmLoad asmLoad, LabelTypeEnum labelType)
             : this(labelName, "", asmLoad, labelType)
         {
+        }
+
+        public Label(string labelName, AIValue value, AsmLoad asmLoad, LabelTypeEnum labelType)
+            : this(labelName, "", asmLoad, labelType)
+        {
+            Value2 = value;
         }
 
         public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType)
@@ -270,14 +277,17 @@ namespace AILZ80ASM.Assembler
             if (LineDetailExpansionItem != default)
             {
                 Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailExpansionItem.Address);
+                Value2 = AIMath2.Calculation(ValueString, AsmLoad, LineDetailExpansionItem.Address);
             }
             else if (LineDetailItem != default)
             {
                 Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailItem.Address);
+                Value2 = AIMath2.Calculation(ValueString, AsmLoad, LineDetailItem.Address);
             }
             else
             {
                 Value = AIMath.ConvertTo<int>(ValueString, AsmLoad);
+                Value2 = AIMath2.Calculation(ValueString, AsmLoad);
             }
             DataType = DataTypeEnum.Value;
         }
