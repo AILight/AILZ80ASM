@@ -163,7 +163,7 @@ namespace AILZ80ASM.LineDetailItems
             // リピート数が設定されているものを処理する
             foreach (var condition in Conditions.Keys)
             {
-                if (string.IsNullOrEmpty(condition) || AIMath.ConvertTo<bool>(condition, AsmLoad))
+                if (string.IsNullOrEmpty(condition) || AIMath.Calculation(condition, AsmLoad).ConvertTo<bool>())
                 {
                     var lineItems = default(LineItem[]);
                     var lineDetailScopeItems = new List<LineDetailScopeItem>();

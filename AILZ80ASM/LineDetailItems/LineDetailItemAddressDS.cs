@@ -49,11 +49,12 @@ namespace AILZ80ASM.LineDetailItems
             this.AsmLoad.AddORG(asmORG_DS);
             this.AsmLoad.AddLineDetailItem(this); // 自分自身を追加する
 
-            var length = default(UInt16);
-            if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse<UInt16>(LengthLabel, this.AsmLoad, out length))
+            if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse(LengthLabel, this.AsmLoad, out var aiValue))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, LengthLabel);
             }
+            var length = aiValue.ConvertTo<UInt16>();
+
             asmAddress.Program += length;
 
             var asmORG_Next = new AsmORG(asmAddress.Program, "", "", this.LineItem, AsmORG.ORGTypeEnum.NextORG);

@@ -34,10 +34,6 @@ namespace AILZ80ASM
             }
             var label = new LabelAdr("[NS_Main]", AssembleLoad);
             AssembleLoad.AddLabel(label);
-            AssembleLoad.Scope.DefaultCharMap = "@SJIS";
-
-            // CharMapの初期化;
-            CharMaps.CharMapConverter.ReadCharMapFromResource(AssembleLoad.Scope.DefaultCharMap, AssembleLoad);
 
             foreach (var fileInfo in asmOption.InputFiles[AsmEnum.FileTypeEnum.Z80])
             {
@@ -132,7 +128,7 @@ namespace AILZ80ASM
             {
                 var outputAddress = default(UInt32);
 
-                if (!AIMath.TryParse<UInt32>(asmORG.OutputAddressLabel, this.AssembleLoad, out outputAddress))
+                if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, out var outputAddressValue))
                 {
                     // 最後のアドレスを取得して再計算する
                     var foundAsmORG = this.AssembleLoad.Share.AsmORGs.Where(m => m != asmORG && m.HasBinResult && m.ProgramAddress <= asmORG.ProgramAddress).LastOrDefault();
@@ -142,11 +138,12 @@ namespace AILZ80ASM
                         var lastBinResult = foundAsmORG.LineDetailItems.Where(m => m.LineDetailScopeItems != default).SelectMany(m => m.LineDetailScopeItems.SelectMany(n => n.LineDetailExpansionItems.Select(m => new { m.Address, m.Length }))).OrderByDescending(m => m.Address.Output).FirstOrDefault();
                         resultAddress = new AsmAddress((UInt16)(lastBinResult.Address.Program + lastBinResult.Length.Program), (UInt32)(lastBinResult.Address.Output + lastBinResult.Length.Output));
                     }
-                    if (!AIMath.TryParse<UInt32>(asmORG.OutputAddressLabel, this.AssembleLoad, resultAddress, out outputAddress))
+                    if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, resultAddress, out outputAddressValue))
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.OutputAddressLabel);
                     }
                 }
+                outputAddress = outputAddressValue.ConvertTo<UInt32>();
 
                 asmORG.AdjustAssemble(outputAddress);
             }
@@ -161,7 +158,7 @@ namespace AILZ80ASM
                 }
 
                 var fillByte = defaultFillByte;
-                if (!string.IsNullOrEmpty(asmORG.FillByteLabel) && !AIMath.TryParse<byte>(asmORG.FillByteLabel, this.AssembleLoad, out fillByte))
+                if (!string.IsNullOrEmpty(asmORG.FillByteLabel) && !(AIMath.TryParse(asmORG.FillByteLabel, this.AssembleLoad, out var aiValueFillByte) && aiValueFillByte.TryParse(out fillByte)))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.FillByteLabel);
                 }

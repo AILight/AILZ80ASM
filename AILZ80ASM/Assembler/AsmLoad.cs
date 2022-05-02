@@ -627,7 +627,7 @@ namespace AILZ80ASM.Assembler
                 }
                 foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.GlobalLabelName == globalLabelName))
                 {
-                    streamWriter.WriteLine($"{label.Value:X4} {label.LabelShortName}");
+                    streamWriter.WriteLine($"{label.Value.ConvertTo<UInt16>():X4} {label.LabelShortName}");
                 }
                 streamWriter.WriteLine();
             }
@@ -636,7 +636,7 @@ namespace AILZ80ASM.Assembler
             {
                 foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value))
                 {
-                    streamWriter.WriteLine($"{label.Value:X4} {label.LabelFullName}");
+                    streamWriter.WriteLine($"{label.Value.ConvertTo<UInt16>():X4} {label.LabelFullName}");
                 }
             }
         }
@@ -672,7 +672,7 @@ namespace AILZ80ASM.Assembler
                 // addressModeで出し分けをする
                 var equLabels = labels.Where(m => (m.LabelLevel == Label.LabelLevelEnum.Label && (m.LabelType == Label.LabelTypeEnum.Equ || (!addressMode && m.LabelType == Label.LabelTypeEnum.Adr))));
                 // addressModeがTrueの時だけ使う
-                var orgLabels = labels.Where(m => addressMode && m.LabelType == Label.LabelTypeEnum.Adr).OrderBy(m => m.Value).Select(m => m.Value).Distinct();
+                var orgLabels = labels.Where(m => addressMode && m.LabelType == Label.LabelTypeEnum.Adr).OrderBy(m => m.Value.ConvertTo<int>()).Select(m => m.Value).Distinct();
 
                 // ラベルの最大長を求める
                 labelMaxLength = labels.Max(m => m.LabelName.Length + 2);
@@ -681,10 +681,11 @@ namespace AILZ80ASM.Assembler
                 foreach (var label in equLabels)
                 {
                     var labelName = $"{label.LabelName}:";
-                    var equValue = $"${label.Value:X4}";
-                    if (AIMath.TryParse<int>(label.ValueString, out var tmpValue) && label.Value == tmpValue)
+                    var equValue = $"${label.Value.ConvertTo<UInt16>():X4}";
+                    if (AIMath.TryParse(label.Value.OriginalValue, out var tmpAIValue) &&
+                        label.Value.Equals(tmpAIValue))
                     {
-                        equValue = label.ValueString;
+                        equValue = label.Value.OriginalValue;
                     }
                     streamWriter.WriteLine($"{labelName.PadRight(labelMaxLength)}equ {equValue}");
 
@@ -692,10 +693,11 @@ namespace AILZ80ASM.Assembler
                     foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && (m.LabelType == Label.LabelTypeEnum.Equ || (!addressMode && m.LabelType == Label.LabelTypeEnum.Adr))))
                     {
                         var subLabelName = $".{item.SubLabelName}";
-                        var subEquValue = $"${item.Value:X4}";
-                        if (AIMath.TryParse<int>(item.ValueString, out var subTmpValue) && item.Value == subTmpValue)
+                        var subEquValue = $"${item.Value.ConvertTo<UInt16>():X4}";
+                        if (AIMath.TryParse(item.Value.OriginalValue, out var subTmpAIValue) &&
+                            item.Value.Equals(subTmpAIValue))
                         {
-                            subEquValue = item.ValueString;
+                            subEquValue = item.Value.OriginalValue;
                         }
                         streamWriter.WriteLine($"{subLabelName.PadRight(labelMaxLength)}equ {subEquValue}");
                     }
@@ -707,9 +709,9 @@ namespace AILZ80ASM.Assembler
 
                 // ORG
                 var saveAddress = int.MaxValue;
-                foreach (var address in orgLabels)
+                foreach (var address in orgLabels.Select(m => m.ConvertTo<int>()))
                 {
-                    foreach (var label in labels.Where(m => m.Value == address && m.LabelLevel == Label.LabelLevelEnum.Label && m.LabelType == Label.LabelTypeEnum.Adr))
+                    foreach (var label in labels.Where(m => m.Value.ConvertTo<int>() == address && m.LabelLevel == Label.LabelLevelEnum.Label && m.LabelType == Label.LabelTypeEnum.Adr))
                     {
                         if (saveAddress != address)
                         {
@@ -727,10 +729,10 @@ namespace AILZ80ASM.Assembler
                         foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Equ))
                         {
                             var subLabelName = $".{item.SubLabelName}";
-                            var equValue = $"${item.Value:X4}";
-                            if (AIMath.TryParse<int>(item.ValueString, out var tmpValue) && item.Value == tmpValue)
+                            var equValue = $"${item.Value.ConvertTo<UInt16>():X4}";
+                            if (AIMath.TryParse(item.Value.OriginalValue, out var tmpValue) && item.Value.Equals(tmpValue))
                             {
-                                equValue = item.ValueString;
+                                equValue = item.Value.OriginalValue;
                             }
 
                             streamWriter.WriteLine($"{subLabelName.PadRight(labelMaxLength)}equ {equValue} ");
@@ -739,12 +741,13 @@ namespace AILZ80ASM.Assembler
                         // SubAddress
                         foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Adr))
                         {
-                            if (saveAddress != item.Value)
+                            var itemAddress = item.Value.ConvertTo<int>();
+                            if (saveAddress != itemAddress)
                             {
                                 // ORG
                                 streamWriter.WriteLine();
-                                streamWriter.WriteLine($"{new string(' ', labelMaxLength)}org ${item.Value:X4}");
-                                saveAddress = item.Value;
+                                streamWriter.WriteLine($"{new string(' ', labelMaxLength)}org ${address:X4}");
+                                saveAddress = itemAddress;
                             }
 
                             var subLabelName = $".{item.SubLabelName}";

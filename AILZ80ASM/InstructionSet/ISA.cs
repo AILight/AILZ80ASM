@@ -122,7 +122,7 @@ namespace AILZ80ASM.InstructionSet
                     {
                         case InstructionRegister.InstructionRegisterModeEnum.RelativeAddress8Bit:
                             {
-                                var tmpValue16 = AIMath.ConvertTo<UInt16>(stringValue, asmLoad, asmAddress);
+                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
                                 var offsetAddress = tmpValue16 - asmAddress.Program - 2;
                                 if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                                 {
@@ -134,7 +134,7 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value0Bit:
                             {
-                                var tmpValue16 = AIMath.ConvertTo<UInt16>(stringValue, asmLoad, asmAddress);
+                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
                                 replaceDic.Add(instructionRegister.MnemonicBitName, "");
                                 if (tmpValue16 != 0)
                                 {
@@ -144,7 +144,7 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
                             {
-                                var tmpValue16 = AIMath.ConvertTo<UInt16>(stringValue, asmLoad, asmAddress);
+                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
                                 var value3 = ConvertTo2BaseString(tmpValue16 & 0x07, 3);
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value3);
                                 if (tmpValue16 > 7)
@@ -155,7 +155,7 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
                             {
-                                var tmpValue16 = AIMath.ConvertTo<UInt16>(stringValue, asmLoad, asmAddress);
+                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
                                 var value8 = ConvertTo2BaseString(tmpValue16 & 0xFF, 8);
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                                 if (tmpValue16 > 255)
@@ -166,7 +166,7 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value8BitSigned:
                             {
-                                var tmpValue16 = AIMath.ConvertTo<int>(stringValue, asmLoad, asmAddress);
+                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<int>();
                                 var value8 = ConvertTo2BaseString(tmpValue16 & 0xFF, 8);
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                                 if (tmpValue16 > 127 || tmpValue16 < -128)
@@ -177,7 +177,7 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
                             {
-                                var tmpValue32 = AIMath.ConvertTo<UInt32>(stringValue, asmLoad, asmAddress);
+                                var tmpValue32 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt32>();
                                 var tmpValue16String = ConvertTo2BaseString((int)(tmpValue32 & 0xFFFF), 16);
                                 var value16 = new[] { "", "" };
                                 var mnemonicBitNames = instructionRegister.MnemonicBitName.Split(",");
@@ -191,7 +191,7 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.InterruptModeValue:
                             {
-                                var tmpValue16 = AIMath.ConvertTo<UInt16>(stringValue, asmLoad, asmAddress);
+                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
                                 var value8 = tmpValue16 switch
                                 { 
                                     0 => "00",
@@ -204,7 +204,7 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.RestartValue:
                             {
-                                var tmpValue16 = AIMath.ConvertTo<UInt16>(stringValue, asmLoad, asmAddress);
+                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
                                 var value8 = tmpValue16 switch
                                 {
                                     0x00 => "000",

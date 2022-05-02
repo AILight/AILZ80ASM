@@ -128,7 +128,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Label.Z80");
 
-            Assert.AreEqual(errors.Length, 9);
+            Assert.AreEqual(errors.Length, 10);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 1, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 3, "Label.Z80", errors);
@@ -138,6 +138,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 8, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0018, 11, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0017, 14, "Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 17, "Label.Z80", errors);
         }
 
         [TestMethod]

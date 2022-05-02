@@ -262,7 +262,7 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            if (AIMath.IsNumber(target))
+            if (AIValue.IsNumber(target))
             {
                 return false;
             }
@@ -300,7 +300,7 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            if (AIMath.IsNumber(target))
+            if (AIValue.IsNumber(target))
             {
                 return false;
             }
@@ -356,7 +356,7 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            if (AIMath.IsNumber(target))
+            if (AIValue.IsNumber(target))
             {
                 return false;
             }

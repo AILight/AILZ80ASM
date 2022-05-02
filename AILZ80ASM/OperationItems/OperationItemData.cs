@@ -84,8 +84,18 @@ namespace AILZ80ASM.OperationItems
                 {
                     try
                     {
-                        var bytes = AIString.GetBytesByString(item.Value, asmLoad);
-                        dataList.AddRange(bytes.Select(m => m.ToString("0")));
+                        var aiValue = AIMath.Calculation(item.Value, asmLoad, address);
+                        switch (dataType)
+                        {
+                            case DataTypeEnum.db:
+                                dataList.AddRange(aiValue.ConvertTo<byte[]>().Select(m => m.ToString("0")));
+                                break;
+                            case DataTypeEnum.dw:
+                                dataList.AddRange(aiValue.ConvertTo<UInt16[]>().Select(m => m.ToString("0")));
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
                     }
                     catch (CharMapNotFoundException ex)
                     {
@@ -154,8 +164,8 @@ namespace AILZ80ASM.OperationItems
                 var operation = matchFunction.Groups["operation"].Value.Trim();
 
                 //ループの展開
-                var startValue = AIMath.ConvertTo<int>(start, asmLoad, lineDetailExpansionItemOperation.Address);
-                var endValue = AIMath.ConvertTo<int>(end, asmLoad, lineDetailExpansionItemOperation.Address);
+                var startValue = AIMath.Calculation(start, asmLoad, lineDetailExpansionItemOperation.Address).ConvertTo<int>();
+                var endValue = AIMath.Calculation(end, asmLoad, lineDetailExpansionItemOperation.Address).ConvertTo<int>();
                 var stepValue = startValue < endValue ? 1 : -1;
                 var loopCount = (endValue - startValue) * stepValue;
                 var currentValue = startValue;
@@ -190,20 +200,31 @@ namespace AILZ80ASM.OperationItems
                     {
                         try
                         {
-                            var value = AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address);
-                            switch (asmLoad.ISA.Endianness)
+                            var values = AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<UInt16[]>();
+                            foreach (var value in values)
                             {
-                                case InstructionSet.ISA.EndiannessEnum.LittleEndian:
-                                    byteList.Add((byte)(value % 256));
-                                    byteList.Add((byte)(value / 256));
-                                    break;
-                                case InstructionSet.ISA.EndiannessEnum.BigEndian:
-                                    byteList.Add((byte)(value / 256));
-                                    byteList.Add((byte)(value % 256));
-                                    break;
-                                default:
-                                    throw new InvalidOperationException();
+                                switch (asmLoad.ISA.Endianness)
+                                {
+                                    case InstructionSet.ISA.EndiannessEnum.LittleEndian:
+                                        byteList.Add((byte)(value % 256));
+                                        byteList.Add((byte)(value / 256));
+                                        break;
+                                    case InstructionSet.ISA.EndiannessEnum.BigEndian:
+                                        byteList.Add((byte)(value / 256));
+                                        byteList.Add((byte)(value % 256));
+                                        break;
+                                    default:
+                                        throw new InvalidOperationException();
+                                }
                             }
+                        }
+                        catch (CharMapNotFoundException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                        }
+                        catch (CharMapConvertException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
                         }
                         catch (Exception)
                         {
@@ -216,7 +237,15 @@ namespace AILZ80ASM.OperationItems
                     {
                         try
                         {
-                            byteList.Add((byte)AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address));
+                            byteList.AddRange(AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<byte[]>());
+                        }
+                        catch (CharMapNotFoundException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                        }
+                        catch (CharMapConvertException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
                         }
                         catch (Exception)
                         {

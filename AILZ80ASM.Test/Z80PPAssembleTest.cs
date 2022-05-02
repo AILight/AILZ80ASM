@@ -40,7 +40,6 @@ namespace AILZ80ASM.Test
         public void TestPP_MacroEx()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
-        
         }
 
         [TestMethod]

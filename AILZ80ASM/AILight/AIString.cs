@@ -300,10 +300,22 @@ namespace AILZ80ASM.AILight
 
             if (string.IsNullOrEmpty(charMap))
             {
-                charMap = asmLoad.Scope.DefaultCharMap;
+                charMap = "@SJIS";
             }
 
-            var bytes = CharMaps.CharMapConverter.ConvertToBytes(charMap, resultString, asmLoad.ISA.Endianness);
+            if (!CharMaps.CharMapConverter.IsContains(charMap))
+            {
+                try
+                {
+                    CharMaps.CharMapConverter.ReadCharMapFromResource(charMap, asmLoad);
+                }
+                catch
+                {
+                    throw new CharMapNotFoundException(charMap);
+                }
+            }
+
+            var bytes = CharMaps.CharMapConverter.ConvertToBytes(charMap, resultString);
 
             return bytes;
         }

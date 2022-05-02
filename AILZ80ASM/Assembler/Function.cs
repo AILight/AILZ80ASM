@@ -48,6 +48,7 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
+        /*
         /// <summary>
         /// Functionを計算する
         /// </summary>
@@ -63,10 +64,10 @@ namespace AILZ80ASM.Assembler
             }
 
             var guid = $"{Guid.NewGuid():N}";
-            var calcedArguments = new List<string>();
+            var calcedArguments = new List<AIValue>();
             foreach (var argument in arguments)
             {
-                calcedArguments.Add(AIMath.ConvertTo<int>(argument, asmLoad).ToString());
+                calcedArguments.Add(AIMath.Calculation(argument, asmLoad));
             }
 
             return asmLoad.CreateLocalScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
@@ -77,11 +78,11 @@ namespace AILZ80ASM.Assembler
                     localAsmLoad.AddLabel(label);
                 }
 
-                return AIMath.ConvertTo<int>(Formula, localAsmLoad);
+                return AIMath.Calculation(Formula, localAsmLoad).ConvertTo<int>();
 
             });
         }
-
+        */
         /// <summary>
         /// Functionを計算する
         /// </summary>
@@ -97,21 +98,21 @@ namespace AILZ80ASM.Assembler
             }
 
             var guid = $"{Guid.NewGuid():N}";
-            var calcedArguments = new List<AIValue>();
+            var calcedArguments = new List<Tuple<string, AIValue>>();
             foreach (var argument in arguments)
             {
-                calcedArguments.Add(AIMath2.Calculation(argument, asmLoad));
+                calcedArguments.Add(new Tuple<string, AIValue>(argument, AIMath.Calculation(argument, asmLoad)));
             }
 
             return asmLoad.CreateLocalScope2($"function_{guid}", $"label_{guid}", localAsmLoad =>
             {
                 foreach (var index in Enumerable.Range(0, arguments.Length))
                 {
-                    var label = new LabelArg(Args[index], calcedArguments[index], localAsmLoad);
+                    var label = new LabelArg(Args[index], calcedArguments[index].Item1, calcedArguments[index].Item2, localAsmLoad);
                     localAsmLoad.AddLabel(label);
                 }
 
-                return AIMath2.Calculation(Formula, localAsmLoad);
+                return AIMath.Calculation(Formula, localAsmLoad);
 
             });
         }

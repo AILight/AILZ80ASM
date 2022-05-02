@@ -139,8 +139,6 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.Scope.DefaultCharMap = "@SJIS";
-                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByChar("'A'", asmLoad);
                 Assert.AreEqual(bytes[0], 0x41);
@@ -148,22 +146,18 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.Scope.DefaultCharMap = "@SJIS";
-                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByChar("'石'", asmLoad);
-                Assert.AreEqual(bytes[0], 0xCE);
-                Assert.AreEqual(bytes[1], 0x90);
+                Assert.AreEqual(bytes[0], 0x90);
+                Assert.AreEqual(bytes[1], 0xCE);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.Scope.DefaultCharMap = "@SJIS";
-                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByChar("@SJIS:'野'", asmLoad);
-                Assert.AreEqual(bytes[0], 0xEC);
-                Assert.AreEqual(bytes[1], 0x96);
+                Assert.AreEqual(bytes[0], 0x96);
+                Assert.AreEqual(bytes[1], 0xEC);
             }
         }
 
@@ -172,8 +166,6 @@ namespace AILZ80ASM.Test
         {
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.Scope.DefaultCharMap = "@SJIS";
-                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByString("\"A\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0x41);
@@ -181,26 +173,22 @@ namespace AILZ80ASM.Test
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.Scope.DefaultCharMap = "@SJIS";
-                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByString("\"石野\"", asmLoad);
-                Assert.AreEqual(bytes[0], 0xCE);
-                Assert.AreEqual(bytes[1], 0x90);
-                Assert.AreEqual(bytes[2], 0xEC);
-                Assert.AreEqual(bytes[3], 0x96);
+                Assert.AreEqual(bytes[0], 0x90);
+                Assert.AreEqual(bytes[1], 0xCE);
+                Assert.AreEqual(bytes[2], 0x96);
+                Assert.AreEqual(bytes[3], 0xEC);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.Scope.DefaultCharMap = "@SJIS";
-                CharMaps.CharMapConverter.ReadCharMapFromResource("@SJIS", asmLoad);
 
                 var bytes = AIString.GetBytesByString("@SJIS:\"石野\"", asmLoad);
-                Assert.AreEqual(bytes[0], 0xCE);
-                Assert.AreEqual(bytes[1], 0x90);
-                Assert.AreEqual(bytes[2], 0xEC);
-                Assert.AreEqual(bytes[3], 0x96);
+                Assert.AreEqual(bytes[0], 0x90);
+                Assert.AreEqual(bytes[1], 0xCE);
+                Assert.AreEqual(bytes[2], 0x96);
+                Assert.AreEqual(bytes[3], 0xEC);
             }
         }
 

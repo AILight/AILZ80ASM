@@ -1,4 +1,5 @@
-﻿using AILZ80ASM.Assembler;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AILZ80ASM.Test

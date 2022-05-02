@@ -54,8 +54,7 @@ namespace AILZ80ASM.Assembler
         };
 
         public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
-        public int Value { get; private set; }
-        public AIValue Value2 { get; private set; }
+        public AIValue Value { get; private set; }
         public string ValueString { get; private set; }
 
         public DataTypeEnum DataType { get; private set; }
@@ -70,14 +69,12 @@ namespace AILZ80ASM.Assembler
             : this(labelName, "", asmLoad, labelType)
         {
         }
-
-        public Label(string labelName, AIValue value, AsmLoad asmLoad, LabelTypeEnum labelType)
-            : this(labelName, "", asmLoad, labelType)
+        public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType) 
+            : this(labelName, valueString, default(AIValue), asmLoad, labelType)
         {
-            Value2 = value;
         }
 
-        public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType)
+        public Label(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LabelTypeEnum labelType)
         {
             GlobalLabelName = asmLoad.Scope.GlobalLabelName;
             LabelName = asmLoad.Scope.LabelName;
@@ -85,13 +82,23 @@ namespace AILZ80ASM.Assembler
             LabelType = labelType;
             AsmLoad = asmLoad;
             LabelLevel = LabelLevelEnum.None;
-            
+
             if (string.IsNullOrEmpty(labelName))
             {
                 DataType = DataTypeEnum.Marker;
                 return;
             }
-            DataType = DataTypeEnum.None;
+
+            if (aiValue != default)
+            {
+                Value = aiValue;
+                DataType = DataTypeEnum.Value;
+            }
+            else
+            {
+                DataType = DataTypeEnum.None;
+            }
+
 
             if (!AIName.DeclareLabelValidate(labelName, asmLoad))
             {
@@ -274,21 +281,16 @@ namespace AILZ80ASM.Assembler
                 return;
             }
 
+            var asmAddress = default(AsmAddress?);
             if (LineDetailExpansionItem != default)
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailExpansionItem.Address);
-                Value2 = AIMath2.Calculation(ValueString, AsmLoad, LineDetailExpansionItem.Address);
+                asmAddress = LineDetailExpansionItem.Address;
             }
             else if (LineDetailItem != default)
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailItem.Address);
-                Value2 = AIMath2.Calculation(ValueString, AsmLoad, LineDetailItem.Address);
+                asmAddress = LineDetailItem.Address;
             }
-            else
-            {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad);
-                Value2 = AIMath2.Calculation(ValueString, AsmLoad);
-            }
+            Value = AIMath.Calculation(ValueString, AsmLoad, asmAddress);
             DataType = DataTypeEnum.Value;
         }
 

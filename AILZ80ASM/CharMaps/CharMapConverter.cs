@@ -14,8 +14,9 @@ namespace AILZ80ASM.CharMaps
     public static class CharMapConverter
     {
         private static Dictionary<string, Dictionary<char, byte[]>> CharMaps { get; set; } = new Dictionary<string, Dictionary<char, byte[]>>();
+        private const string DEFAULT_CHAR_MAP = "@SJIS";
 
-        public static byte[] ConvertToBytes(string map, string target, ISA.EndiannessEnum endianness)
+        public static byte[] ConvertToBytes(string map, string target)
         {
             if (!CharMaps.ContainsKey(map))
             {
@@ -28,17 +29,7 @@ namespace AILZ80ASM.CharMaps
             {
                 if (charMap.TryGetValue(item, out var bytes))
                 {
-                    switch (endianness)
-                    {
-                        case ISA.EndiannessEnum.LittleEndian:
-                            result.AddRange(bytes.Reverse());
-                            break;
-                        case ISA.EndiannessEnum.BigEndian:
-                            result.AddRange(bytes);
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
+                    result.AddRange(bytes);
                 }
                 else
                 {
@@ -94,7 +85,7 @@ namespace AILZ80ASM.CharMaps
         }
 
         /// <summary>
-        /// リソースの読み濃いm
+        /// リソースの読み込み
         /// </summary>
         /// <param name="map"></param>
         /// <param name="asmLoad"></param>

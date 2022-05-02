@@ -1,4 +1,4 @@
-                                *** AILZ80ASM *** Z-80 Assembler, version 0.9.9.3
+                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13, LST:Full:4
 000000 8000                         org $8000
 000000 8000 3E00             7      ld a, 0
        C000                         GREEN_ADDR equ $C000
@@ -86,4 +86,10 @@
        C000                     SF.MAP: equ 0C000H
                                 
        1234                     ABCLabel    equ $1234   ; リスティングファイル検証用
+                                
+       0041                     LABEL_A     equ "A"
+       484C                     LABEL_HL    equ "HL"
+00004D 804D                             DS 3
+000050 8050 3E41             7          ld A, LABEL_A
+000052 8052 214C48          10          ld hl, LABEL_HL
 [EOF:Test.Z80:UTF_8]

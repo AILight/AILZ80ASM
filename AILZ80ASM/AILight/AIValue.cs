@@ -2,7 +2,7 @@
 using AILZ80ASM.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.AILight
@@ -151,13 +151,13 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.Ternary_Colon] = ArgumentTypeEnum.None,                  // :
             [OperationTypeEnum.LeftParenthesis] = ArgumentTypeEnum.None,                // (
         };
+
         private static readonly string RegexPatternHexadecimal_H = @"^(?<value>([0-9A-Fa-f_]+))H$";
         private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f_]+))$";
         private static readonly string RegexPatternHexadecimal_D = @"^\$(?<value>([0-9A-Fa-f_]+))$";
         private static readonly string RegexPatternOctal_O = @"^(?<value>([0-7_]+))O$";
         private static readonly string RegexPatternBinaryNumber_B = @"^(?<value>([01_]+))B$";
         private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
-        //private static readonly string RegexPatternChar = @"^'(?<value>(.|\\.))'$";
         private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
 
 
@@ -214,13 +214,51 @@ namespace AILZ80ASM.AILight
             }
         }
 
+        /// <summary>
+        /// Bool型
+        /// </summary>
+        /// <param name="value"></param>
+        public AIValue(bool value)
+        {
+            ValueType = ValueTypeEnum.Bool;
+            Value = value.ToString();
+            ValueBool = value;
+        }
+
+        /// <summary>
+        /// Int型
+        /// </summary>
+        /// <param name="value"></param>
+        public AIValue(int value)
+        {
+            ValueType = ValueTypeEnum.Int32;
+            Value = value.ToString();
+            ValueInt32 = value;
+        }
+
         public AIValue(AIValue value1, AIValue value2)
             : this(value1.Value + value2.Value)
         { 
         }
 
-        public T ConvertTo<T>()
+        public bool TryParse<T>(out T resultValue)
             where T : struct
+        {
+            try
+            {
+                resultValue = ConvertTo<T>();
+                return true;
+            }
+            catch
+            {
+                resultValue = default(T);
+                return false;
+            }
+        }
+
+        public string OriginalValue => Value;
+
+        public T ConvertTo<T>()
         {
             try
             {
@@ -230,7 +268,7 @@ namespace AILZ80ASM.AILight
                     {
                         return (T)(object)ValueInt32;
                     }
-                    throw new InvalidOperationException();
+                    throw new InvalidAIValueException("int型に変換できません。");
                 }
                 else if (typeof(T) == typeof(UInt32))
                 {
@@ -245,7 +283,7 @@ namespace AILZ80ASM.AILight
                             return (T)(object)(UInt32)(ValueInt32 & UInt32.MaxValue);
                         }
                     }
-                    throw new InvalidOperationException();
+                    throw new InvalidAIValueException("32ビット数値型に変換できません。");
                 }
                 else if (typeof(T) == typeof(UInt16))
                 {
@@ -260,7 +298,7 @@ namespace AILZ80ASM.AILight
                             return (T)(object)(UInt16)(ValueInt32 & UInt16.MaxValue);
                         }
                     }
-                    throw new InvalidOperationException();
+                    throw new InvalidAIValueException("16ビット数値型に変換できません。");
                 }
                 else if (typeof(T) == typeof(byte))
                 {
@@ -275,7 +313,7 @@ namespace AILZ80ASM.AILight
                             return (T)(object)(byte)(ValueInt32 & byte.MaxValue);
                         }
                     }
-                    throw new InvalidOperationException();
+                    throw new InvalidAIValueException("8ビット数値型に変換できません。");
                 }
                 else if (typeof(T) == typeof(bool))
                 {
@@ -283,7 +321,45 @@ namespace AILZ80ASM.AILight
                     {
                         return (T)(object)ValueBool;
                     }
-                    throw new InvalidOperationException();
+                    throw new InvalidAIValueException("Bool型に変換できません。");
+                }
+                else if (typeof(T) == typeof(byte[]))
+                {
+                    if (ValueType.HasFlag(ValueTypeEnum.Bytes))
+                    {
+                        return (T)(object)ValueBytes;
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.Int32))
+                    {
+                        if (ValueInt32 < 0)
+                        {
+                            return (T)(object)new [] { (byte)(byte.MaxValue + ValueInt32 + 1)};
+                        }
+                        else
+                        {
+                            return (T)(object)new[] { (byte)(ValueInt32 & byte.MaxValue) };
+                        }
+                    }
+                    throw new InvalidAIValueException("8ビット数値型の配列に変換できません。");
+                }
+                else if (typeof(T) == typeof(UInt16[]))
+                {
+                    if (ValueType.HasFlag(ValueTypeEnum.Bytes))
+                    {
+                        return (T)(object)ValueBytes.Select(m => (UInt16)m).ToArray();
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.Int32))
+                    {
+                        if (ValueInt32 < 0)
+                        {
+                            return (T)(object)new[] { (UInt16)(UInt16.MaxValue + ValueInt32 + 1) };
+                        }
+                        else
+                        {
+                            return (T)(object)new[] { (UInt16)(ValueInt32 & UInt16.MaxValue) };
+                        }
+                    }
+                    throw new InvalidAIValueException("16ビット数値型の配列に変換できません。");
                 }
                 else
                 {
@@ -305,25 +381,14 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
-        /// Bool型
+        /// イコールの判断
         /// </summary>
         /// <param name="value"></param>
-        public AIValue(bool value)
+        /// <returns></returns>
+        public bool Equals(AIValue value)
         {
-            ValueType = ValueTypeEnum.Bool;
-            Value = value.ToString();
-            ValueBool = value;
-        }
-
-        /// <summary>
-        /// Int型
-        /// </summary>
-        /// <param name="value"></param>
-        public AIValue(int value)
-        {
-            ValueType = ValueTypeEnum.Int32;
-            Value = value.ToString();
-            ValueInt32 = value;
+            var aiValue = AIValue.Equal(this, value);
+            return aiValue.ValueBool;
         }
 
         /// <summary>
@@ -363,148 +428,154 @@ namespace AILZ80ASM.AILight
         /// <exception cref="NotImplementedException"></exception>
         public void SetValue(AsmLoad asmLoad, AsmAddress? asmAddress)
         {
-            if (TryParse16(Value, out var result16))
+            if (ValueType == ValueTypeEnum.Function)
             {
-                // 16進数
-                try
-                {
-                    ValueType = ValueTypeEnum.Int32;
-                    ValueInt32 = Convert.ToInt32(result16, 16);
-                }
-                catch
-                {
-                    throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
-                }
-            }
-            else if (TryParse2(Value, out var result2))
-            {
-                // 2進数
-                try
-                {
-                    ValueType = ValueTypeEnum.Int32;
-                    ValueInt32 = Convert.ToInt32(result2, 2);
-                }
-                catch
-                {
-                    throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
-                }
-            }
-            else if (TryParse8(Value, out var result8))
-            {
-                // 8進数
-                try
-                {
-                    ValueType = ValueTypeEnum.Int32;
-                    ValueInt32 = Convert.ToInt32(result8, 8);
-                }
-                catch
-                {
-                    throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
-                }
-            }
-            else if (TryParse10(Value, out var result10))
-            {
-                // 10進数
-                try
-                {
-                    ValueType = ValueTypeEnum.Int32;
-                    ValueInt32 = Convert.ToInt32(result10, 10);
-                }
-                catch
-                {
-                    throw new InvalidAIValueException($"数値に変換できませんでした。]{Value}]");
-                }
-            }
-            else if (AIString.TryParseCharMap(Value, asmLoad, out var charMap, out var resultString))
-            {
-                ValueCharMap = charMap;
-                ValueString = resultString;
-                ValueType |= ValueTypeEnum.Bytes;
-                if (AIString.IsChar(Value, asmLoad))
-                {
-                    ValueType = ValueTypeEnum.Char;
-                    ValueBytes = AIString.GetBytesByChar(Value, asmLoad);
-                }
-                else
-                {
-                    ValueType = ValueTypeEnum.String;
-                    ValueBytes = AIString.GetBytesByString(Value, asmLoad);
-                }
-
-                if (ValueBytes.Length > 0 && ValueBytes.Length <= 2)
-                {
-                    ValueType |= ValueTypeEnum.Int32;
-                    ValueInt32 = ValueBytes[0] + (ValueBytes.Length > 1 ? ValueBytes[1] * 256 : 0);
-                }
-            }
-            else if (Value == "$")
-            {
-                if (!asmAddress.HasValue)
-                {
-                    throw new ArgumentNullException(nameof(asmAddress));
-                }
-                // プログラム・ロケーションカウンター
-                ValueType = ValueTypeEnum.Int32;
-                ValueInt32 = (int)asmAddress.Value.Program;
-            }
-            else if (Value == "$$")
-            {
-                if (!asmAddress.HasValue)
-                {
-                    throw new ArgumentNullException(nameof(asmAddress));
-                }
-
-                // PreAssemble中のアウトプット・ロケーションカウンターは参照できない
-                if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
-                {
-                    throw new InvalidAIValueException("出力アドレスに影響する場所では$$は使えません。");
-                }
-
-                // アウトプット・ロケーションカウンター
-                ValueType = ValueTypeEnum.Int32;
-                ValueInt32 = (int)asmAddress.Value.Output;
-            }
-            else if (string.Compare(Value, "#TRUE", true) == 0)
-            {
-                ValueType = ValueTypeEnum.Bool;
-                ValueBool = true;
-            }
-            else if (string.Compare(Value, "#FALSE", true) == 0)
-            {
-                ValueType = ValueTypeEnum.Bool;
-                ValueBool = false;
-            }
-            else
-            {
-                if (asmLoad == default)
-                {
-                    throw new ArgumentNullException(nameof(asmLoad));
-                }
-
                 var startIndex = Value.IndexOf('(');
-                if (startIndex != -1)
+                var functionName = Value.Substring(0, startIndex).Trim();
+                var function = asmLoad.FindFunction(functionName);
+
+                var lastIndex = Value.LastIndexOf(')');
+                if (function == default || lastIndex == -1)
                 {
-                    // Function
-                    var functionName = Value.Substring(0, startIndex).Trim();
-                    var function = asmLoad.FindFunction(functionName);
+                    throw new InvalidAIValueException($"Functionが見つかりませんでした。{functionName}");
+                }
+                var arguments = AIName.ParseArguments(Value.Substring(startIndex + 1, lastIndex - startIndex - 1));
 
-                    var lastIndex = Value.LastIndexOf(')');
-                    if (function == default || lastIndex == -1)
+                var calcValue = function.Calculation2(arguments, asmLoad, asmAddress);
+
+                ValueType = calcValue.ValueType;
+                ValueInt32 = calcValue.ValueInt32;
+                ValueBool = calcValue.ValueBool;
+                ValueString = calcValue.ValueString;
+                ValueOperation = calcValue.ValueOperation;
+            }
+            else if (ValueType == ValueTypeEnum.None)
+            {
+                if (TryParse16(Value, out var result16))
+                {
+                    // 16進数
+                    try
                     {
-                        throw new InvalidAIValueException($"Functionが見つかりませんでした。{functionName}");
+                        ValueType = ValueTypeEnum.Int32;
+                        ValueInt32 = Convert.ToInt32(result16, 16);
                     }
-                    var arguments = AIName.ParseArguments(Value.Substring(startIndex + 1, lastIndex - startIndex - 1));
+                    catch
+                    {
+                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
+                    }
+                }
+                else if (TryParse2(Value, out var result2))
+                {
+                    // 2進数
+                    try
+                    {
+                        ValueType = ValueTypeEnum.Int32;
+                        ValueInt32 = Convert.ToInt32(result2, 2);
+                    }
+                    catch
+                    {
+                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
+                    }
+                }
+                else if (TryParse8(Value, out var result8))
+                {
+                    // 8進数
+                    try
+                    {
+                        ValueType = ValueTypeEnum.Int32;
+                        ValueInt32 = Convert.ToInt32(result8, 8);
+                    }
+                    catch
+                    {
+                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
+                    }
+                }
+                else if (TryParse10(Value, out var result10))
+                {
+                    // 10進数
+                    try
+                    {
+                        ValueType = ValueTypeEnum.Int32;
+                        ValueInt32 = Convert.ToInt32(result10, 10);
+                    }
+                    catch
+                    {
+                        throw new InvalidAIValueException($"数値に変換できませんでした。]{Value}]");
+                    }
+                }
+                else if (AIString.TryParseCharMap(Value, asmLoad, out var charMap, out var resultString))
+                {
+                    ValueCharMap = charMap;
+                    ValueString = resultString;
+                    ValueType |= ValueTypeEnum.Bytes;
+                    if (AIString.IsChar(Value, asmLoad))
+                    {
+                        ValueType |= ValueTypeEnum.Char;
+                        ValueBytes = AIString.GetBytesByChar(Value, asmLoad);
+                    }
+                    else
+                    {
+                        ValueType |= ValueTypeEnum.String;
+                        ValueBytes = AIString.GetBytesByString(Value, asmLoad);
+                    }
 
-                    var calcValue = function.Calculation2(arguments, asmLoad, asmAddress);
+                    if (ValueBytes.Length > 0 && ValueBytes.Length <= 2)
+                    {
+                        ValueType |= ValueTypeEnum.Int32;
+                        if (ValueBytes.Length == 2)
+                        {
+                            ValueInt32 = ValueBytes[0] * 256 + ValueBytes[1];
+                        }
+                        else
+                        {
+                            ValueInt32 = ValueBytes[0];
+                        }
+                    }
+                }
+                else if (Value == "$")
+                {
+                    if (!asmAddress.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(asmAddress));
+                    }
+                    // プログラム・ロケーションカウンター
+                    ValueType = ValueTypeEnum.Int32;
+                    ValueInt32 = (int)asmAddress.Value.Program;
+                }
+                else if (Value == "$$")
+                {
+                    if (!asmAddress.HasValue)
+                    {
+                        throw new ArgumentNullException(nameof(asmAddress));
+                    }
 
-                    ValueType = calcValue.ValueType;
-                    ValueInt32 = calcValue.ValueInt32;
-                    ValueBool = calcValue.ValueBool;
-                    ValueString = calcValue.ValueString;
-                    ValueOperation = calcValue.ValueOperation;
+                    // PreAssemble中のアウトプット・ロケーションカウンターは参照できない
+                    if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
+                    {
+                        throw new InvalidAIValueException("出力アドレスに影響する場所では$$は使えません。");
+                    }
+
+                    // アウトプット・ロケーションカウンター
+                    ValueType = ValueTypeEnum.Int32;
+                    ValueInt32 = (int)asmAddress.Value.Output;
+                }
+                else if (string.Compare(Value, "#TRUE", true) == 0)
+                {
+                    ValueType = ValueTypeEnum.Bool;
+                    ValueBool = true;
+                }
+                else if (string.Compare(Value, "#FALSE", true) == 0)
+                {
+                    ValueType = ValueTypeEnum.Bool;
+                    ValueBool = false;
                 }
                 else
                 {
+                    if (asmLoad == default)
+                    {
+                        throw new ArgumentNullException(nameof(asmLoad));
+                    }
+
                     // Label
                     var macroValue = MacroValueEnum.None;
                     var tmpLabel = Value;
@@ -519,19 +590,19 @@ namespace AILZ80ASM.AILight
                             macroValue = MacroValueEnum.High;
                         }
                         else if (string.Compare(option, ".@L", true) == 0 ||
-                                 string.Compare(option, ".@LOW", true) == 0)
+                                    string.Compare(option, ".@LOW", true) == 0)
                         {
                             tmpLabel = Value.Substring(0, optionIndex);
                             macroValue = MacroValueEnum.Low;
                         }
                         else if (string.Compare(option, ".@T", true) == 0 ||
-                                 string.Compare(option, ".@TEXT", true) == 0)
+                                    string.Compare(option, ".@TEXT", true) == 0)
                         {
                             tmpLabel = Value.Substring(0, optionIndex);
                             macroValue = MacroValueEnum.Text;
                         }
                         else if (string.Compare(option, ".@E", true) == 0 ||
-                                 string.Compare(option, ".@EXISTS", true) == 0)
+                                    string.Compare(option, ".@EXISTS", true) == 0)
                         {
                             tmpLabel = Value.Substring(0, optionIndex);
                             macroValue = MacroValueEnum.Exists;
@@ -560,7 +631,7 @@ namespace AILZ80ASM.AILight
                             }
                         }
 
-                        var value = label.Value2;
+                        var value = label.Value;
 
                         switch (macroValue)
                         {
@@ -586,8 +657,7 @@ namespace AILZ80ASM.AILight
                         }
                     }
                 }
-
-            } 
+            }
         }
 
         /// <summary>

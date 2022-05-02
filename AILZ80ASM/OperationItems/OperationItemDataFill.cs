@@ -91,7 +91,7 @@ namespace AILZ80ASM.OperationItems
                 isDefaultValueClear = false;
             }
 
-            var count = AIMath.ConvertTo<int>(ops[0], asmLoad);
+            var count = AIMath.Calculation(ops[0], asmLoad).ConvertTo<int>();
             var valuesStrings = Enumerable.Range(0, count).Select(_ => valueString).ToArray();
 
             returnValue = new OperationItemDataFill()
@@ -116,19 +116,22 @@ namespace AILZ80ASM.OperationItems
                     {
                         try
                         {
-                            var value = AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address);
-                            switch (asmLoad.ISA.Endianness)
+                            var values = AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<UInt16[]>();
+                            foreach (var value in values)
                             {
-                                case InstructionSet.ISA.EndiannessEnum.LittleEndian:
-                                    byteList.Add((byte)(value % 256));
-                                    byteList.Add((byte)(value / 256));
-                                    break;
-                                case InstructionSet.ISA.EndiannessEnum.BigEndian:
-                                    byteList.Add((byte)(value / 256));
-                                    byteList.Add((byte)(value % 256));
-                                    break;
-                                default:
-                                    throw new InvalidOperationException();
+                                switch (asmLoad.ISA.Endianness)
+                                {
+                                    case InstructionSet.ISA.EndiannessEnum.LittleEndian:
+                                        byteList.Add((byte)(value % 256));
+                                        byteList.Add((byte)(value / 256));
+                                        break;
+                                    case InstructionSet.ISA.EndiannessEnum.BigEndian:
+                                        byteList.Add((byte)(value / 256));
+                                        byteList.Add((byte)(value % 256));
+                                        break;
+                                    default:
+                                        throw new InvalidOperationException();
+                                }
                             }
                         }
                         catch (Exception)
@@ -142,7 +145,7 @@ namespace AILZ80ASM.OperationItems
                     {
                         try
                         {
-                            byteList.Add((byte)AIMath.ConvertTo<UInt16>(valueString, asmLoad, LineDetailExpansionItemOperation.Address));
+                            byteList.AddRange(AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<byte[]>());
                         }
                         catch (Exception)
                         {

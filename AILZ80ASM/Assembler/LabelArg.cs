@@ -19,8 +19,8 @@ namespace AILZ80ASM.Assembler
         {
         }
 
-        public LabelArg(string labelName, AIValue value, AsmLoad asmLoad)
-            : base(labelName, value, asmLoad, LabelTypeEnum.Arg)
+        public LabelArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad)
+            : base(labelName, valueString, aiValue, asmLoad, LabelTypeEnum.Arg)
         {
         }
 
