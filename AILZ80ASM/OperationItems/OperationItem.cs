@@ -52,10 +52,5 @@ namespace AILZ80ASM.OperationItems
         {
             throw new NotImplementedException();
         }
-
-        public virtual void TrimData()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -127,22 +127,6 @@ namespace AILZ80ASM.LineDetailItems
             }
         }
 
-        /*
-        public virtual void ResetOutputAddress(ref AsmAddress asmAddress)
-        {
-            Address = asmAddress;
-
-            if (LineDetailScopeItems == default)
-                return;
-
-            foreach (var item in LineDetailScopeItems)
-            {
-                item.ResetOutputAddress(ref asmAddress);
-            }
-        }
-        */
-
-
         public virtual void Assemble()
         {
             if (LineDetailScopeItems == default)

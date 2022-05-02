@@ -126,7 +126,7 @@ namespace AILZ80ASM.InstructionSet
                                 var offsetAddress = tmpValue16 - asmAddress.Program - 2;
                                 if (offsetAddress < SByte.MinValue || offsetAddress > SByte.MaxValue)
                                 {
-                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、0x{tmpValue16:x2}:{tmpValue16}です。");
+                                    throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, offsetAddress, $"指定された値は、0x{offsetAddress:x2}:{offsetAddress}です。");
                                 }
                                 var e8 = ConvertTo2BaseString(offsetAddress, 8);
                                 replaceDic.Add(instructionRegister.MnemonicBitName, e8);

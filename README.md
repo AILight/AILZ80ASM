@@ -24,8 +24,9 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 
 ## パフォーマンス
 - アセンブル時間
-	- 処理時間:  3.67 sec
+	- 処理時間: 3.67 sec
 	- 出力結果: 47,735 bytes
+	- 処理行数: 約20,000行
 - [ベンチマーク・プロジェクト](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark)
 
 ## 使い方

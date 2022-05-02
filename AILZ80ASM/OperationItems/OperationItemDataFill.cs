@@ -160,10 +160,5 @@ namespace AILZ80ASM.OperationItems
             ItemDataBin = byteList.ToArray();
         }
 
-        public override void TrimData()
-        {
-            ItemDataBin = Array.Empty<byte>();
-            ItemDataLength = new AsmLength();
-        }
     }
 }
