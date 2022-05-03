@@ -1,6 +1,6 @@
 {
   "default-options": [
-    "-err"
+    "-cmt"
   ],
   "disable-warnings": [
     "W0001",

@@ -20,7 +20,6 @@ namespace AILZ80ASM.LineDetailItems
 
         public FileInfo FileInfo { get; private set; }
         public List<LineItem> LineItems { get; private set; } = new List<LineItem>();
-        public override byte[] Bin => FileType == FileTypeEnum.Text ? FileItem.Bin : base.Bin;
         public override AsmResult[] BinResults => FileType == FileTypeEnum.Text ? FileItem.BinResults : base.BinResults;
 
         private static readonly string RegexPatternInclude = @"^include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
@@ -148,7 +147,7 @@ namespace AILZ80ASM.LineDetailItems
                         break;
                     case FileTypeEnum.Binary:
                         lists.Add(LineDetailExpansionItem.List);
-                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.Bin.Length));
+                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.BinResults.Sum(m => m.Data.Length)));
                         break;
                     default:
                         throw new NotImplementedException();

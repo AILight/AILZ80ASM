@@ -13,6 +13,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         public string FileLength { get; private set; }
 
         private byte[] _Bin;
+        /*
         public override byte[] Bin
         {
             get
@@ -20,6 +21,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
                 return _Bin;
             }
         }
+        */
 
         public override AsmResult[] BinResults
         {
@@ -71,7 +73,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         {
             get 
             {
-                return AsmList.CreateLineItem(Address, Bin);
+                return AsmList.CreateLineItem(Address, _Bin);
             }
         }
     }

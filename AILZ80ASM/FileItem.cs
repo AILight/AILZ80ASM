@@ -98,32 +98,6 @@ namespace AILZ80ASM
             }
         }
 
-
-        public byte[] Bin
-        {
-            get
-            {
-                var bytes = new List<byte>();
-
-                foreach (var item in Items)
-                {
-                    try
-                    {
-                        if (item.Bin != default(byte[]))
-                        {
-                            bytes.AddRange(item.Bin);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
-                    }
-                }
-
-                return bytes.ToArray();
-            }
-        }
-
         public AsmResult[] BinResults
         {
             get

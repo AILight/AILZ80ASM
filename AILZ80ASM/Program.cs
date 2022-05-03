@@ -251,6 +251,7 @@ namespace AILZ80ASM
             Trace.WriteLine("");
         }
 
+        /*
         private static void OutputStartForDebug(FileInfo fileInfo)
         {
             Trace.WriteLine(ProductInfo.ProductLongName);
@@ -291,5 +292,6 @@ namespace AILZ80ASM
                 }
             }
         }
+        */
     }
 }

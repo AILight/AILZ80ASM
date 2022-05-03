@@ -9,6 +9,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
     {
         public OperationItem OperationItem { get; private set; }
 
+        /*
         public override byte[] Bin
         {
             get
@@ -16,6 +17,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
                 return OperationItem == default(OperationItem) ? Array.Empty<byte>() : OperationItem.Bin;
             }
         }
+        */
 
         public override AsmResult[] BinResults
         {
