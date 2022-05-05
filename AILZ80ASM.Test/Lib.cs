@@ -64,8 +64,6 @@ namespace AILZ80ASM.Test
                     Assert.AreEqual(expected, actual, $"{fileType} Line:{line} expect:{expected} actual:{actual}");
                 }
 
-                expected = expectedStreamReader.ReadLine();
-                actual = actualStreamReader.ReadLine();
                 line++;
             }
 
@@ -78,7 +76,7 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static ErrorLineItem[] Assemble(FileInfo[] files, Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>> outputFiles, bool outputTrim, bool testError)
+        public static ErrorLineItem[] Assemble(FileInfo[] files, Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>> outputFiles, bool testError)
         {
             var asmOption = new AsmOption();
             asmOption.InputFiles = new Dictionary<AsmEnum.FileTypeEnum, FileInfo[]>()
@@ -106,13 +104,7 @@ namespace AILZ80ASM.Test
             return package.Errors.Union(package.Warnings).Union(package.Information).ToArray();
         }
 
-
         public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
-        {
-            return Assemble_AreSame(inputFiles, outputFiles, false);
-        }
-
-        public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles, bool dataTrim)
         {
             var memoryStreamFiles = new Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>>();
             try
@@ -128,7 +120,7 @@ namespace AILZ80ASM.Test
                 }
 
                 // アセンブル
-                var errors = Lib.Assemble(inputFiles, memoryStreamFiles, dataTrim, false);
+                var errors = Lib.Assemble(inputFiles, memoryStreamFiles, false);
 
                 // アセンブル結果の比較
                 foreach (var file in memoryStreamFiles)
@@ -166,17 +158,12 @@ namespace AILZ80ASM.Test
 
         public static ErrorLineItem[] Assemble_AreSame(string directoryName)
         {
-            return Assemble_AreSame(directoryName, false);
-        }
-
-        public static ErrorLineItem[] Assemble_AreSame(string directoryName, bool dataTrim)
-        {
             var targetDirectoryName = Path.Combine(".", "Test", directoryName);
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Test.Z80")) };
             var outputFiles = Enum.GetValues<AsmEnum.FileTypeEnum>().Where(m => m != AsmEnum.FileTypeEnum.Z80)
                                   .ToDictionary(m => m, n => new FileInfo(Path.Combine(targetDirectoryName, $"Test.{n}")));
 
-            return Lib.Assemble_AreSame(inputFiles, outputFiles, dataTrim);
+            return Lib.Assemble_AreSame(inputFiles, outputFiles);
         }
 
         public static void AssertErrorItemMessage(Error.ErrorCodeEnum errorCode, int lineIndex, string fileName, ErrorLineItem[] errors)

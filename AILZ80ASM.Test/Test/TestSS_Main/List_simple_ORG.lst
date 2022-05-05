@@ -1,0 +1,57 @@
+﻿                        ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13, LST:Simple:4
+                                include "Success.INC"
+                            ;Include Test
+  0014                  CHAR01  EQU     20
+  0028                  CHAR02  EQU     40
+  003C                  CHAR03  EQU     60
+[EOF:Success.INC:UTF_8]
+                        
+                        [GB1]
+  0001                  ABC     equ 1
+  0002                  .DEF    equ 2
+  0000  3E00                    ld a, 0
+                        GHI:
+  0002  3E01                    ld a, 1
+                        .JKL
+  0004  3E02                    ld a, 2
+  0003                  .MNO    equ 3
+                        
+  0006  00                      NOP
+  0007  00                      NOP
+  0008  00                      NOP
+  0009  00                      NOP
+  000A  00                      NOP
+                        
+                        [GB2]
+  0001                  ABC     equ 1
+  0002                  .DEF    equ 2
+  000B  3E00                    ld a, 0
+                        GHI:
+  000D  3E01                    ld a, 1
+                        .JKL
+  000F  3E02                    ld a, 2
+                                MACROTEST
+  0011  3E00           +        LD A,0
+  0013  0600           +        LD B,0
+                        
+  0003                  .MNO    equ 3
+                        
+                        MACROTEST   MACRO
+                                LD A,0
+                                LD B,0
+                                ENDM
+                        
+  0015  C9                      RET
+                        include "Success.INC", B
+  0016  EFBBBF093B496E  
+        636C7564652054  
+        6573740D0A4348  
+        41523031094551  
+        55090932300D0A  
+        43484152303209  
+        45515509093430  
+        0D0A4348415230  
+        33094551550909  
+        3630            
+[EOF:Success.INC:65]
+[EOF:Success.Z80:UTF_8]

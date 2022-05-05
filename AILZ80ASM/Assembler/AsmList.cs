@@ -63,7 +63,14 @@ namespace AILZ80ASM.Assembler
         }
         public static AsmList CreateLineItemEqual(Label equLabel, LineItem lineItem)
         {
-            return CreateLineItem(default(UInt32?), equLabel.DataType == Label.DataTypeEnum.Value ? (ushort ?)(equLabel.Value & ushort.MaxValue) : default(ushort?) , default(byte[]), "", lineItem);
+            var programAddress = default(UInt16?);
+
+            if (equLabel.DataType == Label.DataTypeEnum.Value && equLabel.Value.ValueType.HasFlag(AILight.AIValue.ValueTypeEnum.Int32))
+            {
+                programAddress = equLabel.Value.ConvertTo<UInt16>();
+            }
+            
+            return CreateLineItem(default(UInt32?), programAddress, default(byte[]), "", lineItem);
         }
 
         public static AsmList CreateLineItemORG(AsmAddress address, AsmLength length, LineItem lineItem)

@@ -1,7 +1,5 @@
 ﻿	org $8000
 
-	charmap @SJIS
-
 	DB " !\"#$%&\'()*+,-./"
 	DB "0123456789:;<=>?"
 	DB "@ABCDEFGHIJKLMNO"
@@ -12,10 +10,8 @@
 	; 漢字テスト
 	DB @SJIS:"国語算数理科社会"
 
-	charmap @JIS1
-
-	DB "国語算数理科社会"
+	DB @JIS1:"国語算数理科社会"
 
 	charmap @PPP, ".\Test\TestLB_CharMap\Test.json"
 	
-	DB "国語算数理科社会"
+	DB @PPP:"国語算数理科社会"

@@ -125,19 +125,16 @@ namespace AILZ80ASM.Test
             Assert.IsFalse(AIName.ValidateCharMapName("@漢字", asmLoad));
         }
 
-        /*
         [TestMethod]
         public void ReservedWordTest()
         {
-            // TODO:AsmReservedWordの実装が終わってからテストを有効にする
-
-            var reservedWords = new[] { "ORG" };
-            var asmLoad = new AsmLoad(new InstructionSet.Z80());
+            var reservedWords = new[] { "LD" };
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
             foreach (var reservedWord in reservedWords)
             {
                 Assert.IsFalse(AIName.ValidateCharMapName(reservedWord, asmLoad));
-                Assert.IsFalse(AIName.ValidateFunctionName(reservedWord, asmLoad));
+                // Assert.IsFalse(AIName.ValidateFunctionName(reservedWord, asmLoad)); 対応を決めてから有効にする
                 Assert.IsFalse(AIName.ValidateFunctionArgument(reservedWord, asmLoad));
                 Assert.IsFalse(AIName.ValidateMacroName(reservedWord, asmLoad));
                 Assert.IsFalse(AIName.ValidateMacroArgument(reservedWord, asmLoad));
@@ -145,6 +142,5 @@ namespace AILZ80ASM.Test
             }
 
         }
-        */
     }
 }

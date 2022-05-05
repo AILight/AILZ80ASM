@@ -85,3 +85,9 @@ SF.FST	equ 00005H
 SF.MAP:	equ 0C000H
 
 ABCLabel	equ $1234	; リスティングファイル検証用
+
+LABEL_A		equ "A"
+LABEL_HL	equ "HL"
+		DS 3
+		ld A, LABEL_A
+		ld hl, LABEL_HL

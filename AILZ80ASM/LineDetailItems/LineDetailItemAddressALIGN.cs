@@ -42,11 +42,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             base.PreAssemble(ref asmAddress);
 
-            var align = default(UInt16);
-            if (string.IsNullOrEmpty(AlignLabel) || !AIMath.TryParse<UInt16>(AlignLabel, this.AsmLoad, out align))
+            if (string.IsNullOrEmpty(AlignLabel) || !AIMath.TryParse(AlignLabel, this.AsmLoad, out var aiValue))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, AlignLabel);
             }
+            var align = aiValue.ConvertTo<UInt16>();
 
             if ((align & (align - 1)) != 0)
             {

@@ -30,17 +30,5 @@ namespace AILZ80ASM.IO
         {
             Stream.Write(buffer, offset, count);
         }
-
-        /* Endianがあるので今後の課題
-        public void WriteStream(UInt16 target)
-        {
-            Stream.Write(new byte[] { (byte)target, (byte)(target >> 8) });
-        }
-
-        public void WriteStream(UInt32 target)
-        {
-            Stream.Write(new byte[] { (byte)target, (byte)((target >> 8) & 0xFF), (byte)((target >> 16) & 0xFF), (byte)((target >> 24) & 0xFF) });
-        }
-        */
     }
 }

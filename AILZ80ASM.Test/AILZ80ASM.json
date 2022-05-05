@@ -1,0 +1,9 @@
+{
+  "default-options": [
+    "-ul"
+  ],
+  "disable-warnings": [
+    "W9001",
+    "W9002"
+  ]
+}

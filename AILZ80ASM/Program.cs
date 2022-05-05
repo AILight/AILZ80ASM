@@ -92,6 +92,10 @@ namespace AILZ80ASM
                 Trace.WriteLine($"Error:{ex.Message}");
                 return 3;
             }
+            finally
+            {
+                Trace.Close();
+            }
         }
 
         /// <summary>
@@ -251,6 +255,7 @@ namespace AILZ80ASM
             Trace.WriteLine("");
         }
 
+        /*
         private static void OutputStartForDebug(FileInfo fileInfo)
         {
             Trace.WriteLine(ProductInfo.ProductLongName);
@@ -291,5 +296,6 @@ namespace AILZ80ASM
                 }
             }
         }
+        */
     }
 }

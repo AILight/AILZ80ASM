@@ -10,6 +10,6 @@ namespace AILZ80ASM.InstructionSet
     {
         public string Instruction { get; set; }
         public string InstructionForDic { get; set; }
-        public Dictionary<string, string> ArgumentDic { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> ArgumentDic { get; private set; } = new Dictionary<string, string>();
     }
 }

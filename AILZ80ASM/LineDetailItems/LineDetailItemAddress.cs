@@ -17,8 +17,6 @@ namespace AILZ80ASM.LineDetailItems
             }
         }
 
-        public AsmORG AssembleORG { get; set; }
-
         protected LineDetailItemAddress(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {

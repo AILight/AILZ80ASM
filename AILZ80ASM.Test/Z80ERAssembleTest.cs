@@ -14,7 +14,7 @@ namespace AILZ80ASM.Test
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
             var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmEnum.FileTypeEnum, FileInfo>>();
 
-            return Lib.Assemble(inputFiles, outputFiles, false, true);
+            return Lib.Assemble(inputFiles, outputFiles, true);
         }
 
         [TestMethod]
@@ -86,9 +86,12 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("DBDW.Z80");
 
-            Assert.AreEqual(errors.Length, 2);
+            Assert.AreEqual(errors.Length, 5);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0021, 3, "DBDW.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0022, 4, "DBDW.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0022, 5, "DBDW.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2106, 6, "DBDW.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2105, 7, "DBDW.Z80", errors);
         }
 
         [TestMethod]
@@ -124,11 +127,20 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_JR()
+        {
+            var errors = Assemble("JR.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 5, "JR.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Label()
         {
             var errors = Assemble("Label.Z80");
 
-            Assert.AreEqual(errors.Length, 9);
+            Assert.AreEqual(errors.Length, 11);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 1, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 3, "Label.Z80", errors);
@@ -138,6 +150,8 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 8, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0018, 11, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0017, 14, "Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 17, "Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 20, "Label.Z80", errors);
         }
 
         [TestMethod]
@@ -229,6 +243,18 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1015, 14, "Repeat.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1012, 16, "Repeat.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1011, 18, "Repeat.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_Warning()
+        {
+            var errors = Assemble("Warning.Z80");
+
+            Assert.AreEqual(errors.Length, 4);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0001, 3, "Warning.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0002, 4, "Warning.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0003, 7, "Warning.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0003, 8, "Warning.Z80", errors);
         }
     }
 }

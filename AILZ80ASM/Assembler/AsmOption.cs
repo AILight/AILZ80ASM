@@ -15,9 +15,6 @@ namespace AILZ80ASM.Assembler
         // 出力ファイル
         public Dictionary<AsmEnum.FileTypeEnum, FileInfo> OutputFiles { get; set; }
 
-        // 出力結果にトリムをするか
-        //public bool OutputTrim { get; set; } = false;
-
         // 出力結果の差分を取るか
         public bool DiffFile { get; set; } = false;
 

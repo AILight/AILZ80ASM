@@ -54,7 +54,7 @@ namespace AILZ80ASM.Assembler
         };
 
         public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
-        public int Value { get; private set; }
+        public AIValue Value { get; private set; }
         public string ValueString { get; private set; }
 
         public DataTypeEnum DataType { get; private set; }
@@ -69,8 +69,12 @@ namespace AILZ80ASM.Assembler
             : this(labelName, "", asmLoad, labelType)
         {
         }
+        public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType) 
+            : this(labelName, valueString, default(AIValue), asmLoad, labelType)
+        {
+        }
 
-        public Label(string labelName, string valueString, AsmLoad asmLoad, LabelTypeEnum labelType)
+        public Label(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LabelTypeEnum labelType)
         {
             GlobalLabelName = asmLoad.Scope.GlobalLabelName;
             LabelName = asmLoad.Scope.LabelName;
@@ -78,13 +82,23 @@ namespace AILZ80ASM.Assembler
             LabelType = labelType;
             AsmLoad = asmLoad;
             LabelLevel = LabelLevelEnum.None;
-            
+
             if (string.IsNullOrEmpty(labelName))
             {
                 DataType = DataTypeEnum.Marker;
                 return;
             }
-            DataType = DataTypeEnum.None;
+
+            if (aiValue != default)
+            {
+                Value = aiValue;
+                DataType = DataTypeEnum.Value;
+            }
+            else
+            {
+                DataType = DataTypeEnum.None;
+            }
+
 
             if (!AIName.DeclareLabelValidate(labelName, asmLoad))
             {
@@ -149,18 +163,6 @@ namespace AILZ80ASM.Assembler
                 };
                 
             }
-        }
-
-        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, LabelTypeEnum labelType)
-            : this(lineDetailExpansionItemOperation.LineItem.LabelString, "", asmLoad, labelType)
-        {
-            if (LabelLevel == LabelLevelEnum.Label ||
-                LabelLevel == LabelLevelEnum.SubLabel)
-            {
-                ValueString = "$";
-            }
-            LineDetailExpansionItem = lineDetailExpansionItemOperation;
-
         }
 
         public Label(LineDetailItem lineDetailItem, AsmLoad asmLoad, LabelTypeEnum labelType)
@@ -267,18 +269,16 @@ namespace AILZ80ASM.Assembler
                 return;
             }
 
+            var asmAddress = default(AsmAddress?);
             if (LineDetailExpansionItem != default)
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailExpansionItem.Address);
+                asmAddress = LineDetailExpansionItem.Address;
             }
             else if (LineDetailItem != default)
             {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad, LineDetailItem.Address);
+                asmAddress = LineDetailItem.Address;
             }
-            else
-            {
-                Value = AIMath.ConvertTo<int>(ValueString, AsmLoad);
-            }
+            Value = AIMath.Calculation(ValueString, AsmLoad, asmAddress);
             DataType = DataTypeEnum.Value;
         }
 
@@ -297,16 +297,18 @@ namespace AILZ80ASM.Assembler
             }
             catch (Exception ex)
             {
-                if (LineDetailExpansionItem != default && AsmLoad != default)
+                if ((LineDetailExpansionItem != default || LineDetailItem != default) && AsmLoad != default)
                 {
+                    var lineItem = LineDetailExpansionItem != default ? LineDetailExpansionItem.LineItem : LineDetailItem.LineItem;
                     var errorLineItem = default(ErrorLineItem);
+
                     if (ex is ErrorAssembleException eae)
                     {
-                        errorLineItem = new ErrorLineItem(LineDetailExpansionItem.LineItem, eae);
+                        errorLineItem = new ErrorLineItem(lineItem, eae);
                     }
                     else
                     {
-                        errorLineItem = new ErrorLineItem(LineDetailExpansionItem.LineItem, Error.ErrorCodeEnum.E0004, ex.Message);
+                        errorLineItem = new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E0004, ex.Message);
                     }
                     AsmLoad.AddError(errorLineItem);
                 }

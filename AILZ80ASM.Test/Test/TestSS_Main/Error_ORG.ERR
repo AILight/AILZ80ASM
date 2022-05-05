@@ -1,0 +1,17 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13
+Copyright (C) 2022 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [Error.Z80]
+
+# Outputs
+
+
+# Status
+
+# Error
+Error.Z80:1  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[演算対象：g エラー:未定義のラベルが指定されています。g]
+
+
+ 1 error(s), 0 warning(s), 0 information

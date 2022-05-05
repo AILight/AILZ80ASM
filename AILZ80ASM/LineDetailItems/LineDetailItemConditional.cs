@@ -121,40 +121,6 @@ namespace AILZ80ASM.LineDetailItems
             return default;
         }
 
-        /*
-        public override void ExpansionItem()
-        {
-            // 初期値設定
-            LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
-            // リピート数が設定されているものを処理する
-            foreach (var condition in Conditions.Keys)
-            {
-                if (string.IsNullOrEmpty(condition) || AIMath.ConvertTo<bool>(condition, AsmLoad))
-                {
-                    var lineItems = default(LineItem[]);
-                    var lineDetailScopeItems = new List<LineDetailScopeItem>();
-
-                    lineItems = Conditions[condition].Select(m =>
-                    {
-                        var lineItem = new LineItem(m);
-                        lineItem.CreateLineDetailItem(AsmLoad);
-                        return lineItem;
-                    }).ToArray();
-
-                    foreach (var lineItem in lineItems)
-                    {
-                        lineItem.ExpansionItem();
-                        lineDetailScopeItems.AddRange(lineItem.LineDetailItem.LineDetailScopeItems);
-                    }
-                    LineDetailScopeItems = lineDetailScopeItems.ToArray();
-                    break;
-                }
-            }
-
-            base.ExpansionItem();
-        }
-        */
-
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             base.PreAssemble(ref asmAddress);
@@ -163,7 +129,7 @@ namespace AILZ80ASM.LineDetailItems
             // リピート数が設定されているものを処理する
             foreach (var condition in Conditions.Keys)
             {
-                if (string.IsNullOrEmpty(condition) || AIMath.ConvertTo<bool>(condition, AsmLoad))
+                if (string.IsNullOrEmpty(condition) || AIMath.Calculation(condition, AsmLoad).ConvertTo<bool>())
                 {
                     var lineItems = default(LineItem[]);
                     var lineDetailScopeItems = new List<LineDetailScopeItem>();

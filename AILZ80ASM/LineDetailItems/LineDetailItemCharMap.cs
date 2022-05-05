@@ -58,6 +58,10 @@ namespace AILZ80ASM.LineDetailItems
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, ex.FileName);
                     }
+                    catch (CharMapAlreadyDefinedException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, ex.MapName);
+                    }
                 }
                 else
                 {
@@ -78,7 +82,6 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     CharMapName = charMap
                 };
-                asmLoad.Scope.DefaultCharMap = charMap;
 
                 return lineDetailItemCharMap;
 

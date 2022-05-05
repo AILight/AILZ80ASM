@@ -1,7 +1,6 @@
 {
   "default-options": [
-    "-e",
-    "-t"
+    "-err"
   ],
   "disable-warnings": [
     "W0001",

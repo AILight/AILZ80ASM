@@ -70,6 +70,7 @@ namespace AILZ80ASM.Assembler
             E2105,
             E2106,
             E2107,
+            E2108,
 
             // マクロ
             E3001,
@@ -137,7 +138,7 @@ namespace AILZ80ASM.Assembler
 
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
             [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
-            [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。",
+            [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
             [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。[{0}]",
             [ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
             [ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
@@ -192,6 +193,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E2105] = "CharMap 変換テーブルに値が見つかりませんでした。[{0}]",
             [ErrorCodeEnum.E2106] = "CharMap 変換テーブルが見つかりませんでした。[{0}]",
             [ErrorCodeEnum.E2107] = "CharMap ラベルは設定できません。",
+            [ErrorCodeEnum.E2108] = "CharMap 既に設定済みです。[{0}]",
 
             // マクロ
             [ErrorCodeEnum.E3001] = "MACROに対応するEND MACROが見つかりませんでした。",

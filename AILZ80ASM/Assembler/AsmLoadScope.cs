@@ -14,9 +14,6 @@ namespace AILZ80ASM.Assembler
         // 実行ラベル
         public string LabelName { get; set; }
 
-        // デフォルトキャラクターマップ
-        public string DefaultCharMap { get; set; }
-
         // アセンブル終了フラグ
         public bool AssembleEndFlg { get; set; } = false;
 
@@ -62,7 +59,6 @@ namespace AILZ80ASM.Assembler
         {
             this.GlobalLabelName = scope.GlobalLabelName;
             this.LabelName = scope.LabelName;
-            this.DefaultCharMap = scope.DefaultCharMap;
             this.AssembleEndFlg = scope.AssembleEndFlg;
         }
 

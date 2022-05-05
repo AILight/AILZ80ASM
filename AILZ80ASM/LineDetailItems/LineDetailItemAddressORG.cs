@@ -44,7 +44,7 @@ namespace AILZ80ASM.LineDetailItems
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             // ProgramAddress
-            var programAddress = AIMath.ConvertTo<UInt16>(ProgramLabel, this.AsmLoad, asmAddress);
+            var programAddress = AIMath.Calculation(ProgramLabel, this.AsmLoad, asmAddress).ConvertTo<UInt16>();
             asmAddress.Program = programAddress;
 
             base.PreAssemble(ref asmAddress);

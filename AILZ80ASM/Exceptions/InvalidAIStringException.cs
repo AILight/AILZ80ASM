@@ -8,11 +8,6 @@ namespace AILZ80ASM.Exceptions
 {
     public class InvalidAIStringException : Exception
     {
-        public InvalidAIStringException()
-        {
-
-        }
-
         public InvalidAIStringException(string message)
             : base(message)
         {

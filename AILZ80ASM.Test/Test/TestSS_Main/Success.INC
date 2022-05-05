@@ -1,0 +1,4 @@
+﻿	;Include Test
+CHAR01	EQU		20
+CHAR02	EQU		40
+CHAR03	EQU		60

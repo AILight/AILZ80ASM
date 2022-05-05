@@ -14,7 +14,7 @@ namespace AILZ80ASM.LineDetailItems
         
         public AsmAddress Address { get; protected set; }
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
-        public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
+        //public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
         public virtual AsmResult[] BinResults => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResults).ToArray();
         public virtual AsmList[] Lists => LineDetailScopeItems == default ? Array.Empty<AsmList>() : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
@@ -126,22 +126,6 @@ namespace AILZ80ASM.LineDetailItems
                 item.AdjustAssemble(ref outputAddress);
             }
         }
-
-        /*
-        public virtual void ResetOutputAddress(ref AsmAddress asmAddress)
-        {
-            Address = asmAddress;
-
-            if (LineDetailScopeItems == default)
-                return;
-
-            foreach (var item in LineDetailScopeItems)
-            {
-                item.ResetOutputAddress(ref asmAddress);
-            }
-        }
-        */
-
 
         public virtual void Assemble()
         {

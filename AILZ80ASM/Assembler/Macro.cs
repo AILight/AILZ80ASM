@@ -1,4 +1,5 @@
-﻿using AILZ80ASM.Exceptions;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Exceptions;
 using AILZ80ASM.LineDetailItems.ScopeItem;
 using System;
 using System.Collections.Generic;

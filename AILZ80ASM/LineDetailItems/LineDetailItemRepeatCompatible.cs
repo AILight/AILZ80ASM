@@ -13,12 +13,6 @@ namespace AILZ80ASM.LineDetailItems
         private static readonly string RegexPatternRepeatSimpleStart = @"^\s*REPT\s+(?<count>.+)$";
         private static readonly string RegexPatternRepeatEnd = @"^\s*ENDM\s*$";
 
-        private string RepeatCountLabel { get; set; }
-        private string RepeatLastLabel { get; set; }
-
-        private readonly List<LineItem> RepeatLines = new List<LineItem>();
-        private int RepeatNestedCount { get; set; } = 0;
-
         private LineDetailItemRepeatCompatible(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {

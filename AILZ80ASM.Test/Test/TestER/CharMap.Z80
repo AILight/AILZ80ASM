@@ -13,9 +13,9 @@
 	CHARMAP @TEST, ".\test\TestER\CharMap.error7.json"
 	CHARMAP @TEST, ".\test\TestER\CharMap.json"
 
-	DB "国"
-	DB "石"
+	DB @TEST:"国"
+	DB @TEST:"石"
 
 	DB @TES:"国"
 
-	DB "両\q両"
+	DB @TEST:"両\q両"

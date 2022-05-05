@@ -13,13 +13,6 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         public string FileLength { get; private set; }
 
         private byte[] _Bin;
-        public override byte[] Bin
-        {
-            get
-            {
-                return _Bin;
-            }
-        }
 
         public override AsmResult[] BinResults
         {
@@ -42,7 +35,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             base.PreAssemble(ref asmAddress, asmLoad);
 
             var fileSize = (int)FileInfo.Length;
-            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : (int)AIMath.ConvertTo<UInt32>(FileStart, asmLoad);
+            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : (int)AIMath.Calculation(FileStart, asmLoad).ConvertTo<UInt32>();
             fileSize -= fileStart;
 
             if (fileSize < 0)
@@ -50,7 +43,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2006);
             }
 
-            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : (int)AIMath.ConvertTo<UInt32>(FileLength, asmLoad);
+            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : (int)AIMath.Calculation(FileLength, asmLoad).ConvertTo<UInt32>();
             if (readLength > fileSize)
             {
                 readLength = fileSize;
@@ -71,7 +64,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         {
             get 
             {
-                return AsmList.CreateLineItem(Address, Bin);
+                return AsmList.CreateLineItem(Address, _Bin);
             }
         }
     }

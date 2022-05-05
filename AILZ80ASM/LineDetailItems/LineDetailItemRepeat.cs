@@ -114,8 +114,8 @@ namespace AILZ80ASM.LineDetailItems
             if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
             {
                 var lineDetailScopeItems = new List<LineDetailScopeItem>();
-                var count = AIMath.ConvertTo<UInt16>(RepeatCountLabel, this.AsmLoad, asmAddress);
-                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.ConvertTo<UInt16>(RepeatLastLabel, this.AsmLoad);
+                var count = AIMath.Calculation(RepeatCountLabel, this.AsmLoad, asmAddress).ConvertTo<UInt16>();
+                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.Calculation(RepeatLastLabel, this.AsmLoad).ConvertTo<UInt16>();
                 var repeatLines = RepeatLines.Skip(1).SkipLast(1);
                 var lineItemList = new List<LineItem>();
 
