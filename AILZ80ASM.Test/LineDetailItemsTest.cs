@@ -10,16 +10,6 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class LineDetailItemsTest
     {
-        /*
-        [TestMethod]
-        public void LineDetailExpansionItem_get_Bin()
-        {
-            var lineDetailExpansionItem = new LineDetailExpansionItem(default(LineItem));
-
-            Assert.AreEqual(lineDetailExpansionItem.Bin, Array.Empty<byte>());
-        }
-        */
-
         [TestMethod]
         public void LineDetailExpansionItem_get_BinResults()
         {
@@ -35,16 +25,6 @@ namespace AILZ80ASM.Test
 
             Assert.AreEqual(lineDetailExpansionItem.List, default(AsmList));
         }
-
-        /*
-        [TestMethod]
-        public void LineDetailExpansionItemOperation_get_Bin()
-        {
-            var lineDetailExpansionItemOperation = new LineDetailExpansionItemOperation(default(LineItem), default(AsmLoad));
-
-            Assert.AreEqual(lineDetailExpansionItemOperation.Bin, Array.Empty<byte>());
-        }
-        */
 
         [TestMethod]
         public void LineDetailExpansionItemOperation_PreAssemble()

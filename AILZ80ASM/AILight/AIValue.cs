@@ -206,6 +206,7 @@ namespace AILZ80ASM.AILight
                 case ValueTypeEnum.None:
                 case ValueTypeEnum.Int32:
                 case ValueTypeEnum.Operation:
+                case ValueTypeEnum.Char:
                 case ValueTypeEnum.String:
                 case ValueTypeEnum.Function:
                     break;
@@ -234,6 +235,13 @@ namespace AILZ80ASM.AILight
             ValueType = ValueTypeEnum.Int32;
             Value = value.ToString();
             ValueInt32 = value;
+        }
+
+        public AIValue(char value)
+        {
+            ValueType = ValueTypeEnum.Char;
+            Value = value.ToString();
+            ValueString = Value;
         }
 
         public AIValue(AIValue value1, AIValue value2)
@@ -289,6 +297,12 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Int32))
                     {
+                        //有効範囲チェック
+                        if (ValueInt32 < ((UInt16.MaxValue + 1) * -1) || ValueInt32 > UInt16.MaxValue)
+                        {
+                            throw new InvalidAIValueException("16ビット数値型に変換できません。");
+                        }
+
                         if (ValueInt32 < 0)
                         {
                             return (T)(object)(UInt16)(UInt16.MaxValue + ValueInt32 + 1);
@@ -304,6 +318,12 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Int32))
                     {
+                        //有効範囲チェック
+                        if (ValueInt32 < ((byte.MaxValue + 1) * -1) || ValueInt32 > byte.MaxValue)
+                        {
+                            throw new InvalidAIValueException("8ビット数値型に変換できません。");
+                        }
+
                         if (ValueInt32 < 0)
                         {
                             return (T)(object)(byte)(byte.MaxValue + ValueInt32 + 1);
@@ -322,6 +342,22 @@ namespace AILZ80ASM.AILight
                         return (T)(object)ValueBool;
                     }
                     throw new InvalidAIValueException("Bool型に変換できません。");
+                }
+                else if (typeof(T) == typeof(string))
+                {
+                    if (ValueType.HasFlag(ValueTypeEnum.String))
+                    {
+                        return (T)(object)ValueString;
+                    }
+                    throw new InvalidAIValueException("String型に変換できません。");
+                }
+                else if (typeof(T) == typeof(char))
+                {
+                    if (ValueType.HasFlag(ValueTypeEnum.Char) && ValueString.Length == 1)
+                    {
+                        return (T)(object)ValueString[0];
+                    }
+                    throw new InvalidAIValueException("Char型に変換できません。");
                 }
                 else if (typeof(T) == typeof(byte[]))
                 {
@@ -1011,7 +1047,7 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
-        /// <=:以上
+        /// <=:以下
         /// </summary>
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
@@ -1062,8 +1098,13 @@ namespace AILZ80ASM.AILight
             {
                 return new AIValue(firstValue.ValueInt32 == secondValue.ValueInt32);
             }
+            else if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bool) &&
+                     secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))
+            {
+                return new AIValue(firstValue.ValueBool == secondValue.ValueBool);
+            }
 
-            throw new InvalidAIValueException($"指定できる型は、同じ型で数値型もしくは文字列型です。{firstValue.Value},{secondValue.Value}");
+            throw new InvalidAIValueException($"指定できる型は、同じ型で数値型、Bool型もしくは文字列型です。{firstValue.Value},{secondValue.Value}");
         }
 
         /// <summary>
@@ -1084,8 +1125,13 @@ namespace AILZ80ASM.AILight
             {
                 return new AIValue(firstValue.ValueInt32 != secondValue.ValueInt32);
             }
+            else if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bool) &&
+                     secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))
+            {
+                return new AIValue(firstValue.ValueBool != secondValue.ValueBool);
+            }
 
-            throw new InvalidAIValueException($"指定できる型は、同じ型で数値型もしくは文字列型です。{firstValue.Value},{secondValue.Value}");
+            throw new InvalidAIValueException($"指定できる型は、同じ型で数値型、Bool型もしくは文字列型です。{firstValue.Value},{secondValue.Value}");
         }
 
         /// <summary>

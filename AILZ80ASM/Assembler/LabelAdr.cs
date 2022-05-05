@@ -14,6 +14,7 @@ namespace AILZ80ASM.Assembler
         {
         }
 
+        // テスト用、将来private化したい
         public LabelAdr(string labelName, string valueString, AsmLoad asmLoad)
             : base(labelName, valueString, asmLoad, LabelTypeEnum.Adr)
         {

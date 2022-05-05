@@ -1,0 +1,56 @@
+﻿                         ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13, LST:Middle:4
+                                 include "Success.INC"
+                             ;Include Test
+0014                     CHAR01  EQU     20
+0028                     CHAR02  EQU     40
+003C                     CHAR03  EQU     60
+[EOF:Success.INC:UTF_8]
+                         
+                         [GB1]
+0001                     ABC     equ 1
+0002                     .DEF    equ 2
+0000 3E00             7          ld a, 0
+                         GHI:
+0002 3E01             7          ld a, 1
+                         .JKL
+0004 3E02             7          ld a, 2
+0003                     .MNO    equ 3
+                         
+0006 00               4          NOP
+0007 00               4          NOP
+0008 00               4          NOP
+0009 00               4          NOP
+000A 00               4          NOP
+                         
+                         [GB2]
+0001                     ABC     equ 1
+0002                     .DEF    equ 2
+000B 3E00             7          ld a, 0
+                         GHI:
+000D 3E01             7          ld a, 1
+                         .JKL
+000F 3E02             7          ld a, 2
+                                 MACROTEST
+0011 3E00             7 +        LD A,0
+0013 0600             7 +        LD B,0
+                         
+0003                     .MNO    equ 3
+                         
+                         MACROTEST   MACRO
+                                 LD A,0
+                                 LD B,0
+                                 ENDM
+                         
+0015 C9              10          RET
+                         include "Success.INC", B
+0016 EFBBBF093B496E63    
+     6C75646520546573    
+     740D0A4348415230    
+     3109455155090932    
+     300D0A4348415230    
+     3209455155090934    
+     300D0A4348415230    
+     3309455155090936    
+     30                  
+[EOF:Success.INC:65]
+[EOF:Success.Z80:UTF_8]

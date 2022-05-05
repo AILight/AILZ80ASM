@@ -70,6 +70,7 @@ namespace AILZ80ASM.Assembler
             E2105,
             E2106,
             E2107,
+            E2108,
 
             // マクロ
             E3001,
@@ -192,6 +193,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E2105] = "CharMap 変換テーブルに値が見つかりませんでした。[{0}]",
             [ErrorCodeEnum.E2106] = "CharMap 変換テーブルが見つかりませんでした。[{0}]",
             [ErrorCodeEnum.E2107] = "CharMap ラベルは設定できません。",
+            [ErrorCodeEnum.E2108] = "CharMap 既に設定済みです。[{0}]",
 
             // マクロ
             [ErrorCodeEnum.E3001] = "MACROに対応するEND MACROが見つかりませんでした。",

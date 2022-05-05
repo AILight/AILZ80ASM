@@ -13,15 +13,6 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         public string FileLength { get; private set; }
 
         private byte[] _Bin;
-        /*
-        public override byte[] Bin
-        {
-            get
-            {
-                return _Bin;
-            }
-        }
-        */
 
         public override AsmResult[] BinResults
         {

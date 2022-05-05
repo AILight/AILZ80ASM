@@ -68,7 +68,7 @@ namespace AILZ80ASM.CharMaps
             var mapName = map.ToUpper();
             if (CharMaps.ContainsKey(mapName))
             {
-                CharMaps.Remove(mapName);
+                throw new CharMapAlreadyDefinedException(mapName, $"既に設定済みです。[{mapName}]");
             }
 
             try

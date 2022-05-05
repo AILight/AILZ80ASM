@@ -92,6 +92,10 @@ namespace AILZ80ASM
                 Trace.WriteLine($"Error:{ex.Message}");
                 return 3;
             }
+            finally
+            {
+                Trace.Close();
+            }
         }
 
         /// <summary>

@@ -544,14 +544,6 @@ namespace AILZ80ASM.Assembler
             return encodeMode;
         }
 
-        public System.Text.Encoding GetInputEncoding(FileInfo fileInfo)
-        {
-            var encodeMode = GetEncodMode(fileInfo);
-            var encoding = GetInputEncoding(encodeMode);
-
-            return encoding;
-        }
-
         public System.Text.Encoding GetInputEncoding(AsmEnum.EncodeModeEnum encodeMode)
         {
             if (encodeMode == AsmEnum.EncodeModeEnum.AUTO)
@@ -562,13 +554,6 @@ namespace AILZ80ASM.Assembler
             AssembleOption.OutputEncodeMode = encodeMode;
             var encoding = GetEncoding(encodeMode);
 
-            return encoding;
-        }
-
-
-        public System.Text.Encoding GetOutputEncoding()
-        {
-            var encoding = GetEncoding(AssembleOption.OutputEncodeMode);
             return encoding;
         }
 

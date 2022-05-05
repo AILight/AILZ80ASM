@@ -165,18 +165,6 @@ namespace AILZ80ASM.Assembler
             }
         }
 
-        public Label(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad, LabelTypeEnum labelType)
-            : this(lineDetailExpansionItemOperation.LineItem.LabelString, "", asmLoad, labelType)
-        {
-            if (LabelLevel == LabelLevelEnum.Label ||
-                LabelLevel == LabelLevelEnum.SubLabel)
-            {
-                ValueString = "$";
-            }
-            LineDetailExpansionItem = lineDetailExpansionItemOperation;
-
-        }
-
         public Label(LineDetailItem lineDetailItem, AsmLoad asmLoad, LabelTypeEnum labelType)
             : this(lineDetailItem.LineItem.LabelString, labelType == LabelTypeEnum.Equ ? ((LineDetailItemEqual)lineDetailItem).LabelValue : "", asmLoad, labelType)
         {
@@ -309,16 +297,18 @@ namespace AILZ80ASM.Assembler
             }
             catch (Exception ex)
             {
-                if (LineDetailExpansionItem != default && AsmLoad != default)
+                if ((LineDetailExpansionItem != default || LineDetailItem != default) && AsmLoad != default)
                 {
+                    var lineItem = LineDetailExpansionItem != default ? LineDetailExpansionItem.LineItem : LineDetailItem.LineItem;
                     var errorLineItem = default(ErrorLineItem);
+
                     if (ex is ErrorAssembleException eae)
                     {
-                        errorLineItem = new ErrorLineItem(LineDetailExpansionItem.LineItem, eae);
+                        errorLineItem = new ErrorLineItem(lineItem, eae);
                     }
                     else
                     {
-                        errorLineItem = new ErrorLineItem(LineDetailExpansionItem.LineItem, Error.ErrorCodeEnum.E0004, ex.Message);
+                        errorLineItem = new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E0004, ex.Message);
                     }
                     AsmLoad.AddError(errorLineItem);
                 }

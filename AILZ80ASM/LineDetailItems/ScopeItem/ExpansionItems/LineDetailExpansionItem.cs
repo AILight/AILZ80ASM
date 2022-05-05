@@ -15,16 +15,6 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             LineItem = lineItem;
         }
 
-        /*
-        public virtual byte[] Bin
-        {
-            get
-            {
-                return Array.Empty<byte>();
-            }
-        }
-        */
-
         public virtual AsmResult[] BinResults
         {
             get 

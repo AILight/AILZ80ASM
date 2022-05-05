@@ -1,0 +1,17 @@
+[GB1]
+ABC		equ 1	;SJISƒeƒXƒg
+.DEF	equ 2
+		ld a, 0
+GHI:
+		ld a, 1
+.JKL
+		ld a, 2
+
+[GB2]
+ABC		equ 1
+.DEF	equ 2
+		ld a, 0
+GHI:
+		ld a, 1
+.JKL
+		ld a, 2

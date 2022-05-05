@@ -13,7 +13,6 @@ namespace AILZ80ASM
         // レコード情報
         public string LineString { get; private set; }
         public int LineIndex { get; private set; }
-        //public byte[] Bin => LineDetailItem.Bin;
         public AsmResult[] BinResults => LineDetailItem.BinResults;
         public AsmList[] Lists => LineDetailItem.Lists;
 
@@ -59,17 +58,6 @@ namespace AILZ80ASM
             OperationString = lineItem.OperationString;
             CommentString = lineItem.CommentString;
             LineDetailItem = lineItem.LineDetailItem;
-        }
-
-        public void SetLabel(string labelName)
-        {
-            LabelString = labelName;
-        }
-
-        public void ClearOperation()
-        {
-            OperationString = "";
-            LineString = $"{LabelString} {CommentString}";
         }
 
         public void CreateLineDetailItem(AsmLoad asmLoad)

@@ -8,11 +8,6 @@ namespace AILZ80ASM.Exceptions
 {
     public class InvalidAIMathException : Exception
     {
-        public InvalidAIMathException()
-        {
-
-        }
-
         public InvalidAIMathException(string message)
             : base(message)
         {

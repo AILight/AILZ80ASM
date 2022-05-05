@@ -11,7 +11,6 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
         protected AsmLoad AsmLoad { get; set; }
 
         public LineDetailExpansionItem[] LineDetailExpansionItems { get; set; }
-        //public byte[] Bin => LineDetailExpansionItems.SelectMany(m => m.Bin).ToArray();
         public AsmResult[] BinResults => LineDetailExpansionItems.SelectMany(m => m.BinResults).ToArray();
         public AsmList[] Lists => LineDetailExpansionItems.Select(m => m.List).ToArray();
 

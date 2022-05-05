@@ -2,3 +2,6 @@
 	ORG $
 	DB 12,,45
 	DW AB,DE
+	DW 12,,45
+	DB @ABC:"DEF"
+	DB "剝"
