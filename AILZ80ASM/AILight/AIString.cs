@@ -303,11 +303,11 @@ namespace AILZ80ASM.AILight
                 charMap = "@SJIS";
             }
 
-            if (!CharMaps.CharMapConverter.IsContains(charMap))
+            if (!asmLoad.CharMapConverter_IsContains(charMap))
             {
                 try
                 {
-                    CharMaps.CharMapConverter.ReadCharMapFromResource(charMap, asmLoad);
+                    asmLoad.CharMapConverter_ReadCharMapFromResource(charMap);
                 }
                 catch
                 {
@@ -315,7 +315,7 @@ namespace AILZ80ASM.AILight
                 }
             }
 
-            var bytes = CharMaps.CharMapConverter.ConvertToBytes(charMap, resultString);
+            var bytes = asmLoad.CharMapConverter_ConvertToBytes(charMap, resultString);
 
             return bytes;
         }

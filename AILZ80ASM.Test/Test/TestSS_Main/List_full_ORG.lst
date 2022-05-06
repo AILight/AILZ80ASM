@@ -42,15 +42,10 @@
                                         ENDM
                                 
 000015 0015 C9              10          RET
-                                include "Success.INC", B
-000016 0016 EFBBBF093B496E63    
-            6C75646520546573    
-            740D0A4348415230    
-            3109455155090932    
-            300D0A4348415230    
-            3209455155090934    
-            300D0A4348415230    
-            3309455155090936    
-            30                  
-[EOF:Success.INC:65]
+                                include "Include.bin", B
+000016 0016 0001020304050607    
+            08090A0B0C0D0E0F    
+            FFFEFDFCFBFAF9F8    
+            F7F6F5F4F3F2F1F0    
+[EOF:Include.bin:32]
 [EOF:Success.Z80:UTF_8]

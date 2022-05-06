@@ -77,6 +77,7 @@ namespace AILZ80ASM.Assembler
             Share.LoadMacros = new Stack<Macro>();
             Share.ListedFiles = new List<FileInfo>();
             Share.PragmaOnceFiles = new List<FileInfo>();
+            Share.CharMapConverter = new CharMaps.CharMapConverter();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -746,6 +747,45 @@ namespace AILZ80ASM.Assembler
                 }
             }
         }
-        
+
+        /// <summary>
+        /// CharMapConverter.IsContains
+        /// </summary>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public bool CharMapConverter_IsContains(string map)
+        {
+            return this.Share.CharMapConverter.IsContains(map);
+        }
+
+        /// <summary>
+        /// CharMapConverter.ReadCharMapFromResource
+        /// </summary>
+        /// <param name="map"></param>
+        public void CharMapConverter_ReadCharMapFromResource(string map)
+        {
+            this.Share.CharMapConverter.ReadCharMapFromResource(map, this);
+        }
+
+        /// <summary>
+        /// CharMapConverter.ConvertToBytes
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public byte[] CharMapConverter_ConvertToBytes(string map, string target)
+        {
+            return this.Share.CharMapConverter.ConvertToBytes(map, target);
+        }
+
+        /// <summary>
+        /// CharMapConverter.ReadCharMapFromFile
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="filePath"></param>
+        public void CharMapConverter_ReadCharMapFromFile(string map, string filePath)
+        {
+            this.Share.CharMapConverter.ReadCharMapFromFile(map, filePath, this);
+        }
     }
 }

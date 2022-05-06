@@ -14,9 +14,10 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void ConvertToBytesExceptionTest()
         {
+            var charMapConverter = new CharMapConverter();
             Assert.ThrowsException<CharMapNotFoundException>(() => 
             {
-                CharMapConverter.ConvertToBytes("@ConvertToBytes", "石野");
+                charMapConverter.ConvertToBytes("@ConvertToBytes", "石野");
             });
         }
 
@@ -24,20 +25,21 @@ namespace AILZ80ASM.Test
         public void ReadCharMapFromFileExceptionText()
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var charMapConverter = new CharMapConverter();
 
             Assert.ThrowsException<ArgumentException>(() =>
             {
-                CharMapConverter.ReadCharMapFromFile("", "", asmLoad);
+                charMapConverter.ReadCharMapFromFile("", "", asmLoad);
             });
 
             Assert.ThrowsException<ArgumentException>(() =>
             {
-                CharMapConverter.ReadCharMapFromFile("+-", "", asmLoad);
+                charMapConverter.ReadCharMapFromFile("+-", "", asmLoad);
             });
 
             Assert.ThrowsException<FileNotFoundException>(() =>
             {
-                CharMapConverter.ReadCharMapFromFile("@ReadCharMapFromFileExceptionText", "", asmLoad);
+                charMapConverter.ReadCharMapFromFile("@ReadCharMapFromFileExceptionText", "", asmLoad);
             });
         }
 
@@ -45,15 +47,16 @@ namespace AILZ80ASM.Test
         public void ReadCharMapFromResourceExceptionText()
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var charMapConverter = new CharMapConverter();
 
             Assert.ThrowsException<ArgumentException>(() =>
             {
-                CharMapConverter.ReadCharMapFromResource("", asmLoad);
+                charMapConverter.ReadCharMapFromResource("", asmLoad);
             });
 
             Assert.ThrowsException<ArgumentException>(() =>
             {
-                CharMapConverter.ReadCharMapFromResource("+-", asmLoad);
+                charMapConverter.ReadCharMapFromResource("+-", asmLoad);
             });
         }
     }
