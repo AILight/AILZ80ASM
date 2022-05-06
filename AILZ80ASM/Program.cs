@@ -217,7 +217,13 @@ namespace AILZ80ASM
                     assembleResult = false;
                 }
 
+                // エラー結果の出力
                 package.OutputError();
+                if (asmOption.OutputFiles.Any(m => m.Key == AsmEnum.FileTypeEnum.LST))
+                {
+                    package.OutputErrorForList();
+                }
+                package.OutputErrorSummary();
 
                 if (asmOption.DiffFile)
                 {

@@ -47,5 +47,8 @@ namespace AILZ80ASM.Assembler
 
         // CharMapConvert
         public CharMapConverter CharMapConverter { get; set; } = default;
+
+        // Listの内容は揮発するのでこちらで保存
+        public List<AsmList> AsmLists { get; set; } = default;
     }
 }

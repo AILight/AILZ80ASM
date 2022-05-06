@@ -78,6 +78,7 @@ namespace AILZ80ASM.Assembler
             Share.ListedFiles = new List<FileInfo>();
             Share.PragmaOnceFiles = new List<FileInfo>();
             Share.CharMapConverter = new CharMaps.CharMapConverter();
+            Share.AsmLists = new List<AsmList>();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -419,6 +420,11 @@ namespace AILZ80ASM.Assembler
         public bool ListedFileExists(FileInfo fileInfo)
         {
             return this.Share.ListedFiles.Any(m => m.FullName == fileInfo.FullName);
+        }
+
+        public void ListedFileClear()
+        {
+            this.Share.ListedFiles.Clear();
         }
 
         public string FindGlobalLabelName(string target)

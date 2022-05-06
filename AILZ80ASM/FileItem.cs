@@ -193,7 +193,7 @@ namespace AILZ80ASM
         /// リストファイルを保存
         /// </summary>
         /// <param name="stream"></param>
-        public void SaveList(StreamWriter streamWriter)
+        public void SaveList(StreamWriter streamWriter, ref int lineIndex)
         {
             foreach (var list in this.Lists)
             {
@@ -204,7 +204,11 @@ namespace AILZ80ASM
                 else
                 {
                     streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
+                    list.OutputLineIndex = lineIndex;
+                    AssembleLoad.Share.AsmLists.Add(list);
                 }
+
+                lineIndex++;
             }
         }
     }

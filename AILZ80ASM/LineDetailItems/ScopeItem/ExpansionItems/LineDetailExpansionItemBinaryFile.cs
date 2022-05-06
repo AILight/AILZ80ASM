@@ -64,7 +64,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         {
             get 
             {
-                return AsmList.CreateLineItem(Address, _Bin);
+                return AsmList.CreateLineItem(Address, this?.LineItem?.ErrorLineItem?.ErrorCode, this?.LineItem?.ErrorLineItem?.ErrorMessage, _Bin);
             }
         }
     }
