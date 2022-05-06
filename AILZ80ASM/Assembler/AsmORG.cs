@@ -20,7 +20,6 @@ namespace AILZ80ASM.Assembler
         public UInt32 OutputAddress { get; private set; }
         public string OutputAddressLabel { get; private set; }
         public string FillByteLabel { get; private set; }
-        public bool IsOutputData { get; private set; }
         public bool IsRomMode => !string.IsNullOrEmpty(OutputAddressLabel);
         public List<LineDetailItem> LineDetailItems { get; private set; }
         public LineItem LineItem { get; private set; } = default;
@@ -41,7 +40,6 @@ namespace AILZ80ASM.Assembler
             OutputAddressLabel = outputAddressLabel;
 ;
             FillByteLabel = fillByteLabel;
-            IsOutputData = false;
             LineDetailItems = new List<LineDetailItem>();
             LineItem = lineItem;
             ORGType = orgType;
@@ -54,7 +52,6 @@ namespace AILZ80ASM.Assembler
 
         public void AdjustAssemble(UInt32 outputAddress)
         {
-            IsOutputData = true;
             OutputAddress = outputAddress;
 
             foreach (var lineDetailItem in LineDetailItems)

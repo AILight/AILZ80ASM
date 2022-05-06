@@ -220,14 +220,14 @@ namespace AILZ80ASM
             // 余白を調整して出力をする
             foreach (var item in binResults)
             {
-                if (item.Address.Output < outputAddress)
+                if ((item.Address.Output ?? 0) < outputAddress)
                 {
                     this.AssembleLoad.AddError(new ErrorLineItem(item.LineItem, Error.ErrorCodeEnum.E0009));
                     break;
                 }
-                else if (item.Address.Output != outputAddress)
+                else if ((item.Address.Output ?? 0) != outputAddress)
                 {
-                    outputAddress = item.Address.Output;
+                    outputAddress = (item.Address.Output ?? 0);
                 }
 
                 // 通常出力
@@ -459,14 +459,14 @@ namespace AILZ80ASM
             // 余白を調整して出力をする
             foreach (var item in binResults)
             {
-                if (item.Address.Output < outputAddress)
+                if ((item.Address.Output ?? 0) < outputAddress)
                 {
                     throw new Exception("出力先アドレスが重複したため、BINファイルの出力に失敗ました");
                 }
-                else if (item.Address.Output != outputAddress)
+                else if ((item.Address.Output ?? 0) != outputAddress)
                 {
                     // 余白調整
-                    this.AssembleLoad.OutputORGSpace(ref outputAddress, item.Address.Output, stream);
+                    this.AssembleLoad.OutputORGSpace(ref outputAddress, item.Address.Output ?? 0, stream);
                 }
 
                 // 通常出力
@@ -594,22 +594,25 @@ namespace AILZ80ASM
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
+            AssembleLoad.ListedFileClear();
+            var lineIndex = 2;
             var title = $";{ProductInfo.ProductLongName}, LST:{AssembleLoad.AssembleOption.ListMode}:{AssembleLoad.AssembleOption.TabSize}";
             streamWriter.WriteLine(AsmList.CreateSource(title).ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
 
             foreach (var item in FileItems)
             {
-                item.SaveList(streamWriter);
+                item.SaveList(streamWriter, ref lineIndex);
             }
             streamWriter.Flush();
             memoryStream.Position = 0;
             memoryStream.CopyTo(stream);
         }
 
+        /// <summary>
+        /// エラー結果の出力
+        /// </summary>
         public void OutputError()
         {
-            Trace.WriteLine($"# Status");
-
             var errors = AssembleLoad.AssembleErrors;
             var warnings = AssembleLoad.AssembleWarnings;
             var informations = AssembleLoad.AssembleInformation;
@@ -618,11 +621,36 @@ namespace AILZ80ASM
                 warnings.Length > 0 ||
                 informations.Length > 0)
             {
-                Trace.WriteLine($"");
                 OutputError(errors, "Error");
                 OutputError(warnings, "Warning");
                 OutputError(informations, "Information");
             }
+        }
+
+        /// <summary>
+        /// リスティングファイルのエラー情報を出力
+        /// </summary>
+        public void OutputErrorForList()
+        {
+            var errors = this.AssembleLoad.Share.AsmLists.Where(m => m.ErrorCode.HasValue && Error.GetErrorType(m.ErrorCode.Value) == Error.ErrorTypeEnum.Error).ToArray();
+            var fileName = this.AssembleOption.OutputFiles[AsmEnum.FileTypeEnum.LST].Name;
+
+            if (errors.Any())
+            {
+                Trace.WriteLine($"# List");
+
+                OutputErrorForList(errors, fileName);
+            }
+        }
+
+        /// <summary>
+        /// エラーのサマリーを出力
+        /// </summary>
+        public void OutputErrorSummary()
+        {
+            var errors = AssembleLoad.AssembleErrors;
+            var warnings = AssembleLoad.AssembleWarnings;
+            var informations = AssembleLoad.AssembleInformation;
 
             Trace.WriteLine($"");
             Trace.WriteLine($" {errors.Length:0} error(s), {warnings.Length} warning(s), {informations.Length} information");
@@ -654,6 +682,35 @@ namespace AILZ80ASM
                 var errorCode = errorLineItem.ErrorCode.ToString();
                 var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}:{(errorLineItem.LineItem.LineIndex)} ";
                 Trace.WriteLine($"{filePosition} {errorCode}: {errorLineItem.ErrorMessage}");
+            }
+        }
+
+        /// <summary>
+        /// リストのエラーを表示する
+        /// </summary>
+        /// <param name="asmList"></param>
+        /// <param name="fileName"></param>
+        public static void OutputErrorForList(AsmList[] asmLists, string fileName)
+        {
+            if (asmLists.Length > 0)
+            {
+                InternalOutputErrorForList(asmLists, fileName);
+                Trace.WriteLine("");
+            }
+        }
+
+        /// <summary>
+        /// リストのエラーの詳細を表示する
+        /// </summary>
+        /// <param name="asmLists"></param>
+        /// <param name="fileName"></param>
+        private static void InternalOutputErrorForList(AsmList[] asmLists, string fileName)
+        {
+            foreach (var asmList in asmLists.Distinct())
+            {
+                var errorCode = asmList.ErrorCode.ToString();
+                var filePosition = $"{fileName}:{(asmList.OutputLineIndex)} ";
+                Trace.WriteLine($"{filePosition} {errorCode}: {asmList.ErrorMessage}");
             }
         }
     }

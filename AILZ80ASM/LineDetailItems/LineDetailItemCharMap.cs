@@ -41,7 +41,7 @@ namespace AILZ80ASM.LineDetailItems
 
                     try
                     {
-                        CharMaps.CharMapConverter.ReadCharMapFromFile(charMap, filePath.Substring(1, filePath.Length - 2), asmLoad);
+                        asmLoad.CharMapConverter_ReadCharMapFromFile(charMap, filePath.Substring(1, filePath.Length - 2));
                     }
                     catch (CharMapJsonReadException ex)
                     {
@@ -65,11 +65,11 @@ namespace AILZ80ASM.LineDetailItems
                 }
                 else
                 {
-                    if (!CharMaps.CharMapConverter.IsContains(charMap))
+                    if (!asmLoad.CharMapConverter_IsContains(charMap))
                     {
                         try
                         {
-                            CharMaps.CharMapConverter.ReadCharMapFromResource(charMap, asmLoad);
+                            asmLoad.CharMapConverter_ReadCharMapFromResource(charMap);
                         }
                         catch (FileNotFoundException ex)
                         {

@@ -25,3 +25,15 @@ REPT SCREEN.WIDTH
 ENDM
 
     JP LB
+
+REPT 8 LAST -2
+    ld b,8
+.lp
+    inc hl
+    ld  a, (hl)
+    cp  1
+    jr nz, .break
+    djnz .lp
+.break
+
+ENDM

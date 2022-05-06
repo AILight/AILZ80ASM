@@ -246,6 +246,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Repeat_Last()
+        {
+            var errors = Assemble("Repeat_Last.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 37, "Repeat_Last.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Warning()
         {
             var errors = Assemble("Warning.Z80");

@@ -1,39 +1,39 @@
-﻿INCLUDE ".\Test\TestPP_RepeatModern\Test.INC"
+﻿SCREEN:
+.WIDTH		equ	3			; 横のサイズ
+.HEIGHT		equ	2			; 縦のサイズ
 
-LB: REPEAT 3
+LB: REPT 3
         xor     a
-END REPEAT
+ENDM
 
-REPEAT 8 LAST -1
+REPT 8 LAST -1
         ld      (hl), a
         set     5, h
         ld      (hl), a
         add     hl, de
-END REPEAT
+ENDM
 
-REPEAT 2
+REPT 2
         xor     a
 
-REPEAT 3
+REPT 3
         LD      a, 0
-END REPEAT
+ENDM
 
-END REPEAT
+ENDM
 
-REPEAT SCREEN.WIDTH
+REPT SCREEN.WIDTH
         RLA
-END REPEAT
+ENDM
 
     JP LB
 
-REPEAT 8 LAST -2
+REPT 8 LAST -1
     ld b,8
 .lp
     inc hl
     ld  a, (hl)
     cp  1
     jr nz, .break
-    djnz .lp
-.break
-
-END REPEAT
+.break djnz .lp
+	ENDM

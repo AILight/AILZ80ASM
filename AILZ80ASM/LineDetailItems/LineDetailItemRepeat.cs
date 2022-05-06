@@ -127,18 +127,39 @@ namespace AILZ80ASM.LineDetailItems
                     {
                         if (repeatCounter == count)
                         {
-                            var take = repeatLines.Count() + last;
+                            var take = repeatLines.Where(m => !string.IsNullOrEmpty(m.OperationString)).Count() + last;
                             if (take <= 0 || last > 0)
                             {
                                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013);
                             }
-                            //最終ページ処理
-                            lineItems = repeatLines.Take(take).Select(m =>
+
+                            //最終ページ処理（命令部だけを削除する）
+                            var results = new List<LineItem>();
+                            var count = 0;
+                            foreach (var lineItem in repeatLines)
                             {
-                                var lineItem = new LineItem(m);
-                                lineItem.CreateLineDetailItem(localAsmLoad);
-                                return lineItem;
-                            }).ToArray();
+                                var addFlg = false;
+                                if (string.IsNullOrEmpty(lineItem.OperationString))
+                                {
+                                    addFlg = true;
+                                }
+                                else
+                                {
+                                    if (count < take)
+                                    {
+                                        addFlg = true;
+                                        count++;
+                                    }
+                                }
+
+                                if (addFlg)
+                                {
+                                    var newLineItem = new LineItem(lineItem);
+                                    newLineItem.CreateLineDetailItem(localAsmLoad);
+                                    results.Add(newLineItem);
+                                }
+                            }
+                            lineItems = results.ToArray();
                         }
                         else
                         {
@@ -148,6 +169,7 @@ namespace AILZ80ASM.LineDetailItems
                                 lineItem.CreateLineDetailItem(localAsmLoad);
                                 return lineItem;
                             }).ToArray();
+
                         }
 
                         foreach (var lineItem in lineItems)
