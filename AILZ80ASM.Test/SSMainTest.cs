@@ -192,7 +192,7 @@ namespace AILZ80ASM.Test
         {
             var result_simple = Program.Main(@"Success.Z80", "-cmt", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(result_simple, 0);
-            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success.cmt"), File.OpenRead("./Test/TestSS_Main/Success_ORG.cmt"), Assembler.AsmEnum.FileTypeEnum.CMT);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success.cmt"), File.OpenRead("./Test/TestSS_Main/Success_ORG.cmt"), Assembler.AsmEnum.FileTypeEnum.CMT);
         }
 
         [TestMethod]
@@ -200,7 +200,7 @@ namespace AILZ80ASM.Test
         {
             var result_simple = Program.Main(@"Success.Z80", "-t88", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(result_simple, 0);
-            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success.t88"), File.OpenRead("./Test/TestSS_Main/Success_ORG.t88"), Assembler.AsmEnum.FileTypeEnum.T88);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success.t88"), File.OpenRead("./Test/TestSS_Main/Success_ORG.t88"), Assembler.AsmEnum.FileTypeEnum.T88);
         }
 
         [TestMethod]
@@ -208,7 +208,7 @@ namespace AILZ80ASM.Test
         {
             var result_simple = Program.Main(@"Success.Z80", "-bin", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(result_simple, 0);
-            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success.bin"), File.OpenRead("./Test/TestSS_Main/Success_ORG.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success.bin"), File.OpenRead("./Test/TestSS_Main/Success_ORG.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
         }
 
         [TestMethod]

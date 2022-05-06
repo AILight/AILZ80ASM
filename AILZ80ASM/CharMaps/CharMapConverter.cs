@@ -11,12 +11,11 @@ using System.Threading.Tasks;
 
 namespace AILZ80ASM.CharMaps
 {
-    public static class CharMapConverter
+    public class CharMapConverter
     {
-        private static Dictionary<string, Dictionary<char, byte[]>> CharMaps { get; set; } = new Dictionary<string, Dictionary<char, byte[]>>();
-        private const string DEFAULT_CHAR_MAP = "@SJIS";
+        private Dictionary<string, Dictionary<char, byte[]>> CharMaps { get; set; } = new Dictionary<string, Dictionary<char, byte[]>>();
 
-        public static byte[] ConvertToBytes(string map, string target)
+        public byte[] ConvertToBytes(string map, string target)
         {
             if (!CharMaps.ContainsKey(map))
             {
@@ -48,7 +47,7 @@ namespace AILZ80ASM.CharMaps
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="CharMapJsonReadException"></exception>
-        public static void ReadCharMapFromFile(string map, string filePath, AsmLoad asmLoad)
+        public void ReadCharMapFromFile(string map, string filePath, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(map))
             {
@@ -92,7 +91,7 @@ namespace AILZ80ASM.CharMaps
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="CharMapJsonReadException"></exception>
-        public static void ReadCharMapFromResource(string map, AsmLoad asmLoad)
+        public void ReadCharMapFromResource(string map, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(map))
             {
@@ -149,12 +148,12 @@ namespace AILZ80ASM.CharMaps
         /// </summary>
         /// <param name="map"></param>
         /// <returns></returns>
-        public static bool IsContains(string map)
+        public bool IsContains(string map)
         {
             return CharMaps.ContainsKey(map);
         }
 
-        private static Dictionary<char, byte[]> MakeJsonResult(string content)
+        private Dictionary<char, byte[]> MakeJsonResult(string content)
         {
             var result = new Dictionary<char, byte[]>();
             var jsonResult = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, int[]>>(content);

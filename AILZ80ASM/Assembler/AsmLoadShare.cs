@@ -1,4 +1,5 @@
-﻿using AILZ80ASM.LineDetailItems;
+﻿using AILZ80ASM.CharMaps;
+using AILZ80ASM.LineDetailItems;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,5 +44,8 @@ namespace AILZ80ASM.Assembler
 
         // Pragma 一度だけファイルをロードする機能用
         public List<FileInfo> PragmaOnceFiles { get; set; } = default;
+
+        // CharMapConvert
+        public CharMapConverter CharMapConverter { get; set; } = default;
     }
 }

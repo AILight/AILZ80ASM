@@ -577,6 +577,9 @@
     <None Update="Test\TestSS_Main\Success.INC">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestSS_Main\Include.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestSS_Main\Success_SJIS_AUTO_ORG.lst">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
