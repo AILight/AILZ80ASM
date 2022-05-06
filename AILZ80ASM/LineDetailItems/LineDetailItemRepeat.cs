@@ -125,13 +125,6 @@ namespace AILZ80ASM.LineDetailItems
                     var guid = $"{Guid.NewGuid():N}";
                     AsmLoad.CreateNewScope($"repeat_{guid}", $"label_{guid}", localAsmLoad =>
                     {
-                        lineItems = repeatLines.Select(m =>
-                        {
-                            var lineItem = new LineItem(m);
-                            lineItem.CreateLineDetailItem(localAsmLoad);
-                            return lineItem;
-                        }).ToArray();
-
                         if (repeatCounter == count)
                         {
                             var take = repeatLines.Where(m => !string.IsNullOrEmpty(m.OperationString)).Count() + last;
@@ -143,22 +136,40 @@ namespace AILZ80ASM.LineDetailItems
                             //最終ページ処理（命令部だけを削除する）
                             var results = new List<LineItem>();
                             var count = 0;
-                            foreach (var lineItem in lineItems)
+                            foreach (var lineItem in repeatLines)
                             {
+                                var addFlg = false;
                                 if (string.IsNullOrEmpty(lineItem.OperationString))
                                 {
-                                    results.Add(lineItem);
+                                    addFlg = true;
                                 }
                                 else
                                 {
                                     if (count < take)
                                     {
-                                        results.Add(lineItem);
+                                        addFlg = true;
                                         count++;
                                     }
                                 }
+
+                                if (addFlg)
+                                {
+                                    var newLineItem = new LineItem(lineItem);
+                                    newLineItem.CreateLineDetailItem(localAsmLoad);
+                                    results.Add(newLineItem);
+                                }
                             }
                             lineItems = results.ToArray();
+                        }
+                        else
+                        {
+                            lineItems = repeatLines.Select(m =>
+                            {
+                                var lineItem = new LineItem(m);
+                                lineItem.CreateLineDetailItem(localAsmLoad);
+                                return lineItem;
+                            }).ToArray();
+
                         }
 
                         foreach (var lineItem in lineItems)

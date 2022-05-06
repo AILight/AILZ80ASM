@@ -1,0 +1,39 @@
+﻿SCREEN:
+.WIDTH		equ	3			; 横のサイズ
+.HEIGHT		equ	2			; 縦のサイズ
+
+LB: REPT 3
+        xor     a
+ENDM
+
+REPT 8 LAST -1
+        ld      (hl), a
+        set     5, h
+        ld      (hl), a
+        add     hl, de
+ENDM
+
+REPT 2
+        xor     a
+
+REPT 3
+        LD      a, 0
+ENDM
+
+ENDM
+
+REPT SCREEN.WIDTH
+        RLA
+ENDM
+
+    JP LB
+
+REPT 8 LAST -1
+    ld b,8
+.lp
+    inc hl
+    ld  a, (hl)
+    cp  1
+    jr nz, .break
+.break djnz .lp
+	ENDM
