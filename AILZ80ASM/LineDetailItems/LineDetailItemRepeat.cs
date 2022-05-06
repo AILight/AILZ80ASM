@@ -125,29 +125,40 @@ namespace AILZ80ASM.LineDetailItems
                     var guid = $"{Guid.NewGuid():N}";
                     AsmLoad.CreateNewScope($"repeat_{guid}", $"label_{guid}", localAsmLoad =>
                     {
+                        lineItems = repeatLines.Select(m =>
+                        {
+                            var lineItem = new LineItem(m);
+                            lineItem.CreateLineDetailItem(localAsmLoad);
+                            return lineItem;
+                        }).ToArray();
+
                         if (repeatCounter == count)
                         {
-                            var take = repeatLines.Count() + last;
+                            var take = repeatLines.Where(m => !string.IsNullOrEmpty(m.OperationString)).Count() + last;
                             if (take <= 0 || last > 0)
                             {
                                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013);
                             }
-                            //最終ページ処理
-                            lineItems = repeatLines.Take(take).Select(m =>
+
+                            //最終ページ処理（命令部だけを削除する）
+                            var results = new List<LineItem>();
+                            var count = 0;
+                            foreach (var lineItem in lineItems)
                             {
-                                var lineItem = new LineItem(m);
-                                lineItem.CreateLineDetailItem(localAsmLoad);
-                                return lineItem;
-                            }).ToArray();
-                        }
-                        else
-                        {
-                            lineItems = repeatLines.Select(m =>
-                            {
-                                var lineItem = new LineItem(m);
-                                lineItem.CreateLineDetailItem(localAsmLoad);
-                                return lineItem;
-                            }).ToArray();
+                                if (string.IsNullOrEmpty(lineItem.OperationString))
+                                {
+                                    results.Add(lineItem);
+                                }
+                                else
+                                {
+                                    if (count < take)
+                                    {
+                                        results.Add(lineItem);
+                                        count++;
+                                    }
+                                }
+                            }
+                            lineItems = results.ToArray();
                         }
 
                         foreach (var lineItem in lineItems)

@@ -25,3 +25,15 @@ REPEAT SCREEN.WIDTH
 END REPEAT
 
     JP LB
+
+REPEAT 8 LAST -2
+    ld b,8
+.lp
+    inc hl
+    ld  a, (hl)
+    cp  1
+    jr nz, .break
+    djnz .lp
+.break
+
+END REPEAT
