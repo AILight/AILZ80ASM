@@ -412,8 +412,8 @@ TestArg MACRO a1, a2
 ```
 
 #### REPT <式1> [LAST <式2>]　～ ENDM
-- 式1に設定した値の回数分をREPTの中に記述してある命令を展開します
-- 式2には、最終の展開時に削除したい命令数を負の値で設定します
+- 式1に設定した値の回数分をREPTの中に記述してある命令を展開します。
+- 式2には、最終の展開時に削除したい命令数を負の値で設定します。ラベルだけの行や空行は削除対象外です。
 - ネストに対応しています
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_RepeatCompatible/Test.Z80)
 
