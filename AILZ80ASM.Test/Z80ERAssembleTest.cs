@@ -251,7 +251,7 @@ namespace AILZ80ASM.Test
             var errors = Assemble("Repeat_Last.Z80");
 
             Assert.AreEqual(errors.Length, 1);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 37, "Repeat.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 37, "Repeat_Last.Z80", errors);
         }
 
         [TestMethod]
