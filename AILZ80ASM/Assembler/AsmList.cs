@@ -26,7 +26,10 @@ namespace AILZ80ASM.Assembler
         public string Status { get; set; }
         public Stack<NestedCodeTypeEnum> NestedCodeTypes { get; set; }
         public string Source { get; set; }
+        public int OutputLineIndex { get; set; }
         public ListStatusEnum ListStatus { get; set; }
+        public Error.ErrorCodeEnum? ErrorCode { get; set; }
+        public string ErrorMessage { get; set; }
 
         private AsmList()
         {
@@ -49,17 +52,22 @@ namespace AILZ80ASM.Assembler
 
         public static AsmList CreateSourceOnly(string target)
         {
-            return Create(default(UInt32?), default(UInt16?), default(byte[]), "", target, ListStatusEnum.SourceOnly);
+            return Create(default(UInt32?), default(UInt16?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.SourceOnly);
         }
 
         public static AsmList CreateSource(string target)
         {
-            return Create(default(UInt32?), default(UInt16?), default(byte[]), "", target, ListStatusEnum.Normal);
+            return Create(default(UInt32?), default(UInt16?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.Normal);
+        }
+
+        public static AsmList CreateSource(string target, Error.ErrorCodeEnum? errorCode, string errorMessage)
+        {
+            return Create(default(UInt32?), default(UInt16?), errorCode, errorMessage, default(byte[]), "", target, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateLineItem(LineItem lineItem)
         {
-            return CreateSource(lineItem.LineString);
+            return CreateSource(lineItem.LineString, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
         }
         public static AsmList CreateLineItemEqual(Label equLabel, LineItem lineItem)
         {
@@ -78,9 +86,9 @@ namespace AILZ80ASM.Assembler
             return CreateLineItem(new AsmAddress(address, length), default(byte[]), "", lineItem);
         }
 
-        public static AsmList CreateLineItem(AsmAddress asmAdddress, byte[] bin)
+        public static AsmList CreateLineItem(AsmAddress asmAdddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin)
         {
-            return Create(asmAdddress.Output, asmAdddress.Program, bin, "", "", ListStatusEnum.Normal);
+            return Create(asmAdddress.Output, asmAdddress.Program, errorCode, errorMessage, bin, "", "", ListStatusEnum.Normal);
         }
 
         public static AsmList CreateLineItem(AsmAddress asmAdddress, byte[] bin, string status, LineItem lineItem)
@@ -90,19 +98,22 @@ namespace AILZ80ASM.Assembler
 
         public static AsmList CreateLineItem(UInt32? outputAddress, UInt16? programAddress, byte[] bin, string status, LineItem lineItem)
         {
-            return Create(outputAddress, programAddress, bin, status, lineItem.LineString, ListStatusEnum.Normal);
+            return Create(outputAddress, programAddress, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, bin, status, lineItem.LineString, ListStatusEnum.Normal);
         }
 
-        public static AsmList Create(UInt32? outputAddress, UInt16? programAddress, byte[] bin, string status, string source, ListStatusEnum listStatus)
+        public static AsmList Create(UInt32? outputAddress, UInt16? programAddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin, string status, string source, ListStatusEnum listStatus)
         {
             return new AsmList
             {
                 OutputAddress = outputAddress,
                 ProgramAddress = programAddress,
+                ErrorCode = errorCode,
+                ErrorMessage = errorMessage,
                 Bin = bin,
                 Status = status,
                 Source = source,
                 ListStatus = listStatus,
+                OutputLineIndex = 0,
             };
         }
 
@@ -119,7 +130,11 @@ namespace AILZ80ASM.Assembler
             var codeType = "";
             var status = this.Status;
             var source = GetReplaseTab(this.Source, tabSize);
-            if (this.Bin != default && this.Bin.Length > 16)
+            if (ErrorCode.HasValue && Error.GetErrorType(ErrorCode.Value) == Error.ErrorTypeEnum.Error)
+            {
+                binary = $"**** {ErrorCode} ****";
+            }
+            else if (this.Bin != default && this.Bin.Length > 16)
             {
                 var startBin = this.Bin[0];
                 if (this.Bin.Count(m => m == startBin) == this.Bin.Length)

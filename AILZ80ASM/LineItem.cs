@@ -15,6 +15,7 @@ namespace AILZ80ASM
         public int LineIndex { get; private set; }
         public AsmResult[] BinResults => LineDetailItem.BinResults;
         public AsmList[] Lists => LineDetailItem.Lists;
+        public ErrorLineItem ErrorLineItem { get; set; } = default;
 
         // 展開情報
         public string LabelString { get; private set; }
