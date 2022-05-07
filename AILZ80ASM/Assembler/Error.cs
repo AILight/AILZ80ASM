@@ -37,7 +37,7 @@ namespace AILZ80ASM.Assembler
             E0021,
             E0022,
             E0023,
-            //E0024,
+            //E0024, 将来コマンドラインオプションで有効にするかも
 
             E1011,
             E1012,
@@ -137,7 +137,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0000] = "処理できないエラー。開発者にお伝えください。{0}",
 
             [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
-            [ErrorCodeEnum.E0002] = "バイト変換で有効桁数をオーバーしました。",
+            [ErrorCodeEnum.E0002] = "ビット変換で有効桁数をオーバーしました。[指定ビット数:{0}, 指定値{1}]",
             [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
             [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。[{0}]",
             [ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
@@ -157,7 +157,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。[{0}]",
-            //[ErrorCodeEnum.E0024] = "出力アドレスの再配置が行われたため、$$の値が不定になりました。ORGを出力順に並べるか、$$変数を不使用にしてください。",
+            //[ErrorCodeEnum.E0024] = $"オフセット値の範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
 
             // リピート
             [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",

@@ -657,7 +657,7 @@ namespace AILZ80ASM.AILight
                     {
                         if (label == default)
                         {
-                            throw new InvalidAIValueException($"未定義のラベルが指定されています。{Value}");
+                            throw new InvalidAIValueException($"未定義:{Value}");
                         }
                         else
                         {

@@ -76,11 +76,11 @@ namespace AILZ80ASM.AILight
             }
             catch (InvalidAIValueException ex)
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{target} エラー:{ex.Message}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
             }
             catch (InvalidAIMathException ex)
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{target} エラー:{ex.Message}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
             }
             catch (CharMapNotFoundException ex)
             {

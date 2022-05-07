@@ -1,0 +1,17 @@
+﻿
+LABEL_1		equ 1
+LABEL_2		equ 1/0
+
+			LD A, LABEL_0
+			LD A, LABEL_1
+			LD A, LABEL_2
+			LD A, (1+2))
+			LD A, "ABCD"
+
+LABEL_3		equ 3/0
+
+			ALIGN 4/0
+
+			DS 5/0
+
+			BDF 6/0

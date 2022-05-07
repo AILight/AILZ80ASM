@@ -1,0 +1,14 @@
+﻿
+back_1:
+		DS	127
+		JR	back_1
+		JR	forward_1
+		DS	128
+forward_1:
+
+back_2:
+		DS	126
+		JR	back_2
+		JR	forward_2
+		DS	127
+forward_2:

@@ -145,12 +145,14 @@ namespace AILZ80ASM.InstructionSet
                         case InstructionRegister.InstructionRegisterModeEnum.Value3Bit:
                             {
                                 var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
-                                var value3 = ConvertTo2BaseString(tmpValue16 & 0x07, 3);
+                                var value3 = ConvertTo2BaseString(tmpValue16 /*& 0x07*/, 3);
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value3);
+                                /* 3ビットのマスクは不要
                                 if (tmpValue16 > 7)
                                 {
                                     throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定された値は、0x{tmpValue16:x2}:{tmpValue16}です。");
                                 }
+                                */
                             }
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
@@ -251,7 +253,7 @@ namespace AILZ80ASM.InstructionSet
             if ((value > 0 && overString.Contains("1")) ||
                 (value < 0 && overString.Contains("0")))
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0002, $"{value:x}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0002, $"{length:0}", $"0x{value:x2}:{value}");
             }
 
             return returnValue.Substring(overString.Length);
