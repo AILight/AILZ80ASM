@@ -298,5 +298,17 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0023, 3, "E0023.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0023, 4, "E0023.Z80", errors);
         }
+
+
+        [TestMethod]
+        public void TestER_E0024()
+        {
+            var errors = Assemble("E0024.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 2);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0024, 2, "E0024.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0024, 3, "E0024.Z80", errors);
+        }
     }
 }

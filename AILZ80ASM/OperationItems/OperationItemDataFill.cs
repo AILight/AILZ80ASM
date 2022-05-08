@@ -80,10 +80,16 @@ namespace AILZ80ASM.OperationItems
             var ops = AIName.ParseArguments(op2);
             var valueString = "0";
             var isDefaultValueClear = true;
+            var errorCode = dataType switch
+            {
+                DataTypeEnum.dbf => Error.ErrorCodeEnum.E0024,
+                DataTypeEnum.dwf => Error.ErrorCodeEnum.E0025,
+                _ => throw new NotImplementedException()
+            };
 
             if (ops.Length == 0 || ops.Length > 2)
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0012);
+                throw new ErrorAssembleException(errorCode, "引数の指定が間違っています");
             }
             if (ops.Length == 2)
             {
@@ -94,7 +100,7 @@ namespace AILZ80ASM.OperationItems
             var count = AIMath.Calculation(ops[0], asmLoad).ConvertTo<int>();
             if (count < 0)
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0012);
+                throw new ErrorAssembleException(errorCode, "負の値は指定できません");
             }
 
             var valuesStrings = Enumerable.Range(0, count).Select(_ => valueString).ToArray();
