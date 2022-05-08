@@ -406,6 +406,10 @@ namespace AILZ80ASM.AILight
             {
                 throw;
             }
+            catch (ErrorLineItemException)
+            {
+                throw;
+            }
             catch (InvalidAIValueException ex)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{Value} エラー:{ex.Message}");
@@ -477,7 +481,7 @@ namespace AILZ80ASM.AILight
                 }
                 var arguments = AIName.ParseArguments(Value.Substring(startIndex + 1, lastIndex - startIndex - 1));
 
-                var calcValue = function.Calculation2(arguments, asmLoad, asmAddress);
+                var calcValue = function.Calculation(arguments, asmLoad, asmAddress);
 
                 ValueType = calcValue.ValueType;
                 ValueInt32 = calcValue.ValueInt32;

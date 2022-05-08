@@ -11,7 +11,53 @@ LABEL_2		equ 1/0
 LABEL_3		equ 3/0
 
 			ALIGN 4/0
+			ALIGN 16, 5/0
 
-			DS 5/0
+			DS 6/0
+			DS $10, 7/0
 
-			BDF 6/0
+			INCLUDE "./Test/TestEC/E0003.Z80", B, 8/0
+			INCLUDE "./Test/TestEC/E0003.Z80", B, 0, 9/0
+
+			DB 10/0
+			DW 11/0
+
+			DBF 12/0
+			DBF $10, 14/0
+
+			DWF 15/0
+			DWF $10, 16/0
+
+			TEST_M1 17/0
+			TEST_M2 18/0
+			TEST_M2 10
+
+			REPT 19/0
+				XOR A
+			ENDM
+
+			REPT 8, 20/0
+				XOR A
+			ENDM
+
+			LD A, ABS(21/0)
+
+			#IF 22/0
+				XOR A
+			#ENDIF
+
+			ORG 23/0
+			ORG $1000, 24/0
+
+
+			TEST_M1 MACRO ARG1
+				LD A, ARG1
+				XOR A
+			ENDM
+
+			TEST_M2 MACRO ARG1
+				LD A, ARG1 / 0
+				XOR A
+			ENDM
+
+			Function ABS(value) => value < 0 ? value * -1 : value

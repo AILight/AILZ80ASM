@@ -182,6 +182,10 @@ namespace AILZ80ASM.LineDetailItems
                             {
                                 AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
                             }
+                            catch (ErrorLineItemException ex)
+                            {
+                                AsmLoad.AddError(ex.ErrorLineItem);
+                            }
                         }
                         lineItemList.AddRange(lineItems);
                     });
@@ -198,6 +202,10 @@ namespace AILZ80ASM.LineDetailItems
                     catch (ErrorAssembleException ex)
                     {
                         AsmLoad.AddError(new ErrorLineItem(item, ex));
+                    }
+                    catch (ErrorLineItemException ex)
+                    {
+                        AsmLoad.AddError(ex.ErrorLineItem);
                     }
                 }
 

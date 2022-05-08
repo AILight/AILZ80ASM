@@ -179,9 +179,14 @@ namespace AILZ80ASM
                     {
                         package.Assemble();
                     }
-                    catch (ErrorAssembleException eex)
+                    catch (ErrorAssembleException ex)
                     {
-                        Trace.WriteLine($"アセンブルエラー:{eex.Message}");
+                        Trace.WriteLine($"アセンブルエラー:{ex.Message}");
+                        assembleResult = false;
+                    }
+                    catch (ErrorLineItemException ex)
+                    {
+                        Trace.WriteLine($"アセンブルエラー:{ex.Message} ファイル:{ex.ErrorLineItem.LineItem.FileInfo.Name}:{ex.ErrorLineItem.LineItem.LineIndex}");
                         assembleResult = false;
                     }
                     catch (Exception ex)

@@ -112,9 +112,9 @@ namespace AILZ80ASM.OperationItems
             switch (DataType)
             {
                 case DataTypeEnum.dwf:
-                    foreach (var valueString in ValueStrings)
+                    try
                     {
-                        try
+                        foreach (var valueString in ValueStrings)
                         {
                             var values = AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<UInt16[]>();
                             foreach (var value in values)
@@ -134,23 +134,72 @@ namespace AILZ80ASM.OperationItems
                                 }
                             }
                         }
-                        catch (Exception)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, valueString);
-                        }
                     }
+                    catch (CharMapNotFoundException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                    }
+                    catch (CharMapConvertException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                    }
+                    catch (InvalidAIValueException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (InvalidAIMathException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (ErrorAssembleException)
+                    {
+                        throw;
+                    }
+                    catch (ErrorLineItemException)
+                    {
+                        throw;
+                    }
+                    catch (Exception)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0025, ValueStrings.FirstOrDefault());
+                    }
+
                     break;
                 case DataTypeEnum.dbf:
-                    foreach (var valueString in ValueStrings)
+                    try
                     {
-                        try
+                        foreach (var valueString in ValueStrings)
                         {
                             byteList.AddRange(AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<byte[]>());
                         }
-                        catch (Exception)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, valueString);
-                        }
+                    }
+                    catch (CharMapNotFoundException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                    }
+                    catch (CharMapConvertException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                    }
+                    catch (InvalidAIValueException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (InvalidAIMathException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (ErrorAssembleException)
+                    {
+                        throw;
+                    }
+                    catch (ErrorLineItemException)
+                    {
+                        throw;
+                    }
+                    catch (Exception)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0024, ValueStrings.FirstOrDefault());
                     }
                     break;
                 default:

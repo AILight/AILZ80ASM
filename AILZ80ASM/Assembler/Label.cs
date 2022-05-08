@@ -262,7 +262,12 @@ namespace AILZ80ASM.Assembler
         /// <summary>
         /// ラベルの値を計算する
         /// </summary>
-        public void Calculation()
+        public virtual void Calculation()
+        {
+            InternalCalculation(AsmLoad);
+        }
+
+        protected void InternalCalculation(AsmLoad asmLoad)
         {
             if (DataType != DataTypeEnum.None)
             {
@@ -278,7 +283,7 @@ namespace AILZ80ASM.Assembler
             {
                 asmAddress = LineDetailItem.Address;
             }
-            Value = AIMath.Calculation(ValueString, AsmLoad, asmAddress);
+            Value = AIMath.Calculation(ValueString, asmLoad, asmAddress);
             DataType = DataTypeEnum.Value;
         }
 

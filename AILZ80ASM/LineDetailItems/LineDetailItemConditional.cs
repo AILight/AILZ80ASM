@@ -145,6 +145,10 @@ namespace AILZ80ASM.LineDetailItems
                         {
                             this.AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
                         }
+                        catch (ErrorLineItemException ex)
+                        {
+                            this.AsmLoad.AddError(ex.ErrorLineItem);
+                        }
                         catch (Exception ex)
                         {
                             this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));

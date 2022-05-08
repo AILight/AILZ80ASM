@@ -88,7 +88,7 @@ namespace AILZ80ASM.Test
 
             Assert.AreEqual(errors.Length, 5);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0021, 3, "DBDW.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0022, 4, "DBDW.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 4, "DBDW.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0022, 5, "DBDW.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2106, 6, "DBDW.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2105, 7, "DBDW.Z80", errors);

@@ -74,6 +74,10 @@ namespace AILZ80ASM.AILight
             {
                 throw;
             }
+            catch (ErrorLineItemException)
+            {
+                throw;
+            }
             catch (InvalidAIValueException ex)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);

@@ -114,11 +114,26 @@ namespace AILZ80ASM
                 var endIndex = asmORGs.IndexOf(endORG);
                 for (var index = startIndex; index <= endIndex; index++)
                 {
-                    asmORGs[index].AdjustAssemble(outputAddress);
-                    if (index < endIndex)
+                    try
                     {
-                        var offset = (UInt32)(asmORGs[index + 1].ProgramAddress - asmORGs[index].ProgramAddress);
-                        outputAddress += offset;
+                        asmORGs[index].AdjustAssemble(outputAddress, AssembleLoad);
+                        if (index < endIndex)
+                        {
+                            var offset = (UInt32)(asmORGs[index + 1].ProgramAddress - asmORGs[index].ProgramAddress);
+                            outputAddress += offset;
+                        }
+                    }
+                    catch (ErrorAssembleException ex)
+                    {
+                        AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, ex));
+                    }
+                    catch (ErrorLineItemException ex)
+                    {
+                        AssembleLoad.AddError(ex.ErrorLineItem);
+                    }
+                    catch (Exception ex)
+                    {
+                        AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
                     }
                 }
             }
@@ -126,49 +141,78 @@ namespace AILZ80ASM
             // ROM出力調整
             foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.Where(m => m.IsRomMode).OrderBy(m => m.ProgramAddress))
             {
-                var outputAddress = default(UInt32);
-
-                if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, out var outputAddressValue))
+                try
                 {
-                    // 最後のアドレスを取得して再計算する
-                    var foundAsmORG = this.AssembleLoad.Share.AsmORGs.Where(m => m != asmORG && m.HasBinResult && m.ProgramAddress <= asmORG.ProgramAddress).LastOrDefault();
-                    var resultAddress = new AsmAddress();
-                    if (foundAsmORG != default)
-                    {
-                        var lastBinResult = foundAsmORG.LineDetailItems.Where(m => m.LineDetailScopeItems != default).SelectMany(m => m.LineDetailScopeItems.SelectMany(n => n.LineDetailExpansionItems.Select(m => new { m.Address, m.Length }))).OrderByDescending(m => m.Address.Output).FirstOrDefault();
-                        resultAddress = new AsmAddress((UInt16)(lastBinResult.Address.Program + lastBinResult.Length.Program), (UInt32)(lastBinResult.Address.Output + lastBinResult.Length.Output));
-                    }
-                    if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, resultAddress, out outputAddressValue))
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.OutputAddressLabel);
-                    }
-                }
-                outputAddress = outputAddressValue.ConvertTo<UInt32>();
+                    var outputAddress = default(UInt32);
 
-                asmORG.AdjustAssemble(outputAddress);
+                    if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, out var outputAddressValue))
+                    {
+                        // 最後のアドレスを取得して再計算する
+                        var foundAsmORG = this.AssembleLoad.Share.AsmORGs.Where(m => m != asmORG && m.HasBinResult && m.ProgramAddress <= asmORG.ProgramAddress).LastOrDefault();
+                        var resultAddress = new AsmAddress();
+                        if (foundAsmORG != default)
+                        {
+                            var lastBinResult = foundAsmORG.LineDetailItems.Where(m => m.LineDetailScopeItems != default).SelectMany(m => m.LineDetailScopeItems.SelectMany(n => n.LineDetailExpansionItems.Select(m => new { m.Address, m.Length }))).OrderByDescending(m => m.Address.Output).FirstOrDefault();
+                            resultAddress = new AsmAddress((UInt16)(lastBinResult.Address.Program + lastBinResult.Length.Program), (UInt32)(lastBinResult.Address.Output + lastBinResult.Length.Output));
+                        }
+                        if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, resultAddress, out outputAddressValue))
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.OutputAddressLabel);
+                        }
+                    }
+                    outputAddress = outputAddressValue.ConvertTo<UInt32>();
+
+                    asmORG.AdjustAssemble(outputAddress, AssembleLoad);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    AssembleLoad.AddError(ex.ErrorLineItem);
+                }
+                catch (Exception ex)
+                {
+                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
+                }
             }
 
             //
             var defaultFillByte = default(byte);
             foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.OrderBy(m => m.OutputAddress))
             {
-                if (asmORG.ORGType == AsmORG.ORGTypeEnum.ORG)
+                try
                 {
-                    defaultFillByte = 0;
-                }
+                    if (asmORG.ORGType == AsmORG.ORGTypeEnum.ORG)
+                    {
+                        defaultFillByte = 0;
+                    }
 
-                var fillByte = defaultFillByte;
-                if (!string.IsNullOrEmpty(asmORG.FillByteLabel) && !(AIMath.TryParse(asmORG.FillByteLabel, this.AssembleLoad, out var aiValueFillByte) && aiValueFillByte.TryParse(out fillByte)))
+                    var fillByte = defaultFillByte;
+                    if (!string.IsNullOrEmpty(asmORG.FillByteLabel) && !(AIMath.TryParse(asmORG.FillByteLabel, this.AssembleLoad, out var aiValueFillByte) && aiValueFillByte.TryParse(out fillByte)))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.FillByteLabel);
+                    }
+                    asmORG.FillByte = fillByte;
+
+                    if (asmORG.ORGType == AsmORG.ORGTypeEnum.ORG)
+                    {
+                        defaultFillByte = fillByte;
+                    }
+                }
+                catch (ErrorAssembleException ex)
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.FillByteLabel);
+                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, ex));
                 }
-                asmORG.FillByte = fillByte;
-
-                if (asmORG.ORGType == AsmORG.ORGTypeEnum.ORG)
+                catch (ErrorLineItemException ex)
                 {
-                    defaultFillByte = fillByte;
+                    AssembleLoad.AddError(ex.ErrorLineItem);
                 }
-
+                catch (Exception ex)
+                {
+                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
+                }
             }
         }
 
@@ -210,7 +254,7 @@ namespace AILZ80ASM
             }
 
             var outputAddress = default(UInt32);
-            var binResults = FileItems.SelectMany(m => m.BinResults).OrderBy(m => m.Address.Output);
+            var binResults = FileItems.SelectMany(m => m.BinResults).OrderBy(m => m.Address.Output).ThenBy(m => m.Address.Program);
             if (binResults.Count() == 0)
             {
                 // 出力データが無い場合は終了
@@ -220,14 +264,19 @@ namespace AILZ80ASM
             // 余白を調整して出力をする
             foreach (var item in binResults)
             {
-                if ((item.Address.Output ?? 0) < outputAddress)
+                if (!item.Address.Output.HasValue)
+                {
+                    continue;
+                }
+
+                if (item.Address.Output.Value < outputAddress)
                 {
                     this.AssembleLoad.AddError(new ErrorLineItem(item.LineItem, Error.ErrorCodeEnum.E0009));
                     break;
                 }
-                else if ((item.Address.Output ?? 0) != outputAddress)
+                else if (item.Address.Output.Value != outputAddress)
                 {
-                    outputAddress = (item.Address.Output ?? 0);
+                    outputAddress = item.Address.Output.Value;
                 }
 
                 // 通常出力
