@@ -119,20 +119,6 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0012()
-        {
-            var errors = Assemble("E0012.Z80");
-
-            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 6);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 2, "E0012.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 3, "E0012.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 5, "E0012.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 6, "E0012.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 8, "E0012.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 9, "E0012.Z80", errors);
-        }
-
-        [TestMethod]
         public void TestER_E0013()
         {
             var errors = Assemble("E0013.Z80");
@@ -309,6 +295,17 @@ namespace AILZ80ASM.Test
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0024, 2, "E0024.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0024, 3, "E0024.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_E0025()
+        {
+            var errors = Assemble("E0025.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 2);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0025, 2, "E0025.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0025, 3, "E0025.Z80", errors);
         }
     }
 }
