@@ -13,12 +13,12 @@ namespace AILZ80ASM.Test
         public void LabelNameTest()
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            var globalLabel = new LabelAdr("[NS_Main]", asmLoad);
+            var globalLabel = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
             asmLoad.AddLabel(globalLabel);
 
-            Assert.AreEqual(new LabelAdr("ABC:", "", asmLoad).LabelFullName, "NS_Main.ABC");
-            Assert.AreEqual(new LabelAdr("ABC::", "", asmLoad).LabelFullName, "NS_Main.ABC");
-            Assert.AreEqual(new LabelAdr("ABC.DEF", "", asmLoad).LabelFullName, "NS_Main.ABC.DEF");
+            Assert.AreEqual(new LabelAdr("ABC:", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.ABC");
+            Assert.AreEqual(new LabelAdr("ABC::", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.ABC");
+            Assert.AreEqual(new LabelAdr("ABC.DEF", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.ABC.DEF");
             Assert.AreEqual(new LabelAdr("ABC.DEF.GHI", "", asmLoad).LabelFullName, "ABC.DEF.GHI");
 
         }
@@ -27,7 +27,7 @@ namespace AILZ80ASM.Test
         public void BuildLabelTest()
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            var globalLabel = new LabelAdr("[NS_Main]", asmLoad);
+            var globalLabel = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
             asmLoad.AddLabel(globalLabel);
 
             var labelAdr = new LabelAdr("TEST", "123", asmLoad);
@@ -48,10 +48,10 @@ namespace AILZ80ASM.Test
             {
                 try
                 {
-                    var globalLabel = new LabelAdr("[NS_Main]", asmLoad);
+                    var globalLabel = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
                     asmLoad.AddLabel(globalLabel);
 
-                    var labelAdr = new LabelAdr("NS_Main", "123", asmLoad);
+                    var labelAdr = new LabelAdr("NAME_SPACE_DEFAULT", "123", asmLoad);
                     asmLoad.AddLabel(labelAdr);
                 }
                 catch (ErrorAssembleException ex)
@@ -65,10 +65,10 @@ namespace AILZ80ASM.Test
             {
                 try
                 {
-                    var labelAdr = new LabelAdr("NS_Main_A", "123", asmLoad);
+                    var labelAdr = new LabelAdr("NAME_SPACE_DEFAULT_A", "123", asmLoad);
                     asmLoad.AddLabel(labelAdr);
                     
-                    var globalLabel = new LabelAdr("[NS_Main_A]", asmLoad);
+                    var globalLabel = new LabelAdr("[NAME_SPACE_DEFAULT_A]", asmLoad);
                     asmLoad.AddLabel(globalLabel);
                 }
                 catch (ErrorAssembleException ex)

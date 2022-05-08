@@ -2,7 +2,7 @@
 #pragma once
 
 
-[NS_Main]
+[NAME_SPACE_DEFAULT]
 
 CHAR01: equ 20
 CHAR02: equ 40

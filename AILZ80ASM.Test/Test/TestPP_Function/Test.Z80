@@ -17,6 +17,6 @@ OO	EQU $1234
 
 Function ABS(value) => value < 0 ? value * -1 : value
 Function FUNC(arg1, arg2) => arg1 * 10 + arg2
-Function FUNC2(arg1) => arg1 + NS_MAIN.JJ + KK
+Function FUNC2(arg1) => arg1 + NAME_SPACE_DEFAULT.JJ + KK
 Function H(v16) => v16 >> 8
 Function L(v16) => v16 & 0xFF

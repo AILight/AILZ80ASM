@@ -32,7 +32,7 @@ namespace AILZ80ASM
                 default:
                     throw new NotImplementedException();
             }
-            var label = new LabelAdr("[NS_Main]", AssembleLoad);
+            var label = new LabelAdr("[NAME_SPACE_DEFAULT]", AssembleLoad);
             AssembleLoad.AddLabel(label);
 
             foreach (var fileInfo in asmOption.InputFiles[AsmEnum.FileTypeEnum.Z80])
