@@ -131,5 +131,50 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 8, "E0012.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 9, "E0012.Z80", errors);
         }
+
+        [TestMethod]
+        public void TestER_E0013()
+        {
+            var errors = Assemble("E0013.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 36);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 3, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 4, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 5, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 7, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 8, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 9, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 10, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 11, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 12, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 13, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 14, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 15, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 16, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 17, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 18, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 19, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 20, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 21, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 22, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 23, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 24, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 25, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 26, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 27, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 28, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 29, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 30, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 31, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 32, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 33, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 34, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 35, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 53, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 57, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 76, "E0013.Z80", errors);
+        }
     }
 }

@@ -149,7 +149,7 @@ namespace AILZ80ASM.Assembler
             //[ErrorCodeEnum.E0008] = "2進数の変換に失敗しました。",
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
             [ErrorCodeEnum.E0012] = "データの指定が間違っています。",
-            [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。",
+            [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。記号や予約語は使えません。",
             [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
             [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。[{0}]",
