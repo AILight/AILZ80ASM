@@ -53,10 +53,10 @@ namespace AILZ80ASM.OperationItems
             switch (op1.ToUpper())
             {
                 case "DBF":
-                    returnValue = DBDWS(DataTypeEnum.dbf, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                    returnValue = DBDWF(DataTypeEnum.dbf, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 case "DWF":
-                    returnValue = DBDWS(DataTypeEnum.dwf, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                    returnValue = DBDWF(DataTypeEnum.dwf, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 default:
                     break;
@@ -74,7 +74,7 @@ namespace AILZ80ASM.OperationItems
         /// <param name="lineExpansionItem"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static OperationItemDataFill DBDWS(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        private static OperationItemDataFill DBDWF(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemDataFill);
             var ops = AIName.ParseArguments(op2);
@@ -92,6 +92,11 @@ namespace AILZ80ASM.OperationItems
             }
 
             var count = AIMath.Calculation(ops[0], asmLoad).ConvertTo<int>();
+            if (count < 0)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0012);
+            }
+
             var valuesStrings = Enumerable.Range(0, count).Select(_ => valueString).ToArray();
 
             returnValue = new OperationItemDataFill()
