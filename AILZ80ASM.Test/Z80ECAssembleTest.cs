@@ -182,8 +182,35 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("E0014.Z80");
 
-            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 36);
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 3);
 
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 3, "E0014.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 5, "E0014.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 7, "E0014.Z80", errors);
+        }
+
+
+        [TestMethod]
+        public void TestER_E0015()
+        {
+            var errors = Assemble("E0015.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 14);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 3, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 5, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 6, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 7, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 9, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 10, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 11, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 12, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 13, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 14, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 15, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 17, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 19, "E0015.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0015, 20, "E0015.Z80", errors);
         }
     }
 }

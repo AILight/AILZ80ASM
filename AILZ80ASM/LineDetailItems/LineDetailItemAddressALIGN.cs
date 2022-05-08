@@ -48,7 +48,7 @@ namespace AILZ80ASM.LineDetailItems
             }
             var align = aiValue.ConvertTo<UInt16>();
 
-            if ((align & (align - 1)) != 0)
+            if (align <= 0 || (align & (align - 1)) != 0)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
             }
