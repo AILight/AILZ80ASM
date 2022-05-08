@@ -1,0 +1,4 @@
+﻿
+	BIT -1, A	; EOOO2として処理
+	BIT  0, A
+	BIT  8, A	; EOOO2として処理
