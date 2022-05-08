@@ -199,7 +199,7 @@ namespace AILZ80ASM.InstructionSet
                                     0 => "00",
                                     1 => "10",
                                     2 => "11",
-                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定値: {tmpValue16}")
+                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定値: 0x{tmpValue16:x4}:{tmpValue16}")
                                 };
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                             }
@@ -217,7 +217,7 @@ namespace AILZ80ASM.InstructionSet
                                     0x28 => "101",
                                     0x30 => "110",
                                     0x38 => "111",
-                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定値: {tmpValue16}")
+                                    _ => throw new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定値: 0x{tmpValue16:x4}:{tmpValue16}")
                                 };
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                             }

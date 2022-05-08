@@ -109,7 +109,7 @@ namespace AILZ80ASM.OperationItems
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.W0001, ex.Message);
 
                     case InstructionRegister.InstructionRegisterModeEnum.RestartValue:
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017, ex.Message);
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0020, ex.Message);
 
                     default:
                         throw new NotImplementedException();
