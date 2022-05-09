@@ -28,6 +28,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemPragma Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemPragma);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternPragma, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {

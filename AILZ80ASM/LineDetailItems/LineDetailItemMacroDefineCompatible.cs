@@ -19,6 +19,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemMacroDefineCompatible Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemMacroDefineCompatible);
+            }
+
             return (LineDetailItemMacroDefineCompatible)Create(new LineDetailItemMacroDefineCompatible(lineItem, asmLoad), RegexPatternMacroStart, RegexPatternMacroEnd, asmLoad);
         }
     }

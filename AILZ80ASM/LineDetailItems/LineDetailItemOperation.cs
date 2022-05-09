@@ -17,6 +17,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItem Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemOperation);
+            }
+
             if (OperationItem.CanCreate(lineItem.OperationString, asmLoad))
             {
                 return new LineDetailItemOperation(lineItem, asmLoad);

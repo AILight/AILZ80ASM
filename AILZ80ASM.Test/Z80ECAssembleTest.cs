@@ -22,7 +22,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("E0001.Z80");
 
-            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 16);
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 20);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 1, "E0001.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 2, "E0001.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 3, "E0001.Z80", errors);
@@ -41,6 +41,16 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 16, "E0001.Z80", errors);
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 18, "E0001.Z80", errors);
+            
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 20, "E0001.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 21, "E0001.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 25, "E0001.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 23, "E0001.Z80", errors);
+
+            Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 20).FirstOrDefault().ErrorMessage.IndexOf("ASCII") != -1);
+            Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 21).FirstOrDefault().ErrorMessage.IndexOf("ASCII") != -1);
+            Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 25).FirstOrDefault().ErrorMessage.IndexOf("ASCII") != -1);
+            Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 23).FirstOrDefault().ErrorMessage.IndexOf("ƒ‰ƒxƒ‹") != -1);
         }
 
         [TestMethod]

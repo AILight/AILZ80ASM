@@ -24,6 +24,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemAddressORG Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemAddressORG);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternORG, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {

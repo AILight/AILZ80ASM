@@ -139,7 +139,7 @@ namespace AILZ80ASM.Assembler
             // 処理できないエラー
             [ErrorCodeEnum.E0000] = "処理できないエラー。開発者にお伝えください。{0}",
 
-            [ErrorCodeEnum.E0001] = "無効な命令が指定されました。",
+            [ErrorCodeEnum.E0001] = "無効な命令が指定されました。{0}",
             [ErrorCodeEnum.E0002] = "ビット変換で有効桁数をオーバーしました。[指定ビット数:{0}, 指定値{1}]",
             [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
             [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。[{0}]",

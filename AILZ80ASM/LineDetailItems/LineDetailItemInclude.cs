@@ -59,6 +59,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemInclude Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemInclude);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternInclude, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {

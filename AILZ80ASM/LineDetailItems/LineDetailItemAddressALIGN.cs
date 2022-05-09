@@ -23,6 +23,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemAddressALIGN Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemAddressALIGN);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternALIGN, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
