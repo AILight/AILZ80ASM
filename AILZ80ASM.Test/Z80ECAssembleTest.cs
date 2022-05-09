@@ -516,5 +516,76 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2009, 4, "E2009.Z80", errors);
         }
 
+        [TestMethod]
+        public void TestER_E2101()
+        {
+            var errors = Assemble("E2101.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 2);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2101, 2, "E2101.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2101, 3, "E2101.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_E2103()
+        {
+            var errors = Assemble("E2103.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2103, 2, "E2103.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_E2104()
+        {
+            var errors = Assemble("E2104.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 2, "E2104.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_E2105()
+        {
+            var errors = Assemble("E2105.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2105, 5, "E2105.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_E2106()
+        {
+            var errors = Assemble("E2106.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2106, 2, "E2106.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_E2107()
+        {
+            var errors = Assemble("E2107.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2107, 2, "E2107.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_E2108()
+        {
+            var errors = Assemble("E2108.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 2);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2108, 3, "E2108.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2108, 4, "E2108.Z80", errors);
+        }
     }
 }

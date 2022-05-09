@@ -36,7 +36,11 @@ namespace AILZ80ASM.LineDetailItems
 
                 var charMap = matched.Groups["Charmap"].Value;
                 var filePath = matched.Groups["Filename"].Value;
-                if (!string.IsNullOrEmpty(filePath))
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, "");
+                }
+                else
                 {
                     if (!filePath.StartsWith("\"") ||
                         !filePath.EndsWith("\""))
@@ -65,21 +69,7 @@ namespace AILZ80ASM.LineDetailItems
                     }
                     catch (CharMapAlreadyDefinedException ex)
                     {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, ex.MapName);
-                    }
-                }
-                else
-                {
-                    if (!asmLoad.CharMapConverter_IsContains(charMap))
-                    {
-                        try
-                        {
-                            asmLoad.CharMapConverter_ReadCharMapFromResource(charMap);
-                        }
-                        catch (FileNotFoundException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2102, ex.Message);
-                        }
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2108, ex.MapName);
                     }
                 }
 

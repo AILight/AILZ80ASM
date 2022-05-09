@@ -69,7 +69,7 @@ namespace AILZ80ASM.Assembler
 
             // CharMap
             E2101,
-            E2102,
+            //E2102,
             E2103,
             E2104,
             E2105,
@@ -197,7 +197,7 @@ namespace AILZ80ASM.Assembler
 
             // CharMap
             [ErrorCodeEnum.E2101] = "CharMap ファイルが見つかりませんでした。[{0}]",
-            [ErrorCodeEnum.E2102] = "CharMap 内蔵ファイルが見つかりませんでした。[{0}]",
+            //[ErrorCodeEnum.E2102] = "CharMap 内蔵ファイルが見つかりませんでした。[{0}]",
             [ErrorCodeEnum.E2103] = "CharMap ファイルの指定が間違っています。\"\"で囲って下さい。[{0}]",
             [ErrorCodeEnum.E2104] = "CharMap ファイルの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E2105] = "CharMap 変換テーブルに値が見つかりませんでした。[{0}]",

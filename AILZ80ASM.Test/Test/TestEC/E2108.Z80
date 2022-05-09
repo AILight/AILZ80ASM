@@ -1,0 +1,4 @@
+﻿
+	CharMap @TEST, "./Test/TestEC/E2108.CRP"
+	CharMap @test, "./Test/TestEC/E2108.CRP"
+	CharMap @SJIS, "./Test/TestEC/E2108.CRP"
