@@ -410,5 +410,27 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 12, "E1024.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 22, "E1024.Z80", errors);
         }
+
+        [TestMethod]
+        public void TestER_E1031()
+        {
+            var errors = Assemble("E1031.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 2, "E1031.Z80", errors);
+            
+            Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 2).FirstOrDefault().ErrorMessage.IndexOf("ƒGƒ‰[") != -1);
+        }
+
+        [TestMethod]
+        public void TestER_E1032()
+        {
+            var errors = Assemble("E1032.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1032, 2, "E1032.Z80", errors);
+        }
     }
 }
