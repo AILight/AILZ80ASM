@@ -57,13 +57,15 @@ namespace AILZ80ASM.Assembler
             E1032,
 
             // Include
-            E2001,
+            //E2001,
             E2002,
             E2003,
             E2004,
             E2005,
             E2006,
             E2007,
+            E2008,
+            E2009,
 
             // CharMap
             E2101,
@@ -183,13 +185,15 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E1032] = "#ERRORにラベルは設定できません。",
 
             // Include
-            [ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",
+            //[ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",
             [ErrorCodeEnum.E2002] = "Include ファイルが存在しませんでした。[{0}]",
             [ErrorCodeEnum.E2003] = "Include 既に読み込み済みのファイルです。[{0}]",
             [ErrorCodeEnum.E2004] = "Include 開始アドレスの指定が間違っています。",
             [ErrorCodeEnum.E2005] = "Include 長さの指定が間違っています。",
             [ErrorCodeEnum.E2006] = "Include 開始アドレスがファイルの長さを超えています。",
-            [ErrorCodeEnum.E2007] = "Include にはラベルを指定できません。",
+            [ErrorCodeEnum.E2007] = "Include ラベルは設定できません。",
+            [ErrorCodeEnum.E2008] = "Include ファイルタイプには、TEXTかBINARYを指定してください。",
+            [ErrorCodeEnum.E2009] = "Include ファイルタイプ:TEXTでは、開始位置、長さの指定は出来ません。",
 
             // CharMap
             [ErrorCodeEnum.E2101] = "CharMap ファイルが見つかりませんでした。[{0}]",

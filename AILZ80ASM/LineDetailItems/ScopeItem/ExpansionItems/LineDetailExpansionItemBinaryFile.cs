@@ -35,15 +35,24 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             base.PreAssemble(ref asmAddress, asmLoad);
 
             var fileSize = (int)FileInfo.Length;
-            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : (int)AIMath.Calculation(FileStart, asmLoad).ConvertTo<UInt32>();
+            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : AIMath.Calculation(FileStart, asmLoad).ConvertTo<int>();
             fileSize -= fileStart;
+
+            if (fileStart < 0)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2004);
+            }
 
             if (fileSize < 0)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2006);
             }
 
-            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : (int)AIMath.Calculation(FileLength, asmLoad).ConvertTo<UInt32>();
+            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : AIMath.Calculation(FileLength, asmLoad).ConvertTo<int>();
+            if (readLength < 0)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2005);
+            }
             if (readLength > fileSize)
             {
                 readLength = fileSize;
@@ -52,7 +61,14 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             _Bin = new byte[readLength];
 
             using var fileStream = FileInfo.OpenRead();
-            fileStream.Seek(fileStart, SeekOrigin.Begin);
+            try
+            {
+                fileStream.Seek(fileStart, SeekOrigin.Begin);
+            }
+            catch
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2004);
+            }
             fileStream.Read(_Bin, 0, readLength);
 
             Length = new AsmLength(_Bin.Length);

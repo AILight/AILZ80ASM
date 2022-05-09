@@ -75,7 +75,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Conditional_Label.Z80");
             Assert.AreEqual(errors.Length, 4);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1021, 5, "Conditional_Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 5, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 9, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 14, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 16, "Conditional_Label.Z80", errors);

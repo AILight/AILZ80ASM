@@ -80,9 +80,21 @@ namespace AILZ80ASM.LineDetailItems
                 var fileInfo = new FileInfo(filename);
                 var fileType = LineDetailItemInclude.FileTypeEnum.Text;
 
-                if ((new[] { "B", "Binary" }).Any(m => string.Compare(m, fileTypeString, true) == 0))
+                if (string.IsNullOrEmpty(fileTypeString) || (new[] { "T", "Text" }).Any(m => string.Compare(m, fileTypeString, true) == 0))
+                {
+                    fileType = LineDetailItemInclude.FileTypeEnum.Text;
+                    if (!string.IsNullOrEmpty(startAddressString) || !string.IsNullOrEmpty(lengthString))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2009);
+                    }
+                }
+                else if ((new[] { "B", "Binary" }).Any(m => string.Compare(m, fileTypeString, true) == 0))
                 {
                     fileType = LineDetailItemInclude.FileTypeEnum.Binary;
+                }
+                else
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2008);
                 }
 
                 return new LineDetailItemInclude(lineItem, fileInfo, fileType, startAddressString, lengthString, asmLoad);
