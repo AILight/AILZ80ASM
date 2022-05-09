@@ -80,13 +80,13 @@ namespace AILZ80ASM.Assembler
             // マクロ
             E3001,
             E3002,
-            E3003,
+            //E3003,
             E3004,
             E3005,
             E3006,
             E3007,
             E3008,
-            E3009,
+            //E3009,
             E3010,
 
             // ファンクション
@@ -208,13 +208,13 @@ namespace AILZ80ASM.Assembler
             // マクロ
             [ErrorCodeEnum.E3001] = "MACROに対応するEND MACRO (ENDM) が見つかりませんでした。",
             [ErrorCodeEnum.E3002] = "END MACRO (ENDM) が先に見つかりました。",
-            [ErrorCodeEnum.E3003] = "MACROが重複登録されていますので、名前解決が出来ません。",
+            //[ErrorCodeEnum.E3003] = "MACROが重複登録されていますので、名前解決が出来ません。",
             [ErrorCodeEnum.E3004] = "MACROの引数の数が一致していません。",
             [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。[{0}]",
             [ErrorCodeEnum.E3006] = "MACROでは、ローカルラベル以外は使えません。",
             [ErrorCodeEnum.E3007] = "MACROの名前が有効ではありません。",
             [ErrorCodeEnum.E3008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
-            [ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。[{0}]",
+            //[ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。[{0}]",
             [ErrorCodeEnum.E3010] = "同名のMACROが既に定義されています。",
 
             // ファンクション

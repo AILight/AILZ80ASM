@@ -159,8 +159,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Macro.Z80");
 
-            Assert.AreEqual(errors.Length, 13);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 2, "Macro.Z80", errors);
+            Assert.AreEqual(errors.Length, 12);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 17, "Macro.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 20, "Macro.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3005, 33, "Macro.Z80", errors);

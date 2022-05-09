@@ -1,0 +1,11 @@
+﻿
+		TEST 1
+		TEST 1, 2
+		TEST 1, 2, 3
+
+TEST	MACRO ARG1, ARG2
+
+		LD A, ARG1
+		LD B, ARG2
+
+		ENDM
