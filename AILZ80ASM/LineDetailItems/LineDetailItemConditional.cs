@@ -40,15 +40,28 @@ namespace AILZ80ASM.LineDetailItems
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // Conditionalでラベルが存在していたらエラー
-            if (elifMatched.Success || elseMatched.Success || endMatched.Success)
+            if (!string.IsNullOrEmpty(lineItem.LabelString))
             {
-                if (!string.IsNullOrEmpty(lineItem.LabelString))
+                if (elifMatched.Success || elseMatched.Success || endMatched.Success)
                 {
+                    if (endMatched.Success)
+                    {
+                        if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemConditional errorAsmLoad_LineDetailItemConditional)
+                        {
+                            errorAsmLoad_LineDetailItemConditional.ConditionalNestedCount--;
+
+                            // 条件処理が終了
+                            if (errorAsmLoad_LineDetailItemConditional.ConditionalNestedCount == 0)
+                            {
+                                asmLoad.Share.LineDetailItemForExpandItem = default;
+                            }
+                        }
+                    }
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1024);
                 }
             }
 
-            // リピート処理中
+            // 条件処理処理中
             if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemConditional asmLoad_LineDetailItemConditional)
             {
                 // 終了条件チェック
@@ -56,7 +69,7 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     asmLoad_LineDetailItemConditional.ConditionalNestedCount--;
 
-                    // リピートが終了
+                    // 条件処理が終了
                     if (asmLoad_LineDetailItemConditional.ConditionalNestedCount == 0)
                     {
                         asmLoad.Share.LineDetailItemForExpandItem = default;

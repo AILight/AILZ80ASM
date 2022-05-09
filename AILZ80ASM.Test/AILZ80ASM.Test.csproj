@@ -73,6 +73,18 @@
     <None Update="Test\TestEC\E0016.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestEC\E1024.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestEC\E1023.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestEC\E1022.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestEC\E1021.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestEC\E1015.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
