@@ -1,0 +1,8 @@
+﻿
+	REPT 0
+		XOR A
+	ENDM
+
+	REPT -5
+		XOR A
+	ENDM

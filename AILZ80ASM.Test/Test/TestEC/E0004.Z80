@@ -36,7 +36,7 @@ LABEL_3		equ 3/0
 				XOR A
 			ENDM
 
-			REPT 8, 20/0
+			REPT 8 LAST 20/0
 				XOR A
 			ENDM
 

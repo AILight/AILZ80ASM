@@ -166,11 +166,11 @@ namespace AILZ80ASM.Assembler
             //[ErrorCodeEnum.E9999] = $"オフセット値の範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
 
             // リピート
-            [ErrorCodeEnum.E1011] = "REPEATに対応するEND REPEATが見つかりませんでした。",
-            [ErrorCodeEnum.E1012] = "END REPEATが先に見つかりました。",
-            [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。",
-            [ErrorCodeEnum.E1014] = "REPEATでは、ローカルラベルしか使えません。",
-            [ErrorCodeEnum.E1015] = "REPEATに指定した値が不正です。",
+            [ErrorCodeEnum.E1011] = "REPEAT (REPT) に対応するEND REPEAT (ENDM) が見つかりませんでした。",
+            [ErrorCodeEnum.E1012] = "END REPEAT (ENDM) が先に見つかりました。",
+            [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。負の値を指定してください。[{0}]",
+            [ErrorCodeEnum.E1014] = "REPEAT (REPT) では、ローカルラベルしか使えません。",
+            [ErrorCodeEnum.E1015] = "REPEAT (REPT) に指定した値が不正です。[{0}]",
 
             // コンディショナル
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
@@ -202,8 +202,8 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E2108] = "CharMap 既に設定済みです。[{0}]",
 
             // マクロ
-            [ErrorCodeEnum.E3001] = "MACROに対応するEND MACROが見つかりませんでした。",
-            [ErrorCodeEnum.E3002] = "END MACROが先に見つかりました。",
+            [ErrorCodeEnum.E3001] = "MACROに対応するEND MACRO (ENDM) が見つかりませんでした。",
+            [ErrorCodeEnum.E3002] = "END MACRO (ENDM) が先に見つかりました。",
             [ErrorCodeEnum.E3003] = "MACROが重複登録されていますので、名前解決が出来ません。",
             [ErrorCodeEnum.E3004] = "MACROの引数の数が一致していません。",
             [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。[{0}]",
