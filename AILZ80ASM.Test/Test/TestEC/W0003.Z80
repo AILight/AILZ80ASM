@@ -1,0 +1,10 @@
+﻿
+	LD A, (IX-128)
+	LD A, (IX+127)
+	LD A, (IX-129)
+	LD A, (IX+128)
+
+	LD A, (IY-128)
+	LD A, (IY+127)
+	LD A, (IY-129)
+	LD A, (IY+128)

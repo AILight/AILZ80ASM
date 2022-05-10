@@ -710,5 +710,40 @@ namespace AILZ80ASM.Test
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E4005, 4, "E4005.Z80", errors);
         }
+
+        [TestMethod]
+        public void TestER_W0001()
+        {
+            var errors = Assemble("W0001.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).Count(), 2);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0001, 3, "W0001.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0001, 4, "W0001.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_W0002()
+        {
+            var errors = Assemble("W0002.Z80");
+            
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0002, 4, "W0002.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_W0003()
+        {
+            var errors = Assemble("W0003.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Warning).Count(), 4);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0003, 4, "W0003.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0003, 5, "W0003.Z80", errors);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0003, 9, "W0003.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0003, 10, "W0003.Z80", errors);
+        }
     }
 }
