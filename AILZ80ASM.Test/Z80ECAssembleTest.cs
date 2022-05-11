@@ -50,7 +50,6 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 20).FirstOrDefault().ErrorMessage.IndexOf("ASCII") != -1);
             Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 21).FirstOrDefault().ErrorMessage.IndexOf("ASCII") != -1);
             Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 25).FirstOrDefault().ErrorMessage.IndexOf("ASCII") != -1);
-            Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 23).FirstOrDefault().ErrorMessage.IndexOf("ƒ‰ƒxƒ‹") != -1);
         }
 
         [TestMethod]
@@ -419,8 +418,6 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 2, "E1031.Z80", errors);
-            
-            Assert.IsTrue(errors.Where(m => m.LineItem.LineIndex == 2).FirstOrDefault().ErrorMessage.IndexOf("ƒGƒ‰[") != -1);
         }
 
         [TestMethod]
