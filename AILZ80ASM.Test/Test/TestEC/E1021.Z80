@@ -1,0 +1,7 @@
+﻿
+	#IF #TRUE
+		xor a
+	#ENDIF
+
+	#IF #TRUE
+		xor a

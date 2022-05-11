@@ -1,0 +1,9 @@
+﻿
+		LD 1, 2
+
+LD		MACRO ARG1, ARG2
+
+		LD A, ARG1
+		LD B, ARG2
+
+		ENDM

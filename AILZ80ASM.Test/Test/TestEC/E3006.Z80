@@ -1,0 +1,10 @@
+﻿
+		TEST 1, 2
+
+TEST	MACRO ARG1, ARG2
+
+		LD A, ARG1
+LABEL:
+		LD B, ARG2
+
+		ENDM

@@ -1,0 +1,4 @@
+﻿
+	REPT 5 LAST 5
+		XOR A
+	ENDM

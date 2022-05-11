@@ -51,6 +51,10 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
                 {
                     AsmLoad.AddError(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
                 }
+                catch (ErrorLineItemException ex)
+                {
+                    AsmLoad.AddError(ex.ErrorLineItem);
+                }
             }
         }
 
@@ -67,6 +71,10 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
                 catch (ErrorAssembleException ex)
                 {
                     AsmLoad.AddError(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    AsmLoad.AddError(ex.ErrorLineItem);
                 }
             }
         }
@@ -85,6 +93,10 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
                 catch (ErrorAssembleException ex)
                 {
                     AsmLoad.AddError(new ErrorLineItem(lineDetailExpansionItem.LineItem, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    AsmLoad.AddError(ex.ErrorLineItem);
                 }
             }
         }

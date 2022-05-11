@@ -12,7 +12,13 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemInvalid Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            throw new Exceptions.ErrorAssembleException(Error.ErrorCodeEnum.E0001);
+            var errorMessage = "";
+            if (!lineItem.IsCollectOperationString)
+            {
+                errorMessage = "命令にASCIIコード以外の文字が含まれています。";
+            }
+
+            throw new Exceptions.ErrorAssembleException(Error.ErrorCodeEnum.E0001, errorMessage);
         }
 
     }

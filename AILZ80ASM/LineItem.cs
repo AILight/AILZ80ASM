@@ -20,6 +20,7 @@ namespace AILZ80ASM
         // 展開情報
         public string LabelString { get; private set; }
         public string OperationString { get; private set; }
+        public bool IsCollectOperationString { get; private set; }
         public string CommentString { get; private set; }
         public LineDetailItem LineDetailItem { get; private set; }
 
@@ -34,7 +35,7 @@ namespace AILZ80ASM
 
             //展開情報作成
             //コメントを処理する
-            var indexCommnet = AIString.IndexOfSkipString(lineString, ';');
+            var indexCommnet = AIString.IndexOfSkipString(lineString, ';', 0, out var isCollectOperationString);
             var operationString = default(string);
 
             if (indexCommnet != -1)
@@ -48,6 +49,7 @@ namespace AILZ80ASM
             }
             LabelString = Label.GetLabelText(operationString);
             OperationString = operationString.Substring(LabelString.Length).Trim();
+            IsCollectOperationString = isCollectOperationString;
         }
 
         public LineItem(LineItem lineItem)
@@ -57,6 +59,7 @@ namespace AILZ80ASM
             LineIndex = lineItem.LineIndex;
             LabelString = lineItem.LabelString;
             OperationString = lineItem.OperationString;
+            IsCollectOperationString = lineItem.IsCollectOperationString;
             CommentString = lineItem.CommentString;
             LineDetailItem = lineItem.LineDetailItem;
         }

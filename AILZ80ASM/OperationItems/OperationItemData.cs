@@ -105,6 +105,26 @@ namespace AILZ80ASM.OperationItems
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
                     }
+                    catch (InvalidAIValueException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (InvalidAIMathException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (ErrorAssembleException)
+                    {
+                        throw;
+                    }
+                    catch (ErrorLineItemException)
+                    {
+                        throw;
+                    }
+                    catch (Exception)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, item.Value);
+                    }
                 }
                 else if(Regex.IsMatch(item.Value, RegexPatternDataFunction))
                 {
@@ -120,9 +140,9 @@ namespace AILZ80ASM.OperationItems
                             switch (dataType)
                             {
                                 case DataTypeEnum.db:
-                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, "(空)");
+                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, "値が指定されていません");
                                 case DataTypeEnum.dw:
-                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, "(空)");
+                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, "値が指定されていません");
                                 default:
                                     throw new NotImplementedException();
                             }
@@ -226,6 +246,22 @@ namespace AILZ80ASM.OperationItems
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
                         }
+                        catch (InvalidAIValueException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (InvalidAIMathException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (ErrorAssembleException)
+                        {
+                            throw;
+                        }
+                        catch (ErrorLineItemException)
+                        {
+                            throw;
+                        }
                         catch (Exception)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, valueString);
@@ -246,6 +282,22 @@ namespace AILZ80ASM.OperationItems
                         catch (CharMapConvertException ex)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                        }
+                        catch (InvalidAIValueException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (InvalidAIMathException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (ErrorAssembleException)
+                        {
+                            throw;
+                        }
+                        catch (ErrorLineItemException)
+                        {
+                            throw;
                         }
                         catch (Exception)
                         {

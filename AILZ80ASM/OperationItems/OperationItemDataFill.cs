@@ -53,10 +53,10 @@ namespace AILZ80ASM.OperationItems
             switch (op1.ToUpper())
             {
                 case "DBF":
-                    returnValue = DBDWS(DataTypeEnum.dbf, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                    returnValue = DBDWF(DataTypeEnum.dbf, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 case "DWF":
-                    returnValue = DBDWS(DataTypeEnum.dwf, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                    returnValue = DBDWF(DataTypeEnum.dwf, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 default:
                     break;
@@ -74,16 +74,22 @@ namespace AILZ80ASM.OperationItems
         /// <param name="lineExpansionItem"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static OperationItemDataFill DBDWS(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        private static OperationItemDataFill DBDWF(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemDataFill);
             var ops = AIName.ParseArguments(op2);
             var valueString = "0";
             var isDefaultValueClear = true;
+            var errorCode = dataType switch
+            {
+                DataTypeEnum.dbf => Error.ErrorCodeEnum.E0024,
+                DataTypeEnum.dwf => Error.ErrorCodeEnum.E0025,
+                _ => throw new NotImplementedException()
+            };
 
             if (ops.Length == 0 || ops.Length > 2)
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0012);
+                throw new ErrorAssembleException(errorCode, "引数の指定が間違っています");
             }
             if (ops.Length == 2)
             {
@@ -92,6 +98,11 @@ namespace AILZ80ASM.OperationItems
             }
 
             var count = AIMath.Calculation(ops[0], asmLoad).ConvertTo<int>();
+            if (count < 0)
+            {
+                throw new ErrorAssembleException(errorCode, "負の値は指定できません");
+            }
+
             var valuesStrings = Enumerable.Range(0, count).Select(_ => valueString).ToArray();
 
             returnValue = new OperationItemDataFill()
@@ -112,9 +123,9 @@ namespace AILZ80ASM.OperationItems
             switch (DataType)
             {
                 case DataTypeEnum.dwf:
-                    foreach (var valueString in ValueStrings)
+                    try
                     {
-                        try
+                        foreach (var valueString in ValueStrings)
                         {
                             var values = AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<UInt16[]>();
                             foreach (var value in values)
@@ -134,23 +145,72 @@ namespace AILZ80ASM.OperationItems
                                 }
                             }
                         }
-                        catch (Exception)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, valueString);
-                        }
                     }
+                    catch (CharMapNotFoundException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                    }
+                    catch (CharMapConvertException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                    }
+                    catch (InvalidAIValueException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (InvalidAIMathException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (ErrorAssembleException)
+                    {
+                        throw;
+                    }
+                    catch (ErrorLineItemException)
+                    {
+                        throw;
+                    }
+                    catch (Exception)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0025, ValueStrings.FirstOrDefault());
+                    }
+
                     break;
                 case DataTypeEnum.dbf:
-                    foreach (var valueString in ValueStrings)
+                    try
                     {
-                        try
+                        foreach (var valueString in ValueStrings)
                         {
                             byteList.AddRange(AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<byte[]>());
                         }
-                        catch (Exception)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, valueString);
-                        }
+                    }
+                    catch (CharMapNotFoundException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                    }
+                    catch (CharMapConvertException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                    }
+                    catch (InvalidAIValueException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (InvalidAIMathException ex)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                    }
+                    catch (ErrorAssembleException)
+                    {
+                        throw;
+                    }
+                    catch (ErrorLineItemException)
+                    {
+                        throw;
+                    }
+                    catch (Exception)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0024, ValueStrings.FirstOrDefault());
                     }
                     break;
                 default:

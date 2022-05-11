@@ -34,8 +34,13 @@ namespace AILZ80ASM.LineDetailItems
         {
         }
 
-        public static LineDetailItem Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemMacro Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemMacro);
+            }
+
             if (string.IsNullOrEmpty(lineItem.OperationString))
             {
                 return default;
@@ -52,8 +57,14 @@ namespace AILZ80ASM.LineDetailItems
             var foundItem = Macro.Find(LineItem, AsmLoad);
             if (foundItem == default)
             {
+                var errorMessage = "";
+                if (LineItem.LineString.Length > 0 && string.IsNullOrEmpty(LineItem.LabelString) && !char.IsWhiteSpace(LineItem.LineString[0]) && char.IsAscii(LineItem.LineString[0]))
+                {
+                    errorMessage = "ラベルとして指定する場合には、末尾に:が必要です。";
+                }
+
                 // マクロが見つからないケースは、エラーとする
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001);
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, errorMessage);
             }
 
             this.LineDetailScopeItems = foundItem.Macro.Expansion(LineItem, foundItem.Arguments, AsmLoad, ref asmAddress);

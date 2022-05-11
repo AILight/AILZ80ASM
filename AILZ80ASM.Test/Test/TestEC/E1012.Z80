@@ -1,0 +1,6 @@
+﻿
+	END REPEAT   ;ENDMだとMacro側が先に該当するのでこちらにする
+
+	REPT 5
+		XOR A
+	ENDM

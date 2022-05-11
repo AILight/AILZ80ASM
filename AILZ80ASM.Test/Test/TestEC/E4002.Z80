@@ -1,0 +1,4 @@
+﻿
+		LD A, 0123(-1)
+
+Function 0123(value) => value < 0 ? value * -1 : value

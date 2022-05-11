@@ -105,7 +105,7 @@ namespace AILZ80ASM.Assembler
 
             this.Scope.Restore(asmLoad.Scope);
         }
-
+        
         /// <summary>
         /// 新しいローカルスコープを作成
         /// </summary>
@@ -113,30 +113,7 @@ namespace AILZ80ASM.Assembler
         /// <param name="labelName"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        public int CreateLocalScope(string globalLabelName, string labelName, Func<AsmLoad, int> func)
-        {
-            var asmLoad = new AsmLoad(this.AssembleOption, this.ISA)
-            {
-                Share = this.Share,
-            }; 
-            asmLoad.Scope = this.Scope.CreateLocalScope();
-            asmLoad.Scope.GlobalLabelName = globalLabelName;
-            asmLoad.Scope.LabelName = labelName;
-            asmLoad.Scope.GlobalLabelNames.Add(globalLabelName);
-            asmLoad.ParentAsmLoad = this;
-
-
-            return func.Invoke(asmLoad);
-        }
-
-        /// <summary>
-        /// 新しいローカルスコープを作成
-        /// </summary>
-        /// <param name="globalLabelName"></param>
-        /// <param name="labelName"></param>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        public AIValue CreateLocalScope2(string globalLabelName, string labelName, Func<AsmLoad, AIValue> func)
+        public AIValue CreateLocalScope(string globalLabelName, string labelName, Func<AsmLoad, AIValue> func)
         {
             var asmLoad = new AsmLoad(this.AssembleOption, this.ISA)
             {
@@ -147,7 +124,6 @@ namespace AILZ80ASM.Assembler
             asmLoad.Scope.LabelName = labelName;
             asmLoad.Scope.GlobalLabelNames.Add(globalLabelName);
             asmLoad.ParentAsmLoad = this;
-
 
             return func.Invoke(asmLoad);
         }
@@ -164,7 +140,7 @@ namespace AILZ80ASM.Assembler
             {
                 action.Invoke(localAsmLoad);
 
-                return 0;
+                return new AIValue(0);
             });
         }
 

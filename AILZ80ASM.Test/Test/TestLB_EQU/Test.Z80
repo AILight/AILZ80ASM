@@ -91,3 +91,10 @@ LABEL_HL	equ "HL"
 		DS 3
 		ld A, LABEL_A
 		ld hl, LABEL_HL
+
+TEST.1CH		equ	00000H
+TEST.2CH		equ	00001H
+TEST.3CH		equ	00002H
+TEST.0			equ	00003H
+TEST.A			equ	00004H
+TEST.LD			equ	00005H

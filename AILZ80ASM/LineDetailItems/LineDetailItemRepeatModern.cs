@@ -21,6 +21,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemRepeatModern Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemRepeatModern);
+            }
+
             return (LineDetailItemRepeatModern)Create(new LineDetailItemRepeatModern(lineItem, asmLoad), RegexPatternRepeatFullStart, RegexPatternRepeatSimpleStart, RegexPatternRepeatEnd, asmLoad);
         }
     }

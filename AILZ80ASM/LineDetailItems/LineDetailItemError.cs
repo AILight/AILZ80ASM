@@ -18,6 +18,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemError Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemError);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternError, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // 開始条件チェック

@@ -72,7 +72,7 @@ namespace AILZ80ASM.LineDetailItems
                         asmLoad.Share.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(asmLoad_LineDetailItemMacro.LineItem, Error.ErrorCodeEnum.E3010));
                     }
 
-                    if (asmLoad.Share.LineDetailItemForExpandItem.Errors.Count == 0)
+                    if (asmLoad.Share.LineDetailItemForExpandItem.Errors.Where(m => m.ErrorCode != Error.ErrorCodeEnum.E3006).Count() == 0)
                     {
                         asmLoad.AddMacro(macro);
                     }

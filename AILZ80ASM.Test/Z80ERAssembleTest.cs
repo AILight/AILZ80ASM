@@ -45,7 +45,7 @@ namespace AILZ80ASM.Test
             var errors = Assemble("CharMap.Z80");
 
             Assert.AreEqual(errors.Length, 11);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2102, 2, "CharMap.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2101, 2, "CharMap.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2101, 6, "CharMap.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 7, "CharMap.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 8, "CharMap.Z80", errors);
@@ -75,7 +75,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Conditional_Label.Z80");
             Assert.AreEqual(errors.Length, 4);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1021, 5, "Conditional_Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 5, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 9, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 14, "Conditional_Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1024, 16, "Conditional_Label.Z80", errors);
@@ -88,7 +88,7 @@ namespace AILZ80ASM.Test
 
             Assert.AreEqual(errors.Length, 5);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0021, 3, "DBDW.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0022, 4, "DBDW.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 4, "DBDW.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0022, 5, "DBDW.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2106, 6, "DBDW.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2105, 7, "DBDW.Z80", errors);
@@ -159,8 +159,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Macro.Z80");
 
-            Assert.AreEqual(errors.Length, 13);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 2, "Macro.Z80", errors);
+            Assert.AreEqual(errors.Length, 12);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 17, "Macro.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3006, 20, "Macro.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3005, 33, "Macro.Z80", errors);

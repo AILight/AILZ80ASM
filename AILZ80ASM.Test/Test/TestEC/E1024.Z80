@@ -1,0 +1,23 @@
+﻿
+	 #IF #TRUE
+		xor a
+LB1: #ELIF #FALSE
+		or a
+	 #ENDIF
+
+	 #IF #TRUE
+		xor a
+	 #ELIF #FALSE
+		or a
+LB2: #ELSE
+		and a
+	 #ENDIF
+
+	 #IF #TRUE
+		xor a
+	 #ELIF #FALSE
+		or a
+	 #ELSE
+		and a
+LB3: #ENDIF
+

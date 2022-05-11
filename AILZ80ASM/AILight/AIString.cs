@@ -68,6 +68,20 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
+        /// 文字列を抜かして有効な命令文字かを判定
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool IsCorrectOperation(string target)
+        {
+            var result = default(bool);
+
+            IndexOfAnySkipString(target, new char[] { }, 0, out result);
+
+            return result;
+        }
+
+        /// <summary>
         /// 文字列からCharMap情報を取得する
         /// </summary>
         /// <param name="target"></param>
@@ -109,7 +123,20 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static int IndexOfSkipString(string target, char value, int startIndex)
         {
-            return IndexOfAnySkipString(target, new []{ value }, startIndex);
+            return IndexOfAnySkipString(target, new []{ value }, startIndex, out var _);
+        }
+
+        /// <summary>
+        /// 文字列をスキップしてその中でvalueの文字位置を調べる
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="value"></param>
+        /// <param name="startIndex"></param>
+        /// <param name="isAllAsciiChars"></param>
+        /// <returns></returns>
+        public static int IndexOfSkipString(string target, char value, int startIndex, out bool isAllAsciiChars)
+        {
+            return IndexOfAnySkipString(target, new[] { value }, startIndex, out isAllAsciiChars);
         }
 
         /// <summary>
@@ -120,7 +147,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static int IndexOfAnySkipString(string target, char[] anyOf)
         {
-            return IndexOfAnySkipString(target, anyOf, 0);
+            return IndexOfAnySkipString(target, anyOf, 0, out var _);
         }
 
         /// <summary>
@@ -129,22 +156,20 @@ namespace AILZ80ASM.AILight
         /// <param name="target"></param>
         /// <param name="anyOf"></param>
         /// <param name="startIndex"></param>
+        /// <param name="IsAllAsciiChars">全ての文字がASCII文字か？</param>
         /// <returns></returns>
-        public static int IndexOfAnySkipString(string target, char[] anyOf, int startIndex)
+        public static int IndexOfAnySkipString(string target, char[] anyOf, int startIndex, out bool isAllAsciiChars)
         {
             var skip = false;
             var mode = 0;
             var result = -1;
+            isAllAsciiChars = true;
 
             for (var index = startIndex; index < target.Length; index++)
             {
                 if (skip)
                 {
                     skip = false;
-                }
-                else if (mode == 0 && anyOf.Any(m => m == target[index]))
-                {
-                    return index;
                 }
                 else if (target[index] == '\'' && (mode == 0 || mode == 1))
                 {
@@ -171,6 +196,14 @@ namespace AILZ80ASM.AILight
                 else if (mode > 0 && target[index] == '\\')
                 {
                     skip = true;
+                }
+                else if (mode == 0)
+                {
+                    if (anyOf.Any(m => m == target[index]))
+                    {
+                        return index;
+                    }
+                    isAllAsciiChars &= char.IsAscii(target[index]);
                 }
             }
 
