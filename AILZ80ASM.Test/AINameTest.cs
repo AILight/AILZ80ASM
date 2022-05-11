@@ -128,19 +128,126 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void ReservedWordTest()
         {
-            var reservedWords = new[] { "LD" };
+            var reservedWords = new[] { "LD", "A" };
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
             foreach (var reservedWord in reservedWords)
             {
                 Assert.IsFalse(AIName.ValidateCharMapName(reservedWord, asmLoad));
-                // Assert.IsFalse(AIName.ValidateFunctionName(reservedWord, asmLoad)); 対応を決めてから有効にする
-                Assert.IsFalse(AIName.ValidateFunctionArgument(reservedWord, asmLoad));
+                Assert.IsTrue(AIName.ValidateFunctionName(reservedWord, asmLoad));
+                Assert.IsTrue(AIName.ValidateFunctionArgument(reservedWord, asmLoad));
                 Assert.IsFalse(AIName.ValidateMacroName(reservedWord, asmLoad));
                 Assert.IsFalse(AIName.ValidateMacroArgument(reservedWord, asmLoad));
                 Assert.IsFalse(AIName.DeclareLabelValidate(reservedWord, asmLoad));
             }
 
+        }
+
+        [TestMethod]
+        public void DeclareLabelValidateTest()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var label = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
+            asmLoad.AddLabel(label);
+
+            Assert.IsTrue(AIName.DeclareLabelValidate("ABC:", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate("A_B_C:", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate("ABC.DEF", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate(".A", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate(".0", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate("ABC.0", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate("ABC.0:", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate(".ABC:", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate(".ABC::", asmLoad));
+            Assert.IsTrue(AIName.DeclareLabelValidate("NAME_SPACE_DEFAULT.ABC.DEF", asmLoad));
+
+            Assert.IsFalse(AIName.DeclareLabelValidate("$0000:", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("0000:", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("LD:", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("ABC!:", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("ABC.0!0", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("A!BC.0", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("NAME_SPACE_DEFAULT.A!B", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("NAME_SPACE_DEFAULT.A!B.0", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("NAME_SPACE_DEFAULT.AB.0!0", asmLoad));
+            Assert.IsFalse(AIName.DeclareLabelValidate("NAME_SPACE_DEFAULT.A.B.C", asmLoad));
+        }
+
+        [TestMethod]
+        public void ValidateMacroNameTest()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var label = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
+            asmLoad.AddLabel(label);
+
+            Assert.IsTrue(AIName.ValidateMacroName("ABC", asmLoad));
+            Assert.IsTrue(AIName.ValidateMacroName("ABC()", asmLoad));
+            Assert.IsTrue(AIName.ValidateMacroName("ABC_DEF", asmLoad));
+            Assert.IsTrue(AIName.ValidateMacroName("ABC_DEF()", asmLoad));
+
+            Assert.IsFalse(AIName.ValidateMacroName("0ABC", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroName("ABC!", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroName("ABC:", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroName("$0000", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroName("0H", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroName("LD", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroName("AB.CD", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroName("AB:", asmLoad));
+        }
+
+        [TestMethod]
+        public void ValidateMacroArgumentTest()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var label = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
+            asmLoad.AddLabel(label);
+
+            Assert.IsTrue(AIName.ValidateMacroArgument("ABC", asmLoad));
+            Assert.IsTrue(AIName.ValidateMacroArgument("A_B_C", asmLoad));
+            Assert.IsTrue(AIName.ValidateMacroArgument("A_B_C0", asmLoad));
+
+            Assert.IsFalse(AIName.ValidateMacroArgument("LD", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroArgument("A", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroArgument("A!B", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroArgument("AB.CD", asmLoad));
+            Assert.IsFalse(AIName.ValidateMacroArgument("AB:", asmLoad));
+        }
+
+        [TestMethod]
+        public void ValidateFunctionNameTest()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var label = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
+            asmLoad.AddLabel(label);
+
+            Assert.IsTrue(AIName.ValidateFunctionName("ABC", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionName("A_B_C", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionName("A_B_C0", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionName("LD", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionName("A", asmLoad));
+
+            Assert.IsFalse(AIName.ValidateFunctionName("A!B", asmLoad));
+            Assert.IsFalse(AIName.ValidateFunctionName("FUNC()", asmLoad));
+            Assert.IsFalse(AIName.ValidateFunctionName("AB.CD", asmLoad));
+            Assert.IsFalse(AIName.ValidateFunctionName("AB:", asmLoad));
+        }
+
+        [TestMethod]
+        public void ValidateFunctionArgumentTest()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var label = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
+            asmLoad.AddLabel(label);
+
+            Assert.IsTrue(AIName.ValidateFunctionArgument("ABC", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionArgument("A_B_C", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionArgument("A_B_C0", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionArgument("LD", asmLoad));
+            Assert.IsTrue(AIName.ValidateFunctionArgument("A", asmLoad));
+
+            Assert.IsFalse(AIName.ValidateFunctionArgument("A!B", asmLoad));
+            Assert.IsFalse(AIName.ValidateFunctionArgument("AB.CD", asmLoad));
+            Assert.IsFalse(AIName.ValidateFunctionArgument("AB:", asmLoad));
         }
     }
 }

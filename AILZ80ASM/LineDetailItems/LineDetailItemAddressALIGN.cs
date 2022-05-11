@@ -23,6 +23,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemAddressALIGN Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemAddressALIGN);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternALIGN, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
@@ -48,7 +53,7 @@ namespace AILZ80ASM.LineDetailItems
             }
             var align = aiValue.ConvertTo<UInt16>();
 
-            if ((align & (align - 1)) != 0)
+            if (align <= 0 || (align & (align - 1)) != 0)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
             }

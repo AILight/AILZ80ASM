@@ -67,6 +67,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, ex));
                 }
+                catch (ErrorLineItemException ex)
+                {
+                    AssembleLoad.AddError(ex.ErrorLineItem);
+                }
                 catch (Exception ex)
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
@@ -91,6 +95,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, ex));
                 }
+                catch (ErrorLineItemException ex)
+                {
+                    AssembleLoad.AddError(ex.ErrorLineItem);
+                }
                 catch (Exception ex)
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
@@ -109,6 +117,14 @@ namespace AILZ80ASM
                     try
                     {
                         asmResults.AddRange(item.BinResults);
+                    }
+                    catch (ErrorAssembleException ex)
+                    {
+                        AssembleLoad.AddError(new ErrorLineItem(item, ex));
+                    }
+                    catch (ErrorLineItemException ex)
+                    {
+                        AssembleLoad.AddError(ex.ErrorLineItem);
                     }
                     catch (Exception ex)
                     {
@@ -138,6 +154,14 @@ namespace AILZ80ASM
                     {
                         lists.AddRange(item.Lists);
                     }
+                    catch (ErrorAssembleException ex)
+                    {
+                        AssembleLoad.AddError(new ErrorLineItem(item, ex));
+                    }
+                    catch (ErrorLineItemException ex)
+                    {
+                        AssembleLoad.AddError(ex.ErrorLineItem);
+                    }
                     catch (Exception ex)
                     {
                         AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
@@ -163,6 +187,10 @@ namespace AILZ80ASM
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, ex));
                 }
+                catch (ErrorLineItemException ex)
+                {
+                    AssembleLoad.AddError(ex.ErrorLineItem);
+                }
                 catch (Exception ex)
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
@@ -181,6 +209,10 @@ namespace AILZ80ASM
                 catch (ErrorAssembleException ex)
                 {
                     AssembleLoad.AddError(new ErrorLineItem(item, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    AssembleLoad.AddError(ex.ErrorLineItem);
                 }
                 catch (Exception ex)
                 {

@@ -55,6 +55,10 @@ namespace AILZ80ASM.Assembler
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E3008);
             }
+            if (arguments.Length != this.Args.Length)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E3004);
+            }
 
             // Macro展開用のAsmLoadを作成する
             var guid = $"{Guid.NewGuid():N}";
@@ -64,19 +68,15 @@ namespace AILZ80ASM.Assembler
             {
                 if (arguments.Length > 0)
                 {
-                    if (arguments.Length != this.Args.Length)
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E3004);
-                    }
 
                     // 引数の割り当て
                     foreach (var index in Enumerable.Range(0, arguments.Length))
                     {
-                        var argumentLabel = new LabelArg(arguments[index], asmLoad);
+                        var argumentLabel = new LabelArg(arguments[index], asmLoad, lineItem, asmLoad);
                         var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalidate ?
                                             argumentLabel.LabelFullName : arguments[index];
 
-                        var label = new LabelArg(this.Args[index], argumentValue, localAsmLoad);
+                        var label = new LabelArg(this.Args[index], argumentValue, localAsmLoad, lineItem, asmLoad);
                         if (label.Invalidate)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
@@ -103,6 +103,10 @@ namespace AILZ80ASM.Assembler
                     {
                         asmLoad.AddError(new ErrorLineItem(localLineItem, ex));
                     }
+                    catch (ErrorLineItemException ex)
+                    {
+                        asmLoad.AddError(ex.ErrorLineItem);
+                    }
 
                 }
                 lineItemList.AddRange(lineItems);
@@ -122,6 +126,10 @@ namespace AILZ80ASM.Assembler
                 catch (ErrorAssembleException ex)
                 {
                     asmLoad.AddError(new ErrorLineItem(item, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    asmLoad.AddError(ex.ErrorLineItem);
                 }
             }
 

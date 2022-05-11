@@ -119,7 +119,7 @@ namespace AILZ80ASM.Test
             asmAddress.Output = 0x8000;
 
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            asmLoad.AddLabel(new LabelAdr("[NS_Main]", asmLoad));
+            asmLoad.AddLabel(new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad));
             var label = new LabelAdr("LB", "0xAA01", asmLoad);
 
             asmLoad.AddLabel(label);
@@ -197,7 +197,7 @@ namespace AILZ80ASM.Test
 
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
-            asmLoad.AddLabel(new LabelAdr("[NS_Main]", "", asmLoad));
+            asmLoad.AddLabel(new LabelAdr("[NAME_SPACE_DEFAULT]", "", asmLoad));
             {
                 var label = new LabelAdr("LB", "0xAA02", asmLoad);
                 asmLoad.AddLabel(label);
@@ -278,7 +278,7 @@ namespace AILZ80ASM.Test
                 asmAddress.Output = 0x8000;
 
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                asmLoad.AddLabel(new LabelAdr("[NS_Main]", "", asmLoad));
+                asmLoad.AddLabel(new LabelAdr("[NAME_SPACE_DEFAULT]", "", asmLoad));
 
                 var label = new LabelAdr("LB", "0xAA02", asmLoad);
                 asmLoad.AddLabel(label);

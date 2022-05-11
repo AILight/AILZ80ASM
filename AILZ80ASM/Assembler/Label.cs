@@ -31,6 +31,7 @@ namespace AILZ80ASM.Assembler
             Equ,
             Adr,
             Arg,
+            FuncArg,
         }
 
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\](\s+|$)";
@@ -99,12 +100,33 @@ namespace AILZ80ASM.Assembler
                 DataType = DataTypeEnum.None;
             }
 
-
-            if (!AIName.DeclareLabelValidate(labelName, asmLoad))
+            switch (labelType)
             {
-                DataType = DataTypeEnum.Invalidate;
+                case LabelTypeEnum.Equ:
+                case LabelTypeEnum.Adr:
+                    if (!AIName.DeclareLabelValidate(labelName, asmLoad))
+                    {
+                        DataType = DataTypeEnum.Invalidate;
+                    }
+                    break;
+                case LabelTypeEnum.Arg:
+                    if (!AIName.ValidateMacroArgument(labelName, asmLoad))
+                    {
+                        DataType = DataTypeEnum.Invalidate;
+                    }
+                    break;
+                case LabelTypeEnum.FuncArg:
+                    if (!AIName.ValidateFunctionArgument(labelName, asmLoad))
+                    {
+                        DataType = DataTypeEnum.Invalidate;
+                    }
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
-            else
+
+
+            if (DataType != DataTypeEnum.Invalidate)
             {
                 if (labelName.StartsWith('[') && labelName.EndsWith(']'))
                 {
@@ -262,7 +284,12 @@ namespace AILZ80ASM.Assembler
         /// <summary>
         /// ラベルの値を計算する
         /// </summary>
-        public void Calculation()
+        public virtual void Calculation()
+        {
+            InternalCalculation(AsmLoad);
+        }
+
+        protected void InternalCalculation(AsmLoad asmLoad)
         {
             if (DataType != DataTypeEnum.None)
             {
@@ -278,7 +305,7 @@ namespace AILZ80ASM.Assembler
             {
                 asmAddress = LineDetailItem.Address;
             }
-            Value = AIMath.Calculation(ValueString, AsmLoad, asmAddress);
+            Value = AIMath.Calculation(ValueString, asmLoad, asmAddress);
             DataType = DataTypeEnum.Value;
         }
 

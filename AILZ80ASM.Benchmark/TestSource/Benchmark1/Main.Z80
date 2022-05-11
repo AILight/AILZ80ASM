@@ -11,7 +11,7 @@ MAIN:
 
         ; スタックポインターを設定
         ld      sp, SP_WORK_START
-        jp      NS_MAIN.START_GAME
+        jp      NAME_SPACE_DEFAULT.START_GAME
 
         include "Screen.z80"
         include "Interupt.z80"
@@ -19,7 +19,7 @@ MAIN:
         include "Dummy1.z80"
         include "Dummy2.z80"
 
-[NS_MAIN]
+[NAME_SPACE_DEFAULT]
 
 START_GAME:
         

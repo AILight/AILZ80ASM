@@ -90,6 +90,16 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void IsCorrectOperation()
+        {
+            Assert.IsTrue(AIString.IsCorrectOperation("LD A, (123)"));
+            Assert.IsTrue(AIString.IsCorrectOperation("DB 123, \"全角\", 123"));
+            Assert.IsFalse(AIString.IsCorrectOperation("LD A, （123)"));
+            Assert.IsFalse(AIString.IsCorrectOperation("LD A, (123）"));
+            Assert.IsFalse(AIString.IsCorrectOperation("LD A,　‘(123）"));
+        }
+
+        [TestMethod]
         public void EscapeSequenceTest()
         {
             Assert.AreEqual(AIString.EscapeSequence("\\'"), "'");
@@ -234,10 +244,11 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(AIString.IndexOfAnySkipString("LD A,'\0'  ; ABC", new[] { ';', '(' }), 10);
 
             // 開始位置のテスト
-            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 0), 1);
-            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 1), 1);
-            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 3), 15);
+            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 0, out var _), 1);
+            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 1, out var _), 1);
+            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 3, out var _), 15);
         }
+
 
     }
 }

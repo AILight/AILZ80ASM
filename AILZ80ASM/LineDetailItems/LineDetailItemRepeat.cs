@@ -97,9 +97,10 @@ namespace AILZ80ASM.LineDetailItems
 
                     return lineDetailItemRepeat;
                 }
-                else if (string.Compare(lineItem.OperationString, "REPEAT") == 0)
+                else if (string.Compare(lineItem.OperationString, "REPEAT") == 0 ||
+                         string.Compare(lineItem.OperationString, "REPT") == 0)
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1015);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1015, "");
                 }
             }
 
@@ -113,9 +114,14 @@ namespace AILZ80ASM.LineDetailItems
             // リピート数が設定されているものを処理する
             if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
             {
+                var count = AIMath.Calculation(RepeatCountLabel, this.AsmLoad, asmAddress).ConvertTo<int>();
+                if (count < 0)
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1015, count);
+                }
+                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : AIMath.Calculation(RepeatLastLabel, this.AsmLoad).ConvertTo<int>();
+
                 var lineDetailScopeItems = new List<LineDetailScopeItem>();
-                var count = AIMath.Calculation(RepeatCountLabel, this.AsmLoad, asmAddress).ConvertTo<UInt16>();
-                var last = string.IsNullOrEmpty(RepeatLastLabel) ? 0 : (Int16)AIMath.Calculation(RepeatLastLabel, this.AsmLoad).ConvertTo<UInt16>();
                 var repeatLines = RepeatLines.Skip(1).SkipLast(1);
                 var lineItemList = new List<LineItem>();
 
@@ -130,7 +136,7 @@ namespace AILZ80ASM.LineDetailItems
                             var take = repeatLines.Where(m => !string.IsNullOrEmpty(m.OperationString)).Count() + last;
                             if (take <= 0 || last > 0)
                             {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013);
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013, last);
                             }
 
                             //最終ページ処理（命令部だけを削除する）
@@ -182,6 +188,10 @@ namespace AILZ80ASM.LineDetailItems
                             {
                                 AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
                             }
+                            catch (ErrorLineItemException ex)
+                            {
+                                AsmLoad.AddError(ex.ErrorLineItem);
+                            }
                         }
                         lineItemList.AddRange(lineItems);
                     });
@@ -198,6 +208,10 @@ namespace AILZ80ASM.LineDetailItems
                     catch (ErrorAssembleException ex)
                     {
                         AsmLoad.AddError(new ErrorLineItem(item, ex));
+                    }
+                    catch (ErrorLineItemException ex)
+                    {
+                        AsmLoad.AddError(ex.ErrorLineItem);
                     }
                 }
 

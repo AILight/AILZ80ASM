@@ -28,6 +28,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemEnd Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemEnd);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (asmLoad.Scope.AssembleEndFlg || matched.Success)
             {

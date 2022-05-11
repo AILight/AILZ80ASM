@@ -1,0 +1,10 @@
+﻿
+	org $8000
+	LD	C, 1
+	LD	C, 2
+	LD	C, 3
+
+	org $9000, $0002
+	LD	C, 1
+	LD	C, 2
+	LD	C, 3

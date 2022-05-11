@@ -1,0 +1,7 @@
+﻿	BIT -1,A
+	BIT 8,A
+
+	CALL $FFFF		;正常
+	CALL $FFFFFF
+
+	CP	 $FFFF

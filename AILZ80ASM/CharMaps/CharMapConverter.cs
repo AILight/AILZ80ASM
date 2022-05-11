@@ -69,6 +69,14 @@ namespace AILZ80ASM.CharMaps
             {
                 throw new CharMapAlreadyDefinedException(mapName, $"既に設定済みです。[{mapName}]");
             }
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var resourceName = $"AILZ80ASM.CharMaps.{mapName.Substring(1)}.json";
+
+            if (assembly.GetManifestResourceNames().Any(m => m == resourceName))
+            {
+                throw new CharMapAlreadyDefinedException(mapName, $"内蔵CharMapです。[{mapName}]");
+            }
+
 
             try
             {

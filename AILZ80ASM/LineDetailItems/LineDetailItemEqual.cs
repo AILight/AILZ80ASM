@@ -30,6 +30,11 @@ namespace AILZ80ASM.LineDetailItems
 
         public static LineDetailItemEqual Create(LineItem lineItem, AsmLoad asmLoad)
         {
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemEqual);
+            }
+
             var matched = Regex.Match(lineItem.OperationString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {

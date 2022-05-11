@@ -1,4 +1,5 @@
 ﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Exceptions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,7 +49,6 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
-        /*
         /// <summary>
         /// Functionを計算する
         /// </summary>
@@ -56,61 +56,26 @@ namespace AILZ80ASM.Assembler
         /// <param name="asmLoad"></param>
         /// <param name="asmAddress"></param>
         /// <returns></returns>
-        public int Calculation(string[] arguments, AsmLoad asmLoad, AsmAddress? asmAddress)
+        public AIValue Calculation(string[] arguments, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
             if (Args.Length != arguments.Length)
             {
-                throw new Exception($"引数の数が不一致です。Function:{this.Name}");
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E4004);
             }
 
             var guid = $"{Guid.NewGuid():N}";
-            var calcedArguments = new List<AIValue>();
-            foreach (var argument in arguments)
-            {
-                calcedArguments.Add(AIMath.Calculation(argument, asmLoad));
-            }
-
             return asmLoad.CreateLocalScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
             {
                 foreach (var index in Enumerable.Range(0, arguments.Length))
                 {
-                    var label = new LabelArg(Args[index], calcedArguments[index], localAsmLoad);
+                    var label = new LabelFncArg(Args[index], arguments[index], localAsmLoad, asmLoad);
+                    if (label.Invalidate)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E4005);
+                    }
                     localAsmLoad.AddLabel(label);
                 }
 
-                return AIMath.Calculation(Formula, localAsmLoad).ConvertTo<int>();
-
-            });
-        }
-        */
-        /// <summary>
-        /// Functionを計算する
-        /// </summary>
-        /// <param name="arguments"></param>
-        /// <param name="asmLoad"></param>
-        /// <param name="asmAddress"></param>
-        /// <returns></returns>
-        public AIValue Calculation2(string[] arguments, AsmLoad asmLoad, AsmAddress? asmAddress)
-        {
-            if (Args.Length != arguments.Length)
-            {
-                throw new Exception($"引数の数が不一致です。Function:{this.Name}");
-            }
-
-            var guid = $"{Guid.NewGuid():N}";
-            var calcedArguments = new List<Tuple<string, AIValue>>();
-            foreach (var argument in arguments)
-            {
-                calcedArguments.Add(new Tuple<string, AIValue>(argument, AIMath.Calculation(argument, asmLoad)));
-            }
-
-            return asmLoad.CreateLocalScope2($"function_{guid}", $"label_{guid}", localAsmLoad =>
-            {
-                foreach (var index in Enumerable.Range(0, arguments.Length))
-                {
-                    var label = new LabelArg(Args[index], calcedArguments[index].Item1, calcedArguments[index].Item2, localAsmLoad);
-                    localAsmLoad.AddLabel(label);
-                }
 
                 return AIMath.Calculation(Formula, localAsmLoad);
 

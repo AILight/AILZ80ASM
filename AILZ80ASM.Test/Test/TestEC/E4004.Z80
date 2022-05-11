@@ -1,0 +1,4 @@
+﻿
+		LD A, ABS(-1)
+
+		Function ABS(value1, value2) => value1 < 0 ? value1 * -1 : value2

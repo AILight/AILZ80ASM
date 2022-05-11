@@ -3,6 +3,7 @@ using AILZ80ASM.LineDetailItems.ScopeItem;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using AILZ80ASM.Exceptions;
 
 namespace AILZ80ASM.Assembler
 {
@@ -50,13 +51,24 @@ namespace AILZ80ASM.Assembler
             LineDetailItems.Add(lineDetailItem);
         }
 
-        public void AdjustAssemble(UInt32 outputAddress)
+        public void AdjustAssemble(UInt32 outputAddress, AsmLoad asmLoad)
         {
             OutputAddress = outputAddress;
 
             foreach (var lineDetailItem in LineDetailItems)
             {
-                lineDetailItem.AdjustAssemble(ref outputAddress);
+                try
+                {
+                    lineDetailItem.AdjustAssemble(ref outputAddress);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    asmLoad.AddError(new ErrorLineItem(lineDetailItem.LineItem, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    asmLoad.AddError(ex.ErrorLineItem);
+                }
             }
         }
     }

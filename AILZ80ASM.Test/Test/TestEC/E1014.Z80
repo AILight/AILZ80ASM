@@ -1,0 +1,6 @@
+﻿
+	REPT 5
+		XOR A
+LABEL:
+		AND A
+	ENDM
