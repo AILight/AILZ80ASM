@@ -24,6 +24,22 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void LocalLabelNameTest()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var globalLabel = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
+            asmLoad.AddLabel(globalLabel);
+
+            Assert.AreEqual(new LabelAdr("TEST.1CH", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.1CH");
+            Assert.AreEqual(new LabelAdr("TEST.2CH", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.2CH");
+            Assert.AreEqual(new LabelAdr("TEST.3CH", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.3CH");
+            Assert.AreEqual(new LabelAdr("TEST.0", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.0");
+            Assert.AreEqual(new LabelAdr("TEST.A", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.A");
+            Assert.AreEqual(new LabelAdr("TEST.LD", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.LD");
+
+        }
+
+        [TestMethod]
         public void BuildLabelTest()
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());

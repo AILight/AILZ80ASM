@@ -51,17 +51,54 @@ namespace AILZ80ASM.AILight
             else
             {
                 var splits = target.Split('.');
-                if (splits.Length > 3)
+                switch (splits.Length)
                 {
-                    return false;
-                }
-                foreach (var item in splits)
-                {
-                    if (!ValidateName(item, asmLoad))
-                    {
+                    case 1:
+                        if (!ValidateName(splits[0], asmLoad))
+                        {
+                            return false;
+                        }
+                        break;
+                    case 2:
+                        if (string.IsNullOrEmpty(asmLoad.FindGlobalLabelName(splits[0])))
+                        {
+                            if (!ValidateName(splits[0], asmLoad))
+                            {
+                                return false;
+                            }
+                            if (!ValidateNameForLocalLabel(splits[1], asmLoad))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (!ValidateName(splits[0], asmLoad))
+                            {
+                                return false;
+                            }
+                            if (!ValidateName(splits[1], asmLoad))
+                            {
+                                return false;
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (!ValidateName(splits[0], asmLoad))
+                        {
+                            return false;
+                        }
+                        if (!ValidateName(splits[1], asmLoad))
+                        {
+                            return false;
+                        }
+                        if (!ValidateNameForLocalLabel(splits[2], asmLoad))
+                        {
+                            return false;
+                        }
+                        break;
+                    default:
                         return false;
-                    }
-
                 }
                 return true;
             }
@@ -103,6 +140,12 @@ namespace AILZ80ASM.AILight
             return ValidateName(target, asmLoad);
         }
 
+        /// <summary>
+        /// ファンクション名をチェックする
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="asmLoad"></param>
+        /// <returns></returns>
         public static bool ValidateFunctionName(string target, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(target))
@@ -120,7 +163,7 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
-        /// 引数のラベルチェック
+        /// ファンクション引数名をチェックする
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
@@ -131,7 +174,8 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            return ValidateName(target, asmLoad);
+
+            return ValidateNameForFunctionArgument(target, asmLoad);
         }
 
 
@@ -361,17 +405,33 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            // レジスター文字列、命令の文字列は利用不可
-            /*
-            if (asmLoad.ISA.IsMatchRegisterName(target))
+            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+                   !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+        }
+
+        /// <summary>
+        /// 名前のチェック（ファンクション引数）
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="asmLoad"></param>
+        /// <returns></returns>
+        private static bool ValidateNameForFunctionArgument(string target, AsmLoad asmLoad)
+        {
+            if (string.IsNullOrEmpty(target))
             {
                 return false;
             }
-            if (asmLoad.ISA.IsMatchInstructionName(target))
+
+            // 含まれてはいけない文字の調査
+            if (target.ToArray().Any(m => ":. ".Contains(m)))
             {
                 return false;
             }
-            */
+
+            if (AIValue.IsNumber(target))
+            {
+                return false;
+            }
 
             return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
                    !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;

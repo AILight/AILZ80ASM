@@ -1,4 +1,4 @@
 ﻿
 		;LD A, ABS(-1)
 
-		Function ABS(HL) => HL < 0 ? HL * -1 : HL
+		Function ABS(H.L) => H.L < 0 ? H.L * -1 : H.L

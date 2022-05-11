@@ -145,12 +145,12 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0002] = "ビット変換で有効桁数をオーバーしました。[指定ビット数:{0}, 指定値{1}]",
             [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
             [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。[{0}]",
-            //[ErrorCodeEnum.E0005] = "16進数の変換に失敗しました。",
-            //[ErrorCodeEnum.E0006] = "10進数の変換に失敗しました。",
-            //[ErrorCodeEnum.E0007] = "8進数の変換に失敗しました。",
-            //[ErrorCodeEnum.E0008] = "2進数の変換に失敗しました。",
+            //[ErrorCodeEnum.E0005] = "",
+            //[ErrorCodeEnum.E0006] = "",
+            //[ErrorCodeEnum.E0007] = "",
+            //[ErrorCodeEnum.E0008] = "",
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
-            //[ErrorCodeEnum.E0012] = "データの指定が間違っています。",
+            //[ErrorCodeEnum.E0012] = "",
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。記号や予約語は使えません。",
             [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
@@ -185,7 +185,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E1032] = "#ERRORにラベルは設定できません。",
 
             // Include
-            //[ErrorCodeEnum.E2001] = "Include 展開先でエラーが発生しました。",
+            //[ErrorCodeEnum.E2001] = "",
             [ErrorCodeEnum.E2002] = "Include ファイルが存在しませんでした。[{0}]",
             [ErrorCodeEnum.E2003] = "Include 既に読み込み済みのファイルです。[{0}]",
             [ErrorCodeEnum.E2004] = "Include 開始アドレスの指定が間違っています。",
@@ -197,7 +197,7 @@ namespace AILZ80ASM.Assembler
 
             // CharMap
             [ErrorCodeEnum.E2101] = "CharMap ファイルが見つかりませんでした。[{0}]",
-            //[ErrorCodeEnum.E2102] = "CharMap 内蔵ファイルが見つかりませんでした。[{0}]",
+            //[ErrorCodeEnum.E2102] = "",
             [ErrorCodeEnum.E2103] = "CharMap ファイルの指定が間違っています。\"\"で囲って下さい。[{0}]",
             [ErrorCodeEnum.E2104] = "CharMap ファイルの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E2105] = "CharMap 変換テーブルに値が見つかりませんでした。[{0}]",
@@ -208,19 +208,19 @@ namespace AILZ80ASM.Assembler
             // マクロ
             [ErrorCodeEnum.E3001] = "MACROに対応するEND MACRO (ENDM) が見つかりませんでした。",
             [ErrorCodeEnum.E3002] = "END MACRO (ENDM) が先に見つかりました。",
-            //[ErrorCodeEnum.E3003] = "MACROが重複登録されていますので、名前解決が出来ません。",
+            //[ErrorCodeEnum.E3003] = ",
             [ErrorCodeEnum.E3004] = "MACROの引数の数が一致していません。",
-            [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。[{0}]",
+            [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。記号や予約語は使えません。[{0}]",
             [ErrorCodeEnum.E3006] = "MACROでは、ローカルラベル以外は使えません。",
-            [ErrorCodeEnum.E3007] = "MACROの名前が有効ではありません。",
+            [ErrorCodeEnum.E3007] = "MACROの名前が有効ではありません。記号や予約語は使えません。",
             [ErrorCodeEnum.E3008] = "MACROの中から自分自身のMACROを呼び出すことは出来ません。",
-            //[ErrorCodeEnum.E3009] = "MACROが見つかりませんでした。[{0}]",
+            //[ErrorCodeEnum.E3009] = "",
             [ErrorCodeEnum.E3010] = "同名のMACROが既に定義されています。",
 
             // ファンクション
             [ErrorCodeEnum.E4001] = "同名のFunctionが既に定義されています。",
-            [ErrorCodeEnum.E4002] = "Functionの名前が有効ではありません。",
-            //[ErrorCodeEnum.E4003] = "Functionが見つかりませんでした。ネームスペース付きの名前を利用すると解決する場合があります。[{0}]",
+            [ErrorCodeEnum.E4002] = "Functionの名前が有効ではありません。記号は使えません。",
+            //[ErrorCodeEnum.E4003] = "",
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。[{0}]",
 

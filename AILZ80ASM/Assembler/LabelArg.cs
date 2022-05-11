@@ -17,10 +17,8 @@ namespace AILZ80ASM.Assembler
         }
 
         public LabelArg(string labelName, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad)
-            : base(labelName, asmLoad, LabelTypeEnum.Arg)
+            : this(labelName, "", asmLoad, calcLineItem, calcAsmLoad)
         {
-            CalculationAsmLoad = calcAsmLoad;
-            CalcLineItem = calcLineItem;
         }
 
         public LabelArg(string labelName, string valueString, AsmLoad asmLoad, AsmLoad calcAsmLoad)
@@ -30,10 +28,8 @@ namespace AILZ80ASM.Assembler
         }
 
         public LabelArg(string labelName, string valueString, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad)
-            : base(labelName, valueString, asmLoad, LabelTypeEnum.Arg)
+            : this(labelName, valueString, default(AIValue), asmLoad, calcLineItem, calcAsmLoad)
         {
-            CalculationAsmLoad = calcAsmLoad;
-            CalcLineItem = calcLineItem;
         }
 
         public LabelArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, AsmLoad calcAsmLoad)
@@ -43,18 +39,16 @@ namespace AILZ80ASM.Assembler
         }
 
         public LabelArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad)
-            : base(labelName, valueString, aiValue, asmLoad, LabelTypeEnum.Arg)
+            : this(labelName, valueString, aiValue, asmLoad, calcLineItem, calcAsmLoad, LabelTypeEnum.Arg)
+        {
+        }
+
+        protected LabelArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad, LabelTypeEnum labelTypeEnum)
+            : base(labelName, valueString, aiValue, asmLoad, labelTypeEnum)
         {
             CalculationAsmLoad = calcAsmLoad;
             CalcLineItem = calcLineItem;
         }
-
-        /*
-        public LabelArg(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmLoad asmLoad)
-            : base(lineDetailExpansionItemOperation, asmLoad, LabelTypeEnum.Arg)
-        {
-        }
-        */
 
         public override void Calculation()
         {

@@ -68,7 +68,7 @@ namespace AILZ80ASM.Assembler
             {
                 foreach (var index in Enumerable.Range(0, arguments.Length))
                 {
-                    var label = new LabelArg(Args[index], arguments[index], localAsmLoad, asmLoad);
+                    var label = new LabelFncArg(Args[index], arguments[index], localAsmLoad, asmLoad);
                     if (label.Invalidate)
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E4005);
