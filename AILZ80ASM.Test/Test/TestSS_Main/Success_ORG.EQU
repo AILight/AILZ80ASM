@@ -4,25 +4,25 @@
 
 [NAME_SPACE_DEFAULT]
 
-CHAR01  equ 20
-CHAR02  equ 40
-CHAR03  equ 60
+CHAR01      equ 20
+CHAR02      equ 40
+CHAR03      equ 60
 
 
 [GB1]
 
-ABC      equ 1
-ABC.DEF  equ 2
-GHI:     equ $0002
-GHI.JKL: equ $0004
-GHI.MNO  equ 3
+ABC         equ 1
+ABC.DEF     equ 2
+GHI:        equ $0002
+GHI.JKL:    equ $0004
+GHI.MNO     equ 3
 
 
 [GB2]
 
-ABC      equ 1
-ABC.DEF  equ 2
-GHI:     equ $000D
-GHI.JKL: equ $000F
-GHI.MNO  equ 3
+ABC         equ 1
+ABC.DEF     equ 2
+GHI:        equ $000D
+GHI.JKL:    equ $000F
+GHI.MNO     equ 3
 

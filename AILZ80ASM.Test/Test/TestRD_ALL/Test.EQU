@@ -1,20 +1,20 @@
 ﻿;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.12, EQU
 #pragma once
 
-LB00: equ $0000
-LB10: equ $0014
-LB20: equ $002A
-LB30: equ $0044
-LB40: equ $005E
-LB50: equ $006E
-LB60: equ $007E
-LB70: equ $008E
-LB80: equ $009E
-LB90: equ $00AE
-LBA0: equ $00BE
-LBB0: equ $00CE
-LBC0: equ $00DE
-LBD0: equ $00FB
-LBE0: equ $0116
-LBF0: equ $012F
+LB00:   equ $0000
+LB10:   equ $0014
+LB20:   equ $002A
+LB30:   equ $0044
+LB40:   equ $005E
+LB50:   equ $006E
+LB60:   equ $007E
+LB70:   equ $008E
+LB80:   equ $009E
+LB90:   equ $00AE
+LBA0:   equ $00BE
+LBB0:   equ $00CE
+LBC0:   equ $00DE
+LBD0:   equ $00FB
+LBE0:   equ $0116
+LBF0:   equ $012F
 

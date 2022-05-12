@@ -31,7 +31,13 @@ namespace AILZ80ASM.Assembler
                 // addressModeで出し分けをする
                 var equLabels = labels.Where(m => ((m.LabelLevel == Label.LabelLevelEnum.Label || m.LabelLevel == Label.LabelLevelEnum.SubLabel) && (m.LabelType == Label.LabelTypeEnum.Equ || m.LabelType == Label.LabelTypeEnum.Adr)));
                 // ラベルの最大長を求める
-                labelMaxLength = labels.Max(m => m.LabelShortName.Length + 2);
+                labelMaxLength = labels.Max(m => m.LabelShortName.Length + 2);  // コロンとスペース分
+                try
+                {
+                    labelMaxLength += (this.AssembleOption.TabSize - (labelMaxLength % this.AssembleOption.TabSize));
+                }
+                catch { }
+
 
                 // EQU
                 foreach (var label in equLabels)
