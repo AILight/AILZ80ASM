@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "Symbol.inc -bin -lst -equ -cd .\\Sample7"
     }
   }
 }
