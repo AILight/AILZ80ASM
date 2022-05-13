@@ -1,0 +1,6 @@
+﻿
+#pragma once
+
+PORT	EQU CCH
+.SUB1	EQU 01H
+.SUB2	EQU 02H

@@ -1,0 +1,12 @@
+﻿
+	include "ErrorList_Def.z80"
+
+	LD	A, PORT.Sub1
+
+	include "ErrorList_Sub.z80"
+
+	LD	A, PORT.Sub2
+
+	include "ErrorList_Dat.bin", b
+
+	LD	A, PORT.Sub3

@@ -219,5 +219,13 @@ namespace AILZ80ASM.Test
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Error.err"), File.OpenRead("./Test/TestSS_Main/Error_ORG.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
         }
 
+        [TestMethod]
+        public void TestErrList()
+        {
+            var result_simple = Program.Main(@"ErrorList.Z80", "-err", "-lst", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(result_simple, 1);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/ErrorList.err"), File.OpenRead("./Test/TestSS_Main/ErrorList_ORG.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/ErrorList.lst"), File.OpenRead("./Test/TestSS_Main/ErrorList_ORG.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
     }
 }

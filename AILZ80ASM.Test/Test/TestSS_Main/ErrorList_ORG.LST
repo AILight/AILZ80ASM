@@ -1,0 +1,32 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.16, LST:Full:4
+                                
+                                    include "ErrorList_Def.z80"
+                                
+                                #pragma once
+                                
+       00CC                     PORT    EQU CCH
+       0001                     .SUB1   EQU 01H
+       0002                     .SUB2   EQU 02H
+[EOF:ErrorList_Def.z80:UTF_8]
+                                
+000000 0000 3E01             7      LD  A, PORT.Sub1
+                                
+                                    include "ErrorList_Sub.z80"
+                                
+                                    include "ErrorList_Def.z80"
+                                
+000002 0002 3E01             7      LD  A, PORT.Sub1
+000004 0004 3E02             7      LD  A, PORT.Sub2
+[EOF:ErrorList_Sub.z80:UTF_8]
+                                
+000006 0006 3E02             7      LD  A, PORT.Sub2
+                                
+                                    include "ErrorList_Dat.bin", b
+000008 0008 0001020304050607    
+            08090A0B0C0D0E0F    
+            1234567890123456    
+            7890123456789012    
+[EOF:ErrorList_Dat.bin:32]
+                                
+000028 0028 **** E0004 ****  7      LD  A, PORT.Sub3
+[EOF:ErrorList.Z80:UTF_8]
