@@ -373,6 +373,9 @@ namespace AILZ80ASM
                 case AsmEnum.FileTypeEnum.ADR:
                     SaveADR(stream);
                     break;
+                case AsmEnum.FileTypeEnum.TAG:
+                    SaveTAG(stream);
+                    break;
                 default:
                     throw new NotImplementedException($"指定の出力形式は選択できません。{outputFile.Key}");
             }
