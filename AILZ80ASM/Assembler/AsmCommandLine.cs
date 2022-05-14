@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -532,6 +533,26 @@ namespace AILZ80ASM.Assembler
                     return readme;
                 }
             }
+        }
+
+        /// <summary>
+        /// JsonからArgumentsのパースを行う
+        /// </summary>
+        /// <param name="profileString"></param>
+        /// <returns></returns>
+        public static IList<string> ParseArgumentsFromJsonString(string profileString)
+        {
+            var options = new JsonSerializerOptions { AllowTrailingCommas = true };
+            var defaultProfile = JsonSerializer.Deserialize<AILZ80ASM.Models.Profile>(profileString, options);
+            var profileArguments = new List<string>();
+            profileArguments.AddRange(defaultProfile.DefaultOptions.SelectMany(m => m.Split(' ')).Where(m => !string.IsNullOrEmpty(m)));
+            if (defaultProfile.DisableWarnings != default && defaultProfile.DisableWarnings.Count() > 0)
+            {
+                profileArguments.Add("-dw");
+                profileArguments.AddRange(defaultProfile.DisableWarnings);
+            }
+
+            return profileArguments;
         }
 
     }
