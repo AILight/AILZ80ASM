@@ -152,7 +152,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
             //[ErrorCodeEnum.E0012] = "",
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。記号や予約語は使えません。",
-            [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。",
+            [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。ローカルラベルの場合は、上位ラベルの宣言を確認してください。",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
             [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。[{0}]",
             [ErrorCodeEnum.E0017] = "ラベル名と同じネームスペース名は付ける事が出来ません。[{0}]",

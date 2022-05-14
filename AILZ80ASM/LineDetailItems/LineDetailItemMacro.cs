@@ -14,9 +14,12 @@ namespace AILZ80ASM.LineDetailItems
                 var lists = new List<AsmList>();
                 lists.Add(AsmList.CreateLineItem(LineItem));
 
-                foreach (var item in this.LineDetailScopeItems)
+                if (this.LineDetailScopeItems != default)
                 {
-                    lists.AddRange(item.Lists);
+                    foreach (var item in this.LineDetailScopeItems)
+                    {
+                        lists.AddRange(item.Lists);
+                    }
                 }
 
                 // 先頭行は抜かす
