@@ -157,38 +157,45 @@ namespace AILZ80ASM.InstructionSet
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value8Bit:
                             {
-                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt16>();
+                                var result = AIMath.Calculation(stringValue, asmLoad, asmAddress);
+                                var tmpValue = result.ConvertTo<int>();
+                                if (tmpValue > 255 || tmpValue < -255)
+                                {
+                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue, $"指定値: 0x{tmpValue:x2}:{tmpValue}");
+                                }
+
+                                var tmpValue16 = result.ConvertTo<UInt16>();
                                 var value8 = ConvertTo2BaseString(tmpValue16 & 0xFF, 8);
                                 replaceDic.Add(instructionRegister.MnemonicBitName, value8);
-                                if (tmpValue16 > 255)
-                                {
-                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定値: 0x{tmpValue16:x2}:{tmpValue16}");
-                                }
                             }
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value8BitSigned:
                             {
-                                var tmpValue16 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<int>();
-                                var value8 = ConvertTo2BaseString(tmpValue16 & 0xFF, 8);
-                                replaceDic.Add(instructionRegister.MnemonicBitName, value8);
-                                if (tmpValue16 > 127 || tmpValue16 < -128)
+                                var tmpValue = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<int>();
+                                if (tmpValue > 127 || tmpValue < -128)
                                 {
-                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue16, $"指定値: 0x{tmpValue16:x2}:{tmpValue16}");
+                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue, $"指定値: 0x{tmpValue:x2}:{tmpValue}");
                                 }
+
+                                var value8 = ConvertTo2BaseString(tmpValue & 0xFF, 8);
+                                replaceDic.Add(instructionRegister.MnemonicBitName, value8);
                             }
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.Value16Bit:
                             {
-                                var tmpValue32 = AIMath.Calculation(stringValue, asmLoad, asmAddress).ConvertTo<UInt32>();
+                                var result = AIMath.Calculation(stringValue, asmLoad, asmAddress);
+                                var tmpValue = result.ConvertTo<int>();
+                                if (tmpValue > 65535 || tmpValue < -65535)
+                                {
+                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, tmpValue, $"指定値: 0x{tmpValue:x4}:{tmpValue}");
+                                }
+
+                                var tmpValue32 = result.ConvertTo<UInt32>();
                                 var tmpValue16String = ConvertTo2BaseString((int)(tmpValue32 & 0xFFFF), 16);
                                 var value16 = new[] { "", "" };
                                 var mnemonicBitNames = instructionRegister.MnemonicBitName.Split(",");
                                 replaceDic.Add(mnemonicBitNames[0], tmpValue16String.Substring(0, 8));
                                 replaceDic.Add(mnemonicBitNames[1], tmpValue16String.Substring(8));
-                                if (tmpValue32 > 65535)
-                                {
-                                    assembleResult.InnerAssembleException = new AssembleOutOfRangeException(instructionRegister.InstructionRegisterMode, (int)tmpValue32, $"指定値: 0x{tmpValue32:x4}:{tmpValue32}");
-                                }
                             }
                             break;
                         case InstructionRegister.InstructionRegisterModeEnum.InterruptModeValue:

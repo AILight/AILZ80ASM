@@ -224,7 +224,7 @@ namespace AILZ80ASM.Test
         {
             var result_simple = Program.Main(@"Success.Z80", "-tag", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(result_simple, 0);
-            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/tags"), File.OpenRead("./Test/TestSS_Main/Success_ORG.tag"), Assembler.AsmEnum.FileTypeEnum.TAG);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/tags"), File.OpenRead("./Test/TestSS_Main/Success_ORG.tag"), Assembler.AsmEnum.FileTypeEnum.TAG);
         }
 
         [TestMethod]
