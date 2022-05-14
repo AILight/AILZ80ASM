@@ -461,11 +461,22 @@ namespace AILZ80ASM.Assembler
                 return Array.Empty<string>();
             }
 
-            var inputFile = inputOption.Value.First();
-            var extension = $".{outputModeOption.Value}";
-            var fileName = GetChangeExtension(inputFile, extension);
+            var outputSelectOption = options.Where(m => m.Aliases.Any(n => n == $"-{outputModeOption.Value}")).FirstOrDefault();
+            if (outputSelectOption == default)
+            {
 
-            return new[] { fileName };
+                var inputFile = inputOption.Value.First();
+                var extension = $".{outputModeOption.Value}";
+                var fileName = GetChangeExtension(inputFile, extension);
+                
+                return new[] { fileName };
+            }
+            else
+            {
+                var fileNames = outputSelectOption.DefaultFunc(options);
+                
+                return fileNames;
+            }
         }
 
         /// <summary>
