@@ -250,7 +250,7 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(rootCommand.GetValue<FileInfo>("outputBin").Name, "Test.bin");
                 Assert.IsFalse(rootCommand.GetSelected("output"));
                 Assert.IsFalse(rootCommand.GetSelected("outputMode"));
-                
+
                 var outputFiles = rootCommand.GetOutputFiles();
                 Assert.AreEqual(outputFiles.Count, 1);
                 Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Test.bin");
@@ -800,7 +800,8 @@ namespace AILZ80ASM.Test
         {
             var rootCommand = AsmCommandLine.SettingRootCommand();
 
-            Assert.ThrowsException<Exception>(() => {
+            Assert.ThrowsException<Exception>(() =>
+            {
                 rootCommand.AddOption(new CommandLine.Option<FileInfo[]>()
                 {
                     Name = "input",
@@ -813,7 +814,8 @@ namespace AILZ80ASM.Test
                 });
             });
 
-            Assert.ThrowsException<Exception>(() => {
+            Assert.ThrowsException<Exception>(() =>
+            {
                 rootCommand.AddOption(new CommandLine.Option<FileInfo[]>()
                 {
                     Name = "input_test",
@@ -827,6 +829,101 @@ namespace AILZ80ASM.Test
             });
         }
 
+        [TestMethod]
+        public void Test_ParseArgumentsFromJsonString()
+        {
+            {
+                var testJson = @"
+{
+  ""default-options"": [
+    ""-err""
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001"",
+    ""W9002""
+  ]
+}";
+                var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                Assert.AreEqual(argments[0], "-err");
+                Assert.AreEqual(argments[1], "-dw");
+                Assert.AreEqual(argments[2], "W0001");
+                Assert.AreEqual(argments[3], "W9001");
+                Assert.AreEqual(argments[4], "W9002");
+            }
 
+            {
+                 var testJson = @"
+{
+  ""default-options"": [
+    ""-ts 8""
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001"",
+    ""W9002""
+  ]
+}";
+                var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                Assert.AreEqual(argments[0], "-ts");
+                Assert.AreEqual(argments[1], "8");
+                Assert.AreEqual(argments[2], "-dw");
+                Assert.AreEqual(argments[3], "W0001");
+                Assert.AreEqual(argments[4], "W9001");
+                Assert.AreEqual(argments[5], "W9002");
+            }
+
+            {
+                var testJson = @"
+{
+  ""default-options"": [
+    ""-ts 8""
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001"",
+    ""W9002"",
+  ]
+}";
+                var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                Assert.AreEqual(argments[0], "-ts");
+                Assert.AreEqual(argments[1], "8");
+                Assert.AreEqual(argments[2], "-dw");
+                Assert.AreEqual(argments[3], "W0001");
+                Assert.AreEqual(argments[4], "W9001");
+                Assert.AreEqual(argments[5], "W9002");
+            }
+
+            {
+                var testJson = @"
+{
+  ""default-options"": [
+    ""-ts 8"",
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001""
+    ""W9002"",
+  ]
+}";
+                try
+                {
+                    try
+                    {
+                        var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                        Assert.Fail();
+                    }
+                    catch (System.Text.Json.JsonException ex)
+                    {
+                        throw new Exception($"{ex.LineNumber}行目に問題があります。");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Assert.AreEqual(ex.Message, "8行目に問題があります。");
+                }
+
+            }
+        }
     }
 }
