@@ -222,9 +222,8 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void TestTAG()
         {
-            var result_simple = Program.Main(@"Success.Z80", "-bin", "-tag", "-cd", "./Test/TestSS_Main/");
+            var result_simple = Program.Main(@"Success.Z80", "-tag", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(result_simple, 0);
-            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success.bin"), File.OpenRead("./Test/TestSS_Main/Success_ORG.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
             Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/tags"), File.OpenRead("./Test/TestSS_Main/Success_ORG.tag"), Assembler.AsmEnum.FileTypeEnum.TAG);
         }
 
