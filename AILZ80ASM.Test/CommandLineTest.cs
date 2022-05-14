@@ -316,7 +316,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void Test_CommandLine_Tags()
+        public void Test_CommandLine_Tag()
         {
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
@@ -333,13 +333,11 @@ namespace AILZ80ASM.Test
                 var outputFiles = rootCommand.GetOutputFiles();
                 Assert.AreEqual(outputFiles.Count, 1);
                 Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "test.bin");
-
-                Assert.IsFalse(rootCommand.GetValue<bool>("tags"));
             }
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-tags" };
+                var arguments = new[] { "Main.z80", "-bin", "-tag" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -350,14 +348,14 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
-                Assert.IsTrue(rootCommand.GetValue<bool>("tags"));
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "tags");
             }
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "--output-tags" };
+                var arguments = new[] { "Main.z80", "-bin", "-tag"};
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -368,14 +366,14 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
-                Assert.IsTrue(rootCommand.GetValue<bool>("tags"));
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "tags");
             }
 
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "Test.bin", "-tags" };
+                var arguments = new[] { "Main.z80", "-bin", "Test.bin", "-tag", "Test.tag" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -389,9 +387,9 @@ namespace AILZ80ASM.Test
                 Assert.IsFalse(rootCommand.GetSelected("outputMode"));
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles.Count, 2);
                 Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Test.bin");
-                Assert.IsTrue(rootCommand.GetValue<bool>("tags"));
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "Test.tag");
             }
         }
 

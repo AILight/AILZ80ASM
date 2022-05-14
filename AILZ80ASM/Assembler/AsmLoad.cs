@@ -576,6 +576,7 @@ namespace AILZ80ASM.Assembler
                 AsmEnum.FileTypeEnum.SYM => AsmEnum.FileDataTypeEnum.Text,
                 AsmEnum.FileTypeEnum.EQU => AsmEnum.FileDataTypeEnum.Text,
                 AsmEnum.FileTypeEnum.DBG => AsmEnum.FileDataTypeEnum.Text,
+                AsmEnum.FileTypeEnum.TAG => AsmEnum.FileDataTypeEnum.Text,
                 _ => throw new NotImplementedException()
             };
 
