@@ -81,6 +81,7 @@ namespace AILZ80ASM.Assembler
                                         new Parameter { Name = "lst", ShortCut = "-lst", Description = "リストファイルを出力します。" },
                                         new Parameter { Name = "err", ShortCut = "-err", Description = "エラーファイルを出力します。" },
                                         //new Parameter { Name = "dbg", ShortCut = "-dbg", Description = "デバッグファイルを出力します。" },
+                                        new Parameter { Name = "tag", ShortCut = "-tag", Description = "タグファイルを出力します。" },
                                     },
                 Required = false
             });
@@ -205,6 +206,20 @@ namespace AILZ80ASM.Assembler
                 IsSimple = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".err"); }
             });
+
+
+            rootCommand.AddOption(new Option<FileInfo>()
+            {
+                Name = "outputTAG",
+                ArgumentName = "file",
+                Aliases = new[] { "-tag" },
+                Description = "タグファイルを出力します。（file名を省略可能）",
+                Required = false,
+                IsShortCut = true,
+                IsSimple = true,
+                DefaultFunc = (options) => { return new[] { "tags" }; }
+            });
+
 
             /*
             rootCommand.AddOption(new Option<FileInfo>()
@@ -340,6 +355,7 @@ namespace AILZ80ASM.Assembler
                 [AsmEnum.FileTypeEnum.LST] = "outputLST",
                 [AsmEnum.FileTypeEnum.ERR] = "outputERR",
                 //[AsmEnum.FileTypeEnum.DBG] = "outputDBG",
+                [AsmEnum.FileTypeEnum.TAG] = "outputTAG",
             };
 
             foreach (var item in outputDic)
@@ -366,6 +382,7 @@ namespace AILZ80ASM.Assembler
                     "adr" => AsmEnum.FileTypeEnum.ADR,
                     "dbg" => AsmEnum.FileTypeEnum.DBG,
                     "err" => AsmEnum.FileTypeEnum.ERR,
+                    "tag" => AsmEnum.FileTypeEnum.TAG,
                     _ => throw new InvalidOperationException()
                 };
                 result.Add(outputModeEnum, output);
@@ -444,11 +461,22 @@ namespace AILZ80ASM.Assembler
                 return Array.Empty<string>();
             }
 
-            var inputFile = inputOption.Value.First();
-            var extension = $".{outputModeOption.Value}";
-            var fileName = GetChangeExtension(inputFile, extension);
+            var outputSelectOption = options.Where(m => m.Aliases.Any(n => n == $"-{outputModeOption.Value}")).FirstOrDefault();
+            if (outputSelectOption == default)
+            {
 
-            return new[] { fileName };
+                var inputFile = inputOption.Value.First();
+                var extension = $".{outputModeOption.Value}";
+                var fileName = GetChangeExtension(inputFile, extension);
+                
+                return new[] { fileName };
+            }
+            else
+            {
+                var fileNames = outputSelectOption.DefaultFunc(options);
+                
+                return fileNames;
+            }
         }
 
         /// <summary>

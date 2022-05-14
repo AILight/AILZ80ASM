@@ -61,6 +61,7 @@ namespace AILZ80ASM.Assembler
         public DataTypeEnum DataType { get; private set; }
         public LabelLevelEnum LabelLevel { get; private set; }
         public LabelTypeEnum LabelType { get; private set; }
+        public LineItem LineItem => LineDetailItem != default ? LineDetailItem.LineItem : LineDetailExpansionItem != default ? LineDetailExpansionItem.LineItem : default;
 
         private AsmLoad AsmLoad { get; set; }
         private LineDetailExpansionItem LineDetailExpansionItem { get; set; }

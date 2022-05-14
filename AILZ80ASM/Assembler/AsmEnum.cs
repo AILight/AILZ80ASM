@@ -24,6 +24,7 @@ namespace AILZ80ASM.Assembler
             ADR,
             ERR,
             DBG,
+            TAG,
         }
 
         /// <summary>

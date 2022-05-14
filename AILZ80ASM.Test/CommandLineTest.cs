@@ -316,6 +316,84 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Test_CommandLine_Tag()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-o", "test.bin", "-om", "BIN" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "test.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "test.bin");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-tag" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "tags");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-tag"};
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "tags");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "Test.bin", "-tag", "Test.tag" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");             // デフォルト値が設定
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("outputBin").Name, "Test.bin");
+                Assert.IsFalse(rootCommand.GetSelected("output"));
+                Assert.IsFalse(rootCommand.GetSelected("outputMode"));
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Test.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "Test.tag");
+            }
+        }
+
+        [TestMethod]
         public void Test_CommandLine_T88()
         {
             {
