@@ -1,4 +1,4 @@
-﻿INCLUDE ".\Test\TestPP_RepeatModern\Test.INC"
+﻿INCLUDE "Test.INC"
 
 LB: REPEAT 3
         xor     a

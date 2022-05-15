@@ -1,2 +1,2 @@
 ﻿
-	INCLUDE "./Test/TestEC/E2003.INC"
+	INCLUDE "E2003.INC"

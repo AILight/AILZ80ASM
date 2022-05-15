@@ -1,4 +1,4 @@
-﻿INCLUDE ".\Test\TestPP_RepeatAlign\Test.INC"
+﻿INCLUDE "Test.INC"
 
 	; 実行アドレスを整える
 	REPT	($ + 15) / 16 * 16 - $

@@ -1,5 +1,5 @@
 ﻿
-	CharMap @E2105, "./Test/TestEC/E2105.CRP"
+	CharMap @E2105, "E2105.CRP"
 
 	LD A, @E2105:"A"
 	LD A, @E2105:"G"

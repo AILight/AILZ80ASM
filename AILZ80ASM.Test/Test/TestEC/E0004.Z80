@@ -16,8 +16,8 @@ LABEL_3		equ 3/0
 			DS 6/0
 			DS $10, 7/0
 
-			INCLUDE "./Test/TestEC/E0003.Z80", B, 8/0
-			INCLUDE "./Test/TestEC/E0003.Z80", B, 0, 9/0
+			INCLUDE "E0003.Z80", B, 8/0
+			INCLUDE "E0003.Z80", B, 0, 9/0
 
 			DB 10/0
 			DW 11/0

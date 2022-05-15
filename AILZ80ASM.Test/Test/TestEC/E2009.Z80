@@ -1,4 +1,4 @@
 ﻿
-	INCLUDE "./Test/TestEC/E2009.INC", T, 1
-	INCLUDE "./Test/TestEC/E2009.INC", T, 1, 2
-	INCLUDE "./Test/TestEC/E2009.INC", T,  , 2
+	INCLUDE "E2009.INC", T, 1
+	INCLUDE "E2009.INC", T, 1, 2
+	INCLUDE "E2009.INC", T,  , 2

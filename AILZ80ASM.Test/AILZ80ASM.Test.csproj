@@ -694,7 +694,7 @@
     <None Update="Test\TestPP_Include\Test3.INC">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_Include\TestSub.Z80">
+    <None Update="Test\TestPP_Include\SubDir\SubSubDir\TestSub.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_Include\Test.LST">
@@ -1036,10 +1036,10 @@
     <None Update="Test\TestUD_CB_SLL\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_Include\Test3.BIN">
+    <None Update="Test\TestPP_Include\SubDir\Test3.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_Include\Test2.INC">
+    <None Update="Test\TestPP_Include\SubDir\Test2.INC">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_Include\Test1.INC">

@@ -1,4 +1,4 @@
-﻿INCLUDE ".\Test\TestPP_Pragma_Once\Test.INC"
+﻿INCLUDE "Test.INC"
 
 		LD	A, SCREEN.WIDTH
 		LD	A, SCREEN.HEIGHT
