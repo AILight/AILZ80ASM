@@ -799,6 +799,12 @@
     <None Update="Test\TestSS_Main\Equal.equ">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestSS_Main\GapTest_ORG.Bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestSS_Main\GapTest.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestSS_Main\ErrorList_Dat.Bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

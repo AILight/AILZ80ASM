@@ -21,6 +21,9 @@ namespace AILZ80ASM.Assembler
         // タブサイズ
         public int TabSize { get; set; } = 4;
 
+        // ギャップバイト
+        public byte GapByte { get; set; } = byte.MaxValue;
+
         // 未使用ラベルのチェック
         public bool CheckUnuseLabel { get; set; } = false;
 
@@ -96,6 +99,7 @@ namespace AILZ80ASM.Assembler
             {
                 DisableWarningCodes = DisableWarningCodes.Where(m => m != Error.ErrorCodeEnum.I0001).ToArray();
             }
+            GapByte = rootCommand.GetValue<byte>("gapByte");
         }
 
         /// <summary>
