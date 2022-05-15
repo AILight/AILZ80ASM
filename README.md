@@ -45,7 +45,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - -i, --input <files>        アセンブリ対象のファイルをスペース区切りで指定します。(オプション名の省略が可能）
 - -ie, --input-encode <mode> 入力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
 - -o, --output <file>        出力ファイルを指定します。
-- -om, --output-mode <mode>  出力ファイルのモードを選択します。 [bin, t88, cmt, sym, lst, equ, err] デフォルト:bin
+- -om, --output-mode <mode>  出力ファイルのモードを選択します。 [bin, t88, cmt, sym, lst, equ, err, tag] デフォルト:bin
 - -oe, --output-encode <mode>出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
 - -lm, --list-mode <mode>    リストの出力形式を選択します。 [simple, middle, full] デフォルト:full
 - -ts, --tab-size <size>     TABのサイズを指定します。 デフォルト:4

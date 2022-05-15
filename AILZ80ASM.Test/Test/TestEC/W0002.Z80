@@ -1,4 +1,5 @@
 ﻿
+	LD HL, -1
 	LD HL, $FF
 	LD HL, $FFFF
 	LD HL, $FFFFFF

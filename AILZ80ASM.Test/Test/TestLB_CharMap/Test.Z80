@@ -12,6 +12,6 @@
 
 	DB @JIS1:"国語算数理科社会"
 
-	charmap @PPP, ".\Test\TestLB_CharMap\Test.json"
+	charmap @PPP, "Test.json"
 	
 	DB @PPP:"国語算数理科社会"

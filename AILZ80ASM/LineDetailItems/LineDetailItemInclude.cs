@@ -76,8 +76,9 @@ namespace AILZ80ASM.LineDetailItems
                 var fileTypeString = matched.Groups["Filetype"].Value;
                 var startAddressString = matched.Groups["StartAddress"].Value;
                 var lengthString = matched.Groups["Length"].Value;
-
-                var fileInfo = new FileInfo(filename);
+                var fileFullPath = Path.Combine(lineItem.FileInfo.Directory.FullName, filename);
+                
+                var fileInfo = new FileInfo(fileFullPath);
                 var fileType = LineDetailItemInclude.FileTypeEnum.Text;
 
                 if (string.IsNullOrEmpty(fileTypeString) || (new[] { "T", "Text" }).Any(m => string.Compare(m, fileTypeString, true) == 0))
@@ -164,7 +165,7 @@ namespace AILZ80ASM.LineDetailItems
                         break;
                     case FileTypeEnum.Binary:
                         lists.Add(LineDetailExpansionItem.List);
-                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.BinResults.Sum(m => m.Data.Length)));
+                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.BinResults.Sum(m => m.Data?.Length ?? 0)));
                         break;
                     default:
                         throw new NotImplementedException();

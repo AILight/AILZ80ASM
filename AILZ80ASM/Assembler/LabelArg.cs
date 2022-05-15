@@ -10,7 +10,7 @@ namespace AILZ80ASM.Assembler
     {
         private LineItem CalcLineItem { get; set; }
         private AsmLoad CalculationAsmLoad { get; set; }
-
+        /*
         public LabelArg(string labelName, AsmLoad asmLoad, AsmLoad calcAsmLoad)
             : this(labelName, asmLoad, default(LineItem), calcAsmLoad)
         {
@@ -41,7 +41,7 @@ namespace AILZ80ASM.Assembler
         public LabelArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad)
             : this(labelName, valueString, aiValue, asmLoad, calcLineItem, calcAsmLoad, LabelTypeEnum.Arg)
         {
-        }
+        }*/
 
         protected LabelArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad, LabelTypeEnum labelTypeEnum)
             : base(labelName, valueString, aiValue, asmLoad, labelTypeEnum)

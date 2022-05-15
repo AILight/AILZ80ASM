@@ -30,8 +30,9 @@ namespace AILZ80ASM.Assembler
         {
             Equ,
             Adr,
-            Arg,
-            FuncArg,
+            //Arg,
+            MacroArg,
+            FunctionArg,
         }
 
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\](\s+|$)";
@@ -61,6 +62,7 @@ namespace AILZ80ASM.Assembler
         public DataTypeEnum DataType { get; private set; }
         public LabelLevelEnum LabelLevel { get; private set; }
         public LabelTypeEnum LabelType { get; private set; }
+        public LineItem LineItem => LineDetailItem != default ? LineDetailItem.LineItem : LineDetailExpansionItem != default ? LineDetailExpansionItem.LineItem : default;
 
         private AsmLoad AsmLoad { get; set; }
         private LineDetailExpansionItem LineDetailExpansionItem { get; set; }
@@ -109,14 +111,21 @@ namespace AILZ80ASM.Assembler
                         DataType = DataTypeEnum.Invalidate;
                     }
                     break;
+                    /*
                 case LabelTypeEnum.Arg:
                     if (!AIName.ValidateMacroArgument(labelName, asmLoad))
                     {
                         DataType = DataTypeEnum.Invalidate;
                     }
-                    break;
-                case LabelTypeEnum.FuncArg:
+                    break;*/
+                case LabelTypeEnum.FunctionArg:
                     if (!AIName.ValidateFunctionArgument(labelName, asmLoad))
+                    {
+                        DataType = DataTypeEnum.Invalidate;
+                    }
+                    break;
+                case LabelTypeEnum.MacroArg:
+                    if (!AIName.ValidateMacroArgument(labelName, asmLoad))
                     {
                         DataType = DataTypeEnum.Invalidate;
                     }

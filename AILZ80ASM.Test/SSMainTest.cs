@@ -70,7 +70,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void TestMainSuccessAllOption()
         {
-            var outputFiles = new[] { "./Test/TestSS_Main/TestMainSuccessAllOption.bin", "./Test/TestSS_Main/TestMainSuccessAllOption.err", "./Test/TestSS_Main/TestMainSuccessAllOption.lst", "./Test/TestSS_Main/TestMainSuccessAllOption.equ", "./Test/TestSS_Main/TestMainSuccessAllOption.adr" };
+            var outputFiles = new[] { "./Test/TestSS_Main/TestMainSuccessAllOption.bin", "./Test/TestSS_Main/TestMainSuccessAllOption.err", "./Test/TestSS_Main/TestMainSuccessAllOption.lst", "./Test/TestSS_Main/TestMainSuccessAllOption.equ", "./Test/TestSS_Main/TestMainSuccessAllOption.adr", "./Test/TestSS_Main/TestMainSuccessAllOption.tag" };
             foreach (var item in outputFiles)
             {
                 if (File.Exists(item))
@@ -79,7 +79,7 @@ namespace AILZ80ASM.Test
                 }
             }
 
-            var result = Program.Main(@"Success.Z80", "-bin", "TestMainSuccessAllOption.bin", "-err", "TestMainSuccessAllOption.err", "-lst", "TestMainSuccessAllOption.lst", "-equ", "TestMainSuccessAllOption.equ", "-adr", "TestMainSuccessAllOption.adr", "-cd", "./Test/TestSS_Main/");
+            var result = Program.Main(@"Success.Z80", "-bin", "TestMainSuccessAllOption.bin", "-err", "TestMainSuccessAllOption.err", "-lst", "TestMainSuccessAllOption.lst", "-equ", "TestMainSuccessAllOption.equ", "-adr", "TestMainSuccessAllOption.adr", "-tag", "TestMainSuccessAllOption.tag", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(result, 0);
             foreach (var item in outputFiles)
             {
@@ -219,5 +219,21 @@ namespace AILZ80ASM.Test
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Error.err"), File.OpenRead("./Test/TestSS_Main/Error_ORG.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
         }
 
+        [TestMethod]
+        public void TestTAG()
+        {
+            var result_simple = Program.Main(@"Success.Z80", "-tag", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(result_simple, 0);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/tags"), File.OpenRead("./Test/TestSS_Main/Success_ORG.tag"), Assembler.AsmEnum.FileTypeEnum.TAG);
+        }
+
+        [TestMethod]
+        public void TestErrList()
+        {
+            var result_simple = Program.Main(@"ErrorList.Z80", "-err", "-lst", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(result_simple, 1);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/ErrorList.err"), File.OpenRead("./Test/TestSS_Main/ErrorList_ORG.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/ErrorList.lst"), File.OpenRead("./Test/TestSS_Main/ErrorList_ORG.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
     }
 }

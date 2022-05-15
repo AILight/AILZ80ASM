@@ -30,18 +30,19 @@ namespace AILZ80ASM
                     var profilePath = Path.Combine(processDirectory, PROFILE_FILENAME);
                     if (File.Exists(profilePath))
                     {
-                        var defaultProfile = JsonSerializer.Deserialize<AILZ80ASM.Models.Profile>(File.ReadAllText(profilePath));
-                        var profileArguments = new List<string>();
-                        profileArguments.AddRange(defaultProfile.DefaultOptions);
-                        if (defaultProfile.DisableWarnings != default && defaultProfile.DisableWarnings.Count() > 0)
-                        {
-                            profileArguments.Add("-dw");
-                            profileArguments.AddRange(defaultProfile.DisableWarnings);
-                        }
+                        var profileString = File.ReadAllText(profilePath);
+                        var profileArguments = AsmCommandLine.ParseArgumentsFromJsonString(profileString);
                         args = args.Concat(profileArguments).ToArray();
                     }
                 }
-                catch { }
+                catch (System.Text.Json.JsonException ex)
+                {
+                    throw new Exception($"{PROFILE_FILENAME}:{ex.LineNumber}行目に問題があります。");
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"{PROFILE_FILENAME}:{ex.Message}", ex);
+                }
 
                 // コマンドラインの設定をする
                 var rootCommand = AsmCommandLine.SettingRootCommand();
@@ -266,47 +267,5 @@ namespace AILZ80ASM
             Trace.WriteLine("");
         }
 
-        /*
-        private static void OutputStartForDebug(FileInfo fileInfo)
-        {
-            Trace.WriteLine(ProductInfo.ProductLongName);
-            Trace.WriteLine(ProductInfo.Copyright);
-            Trace.WriteLine("");
-            //OutputDebug(new[] { ProductInfo.ProductLongName, ProductInfo.Copyright, $"Assemble start:{DateTime.Now}", "" }, fileInfo, false);
-        }
-
-        private static void OutputFileList(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
-        {
-            foreach (var outputFile in outputFiles)
-            {
-                Trace.WriteLine($"{outputFile.Value.Name}");
-            }
-        }
-
-        private static void OutputDebug(string[] targets, FileInfo fileInfo)
-        {
-            //OutputDebug(targets, fileInfo, true);
-        }
-
-        private static void DebugWriteLine(string[] targets, FileInfo fileInfo, bool display)
-        {
-            if (fileInfo == default)
-            {
-                return;
-            }
-
-            using (var streamWriter = fileInfo.AppendText())
-            {
-                foreach (var item in targets)
-                {
-                    if (display)
-                    {
-                        Trace.WriteLine(item);
-                    }
-                    streamWriter.WriteLine(item);
-                }
-            }
-        }
-        */
     }
 }

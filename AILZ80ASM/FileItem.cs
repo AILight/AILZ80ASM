@@ -240,7 +240,7 @@ namespace AILZ80ASM
                     AssembleLoad.Share.AsmLists.Add(list);
                 }
 
-                lineIndex++;
+                lineIndex += list.OutputLineCount;
             }
         }
     }

@@ -1,0 +1,19 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.16
+Copyright (C) 2022 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [ErrorList.Z80]
+
+# Outputs
+
+- LST filename [ErrorList.LST]: Successful.
+
+# Error
+ErrorList.Z80:12  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[未定義:PORT.Sub3]
+
+# List
+ErrorList.LST:31  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[未定義:PORT.Sub3]
+
+
+ 1 error(s), 0 warning(s), 0 information

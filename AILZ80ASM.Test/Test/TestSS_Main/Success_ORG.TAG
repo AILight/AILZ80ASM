@@ -1,0 +1,27 @@
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.16, TAG
+Success.INC(2) : NAME_SPACE_DEFAULT.CHAR01
+Success.INC(2) : CHAR01
+Success.INC(3) : NAME_SPACE_DEFAULT.CHAR02
+Success.INC(3) : CHAR02
+Success.INC(4) : NAME_SPACE_DEFAULT.CHAR03
+Success.INC(4) : CHAR03
+Success.Z80(4) : GB1.ABC
+Success.Z80(4) : ABC
+Success.Z80(5) : GB1.ABC.DEF
+Success.Z80(5) : ABC.DEF
+Success.Z80(7) : GB1.GHI
+Success.Z80(7) : GHI
+Success.Z80(9) : GB1.GHI.JKL
+Success.Z80(9) : GHI.JKL
+Success.Z80(11) : GB1.GHI.MNO
+Success.Z80(11) : GHI.MNO
+Success.Z80(18) : GB2.ABC
+Success.Z80(18) : ABC
+Success.Z80(19) : GB2.ABC.DEF
+Success.Z80(19) : ABC.DEF
+Success.Z80(21) : GB2.GHI
+Success.Z80(21) : GHI
+Success.Z80(23) : GB2.GHI.JKL
+Success.Z80(23) : GHI.JKL
+Success.Z80(27) : GB2.GHI.MNO
+Success.Z80(27) : GHI.MNO

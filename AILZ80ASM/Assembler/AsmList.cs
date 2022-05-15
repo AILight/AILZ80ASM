@@ -27,6 +27,7 @@ namespace AILZ80ASM.Assembler
         public Stack<NestedCodeTypeEnum> NestedCodeTypes { get; set; }
         public string Source { get; set; }
         public int OutputLineIndex { get; set; }
+        public int OutputLineCount { get; set; }
         public ListStatusEnum ListStatus { get; set; }
         public Error.ErrorCodeEnum? ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
@@ -130,6 +131,7 @@ namespace AILZ80ASM.Assembler
             var codeType = "";
             var status = this.Status;
             var source = GetReplaseTab(this.Source, tabSize);
+
             if (ErrorCode.HasValue && Error.GetErrorType(ErrorCode.Value) == Error.ErrorTypeEnum.Error)
             {
                 binary = $"**** {ErrorCode} ****";
@@ -196,6 +198,7 @@ namespace AILZ80ASM.Assembler
                     break;
             }
 
+            OutputLineCount = results.Count == 0 ? 1 : results.Count; //出力行を設定
 
             return string.Join(Environment.NewLine, results);
         }

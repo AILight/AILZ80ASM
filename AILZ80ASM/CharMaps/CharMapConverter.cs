@@ -43,11 +43,11 @@ namespace AILZ80ASM.CharMaps
         /// CharMapの読み込み
         /// </summary>
         /// <param name="map"></param>
-        /// <param name="filePath"></param>
+        /// <param name="fileInfo"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="CharMapJsonReadException"></exception>
-        public void ReadCharMapFromFile(string map, string filePath, AsmLoad asmLoad)
+        public void ReadCharMapFromFile(string map, FileInfo fileInfo, AsmLoad asmLoad)
         {
             if (string.IsNullOrEmpty(map))
             {
@@ -59,9 +59,9 @@ namespace AILZ80ASM.CharMaps
                 throw new ArgumentException(nameof(map));
             }
 
-            if (!File.Exists(filePath))
+            if (!fileInfo.Exists)
             {
-                throw new FileNotFoundException("ファイルが見つかりませんでした", filePath);
+                throw new FileNotFoundException("ファイルが見つかりませんでした", fileInfo.FullName);
             }
 
             var mapName = map.ToUpper();
@@ -80,7 +80,7 @@ namespace AILZ80ASM.CharMaps
 
             try
             {
-                var content = File.ReadAllText(filePath);
+                var content = File.ReadAllText(fileInfo.FullName);
                 var jsonResult = MakeJsonResult(content);
 
                 CharMaps.Add(mapName, jsonResult);

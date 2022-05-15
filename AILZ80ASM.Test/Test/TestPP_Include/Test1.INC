@@ -1,2 +1,2 @@
 ﻿	ld a, TRUE
-include ".\Test\TestPP_Include\Test2.inc"
+include ".\SubDir\Test2.inc"

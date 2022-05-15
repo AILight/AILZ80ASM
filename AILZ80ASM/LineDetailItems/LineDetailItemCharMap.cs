@@ -50,7 +50,11 @@ namespace AILZ80ASM.LineDetailItems
 
                     try
                     {
-                        asmLoad.CharMapConverter_ReadCharMapFromFile(charMap, filePath.Substring(1, filePath.Length - 2));
+                        var filename = filePath.Substring(1, filePath.Length - 2);
+                        var fileFullPath = Path.Combine(lineItem.FileInfo.Directory.FullName, filename);
+
+                        var fileInfo = new FileInfo(fileFullPath);
+                        asmLoad.CharMapConverter_ReadCharMapFromFile(charMap, fileInfo);
                     }
                     catch (CharMapJsonReadException ex)
                     {

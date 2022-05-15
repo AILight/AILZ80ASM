@@ -29,17 +29,17 @@ namespace AILZ80ASM.Test
 
             Assert.ThrowsException<ArgumentException>(() =>
             {
-                charMapConverter.ReadCharMapFromFile("", "", asmLoad);
+                charMapConverter.ReadCharMapFromFile("", default(FileInfo), asmLoad);
             });
 
             Assert.ThrowsException<ArgumentException>(() =>
             {
-                charMapConverter.ReadCharMapFromFile("+-", "", asmLoad);
+                charMapConverter.ReadCharMapFromFile("+-", default(FileInfo), asmLoad);
             });
 
             Assert.ThrowsException<FileNotFoundException>(() =>
             {
-                charMapConverter.ReadCharMapFromFile("@ReadCharMapFromFileExceptionText", "", asmLoad);
+                charMapConverter.ReadCharMapFromFile("@ReadCharMapFromFileExceptionText", new FileInfo(".\\Test"), asmLoad);
             });
         }
 

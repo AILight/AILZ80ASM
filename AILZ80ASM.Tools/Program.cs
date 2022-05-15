@@ -9,8 +9,7 @@ namespace AILZ80ASM.Tools
     {
         public static void Main(params string[] args)
         {
-            CreateCharMapJson_JIS12.JIS();
+            //DumpToFiles.SaveFiles(new FileInfo(""));
         }
-
     }
 }

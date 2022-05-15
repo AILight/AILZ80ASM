@@ -250,7 +250,7 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(rootCommand.GetValue<FileInfo>("outputBin").Name, "Test.bin");
                 Assert.IsFalse(rootCommand.GetSelected("output"));
                 Assert.IsFalse(rootCommand.GetSelected("outputMode"));
-                
+
                 var outputFiles = rootCommand.GetOutputFiles();
                 Assert.AreEqual(outputFiles.Count, 1);
                 Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Test.bin");
@@ -312,6 +312,84 @@ namespace AILZ80ASM.Test
                 var outputFiles = rootCommand.GetOutputFiles();
                 Assert.AreEqual(outputFiles.Count, 1);
                 Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.CMT].Name, "Main.cmt");
+            }
+        }
+
+        [TestMethod]
+        public void Test_CommandLine_Tag()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-o", "test.bin", "-om", "BIN" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "test.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 1);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "test.bin");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-tag" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "tags");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-tag"};
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Main.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "tags");
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "Test.bin", "-tag", "Test.tag" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(fileInfos.Length, 1);
+                Assert.AreEqual(fileInfos.First().Name, "Main.z80");
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("output").Name, "Main.bin");
+                Assert.AreEqual(rootCommand.GetValue<string>("outputMode"), "bin");             // デフォルト値が設定
+                Assert.AreEqual(rootCommand.GetValue<FileInfo>("outputBin").Name, "Test.bin");
+                Assert.IsFalse(rootCommand.GetSelected("output"));
+                Assert.IsFalse(rootCommand.GetSelected("outputMode"));
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(outputFiles.Count, 2);
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.BIN].Name, "Test.bin");
+                Assert.AreEqual(outputFiles[AsmEnum.FileTypeEnum.TAG].Name, "Test.tag");
             }
         }
 
@@ -800,7 +878,8 @@ namespace AILZ80ASM.Test
         {
             var rootCommand = AsmCommandLine.SettingRootCommand();
 
-            Assert.ThrowsException<Exception>(() => {
+            Assert.ThrowsException<Exception>(() =>
+            {
                 rootCommand.AddOption(new CommandLine.Option<FileInfo[]>()
                 {
                     Name = "input",
@@ -813,7 +892,8 @@ namespace AILZ80ASM.Test
                 });
             });
 
-            Assert.ThrowsException<Exception>(() => {
+            Assert.ThrowsException<Exception>(() =>
+            {
                 rootCommand.AddOption(new CommandLine.Option<FileInfo[]>()
                 {
                     Name = "input_test",
@@ -827,6 +907,101 @@ namespace AILZ80ASM.Test
             });
         }
 
+        [TestMethod]
+        public void Test_ParseArgumentsFromJsonString()
+        {
+            {
+                var testJson = @"
+{
+  ""default-options"": [
+    ""-err""
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001"",
+    ""W9002""
+  ]
+}";
+                var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                Assert.AreEqual(argments[0], "-err");
+                Assert.AreEqual(argments[1], "-dw");
+                Assert.AreEqual(argments[2], "W0001");
+                Assert.AreEqual(argments[3], "W9001");
+                Assert.AreEqual(argments[4], "W9002");
+            }
 
+            {
+                 var testJson = @"
+{
+  ""default-options"": [
+    ""-ts 8""
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001"",
+    ""W9002""
+  ]
+}";
+                var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                Assert.AreEqual(argments[0], "-ts");
+                Assert.AreEqual(argments[1], "8");
+                Assert.AreEqual(argments[2], "-dw");
+                Assert.AreEqual(argments[3], "W0001");
+                Assert.AreEqual(argments[4], "W9001");
+                Assert.AreEqual(argments[5], "W9002");
+            }
+
+            {
+                var testJson = @"
+{
+  ""default-options"": [
+    ""-ts 8""
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001"",
+    ""W9002"",
+  ]
+}";
+                var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                Assert.AreEqual(argments[0], "-ts");
+                Assert.AreEqual(argments[1], "8");
+                Assert.AreEqual(argments[2], "-dw");
+                Assert.AreEqual(argments[3], "W0001");
+                Assert.AreEqual(argments[4], "W9001");
+                Assert.AreEqual(argments[5], "W9002");
+            }
+
+            {
+                var testJson = @"
+{
+  ""default-options"": [
+    ""-ts 8"",
+  ],
+  ""disable-warnings"": [
+    ""W0001"",
+    ""W9001""
+    ""W9002"",
+  ]
+}";
+                try
+                {
+                    try
+                    {
+                        var argments = AsmCommandLine.ParseArgumentsFromJsonString(testJson);
+                        Assert.Fail();
+                    }
+                    catch (System.Text.Json.JsonException ex)
+                    {
+                        throw new Exception($"{ex.LineNumber}行目に問題があります。");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Assert.AreEqual(ex.Message, "8行目に問題があります。");
+                }
+
+            }
+        }
     }
 }
