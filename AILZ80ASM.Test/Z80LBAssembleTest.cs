@@ -25,7 +25,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestLB_DBFDWF()
+        public void TestLB_DBFIL_DWFIL()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

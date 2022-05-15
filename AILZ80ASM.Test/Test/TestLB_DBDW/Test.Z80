@@ -1,8 +1,8 @@
 ﻿	org $8000
 LB:
 	LD DE, CHAR_01
-	DB 0, 1, 2, 20H
-	DW 0, 1, 2, 2000H
+	DEFB 0, 1, 2, 20H
+	DEFW 0, 1, 2, 2000H
 	NOP
 CHAR_00:
 	DB $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; キャラL

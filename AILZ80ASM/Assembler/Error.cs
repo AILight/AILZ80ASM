@@ -162,8 +162,8 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0021] = "DBへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0022] = "DWへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。[{0}]",
-            [ErrorCodeEnum.E0024] = "DBFへの変換に失敗しました。[{0}]",
-            [ErrorCodeEnum.E0025] = "DWFへの変換に失敗しました。[{0}]",
+            [ErrorCodeEnum.E0024] = "DBFILへの変換に失敗しました。[{0}]",
+            [ErrorCodeEnum.E0025] = "DWFILへの変換に失敗しました。[{0}]",
 
             //[ErrorCodeEnum.E9999] = $"オフセット値の範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
 

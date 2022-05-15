@@ -22,11 +22,11 @@ LABEL_3		equ 3/0
 			DB 10/0
 			DW 11/0
 
-			DBF 12/0
-			DBF $10, 14/0
+			DBFIL 12/0
+			DBFIL $10, 14/0
 
-			DWF 15/0
-			DWF $10, 16/0
+			DWFIL 15/0
+			DWFIL $10, 16/0
 
 			TEST_M1 17/0
 			TEST_M2 18/0

@@ -375,11 +375,11 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - 例：DW [Y=24..0:$8000 + Y * $140]
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
 
-#### DBF <式>, [<式2>]
+#### DBFIL <式>, [<式2>]
 - <式>のバイト数、0で埋めます。<式2>を設定するとその値で埋めます
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
 
-#### DWF <式>, [<式2>]
+#### DWFIL <式>, [<式2>]
 - <式>の２バイト数、0で埋めます。<式2>を設定するとその値で埋めます
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L11)
 

@@ -9,7 +9,7 @@ namespace AILZ80ASM.LineDetailItems
 {
     public class LineDetailItemAddressDS : LineDetailItemAddress
     {
-        private static readonly string RegexPatternDS = @"^(?<op1>(DS))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
+        private static readonly string RegexPatternDS = @"^(?<op1>(DS|DEFS))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
 
         public string Operation { get; set; }
         public string LengthLabel { get; set; }
