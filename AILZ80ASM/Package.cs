@@ -179,14 +179,14 @@ namespace AILZ80ASM
             }
 
             //
-            var defaultFillByte = default(byte);
+            var defaultFillByte = AssembleLoad.Share.GapByte;
             foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.OrderBy(m => m.OutputAddress))
             {
                 try
                 {
                     if (asmORG.ORGType == AsmORG.ORGTypeEnum.ORG)
                     {
-                        defaultFillByte = 0;
+                        defaultFillByte = AssembleLoad.Share.GapByte;
                     }
 
                     var fillByte = defaultFillByte;

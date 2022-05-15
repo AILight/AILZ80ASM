@@ -53,6 +53,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - --disable-warning <codes>
 - -ul, --unused-label        未使用ラベルを確認します。
 - -cd,                       アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
+- -gap, --gap-default <byte> アセンブル出力ギャップに設定するバイトを指定します。デフォルト:$FF
 - --change-dir <directory>
 - -df, --diff-file           アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 - -v, --version              バージョンを表示します。
@@ -273,7 +274,7 @@ addr:
   - 出力されるバイナリーに影響を与えます。プログラム中で何度でも変更可能です。アドレスの重複は不可能です。
   - バイナリーの出力を制御したいときに使用します
 - <式3>
-  - 先アドレスを指定した場合には、0で埋めます。<式3>を設定するとその値で埋めます。
+  - 先アドレスを指定した場合には、<ギャップ値>で埋めます。<式3>を設定するとその値で埋めます。
 - メモリのアライメントを合わせるには、ALIGNをお勧めします。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ORG/Test.Z80)
 
@@ -300,13 +301,13 @@ LB2000:
 #### ALIGN <式>, [<式2>]
 - ロケーションカウンタの値を、<式>で設定したアライメント境界まで移動します。
 - <式>に設定できる値は、2のべき乗である必要があります。
-- 移動により空いた領域には、0 または <式2> の値で埋められます。
+- 移動により空いた領域には、<ギャップ値> または <式2> の値で埋められます。
 - ALIGN以降のプログラム等の出力情報が無い場合には、出力結果は切り詰められます。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
 #### DS <式>, [<式2>]
 - ロケーションカウンタの値を、<式>で設定した値を加算した場所に移動します。
-- <式>のバイト数、0で埋めます。<式2>を設定するとその値で埋めます
+- <式>のバイト数、<ギャップ値>で埋めます。<式2>を設定するとその値で埋めます
 - DS以降のプログラム等の出力情報が無い場合には、出力結果は切り詰められます。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
 
@@ -374,11 +375,11 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - 例：DW [Y=24..0:$8000 + Y * $140]
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
 
-#### DBF <式>, [<式2>]
+#### DBFIL <式>, [<式2>]
 - <式>のバイト数、0で埋めます。<式2>を設定するとその値で埋めます
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
 
-#### DWF <式>, [<式2>]
+#### DWFIL <式>, [<式2>]
 - <式>の２バイト数、0で埋めます。<式2>を設定するとその値で埋めます
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L11)
 

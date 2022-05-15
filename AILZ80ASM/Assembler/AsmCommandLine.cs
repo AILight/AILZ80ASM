@@ -282,6 +282,15 @@ namespace AILZ80ASM.Assembler
                 Required = false,
             });
 
+            rootCommand.AddOption(new Option<byte>()
+            {
+                Name = "gapByte",
+                Aliases = new[] { "-gap", "--gap-default" },
+                Description = "アセンブラのギャップのデフォルト値を指定します。初期値:$FF",
+                DefaultValue = "$FF",
+                Required = false,
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "diffFile",

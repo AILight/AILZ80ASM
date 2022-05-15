@@ -13,7 +13,7 @@ TEST1:
 .SIZE		equ 4
 
 WORK:
-.Counter	ds 4
+.Counter	defs 4
 .PORT1		ds TEST1.SIZE
 .PORT2		ds TEST1.SIZE
 .PORT3		ds TEST1.SIZE

@@ -1,7 +1,0 @@
-﻿	org $8000
-
-	DBF 16
-	DBF 16, $AA
-
-	DWF 16
-	DWF 16, $55AA

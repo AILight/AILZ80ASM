@@ -26,8 +26,8 @@ namespace AILZ80ASM.OperationItems
 
         private enum DataTypeEnum
         {
-            dbf = 1, // DataLength = 1
-            dwf = 2, // DataLength = 2
+            dbfill = 1, // DataLength = 1
+            dwfill = 2, // DataLength = 2
         }
 
         private OperationItemDataFill()
@@ -39,7 +39,7 @@ namespace AILZ80ASM.OperationItems
         {
             var matched = Regex.Match(operation, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var op1 = matched.Groups["op1"].Value;
-            return (new[] { "DBF", "DWF" }).Any(m => string.Compare(m, op1, true) == 0);
+            return (new[] { "DBFIL", "DWFIL" }).Any(m => string.Compare(m, op1, true) == 0);
         }
 
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
@@ -52,11 +52,11 @@ namespace AILZ80ASM.OperationItems
 
             switch (op1.ToUpper())
             {
-                case "DBF":
-                    returnValue = DBDWF(DataTypeEnum.dbf, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                case "DBFIL":
+                    returnValue = DBDWFILL(DataTypeEnum.dbfill, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
-                case "DWF":
-                    returnValue = DBDWF(DataTypeEnum.dwf, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                case "DWFIL":
+                    returnValue = DBDWFILL(DataTypeEnum.dwfill, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 default:
                     break;
@@ -74,7 +74,7 @@ namespace AILZ80ASM.OperationItems
         /// <param name="lineExpansionItem"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static OperationItemDataFill DBDWF(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        private static OperationItemDataFill DBDWFILL(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
         {
             var returnValue = default(OperationItemDataFill);
             var ops = AIName.ParseArguments(op2);
@@ -82,8 +82,8 @@ namespace AILZ80ASM.OperationItems
             var isDefaultValueClear = true;
             var errorCode = dataType switch
             {
-                DataTypeEnum.dbf => Error.ErrorCodeEnum.E0024,
-                DataTypeEnum.dwf => Error.ErrorCodeEnum.E0025,
+                DataTypeEnum.dbfill => Error.ErrorCodeEnum.E0024,
+                DataTypeEnum.dwfill => Error.ErrorCodeEnum.E0025,
                 _ => throw new NotImplementedException()
             };
 
@@ -122,7 +122,7 @@ namespace AILZ80ASM.OperationItems
             var byteList = new List<byte>();
             switch (DataType)
             {
-                case DataTypeEnum.dwf:
+                case DataTypeEnum.dwfill:
                     try
                     {
                         foreach (var valueString in ValueStrings)
@@ -176,7 +176,7 @@ namespace AILZ80ASM.OperationItems
                     }
 
                     break;
-                case DataTypeEnum.dbf:
+                case DataTypeEnum.dbfill:
                     try
                     {
                         foreach (var valueString in ValueStrings)

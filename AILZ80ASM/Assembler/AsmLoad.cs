@@ -79,9 +79,9 @@ namespace AILZ80ASM.Assembler
             Share.PragmaOnceFiles = new List<FileInfo>();
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
+            Share.GapByte = assembleOption.GapByte;
 
             Scope = new AsmLoadScope();
-            Scope.Labels = new List<Label>();
             Scope.Labels = new List<Label>();
             Scope.Macros = new List<Macro>();
             Scope.Functions = new List<Function>();
