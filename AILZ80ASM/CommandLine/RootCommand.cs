@@ -33,6 +33,11 @@ namespace AILZ80ASM.CommandLine
             }
         }
 
+        public bool HasHelpArgument(string[] args)
+        {
+            return Options.Any(m => m.IsHelp && m.Aliases.Any(n => args.Any(i => n == i)));
+        }
+
         public string CreateHelpMessage(bool simpleMessage)
         {
             var result = default(string);

@@ -23,29 +23,32 @@ namespace AILZ80ASM
                 TraceListenerRemoveAll();
                 Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
 
-                // デフォルト設定のロード
-                try
-                {
-                    var processDirectory = Path.GetDirectoryName(Environment.ProcessPath);
-                    var profilePath = Path.Combine(processDirectory, PROFILE_FILENAME);
-                    if (File.Exists(profilePath))
-                    {
-                        var profileString = File.ReadAllText(profilePath);
-                        var profileArguments = AsmCommandLine.ParseArgumentsFromJsonString(profileString);
-                        args = args.Concat(profileArguments).ToArray();
-                    }
-                }
-                catch (System.Text.Json.JsonException ex)
-                {
-                    throw new Exception($"{PROFILE_FILENAME}:{ex.LineNumber}行目に問題があります。");
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"{PROFILE_FILENAME}:{ex.Message}", ex);
-                }
-
                 // コマンドラインの設定をする
                 var rootCommand = AsmCommandLine.SettingRootCommand();
+
+                // デフォルト設定のロード
+                if (!rootCommand.HasHelpArgument(args))
+                {
+                    try
+                    {
+                        var processDirectory = Path.GetDirectoryName(Environment.ProcessPath);
+                        var profilePath = Path.Combine(processDirectory, PROFILE_FILENAME);
+                        if (File.Exists(profilePath))
+                        {
+                            var profileString = File.ReadAllText(profilePath);
+                            var profileArguments = AsmCommandLine.ParseArgumentsFromJsonString(profileString);
+                            args = args.Concat(profileArguments).ToArray();
+                        }
+                    }
+                    catch (System.Text.Json.JsonException ex)
+                    {
+                        throw new Exception($"{PROFILE_FILENAME}:{ex.LineNumber}行目に問題があります。");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"{PROFILE_FILENAME}:{ex.Message}", ex);
+                    }
+                }
 
                 // 引数の名前とRootCommand.Optionの名前が一致していないと変数展開されない
                 if (rootCommand.Parse(args))
