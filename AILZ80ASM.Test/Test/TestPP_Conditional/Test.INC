@@ -3,6 +3,6 @@
 
 TESTFILE	equ	$01
 
-	include ".\Test\TestPP_Conditional\Define.INC"
+	include "Define.INC"
 
 #ENDIF

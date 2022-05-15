@@ -76,8 +76,9 @@ namespace AILZ80ASM.LineDetailItems
                 var fileTypeString = matched.Groups["Filetype"].Value;
                 var startAddressString = matched.Groups["StartAddress"].Value;
                 var lengthString = matched.Groups["Length"].Value;
-
-                var fileInfo = new FileInfo(filename);
+                var fileFullPath = Path.Combine(lineItem.FileInfo.Directory.FullName, filename);
+                
+                var fileInfo = new FileInfo(fileFullPath);
                 var fileType = LineDetailItemInclude.FileTypeEnum.Text;
 
                 if (string.IsNullOrEmpty(fileTypeString) || (new[] { "T", "Text" }).Any(m => string.Compare(m, fileTypeString, true) == 0))

@@ -618,9 +618,9 @@ namespace AILZ80ASM.Assembler
         /// </summary>
         /// <param name="map"></param>
         /// <param name="filePath"></param>
-        public void CharMapConverter_ReadCharMapFromFile(string map, string filePath)
+        public void CharMapConverter_ReadCharMapFromFile(string map, FileInfo fileInfo)
         {
-            this.Share.CharMapConverter.ReadCharMapFromFile(map, filePath, this);
+            this.Share.CharMapConverter.ReadCharMapFromFile(map, fileInfo, this);
         }
     }
 }

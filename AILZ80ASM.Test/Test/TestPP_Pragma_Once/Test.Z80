@@ -1,6 +1,6 @@
 ﻿
-INCLUDE ".\Test\TestPP_Pragma_Once\Test1.Z80"
-INCLUDE ".\Test\TestPP_Pragma_Once\Test2.Z80"
-INCLUDE ".\Test\TestPP_Pragma_Once\Test3.Z80"
+INCLUDE "Test1.Z80"
+INCLUDE "Test2.Z80"
+INCLUDE "Test3.Z80"
 
 	LD a, TEST.TEST1
