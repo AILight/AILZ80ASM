@@ -164,7 +164,7 @@ namespace AILZ80ASM.LineDetailItems
                         break;
                     case FileTypeEnum.Binary:
                         lists.Add(LineDetailExpansionItem.List);
-                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.BinResults.Sum(m => m.Data.Length)));
+                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.BinResults.Sum(m => m.Data?.Length ?? 0)));
                         break;
                     default:
                         throw new NotImplementedException();

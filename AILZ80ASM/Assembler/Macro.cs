@@ -72,11 +72,11 @@ namespace AILZ80ASM.Assembler
                     // 引数の割り当て
                     foreach (var index in Enumerable.Range(0, arguments.Length))
                     {
-                        var argumentLabel = new LabelArg(arguments[index], asmLoad, lineItem, asmLoad);
+                        var argumentLabel = new LabelMacroArg(arguments[index], asmLoad, lineItem, asmLoad);
                         var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalidate ?
                                             argumentLabel.LabelFullName : arguments[index];
 
-                        var label = new LabelArg(this.Args[index], argumentValue, localAsmLoad, lineItem, asmLoad);
+                        var label = new LabelMacroArg(this.Args[index], argumentValue, localAsmLoad, lineItem, asmLoad);
                         if (label.Invalidate)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
