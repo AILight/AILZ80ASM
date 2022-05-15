@@ -1,0 +1,7 @@
+﻿	org $8000
+
+	DBFIL 16
+	DBFIL 16, $AA
+
+	DWFIL 16
+	DWFIL 16, $55AA

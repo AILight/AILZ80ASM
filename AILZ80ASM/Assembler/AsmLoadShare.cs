@@ -50,5 +50,8 @@ namespace AILZ80ASM.Assembler
 
         // Listの内容は揮発するのでこちらで保存
         public List<AsmList> AsmLists { get; set; } = default;
+        
+        // ギャップバイト
+        public byte GapByte { get; set; } = byte.MaxValue;
     }
 }

@@ -83,6 +83,15 @@ namespace AILZ80ASM.CommandLine
                 Value = (T)(object)Convert.ToInt32(localValues[0]);
                 HasValue = true;
             }
+            else if (typeof(T) == typeof(byte))
+            {
+                if (localValues.Count != 1)
+                {
+                    throw new Exception($"{Name}に、数値を指定する必要があります。");
+                }
+                Value = (T)(object)AILight.AIMath.Calculation(localValues[0]).ConvertTo<byte>();
+                HasValue = true;
+            }
             else if (typeof(T) == typeof(bool))
             {
                 Value = (T)(object)true;

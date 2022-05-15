@@ -6,8 +6,8 @@ LB:
 	NOP
 CHAR_00	DS 16		; ラベルテスト
 	DS 16, 1
-	DBF 16, 5
-	DWF 8, 0102H
+	DBFIL 16, 5
+	DWFIL 8, 0102H
 
 TEST1:
 .ADDR		equ 0

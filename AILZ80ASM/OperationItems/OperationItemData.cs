@@ -37,7 +37,7 @@ namespace AILZ80ASM.OperationItems
         {
             var matched = Regex.Match(operation, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var op1 = matched.Groups["op1"].Value;
-            return (new[] { "DB", "DW", }).Any(m => string.Compare(m, op1, true) == 0);
+            return (new[] { "DB", "DEFB", "DW", "DEFW" }).Any(m => string.Compare(m, op1, true) == 0);
         }
 
         public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
@@ -51,9 +51,11 @@ namespace AILZ80ASM.OperationItems
             switch (op1.ToUpper())
             {
                 case "DB":
+                case "DEFB":
                     returnValue = DBDW(DataTypeEnum.db, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 case "DW":
+                case "DEFW":
                     returnValue = DBDW(DataTypeEnum.dw, op2, lineDetailExpansionItemOperation, address, asmLoad);
                     break;
                 default:
