@@ -22,7 +22,7 @@ namespace AILZ80ASM
         public void SaveHEX(Stream stream)
         {
             using var memoryStream = new MemoryStream();
-            using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
+            using var streamWriter = new StreamWriter(memoryStream, System.Text.Encoding.ASCII);
 
             var outputAddress = default(UInt32);
             var binResults = FileItems.SelectMany(m => m.BinResults).OrderBy(m => m.Address.Output);
