@@ -51,15 +51,30 @@ namespace AILZ80ASM.Test
 
         public static void AreSameLst(Stream expectedStream, Stream actualStream, AsmEnum.FileTypeEnum fileType)
         {
+            if (fileType == AsmEnum.FileTypeEnum.HEX)
+            {
+                var expectedReadByte = expectedStream.ReadByte();
+                var actualReadByte = actualStream.ReadByte();
+                if ((expectedReadByte != -1 && !char.IsAscii((char)expectedReadByte)) ||
+                    (actualReadByte != -1 && !char.IsAscii((char)actualReadByte)))
+                {
+                    Assert.Fail("ASCIIエンコードのファイルではありません");
+                }
+
+                expectedStream.Seek(0, SeekOrigin.Begin);
+                actualStream.Seek(0, SeekOrigin.Begin);
+            }
+
             using var expectedStreamReader = new StreamReader(expectedStream);
             using var actualStreamReader = new StreamReader(actualStream);
+
             var line = 1;
             while (!expectedStreamReader.EndOfStream && !actualStreamReader.EndOfStream)
             {
                 var expected = expectedStreamReader.ReadLine();
                 var actual = actualStreamReader.ReadLine();
 
-                if (line > 1)
+                if (line > 1 || fileType == AsmEnum.FileTypeEnum.HEX)
                 {
                     Assert.AreEqual(expected, actual, $"{fileType} Line:{line} expect:{expected} actual:{actual}");
                 }
