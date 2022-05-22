@@ -1,6 +1,7 @@
 ﻿using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems;
+using AILZ80ASM.OperationItems;
 using System;
 using System.Linq;
 
@@ -19,12 +20,12 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem
         /// </summary>
         /// <param name="lineItem"></param>
         /// <param name="asmLoad"></param>
-        public LineDetailScopeItem(LineItem lineItem, AsmLoad asmLoad)
+        public LineDetailScopeItem(LineItem lineItem, OperationItem operationItem, AsmLoad asmLoad)
         {
             AsmLoad = asmLoad;
             LineDetailExpansionItems = new[]
             {
-                new LineDetailExpansionItemOperation(lineItem, AsmLoad)
+                new LineDetailExpansionItemOperation(lineItem, operationItem, AsmLoad)
             };
         }
 

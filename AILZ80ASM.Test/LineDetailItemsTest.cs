@@ -1,6 +1,8 @@
 ﻿using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
+using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems;
+using AILZ80ASM.OperationItems;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
@@ -29,15 +31,11 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void LineDetailExpansionItemOperation_PreAssemble()
         {
-            var asmAddress = new AsmAddress();
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
             var lineItem = new LineItem("\tLD G,0", 1, default(FileInfo));
-            var lineDetailExpansionItemOperation = new LineDetailExpansionItemOperation(lineItem, asmLoad);
+            var operationItem = LineDetailItemOperation.Create(new LineItem(lineItem), asmLoad);
 
-            Assert.ThrowsException<ErrorAssembleException>(() =>
-            {
-                lineDetailExpansionItemOperation.PreAssemble(ref asmAddress, asmLoad);
-            });
+            Assert.IsNull(operationItem);
         }
     }
 }

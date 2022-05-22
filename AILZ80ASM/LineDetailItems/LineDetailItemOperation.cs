@@ -6,12 +6,12 @@ namespace AILZ80ASM.LineDetailItems
 {
     public class LineDetailItemOperation : LineDetailItem
     {
-        private LineDetailItemOperation(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemOperation(LineItem lineItem, OperationItem operationItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
             this.LineDetailScopeItems = new[]
             {
-                new LineDetailScopeItem(this.LineItem, asmLoad)
+                new LineDetailScopeItem(this.LineItem, operationItem, asmLoad)
             };
         }
 
@@ -22,9 +22,18 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemOperation);
             }
 
-            if (OperationItem.CanCreate(lineItem.OperationString, asmLoad))
+            //lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
+
+            var operationItem = default(OperationItem);
+
+            operationItem ??= OperationItemOPCode.Create(lineItem, asmLoad);
+            operationItem ??= OperationItemData.Create(lineItem, asmLoad);
+            operationItem ??= OperationItemDataFill.Create(lineItem, asmLoad);
+            operationItem ??= OperationItemNone.Create(lineItem, asmLoad);
+
+            if (operationItem != default)
             {
-                return new LineDetailItemOperation(lineItem, asmLoad);
+                return new LineDetailItemOperation(lineItem, operationItem, asmLoad);
             }
 
             return default;
