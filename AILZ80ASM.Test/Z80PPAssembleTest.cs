@@ -31,6 +31,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestPP_MacroArgumentRegister()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestPP_MacroCompatible()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
