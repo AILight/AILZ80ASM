@@ -1,7 +1,6 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
-using AILZ80ASM.Interfaces;
 using AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.OperationItems
 {
-    public class OperationItemDataFill : OperationItem /*, IOperationItemDefaultClearable*/
+    public class OperationItemDataFill : OperationItem
     {
         private enum DataTypeEnum
         {
