@@ -11,89 +11,76 @@ namespace AILZ80ASM.OperationItems
 {
     public class OperationItemData : OperationItem
     {
-        private string[] ValueStrings { get; set; }
-        private DataTypeEnum DataType { get; set; }
-        private byte[] ItemDataBin { get; set; }
-        private AsmLength ItemDataLength { get; set; }
-        private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
-        private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
-
-        public override byte[] Bin => ItemDataBin;
-
-        public override AsmLength Length => ItemDataLength;
-
         private enum DataTypeEnum
         {
             db = 1, // DataLength = 1
             dw = 2, // DataLength = 2
         }
+        private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
+        private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
 
-        private OperationItemData()
+        private string[] ValueStrings { get; set; }
+        private DataTypeEnum DataType { get; set; }
+        private byte[] ItemDataBin { get; set; }
+        private AsmLength ItemDataLength { get; set; }
+        private AsmLoad AsmLoad { get; set; }
+        private List<string> ValueList { get; set; } = new List<string>();
+
+        public override byte[] Bin => ItemDataBin;
+        public override AsmLength Length => ItemDataLength;
+
+        private OperationItemData(DataTypeEnum dataType, string[] valueStrings, AsmLoad asmLoad)
         {
-
+            DataType = dataType;
+            ValueStrings = valueStrings;
+            AsmLoad = asmLoad;
         }
 
-        public new static bool CanCreate(string operation, AsmLoad asmLoad)
+        public static OperationItemData Create(LineItem listItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(operation, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var op1 = matched.Groups["op1"].Value;
-            return (new[] { "DB", "DEFB", "DW", "DEFW" }).Any(m => string.Compare(m, op1, true) == 0);
-        }
-
-        public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
-        {
-            var returnValue = default(OperationItemData);
-            var matched = Regex.Match(lineDetailExpansionItemOperation.LineItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = Regex.Match(listItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var dataType = default(DataTypeEnum);
 
             var op1 = matched.Groups["op1"].Value;
             var op2 = matched.Groups["op2"].Value;
-
             switch (op1.ToUpper())
             {
                 case "DB":
                 case "DEFB":
-                    returnValue = DBDW(DataTypeEnum.db, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                    dataType = DataTypeEnum.db;
                     break;
                 case "DW":
                 case "DEFW":
-                    returnValue = DBDW(DataTypeEnum.dw, op2, lineDetailExpansionItemOperation, address, asmLoad);
+                    dataType = DataTypeEnum.dw;
                     break;
                 default:
-                    break;
+                    return default;
             }
-
-            return returnValue;
+            var ops = AIName.ParseArguments(op2);
+            return new OperationItemData(dataType, ops, asmLoad);
         }
 
-        /// <summary>
-        /// DB、DWの処理部
-        /// </summary>
-        /// <param name="dataType"></param>
-        /// <param name="op2"></param>
-        /// <param name="lineDetailExpansionItemOperation"></param>
-        /// <param name="address"></param>
-        /// <param name="labels"></param>
-        /// <returns></returns>
-        private static OperationItemData DBDW(DataTypeEnum dataType, string op2, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        public override void PreAssemble(LineDetailExpansionItemOperation lineDetailExpansionItemOperation)
         {
-            var ops = AIName.ParseArguments(op2);
-            var dataList = new List<string>();
-            
-            foreach (var item in ops.Select((value, index) => new { Value = value, Index = index }))
+            base.PreAssemble(lineDetailExpansionItemOperation);
+
+            // 展開処理を行う
+            ValueList.Clear();
+            foreach (var item in ValueStrings.Select((value, index) => new { Value = value, Index = index }))
             {
                 //文字列の判断
-                if (AIString.IsChar(item.Value, asmLoad) || AIString.IsString(item.Value, asmLoad))
+                if (AIString.IsChar(item.Value, AsmLoad) || AIString.IsString(item.Value, AsmLoad))
                 {
                     try
                     {
-                        var aiValue = AIMath.Calculation(item.Value, asmLoad, address);
-                        switch (dataType)
+                        var aiValue = AIMath.Calculation(item.Value, AsmLoad, lineDetailExpansionItemOperation.Address);
+                        switch (DataType)
                         {
                             case DataTypeEnum.db:
-                                dataList.AddRange(aiValue.ConvertTo<byte[]>().Select(m => m.ToString("0")));
+                                ValueList.AddRange(aiValue.ConvertTo<byte[]>().Select(m => m.ToString("0")));
                                 break;
                             case DataTypeEnum.dw:
-                                dataList.AddRange(aiValue.ConvertTo<UInt16[]>().Select(m => m.ToString("0")));
+                                ValueList.AddRange(aiValue.ConvertTo<UInt16[]>().Select(m => m.ToString("0")));
                                 break;
                             default:
                                 throw new NotImplementedException();
@@ -128,18 +115,18 @@ namespace AILZ80ASM.OperationItems
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, item.Value);
                     }
                 }
-                else if(Regex.IsMatch(item.Value, RegexPatternDataFunction))
+                else if (Regex.IsMatch(item.Value, RegexPatternDataFunction))
                 {
-                    dataList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, asmLoad));
+                    ValueList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, AsmLoad));
                 }
                 else
                 {
                     if (string.IsNullOrWhiteSpace(item.Value))
                     {
                         // 最後は値の無指定が可能
-                        if (item.Index < ops.Length - 1)
+                        if (item.Index < ValueStrings.Length - 1)
                         {
-                            switch (dataType)
+                            switch (DataType)
                             {
                                 case DataTypeEnum.db:
                                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, "値が指定されていません");
@@ -152,18 +139,117 @@ namespace AILZ80ASM.OperationItems
                     }
                     else
                     {
-                        dataList.Add(item.Value);
+                        ValueList.Add(item.Value);
                     }
                 }
             }
 
-            return new OperationItemData()
+            ItemDataLength = new AsmLength(ValueList.Count * (int)DataType);
+            LineDetailExpansionItemOperation = lineDetailExpansionItemOperation;
+        }
+
+        public override void Assemble(AsmLoad asmLoad)
+        {
+            base.Assemble(asmLoad);
+
+            var byteList = new List<byte>();
+            switch (DataType)
             {
-                ValueStrings = dataList.ToArray(),
-                DataType = dataType,
-                ItemDataLength = new AsmLength(dataList.Count * (int)dataType),
-                LineDetailExpansionItemOperation = lineDetailExpansionItemOperation
-            };
+                case DataTypeEnum.dw:
+                    foreach (var valueItem in ValueList.Select((Value, Index) => new { Value, Index}))
+                    {
+                        try
+                        {
+                            var values = AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<UInt16[]>();
+                            foreach (var value in values)
+                            {
+                                switch (asmLoad.ISA.Endianness)
+                                {
+                                    case InstructionSet.ISA.EndiannessEnum.LittleEndian:
+                                        byteList.Add((byte)(value % 256));
+                                        byteList.Add((byte)(value / 256));
+                                        break;
+                                    case InstructionSet.ISA.EndiannessEnum.BigEndian:
+                                        byteList.Add((byte)(value / 256));
+                                        byteList.Add((byte)(value % 256));
+                                        break;
+                                    default:
+                                        throw new InvalidOperationException();
+                                }
+                            }
+                        }
+                        catch (CharMapNotFoundException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                        }
+                        catch (CharMapConvertException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                        }
+                        catch (InvalidAIValueException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (InvalidAIMathException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (ErrorAssembleException)
+                        {
+                            throw;
+                        }
+                        catch (ErrorLineItemException)
+                        {
+                            throw;
+                        }
+                        catch (Exception)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, valueItem.Value);
+                        }
+                    }
+                    break;
+                case DataTypeEnum.db:
+                    foreach (var valueItem in ValueList.Select((Value, Index) => new { Value, Index }))
+                    {
+                        try
+                        {
+                            byteList.AddRange(AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<byte[]>());
+                        }
+                        catch (CharMapNotFoundException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
+                        }
+                        catch (CharMapConvertException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
+                        }
+                        catch (InvalidAIValueException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (InvalidAIMathException ex)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
+                        }
+                        catch (ErrorAssembleException)
+                        {
+                            throw;
+                        }
+                        catch (ErrorLineItemException)
+                        {
+                            throw;
+                        }
+                        catch (Exception)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, valueItem.Value);
+                        }
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException(nameof(DataType));
+            }
+
+            ItemDataBin = byteList.ToArray();
         }
 
         /// <summary>
@@ -210,108 +296,6 @@ namespace AILZ80ASM.OperationItems
             }
 
             return returnValues.ToArray();
-        }
-
-        public override void Assemble(AsmLoad asmLoad)
-        {
-            var byteList = new List<byte>();
-            switch (DataType)
-            {
-                case DataTypeEnum.dw:
-                    foreach (var valueString in ValueStrings)
-                    {
-                        try
-                        {
-                            var values = AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<UInt16[]>();
-                            foreach (var value in values)
-                            {
-                                switch (asmLoad.ISA.Endianness)
-                                {
-                                    case InstructionSet.ISA.EndiannessEnum.LittleEndian:
-                                        byteList.Add((byte)(value % 256));
-                                        byteList.Add((byte)(value / 256));
-                                        break;
-                                    case InstructionSet.ISA.EndiannessEnum.BigEndian:
-                                        byteList.Add((byte)(value / 256));
-                                        byteList.Add((byte)(value % 256));
-                                        break;
-                                    default:
-                                        throw new InvalidOperationException();
-                                }
-                            }
-                        }
-                        catch (CharMapNotFoundException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
-                        }
-                        catch (CharMapConvertException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
-                        }
-                        catch (InvalidAIValueException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                        }
-                        catch (InvalidAIMathException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                        }
-                        catch (ErrorAssembleException)
-                        {
-                            throw;
-                        }
-                        catch (ErrorLineItemException)
-                        {
-                            throw;
-                        }
-                        catch (Exception)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, valueString);
-                        }
-                    }
-                    break;
-                case DataTypeEnum.db:
-                    foreach (var valueString in ValueStrings)
-                    {
-                        try
-                        {
-                            byteList.AddRange(AIMath.Calculation(valueString, asmLoad, LineDetailExpansionItemOperation.Address).ConvertTo<byte[]>());
-                        }
-                        catch (CharMapNotFoundException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
-                        }
-                        catch (CharMapConvertException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
-                        }
-                        catch (InvalidAIValueException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                        }
-                        catch (InvalidAIMathException ex)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                        }
-                        catch (ErrorAssembleException)
-                        {
-                            throw;
-                        }
-                        catch (ErrorLineItemException)
-                        {
-                            throw;
-                        }
-                        catch (Exception)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, valueString);
-                        }
-                    }
-                    break;
-                default:
-                    throw new InvalidOperationException(nameof(DataType));
-            }
-
-            ItemDataBin = byteList.ToArray();
         }
     }
 }

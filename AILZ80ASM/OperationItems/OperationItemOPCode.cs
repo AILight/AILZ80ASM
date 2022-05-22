@@ -20,43 +20,22 @@ namespace AILZ80ASM.OperationItems
 
         public override AsmLength Length => new AsmLength(AssembleResult.InstructionItem.OPCode.Length);
 
-        private OperationItemOPCode(InstructionSet.AssembleResult assembleResult, LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
+        private OperationItemOPCode(InstructionSet.AssembleResult assembleResult, AsmLoad asmLoad)
         {
             AssembleResult = assembleResult;
-            LineDetailExpansionItemOperation = lineDetailExpansionItemOperation;
             AsmLoad = asmLoad;
         }
 
-        public new static bool CanCreate(string operation, AsmLoad asmLoad)
+        public static OperationItemOPCode Create(LineItem listItem, AsmLoad asmLoad)
         {
-            if (string.IsNullOrEmpty(operation))
+            var asssembleResult = asmLoad.ISA.PreAssemble(listItem.OperationString);
+
+            if (asssembleResult == default)
             {
-                //空文字もOperationItemOPCodeとして処理をする
-                return true;
+                return default;
             }
 
-            if (asmLoad.ISA.PreAssemble(operation) != default)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public new static OperationItem Create(LineDetailExpansionItemOperation lineDetailExpansionItemOperation, AsmAddress address, AsmLoad asmLoad)
-        {
-            var returnValue = default(OperationItemOPCode);
-            var code = lineDetailExpansionItemOperation.LineItem.OperationString;
-            if (!string.IsNullOrEmpty(code))
-            {
-                var result = asmLoad.ISA.PreAssemble(code);
-                if (result != default)
-                {
-                    returnValue = new OperationItemOPCode(result, lineDetailExpansionItemOperation, address, asmLoad);
-                }
-            }
-
-            return returnValue;
+            return new OperationItemOPCode(asssembleResult, asmLoad);
         }
 
         public override void Assemble(AsmLoad asmLoad)

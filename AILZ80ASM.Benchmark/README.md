@@ -14,8 +14,39 @@
   - [Benchmark1](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark/TestSource/Benchmark1) をアセンブルした処理時間
 
 ## ベンチマーク結果
+#### v0.9.9.19(開発中): 2022/05/22
+- 命令解析部の効率化
+```
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1706 (21H1/May2021Update)
+Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK=6.0.203
+  [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+  DefaultJob : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+
+
+|     Method |    Mean |    Error |   StdDev |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 1.583 s | 0.0313 s | 0.0277 s |
+```
+
+
+#### v0.9.9.16: 2022/05/17
+- エラー処理の見直し
+```
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1706 (21H1/May2021Update)
+Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK=6.0.203
+  [Host]     : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+  DefaultJob : .NET 6.0.5 (6.0.522.21309), X64 RyuJIT
+
+
+|     Method |    Mean |    Error |   StdDev |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 3.009 s | 0.0575 s | 0.0538 s |
+```
+
 #### v0.9.9.13: 2022/05/02
-- ラベル演算処理の強化
+- 演算処理の強化
 ```
 BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1645 (21H1/May2021Update)
 Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
