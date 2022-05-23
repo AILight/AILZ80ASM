@@ -17,6 +17,7 @@ namespace AILZ80ASM
 
         public static int Main(params string[] args)
         {
+            var displayedOutputStart = false;
             try
             {
                 // Tranceの書き出し先を削除
@@ -71,6 +72,7 @@ namespace AILZ80ASM
 
                     try
                     {
+                        displayedOutputStart = true;
                         var result = Assember(rootCommand);
                         return result ? 0 : 1;
                     }
@@ -97,7 +99,10 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
-                OutputStart();
+                if (!displayedOutputStart)
+                {
+                    OutputStart();
+                }
                 Trace.WriteLine($"Error:{ex.Message}");
                 return 3;
             }
@@ -151,7 +156,6 @@ namespace AILZ80ASM
                 }
 
                 OutputStart();
-
 
                 // デバッグ情報
                 /*
