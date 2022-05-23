@@ -29,6 +29,9 @@ namespace AILZ80ASM.Assembler
         // ネームスペースの保存
         public List<string> GlobalLabelNames { get; set; } = default;
 
+        // レジスタラベルアリ
+        public bool IsRegisterLabel { get; set; }
+
         public AsmLoadScope CreateScope()
         {
             var asmLoadScope = new AsmLoadScope();
@@ -38,6 +41,7 @@ namespace AILZ80ASM.Assembler
             asmLoadScope.Macros = Macros;
             asmLoadScope.Functions = Functions;
             asmLoadScope.GlobalLabelNames = GlobalLabelNames;
+            asmLoadScope.IsRegisterLabel = IsRegisterLabel;
 
             return asmLoadScope;
         }
@@ -51,6 +55,7 @@ namespace AILZ80ASM.Assembler
             asmLoadScope.Macros = new List<Macro>();
             asmLoadScope.Functions = new List<Function>();
             asmLoadScope.GlobalLabelNames = new List<string>();
+            asmLoadScope.IsRegisterLabel = false;
 
             return asmLoadScope;
         }

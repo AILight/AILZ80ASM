@@ -13,7 +13,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
         {
             get
             {
-                if (OperationItem == default(OperationItem))
+                if (OperationItem == default(OperationItem) || OperationItem is OperationItemNone)
                 {
                     return Array.Empty<AsmResult>();
                 }
@@ -32,45 +32,19 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             }
         }
 
-        public LineDetailExpansionItemOperation(LineItem lineItem, AsmLoad asmLoad)
+        public LineDetailExpansionItemOperation(LineItem lineItem, OperationItem operation, AsmLoad asmLoad)
             : base(lineItem)
         {
-            OperationItem = default(OperationItem);
+            OperationItem = operation;
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress, AsmLoad asmLoad)
         {
             base.PreAssemble(ref asmAddress, asmLoad);
 
-            // ビルド済みの場合処理しない
-            if (!IsAssembled)
-            {
-                if (string.IsNullOrEmpty(this.LineItem.OperationString))
-                {
-                    IsAssembled = true;
-                }
-                else
-                {
-                    // 命令を判別する
-                    OperationItem = OperationItem.Create(this, asmAddress, asmLoad);
-
-                    // Addressを設定
-                    if (OperationItem != default(OperationItem))
-                    {
-                        //Address = OperationItem.Address;
-                        Length = OperationItem.Length;
-                        asmAddress = new AsmAddress(this.Address, Length);
-                    }
-                    else
-                    {
-                        var operationCode = LineItem.OperationString;
-                        if (!string.IsNullOrEmpty(operationCode))
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, $"{operationCode}");
-                        }
-                    }
-                }
-            }
+            OperationItem.PreAssemble(this);
+            Length = OperationItem.Length;
+            asmAddress = new AsmAddress(this.Address, Length);
         }
 
         public override void Assemble(AsmLoad asmLoad)

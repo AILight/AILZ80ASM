@@ -1,0 +1,14 @@
+﻿	ORG	$9000
+
+	ld b, 3
+	ld hl, $A000
+
+	REGTEST 2
+	REGTEST b
+
+REGTEST	MACRO	port
+	ld	c, port
+	out	(c), l
+	ld	c, port
+	out	(c), h
+	ENDM

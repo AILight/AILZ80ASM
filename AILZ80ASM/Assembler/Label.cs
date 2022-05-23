@@ -35,6 +35,12 @@ namespace AILZ80ASM.Assembler
             FunctionArg,
         }
 
+        public enum LabelValueTypeEnum
+        {
+            Normal,
+            Register,
+        }
+
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\](\s+|$)";
         private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):+(\s+|$)";
         //private static readonly string RegexPatternEquLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):?";
@@ -58,6 +64,7 @@ namespace AILZ80ASM.Assembler
         public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
         public AIValue Value { get; private set; }
         public string ValueString { get; private set; }
+        public LabelValueTypeEnum LabelValueType { get; private set; } = LabelValueTypeEnum.Normal;
 
         public DataTypeEnum DataType { get; private set; }
         public LabelLevelEnum LabelLevel { get; private set; }
@@ -85,6 +92,7 @@ namespace AILZ80ASM.Assembler
             LabelType = labelType;
             AsmLoad = asmLoad;
             LabelLevel = LabelLevelEnum.None;
+            LabelValueType = asmLoad.ISA.IsMatchRegisterName(valueString) ? LabelValueTypeEnum.Register : LabelValueTypeEnum.Normal;
 
             if (string.IsNullOrEmpty(labelName))
             {
@@ -111,13 +119,6 @@ namespace AILZ80ASM.Assembler
                         DataType = DataTypeEnum.Invalidate;
                     }
                     break;
-                    /*
-                case LabelTypeEnum.Arg:
-                    if (!AIName.ValidateMacroArgument(labelName, asmLoad))
-                    {
-                        DataType = DataTypeEnum.Invalidate;
-                    }
-                    break;*/
                 case LabelTypeEnum.FunctionArg:
                     if (!AIName.ValidateFunctionArgument(labelName, asmLoad))
                     {

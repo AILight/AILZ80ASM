@@ -86,6 +86,7 @@ namespace AILZ80ASM.Assembler
             Scope.Macros = new List<Macro>();
             Scope.Functions = new List<Function>();
             Scope.GlobalLabelNames = new List<string>();
+            Scope.IsRegisterLabel = false;
         }
 
         /// <summary>
@@ -327,6 +328,7 @@ namespace AILZ80ASM.Assembler
                 this.Scope.LabelName = label.LabelName;
             }
 
+            this.Scope.IsRegisterLabel = label.LabelValueType == Label.LabelValueTypeEnum.Register;
         }
 
         /// <summary>
@@ -434,6 +436,28 @@ namespace AILZ80ASM.Assembler
                 targetAsmLoad = targetAsmLoad.ParentAsmLoad;
             }
             return default;
+        }
+
+        public Label FindLabelForRegister(string target)
+        {
+            while (true)
+            {
+                var lable = FindLabel(target);
+                if (lable == default)
+                {
+                    return default;
+                }
+                if (lable.LabelValueType == Label.LabelValueTypeEnum.Register)
+                {
+                    return lable;
+                }
+                if (target == lable.ValueString)
+                {
+                    return default;
+                }
+
+                target = lable.ValueString;
+            }
         }
 
         public Function FindFunction(string target)

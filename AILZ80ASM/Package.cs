@@ -355,6 +355,9 @@ namespace AILZ80ASM
                 case AsmEnum.FileTypeEnum.BIN:
                     SaveBin(stream);
                     break;
+                case AsmEnum.FileTypeEnum.HEX:
+                    SaveHEX(stream);
+                    break;
                 case AsmEnum.FileTypeEnum.T88:
                     SaveT88(stream, outputFile.Value.Name);
                     break;

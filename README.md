@@ -53,8 +53,8 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - --disable-warning <codes>
 - -ul, --unused-label        未使用ラベルを確認します。
 - -cd,                       アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
-- -gap, --gap-default <byte> アセンブル出力ギャップに設定するバイトを指定します。デフォルト:$FF
 - --change-dir <directory>
+- -gap, --gap-default <byte> アセンブル出力ギャップに設定するバイトを指定します。デフォルト:$FF
 - -df, --diff-file           アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 - -v, --version              バージョンを表示します。
 - -?, -h, --help <help>      ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --output-mode

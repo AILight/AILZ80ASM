@@ -73,7 +73,7 @@ namespace AILZ80ASM.Assembler
                 DefaultValue = "bin",
                 Parameters = new[] { 
                                         new Parameter { Name = "bin", ShortCut = "-bin", Description = "出力ファイルをBIN形式で出力します。" },
-                                        //new Parameter { Name = "hex", ShortCut = "-hex", Description = "出力ファイルをHEX形式で出力します。（未対応）" },
+                                        new Parameter { Name = "hex", ShortCut = "-hex", Description = "出力ファイルをHEX形式で出力します。" },
                                         new Parameter { Name = "t88", ShortCut = "-t88", Description = "出力ファイルをT88形式で出力します。" },
                                         new Parameter { Name = "cmt", ShortCut = "-cmt", Description = "出力ファイルをCMT形式で出力します。" },
                                         new Parameter { Name = "sym", ShortCut = "-sym", Description = "シンボルファイルを出力します。" },
@@ -112,7 +112,6 @@ namespace AILZ80ASM.Assembler
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".bin"); }
             });
 
-            /*
             rootCommand.AddOption(new Option<FileInfo>()
             {
                 Name = "outputHex",
@@ -123,7 +122,6 @@ namespace AILZ80ASM.Assembler
                 IsShortCut = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".hex"); }
             });
-            */
 
             rootCommand.AddOption(new Option<FileInfo>()
             {
@@ -355,7 +353,7 @@ namespace AILZ80ASM.Assembler
             var outputDic = new Dictionary<AsmEnum.FileTypeEnum, string>
             {
                 [AsmEnum.FileTypeEnum.BIN] = "outputBin",
-                //[AsmEnum.FileTypeEnum.HEX] = "outputHex",
+                [AsmEnum.FileTypeEnum.HEX] = "outputHex",
                 [AsmEnum.FileTypeEnum.T88] = "outputT88",
                 [AsmEnum.FileTypeEnum.CMT] = "outputCMT",
                 [AsmEnum.FileTypeEnum.SYM] = "outputSYM",

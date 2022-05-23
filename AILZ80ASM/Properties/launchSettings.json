@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": "GameMain.z80 -bin -lst -cd .\\NewCityHero"
+      "commandName": "Project"
     }
   }
 }
