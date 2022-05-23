@@ -1,0 +1,25 @@
+﻿TOP	EQU	0000H
+	ORG TOP
+	LD	A, 0
+	ORG TOP + $10
+	JP ST
+	LD  B, 0
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	ORG TOP + $30
+ST:
+	RET
