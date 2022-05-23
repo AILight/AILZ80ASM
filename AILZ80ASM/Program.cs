@@ -56,6 +56,10 @@ namespace AILZ80ASM
                     var currentDirectory = "";
                     // 実行時のディレクトリを変更する
                     var directoryInfo = rootCommand.GetValue<DirectoryInfo>("changeDirectory");
+                    if (directoryInfo != default && !directoryInfo.Exists)
+                    {
+                        throw new Exception($"アセンブル先のディレクトリが見つかりません。[{directoryInfo.Name}]");
+                    }
                     if (directoryInfo != default)
                     {
                         currentDirectory = System.Environment.CurrentDirectory;
@@ -93,6 +97,7 @@ namespace AILZ80ASM
             }
             catch (Exception ex)
             {
+                OutputStart();
                 Trace.WriteLine($"Error:{ex.Message}");
                 return 3;
             }

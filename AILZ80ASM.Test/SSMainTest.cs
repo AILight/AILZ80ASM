@@ -243,5 +243,13 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(result, 0);
             Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/GapTest.bin"), File.OpenRead("./Test/TestSS_Main/GapTest.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
         }
+
+        [TestMethod]
+        public void TestHexTest()
+        {
+            var result = Program.Main(@"HEXTest.Z80", "-hex", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(result, 0);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/HEXTest.hex"), File.OpenRead("./Test/TestSS_Main/HEXTest_ORG.hex"), Assembler.AsmEnum.FileTypeEnum.HEX);
+        }
     }
 }

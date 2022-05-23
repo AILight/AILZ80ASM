@@ -820,6 +820,12 @@
     <None Update="Test\TestSS_Main\Equal.equ">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestSS_Main\HEXTest_ORG.HEX">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\TestSS_Main\HEXTest.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestSS_Main\GapTest_ORG.Bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
