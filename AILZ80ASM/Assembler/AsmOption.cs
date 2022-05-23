@@ -114,6 +114,13 @@ namespace AILZ80ASM.Assembler
                 throw new ArgumentException($"入力ファイルが指定されていません。");
             }
 
+            // 入力ファイルの存在チェック
+            var notFoundFiles = InputFiles.SelectMany(m => m.Value).Where(m => !m.Exists);
+            if (notFoundFiles.Any())
+            {
+                throw new ArgumentException($"入力ファイルが見つかりません。ファイル: {notFoundFiles.First().Name}");
+            }
+
             if (OutputFiles == default || OutputFiles.Count == 0)
             {
                 throw new ArgumentException($"出力ファイルが指定されていません。");

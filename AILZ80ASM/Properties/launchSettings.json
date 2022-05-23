@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": "Test.Z80 -hex"
+      "commandName": "Project"
     }
   }
 }
