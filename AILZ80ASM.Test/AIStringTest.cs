@@ -68,6 +68,8 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIString.IsString("\"石\"", asmLoad));
             Assert.IsTrue(AIString.IsString("@SJIS:\"ABC\"", asmLoad));
             Assert.IsTrue(AIString.IsString("'ABC'", asmLoad));
+            Assert.IsTrue(AIString.IsString("'A\"B\"C'", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"A'B'C\"", asmLoad));
 
             Assert.IsTrue(AIString.IsString("\"00\"", asmLoad));
             Assert.IsTrue(AIString.IsString("\"石野\"", asmLoad));
