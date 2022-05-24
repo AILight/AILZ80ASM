@@ -239,7 +239,6 @@ namespace AILZ80ASM.Test
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("\"0", asmLoad).ConvertTo<UInt16>(); });
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("(1+1 * (3 + 1)", asmLoad).ConvertTo<UInt16>(); });
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("(1+1 * (3 + 1)))", asmLoad).ConvertTo<UInt16>(); });
-            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("'AB'", asmLoad).ConvertTo<UInt16>(); });
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("0", asmLoad).ConvertTo<Double>(); });
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("LB + 1", asmLoad).ConvertTo<UInt16>(); });
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("0 == 1 ? 5", asmLoad).ConvertTo<UInt16>(); });
