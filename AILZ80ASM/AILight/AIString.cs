@@ -14,9 +14,9 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool IsString(string target, AsmLoad asmLoad)
         {
-            if (target.EndsWith('\"'))
+            if (target.EndsWith('\"') || target.EndsWith('\''))
             {
-                return TryParseCharMap(target, asmLoad, out var dummy1, out var dummy2);
+                return TryParseCharMap(target, asmLoad, out var _, out var _);
             }
 
             return false;
@@ -31,7 +31,11 @@ namespace AILZ80ASM.AILight
         {
             if (target.EndsWith('\''))
             {
-                return TryParseCharMap(target, asmLoad, out var dummy1, out var dummy2);
+                var result =  TryParseCharMap(target, asmLoad, out var _, out var charString);
+                if (result && charString.Length == 1)
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -94,10 +98,6 @@ namespace AILZ80ASM.AILight
             if (!result)
             {
                 result = InternalTryParseCharMap(target, '\'', asmLoad, out charMap, out resultString);
-                if (result && resultString.Length != 1)
-                {
-                    return false;
-                }
             }
 
             return result;
@@ -291,7 +291,7 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIStringException"></exception>
         public static byte[] GetBytesByChar(string target, AsmLoad asmLoad)
         {
-            return InternalGetBytesByString(target, '\'', asmLoad);
+            return InternalGetBytesByString(target, new[] { '\'' }, asmLoad);
         }
 
         /// <summary>
@@ -303,7 +303,7 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIStringException"></exception>
         public static byte[] GetBytesByString(string target, AsmLoad asmLoad)
         {
-            return InternalGetBytesByString(target, '\"', asmLoad);
+            return InternalGetBytesByString(target, new[] { '\'', '\"' }, asmLoad);
         }
 
         /// <summary>
@@ -315,20 +315,12 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         /// <exception cref="InvalidAIStringException"></exception>
         /// <exception cref="NotImplementedException"></exception>
-        private static byte[] InternalGetBytesByString(string target, char encloseChar, AsmLoad asmLoad)
+        private static byte[] InternalGetBytesByString(string target, char[] encloseChars, AsmLoad asmLoad)
         {
-            if (!target.EndsWith(encloseChar) ||
+            if (!encloseChars.Any(m => target.EndsWith(m)) ||
                 !TryParseCharMap(target, asmLoad, out var charMap, out var resultString))
             {
-                switch (encloseChar)
-                {
-                    case '\'':
-                        throw new InvalidAIStringException("正しい１文字を指定してください");
-                    case '\"':
-                        throw new InvalidAIStringException("正しい文字列を指定してください");
-                    default:
-                        throw new NotImplementedException();
-                }
+                throw new InvalidAIStringException("正しい文字列を指定してください");
             }
 
             if (string.IsNullOrEmpty(charMap))
