@@ -18,7 +18,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0000()
+        public void TestEC_E0000()
         {
             var errors = Assemble("E0000.Z80");
 
@@ -28,7 +28,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0001()
+        public void TestEC_E0001()
         {
             var errors = Assemble("E0001.Z80");
 
@@ -63,7 +63,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0002()
+        public void TestEC_E0002()
         {
             var errors = Assemble("E0002.Z80");
 
@@ -73,7 +73,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0003()
+        public void TestEC_E0003()
         {
             var errors = Assemble("E0003.Z80");
 
@@ -83,7 +83,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0004()
+        public void TestEC_E0004()
         {
             var errors = Assemble("E0004.Z80");
 
@@ -118,7 +118,18 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0009_1()
+        public void TestEC_E0005()
+        {
+            var errors = Assemble("E0005.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 2);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0005, 2, "E0005.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0005, 3, "E0005.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestEC_E0009_1()
         {
             var errors = Assemble("E0009_1.Z80");
 
@@ -128,7 +139,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0009_2()
+        public void TestEC_E0009_2()
         {
             var errors = Assemble("E0009_2.Z80");
 
@@ -138,7 +149,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0013()
+        public void TestEC_E0013()
         {
             var errors = Assemble("E0013.Z80");
 
@@ -183,7 +194,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0014()
+        public void TestEC_E0014()
         {
             var errors = Assemble("E0014.Z80");
 
@@ -196,7 +207,7 @@ namespace AILZ80ASM.Test
 
 
         [TestMethod]
-        public void TestER_E0015()
+        public void TestEC_E0015()
         {
             var errors = Assemble("E0015.Z80");
 
@@ -219,7 +230,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0016()
+        public void TestEC_E0016()
         {
             var errors = Assemble("E0016.Z80");
 
@@ -230,7 +241,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0017()
+        public void TestEC_E0017()
         {
             var errors = Assemble("E0017.Z80");
 
@@ -240,7 +251,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0018()
+        public void TestEC_E0018()
         {
             var errors = Assemble("E0018.Z80");
 
@@ -250,7 +261,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0019()
+        public void TestEC_E0019()
         {
             var errors = Assemble("E0019.Z80");
 
@@ -261,7 +272,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0020()
+        public void TestEC_E0020()
         {
             var errors = Assemble("E0020.Z80");
 
@@ -273,7 +284,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0021()
+        public void TestEC_E0021()
         {
             var errors = Assemble("E0021.Z80");
 
@@ -283,7 +294,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0022()
+        public void TestEC_E0022()
         {
             var errors = Assemble("E0022.Z80");
 
@@ -293,7 +304,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0023()
+        public void TestEC_E0023()
         {
             var errors = Assemble("E0023.Z80");
 
@@ -306,7 +317,7 @@ namespace AILZ80ASM.Test
 
 
         [TestMethod]
-        public void TestER_E0024()
+        public void TestEC_E0024()
         {
             var errors = Assemble("E0024.Z80");
 
@@ -317,7 +328,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E0025()
+        public void TestEC_E0025()
         {
             var errors = Assemble("E0025.Z80");
 
@@ -328,7 +339,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1011()
+        public void TestEC_E1011()
         {
             var errors = Assemble("E1011.Z80");
 
@@ -338,7 +349,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1012()
+        public void TestEC_E1012()
         {
             var errors = Assemble("E1012.Z80");
 
@@ -348,7 +359,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1013()
+        public void TestEC_E1013()
         {
             var errors = Assemble("E1013.Z80");
 
@@ -358,7 +369,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1014()
+        public void TestEC_E1014()
         {
             var errors = Assemble("E1014.Z80");
 
@@ -368,7 +379,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1015()
+        public void TestEC_E1015()
         {
             var errors = Assemble("E1015.Z80");
 
@@ -378,7 +389,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1021()
+        public void TestEC_E1021()
         {
             var errors = Assemble("E1021.Z80");
 
@@ -388,7 +399,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1022()
+        public void TestEC_E1022()
         {
             var errors = Assemble("E1022.Z80");
 
@@ -398,7 +409,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1023()
+        public void TestEC_E1023()
         {
             var errors = Assemble("E1023.Z80");
 
@@ -409,7 +420,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1024()
+        public void TestEC_E1024()
         {
             var errors = Assemble("E1024.Z80");
 
@@ -421,7 +432,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1031()
+        public void TestEC_E1031()
         {
             var errors = Assemble("E1031.Z80");
 
@@ -431,7 +442,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E1032()
+        public void TestEC_E1032()
         {
             var errors = Assemble("E1032.Z80");
 
@@ -441,7 +452,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2002()
+        public void TestEC_E2002()
         {
             var errors = Assemble("E2002.Z80");
 
@@ -451,7 +462,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2003()
+        public void TestEC_E2003()
         {
             var errors = Assemble("E2003.Z80");
 
@@ -461,7 +472,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2004()
+        public void TestEC_E2004()
         {
             var errors = Assemble("E2004.Z80");
 
@@ -471,7 +482,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2005()
+        public void TestEC_E2005()
         {
             var errors = Assemble("E2005.Z80");
 
@@ -481,7 +492,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2006()
+        public void TestEC_E2006()
         {
             var errors = Assemble("E2006.Z80");
 
@@ -491,7 +502,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2007()
+        public void TestEC_E2007()
         {
             var errors = Assemble("E2007.Z80");
 
@@ -501,7 +512,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2008()
+        public void TestEC_E2008()
         {
             var errors = Assemble("E2008.Z80");
 
@@ -512,7 +523,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2009()
+        public void TestEC_E2009()
         {
             var errors = Assemble("E2009.Z80");
 
@@ -524,7 +535,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2101()
+        public void TestEC_E2101()
         {
             var errors = Assemble("E2101.Z80");
 
@@ -535,7 +546,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2103()
+        public void TestEC_E2103()
         {
             var errors = Assemble("E2103.Z80");
 
@@ -545,7 +556,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2104()
+        public void TestEC_E2104()
         {
             var errors = Assemble("E2104.Z80");
 
@@ -555,7 +566,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2105()
+        public void TestEC_E2105()
         {
             var errors = Assemble("E2105.Z80");
 
@@ -565,7 +576,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2106()
+        public void TestEC_E2106()
         {
             var errors = Assemble("E2106.Z80");
 
@@ -575,7 +586,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2107()
+        public void TestEC_E2107()
         {
             var errors = Assemble("E2107.Z80");
 
@@ -585,7 +596,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E2108()
+        public void TestEC_E2108()
         {
             var errors = Assemble("E2108.Z80");
 
@@ -596,7 +607,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3001()
+        public void TestEC_E3001()
         {
             var errors = Assemble("E3001.Z80");
 
@@ -606,7 +617,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3002()
+        public void TestEC_E3002()
         {
             var errors = Assemble("E3002.Z80");
 
@@ -616,7 +627,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3004()
+        public void TestEC_E3004()
         {
             var errors = Assemble("E3004.Z80");
 
@@ -627,7 +638,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3005()
+        public void TestEC_E3005()
         {
             var errors = Assemble("E3005.Z80");
 
@@ -638,7 +649,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3006()
+        public void TestEC_E3006()
         {
             var errors = Assemble("E3006.Z80");
 
@@ -648,7 +659,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3007()
+        public void TestEC_E3007()
         {
             var errors = Assemble("E3007.Z80");
 
@@ -659,7 +670,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3008()
+        public void TestEC_E3008()
         {
             var errors = Assemble("E3008.Z80");
 
@@ -669,7 +680,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E3010()
+        public void TestEC_E3010()
         {
             var errors = Assemble("E3010.Z80");
 
@@ -679,7 +690,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E4001()
+        public void TestEC_E4001()
         {
             var errors = Assemble("E4001.Z80");
 
@@ -689,7 +700,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E4002()
+        public void TestEC_E4002()
         {
             var errors = Assemble("E4002.Z80");
 
@@ -699,7 +710,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E4004()
+        public void TestEC_E4004()
         {
             var errors = Assemble("E4004.Z80");
 
@@ -709,7 +720,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_E4005()
+        public void TestEC_E4005()
         {
             var errors = Assemble("E4005.Z80");
 
@@ -719,7 +730,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W0001()
+        public void TestEC_W0001()
         {
             var errors = Assemble("W0001.Z80");
 
@@ -730,7 +741,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W0002()
+        public void TestEC_W0002()
         {
             var errors = Assemble("W0002.Z80");
             
@@ -740,7 +751,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W0003()
+        public void TestEC_W0003()
         {
             var errors = Assemble("W0003.Z80");
 
@@ -754,7 +765,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W9001()
+        public void TestEC_W9001()
         {
             var errors = Assemble("W9001.Z80");
 
@@ -764,7 +775,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W9002()
+        public void TestEC_W9002()
         {
             var errors = Assemble("W9002.Z80");
 
@@ -774,7 +785,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W9003()
+        public void TestEC_W9003()
         {
             var errors = Assemble("W9003.Z80");
 
@@ -784,7 +795,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W9004()
+        public void TestEC_W9004()
         {
             var errors = Assemble("W9004.Z80");
 
@@ -794,7 +805,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_W9005()
+        public void TestEC_W9005()
         {
             var errors = Assemble("W9005.Z80");
 

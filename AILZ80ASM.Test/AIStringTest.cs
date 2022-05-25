@@ -122,18 +122,26 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void ValidEscapeSequenceTest()
+        {
+            Assert.IsFalse(AIString.ValidEscapeSequence("\\"));
+            Assert.IsFalse(AIString.ValidEscapeSequence("\\c"));
+            Assert.IsFalse(AIString.ValidEscapeSequence("\\w"));
+        }
+
+        [TestMethod]
         public void TryParseCharMapTrueTest()
         {
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                Assert.IsTrue(AIString.TryParseCharMap("\'A\'", asmLoad, out var charMap, out var resultString));
+                Assert.IsTrue(AIString.TryParseCharMap("\'A\'", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "A");
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString));
+                Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "ABC");
             }
@@ -142,7 +150,7 @@ namespace AILZ80ASM.Test
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.CharMapConverter_ReadCharMapFromResource("@SJIS");
 
-                Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString));
+                Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
                 Assert.AreEqual(charMap, "@SJIS");
                 Assert.AreEqual(resultString, "ABC");
             }

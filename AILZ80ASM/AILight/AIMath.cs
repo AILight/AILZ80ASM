@@ -94,6 +94,10 @@ namespace AILZ80ASM.AILight
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
             }
+            catch (InvalidAIStringEscapeSequenceException ex)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, ex.Value);
+            }
             catch (Exception)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{target}");
