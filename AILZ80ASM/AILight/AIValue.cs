@@ -540,11 +540,16 @@ namespace AILZ80ASM.AILight
                     }
                     catch
                     {
-                        throw new InvalidAIValueException($"数値に変換できませんでした。]{Value}]");
+                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
                     }
                 }
-                else if (AIString.TryParseCharMap(Value, asmLoad, out var charMap, out var resultString))
+                else if (AIString.TryParseCharMap(Value, asmLoad, out var charMap, out var resultString, out var validEscapeSequence))
                 {
+                    if (!validEscapeSequence)
+                    {
+                        throw new InvalidAIStringEscapeSequenceException($"有効なエスケープシーケンスではありません。[{Value}]", Value);
+                    }
+
                     ValueCharMap = charMap;
                     ValueString = resultString;
                     ValueType |= ValueTypeEnum.Bytes;

@@ -148,6 +148,10 @@ namespace AILZ80ASM.OperationItems
                             {
                                 throw;
                             }
+                            catch (InvalidAIStringEscapeSequenceException ex)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, ex.Value);
+                            }
                             catch (Exception)
                             {
                                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, valueItem.Value);

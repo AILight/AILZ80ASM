@@ -3,7 +3,7 @@
 	DB " !\"#$%&\'()*+,-./"
 	DB "0123456789:;<=>?"
 	DB "@ABCDEFGHIJKLMNO"
-	DB "PQRSTUVWXYZ[\]^_"
+	DB "PQRSTUVWXYZ[\\]^_"
 	DB "`abcdefghijklmno"
 	DB "pqrstuvwxyz{|}~\0"
 
