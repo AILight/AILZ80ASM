@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "time.asm -bin -lst -cd .\\MUCOM88"
     }
   }
 }

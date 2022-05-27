@@ -6,22 +6,23 @@ namespace AILZ80ASM.OperationItems
 {
     public abstract class OperationItem
     {
-        public OperationItem()
-        {
-
-        }
-
         public LineDetailExpansionItemOperation LineDetailExpansionItemOperation { get; set; }
-
         public virtual byte[] Bin => throw new NotImplementedException();
+        public virtual AsmLength Length => throw new NotImplementedException();
+
+        protected LineItem LineItem { get; set; }
+        protected AsmLoad AsmLoad { get; set; }
+        
+        public OperationItem(LineItem lineItem, AsmLoad asmLoad)
+        {
+            LineItem = lineItem;
+            AsmLoad = asmLoad;
+        }
 
         public virtual AsmList List(AsmAddress asmAddress)
         {
-            return AsmList.CreateLineItem(asmAddress, Bin, "", LineDetailExpansionItemOperation.LineItem);
+            return AsmList.CreateLineItem(asmAddress, Bin, "", LineItem);
         }
-
-        public virtual AsmLength Length => throw new NotImplementedException();
-
 
         public virtual void PreAssemble(LineDetailExpansionItemOperation lineDetailExpansionItemOperation)
         {

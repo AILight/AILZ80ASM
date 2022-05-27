@@ -22,8 +22,6 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemOperation);
             }
 
-            //lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
-
             var operationItem = default(OperationItem);
 
             operationItem ??= OperationItemOPCode.Create(lineItem, asmLoad);
