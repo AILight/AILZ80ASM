@@ -9,26 +9,25 @@ namespace AILZ80ASM.OperationItems
 {
     public class OperationItemOPCode : OperationItem
     {
-        private AsmLoad AsmLoad {get; set; }
         private AssembleResult AssembleResult { get; set; }
 
         public override byte[] Bin => AsmLoad?.ISA?.ToBin(AssembleResult) ?? Array.Empty<byte>();
         public override AsmList List(AsmAddress asmAddress)
         {
-            return AsmList.CreateLineItem(asmAddress, Bin, AssembleResult.InstructionItem.T == 0 ? "" : AssembleResult.InstructionItem.T.ToString(), LineDetailExpansionItemOperation.LineItem);
+            return AsmList.CreateLineItem(asmAddress, Bin, AssembleResult.InstructionItem.T == 0 ? "" : AssembleResult.InstructionItem.T.ToString(), LineItem);
         }
 
         public override AsmLength Length => new AsmLength(AssembleResult.InstructionItem.OPCode.Length);
 
-        private OperationItemOPCode(InstructionSet.AssembleResult assembleResult, AsmLoad asmLoad)
+        private OperationItemOPCode(InstructionSet.AssembleResult assembleResult, LineItem lineItem, AsmLoad asmLoad)
+            : base(lineItem, asmLoad)
         {
             AssembleResult = assembleResult;
-            AsmLoad = asmLoad;
         }
 
-        public static OperationItemOPCode Create(LineItem listItem, AsmLoad asmLoad)
+        public static OperationItemOPCode Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var asssembleResult = asmLoad.ISA.PreAssemble(listItem.OperationString);
+            var asssembleResult = asmLoad.ISA.PreAssemble(lineItem.OperationString);
 
             if (asssembleResult == default)
             {
@@ -55,7 +54,7 @@ namespace AILZ80ASM.OperationItems
                 }
             }
 
-            return new OperationItemOPCode(asssembleResult, asmLoad);
+            return new OperationItemOPCode(asssembleResult, lineItem, asmLoad);
         }
 
         public override void Assemble(AsmLoad asmLoad)

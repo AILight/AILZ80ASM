@@ -23,22 +23,21 @@ namespace AILZ80ASM.OperationItems
         private DataTypeEnum DataType { get; set; }
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
-        private AsmLoad AsmLoad { get; set; }
         private List<string> ValueList { get; set; } = new List<string>();
 
         public override byte[] Bin => ItemDataBin;
         public override AsmLength Length => ItemDataLength;
 
-        private OperationItemData(DataTypeEnum dataType, string[] valueStrings, AsmLoad asmLoad)
+        private OperationItemData(DataTypeEnum dataType, string[] valueStrings, LineItem lineItem, AsmLoad asmLoad)
+            : base(lineItem, asmLoad)
         {
             DataType = dataType;
             ValueStrings = valueStrings;
-            AsmLoad = asmLoad;
         }
 
-        public static OperationItemData Create(LineItem listItem, AsmLoad asmLoad)
+        public static OperationItemData Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(listItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = Regex.Match(lineItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var dataType = default(DataTypeEnum);
 
             var op1 = matched.Groups["op1"].Value;
@@ -57,7 +56,7 @@ namespace AILZ80ASM.OperationItems
                     return default;
             }
             var ops = AIName.ParseArguments(op2);
-            return new OperationItemData(dataType, ops, asmLoad);
+            return new OperationItemData(dataType, ops, lineItem, asmLoad);
         }
 
         public override void PreAssemble(LineDetailExpansionItemOperation lineDetailExpansionItemOperation)
