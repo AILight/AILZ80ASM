@@ -42,6 +42,7 @@ namespace AILZ80ASM.Test
             Assert.IsFalse(AIString.IsChar("\0\"", asmLoad));
             Assert.IsFalse(AIString.IsChar("'''", asmLoad));
 
+            Assert.IsFalse(AIString.IsChar("'YYY'", asmLoad));
             Assert.IsFalse(AIString.IsChar(":'Y'", asmLoad));
             Assert.IsFalse(AIString.IsChar("@:'Y'", asmLoad));
             Assert.IsFalse(AIString.IsChar("JIS:'Y'", asmLoad));
@@ -66,6 +67,9 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIString.IsString("\"\0\"", asmLoad));
             Assert.IsTrue(AIString.IsString("\"石\"", asmLoad));
             Assert.IsTrue(AIString.IsString("@SJIS:\"ABC\"", asmLoad));
+            Assert.IsTrue(AIString.IsString("'ABC'", asmLoad));
+            Assert.IsTrue(AIString.IsString("'A\"B\"C'", asmLoad));
+            Assert.IsTrue(AIString.IsString("\"A'B'C\"", asmLoad));
 
             Assert.IsTrue(AIString.IsString("\"00\"", asmLoad));
             Assert.IsTrue(AIString.IsString("\"石野\"", asmLoad));
@@ -118,18 +122,26 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void ValidEscapeSequenceTest()
+        {
+            Assert.IsFalse(AIString.ValidEscapeSequence("\\"));
+            Assert.IsFalse(AIString.ValidEscapeSequence("\\c"));
+            Assert.IsFalse(AIString.ValidEscapeSequence("\\w"));
+        }
+
+        [TestMethod]
         public void TryParseCharMapTrueTest()
         {
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                Assert.IsTrue(AIString.TryParseCharMap("\'A\'", asmLoad, out var charMap, out var resultString));
+                Assert.IsTrue(AIString.TryParseCharMap("\'A\'", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "A");
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString));
+                Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
                 Assert.AreEqual(charMap, "");
                 Assert.AreEqual(resultString, "ABC");
             }
@@ -138,7 +150,7 @@ namespace AILZ80ASM.Test
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 asmLoad.CharMapConverter_ReadCharMapFromResource("@SJIS");
 
-                Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString));
+                Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
                 Assert.AreEqual(charMap, "@SJIS");
                 Assert.AreEqual(resultString, "ABC");
             }
@@ -174,12 +186,14 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void GetBytesByStringTest()
         {
+            // ダブルクオーテーション
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByString("\"A\"", asmLoad);
                 Assert.AreEqual(bytes[0], 0x41);
             }
+
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
@@ -200,20 +214,40 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(bytes[2], 0x96);
                 Assert.AreEqual(bytes[3], 0xEC);
             }
+
+
+            // シングルクオーテーション
+            {
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+
+                var bytes = AIString.GetBytesByString("\'A\'", asmLoad);
+                Assert.AreEqual(bytes[0], 0x41);
+            }
+
+            {
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+
+                var bytes = AIString.GetBytesByString("\'石野\'", asmLoad);
+                Assert.AreEqual(bytes[0], 0x90);
+                Assert.AreEqual(bytes[1], 0xCE);
+                Assert.AreEqual(bytes[2], 0x96);
+                Assert.AreEqual(bytes[3], 0xEC);
+            }
+
+            {
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+
+                var bytes = AIString.GetBytesByString("@SJIS:\'石野\'", asmLoad);
+                Assert.AreEqual(bytes[0], 0x90);
+                Assert.AreEqual(bytes[1], 0xCE);
+                Assert.AreEqual(bytes[2], 0x96);
+                Assert.AreEqual(bytes[3], 0xEC);
+            }
         }
 
         [TestMethod]
         public void GetBytesByStringThrowTest()
         {
-            {
-                Assert.ThrowsException<InvalidAIStringException>(() => {
-                    var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-                    asmLoad.CharMapConverter_ReadCharMapFromResource("@SJIS");
-
-                    AIString.GetBytesByString("@SJIS:\'石野\'", asmLoad);
-                });
-            }
-
             {
                 Assert.ThrowsException<InvalidAIStringException>(() => {
                     var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());

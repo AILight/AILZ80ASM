@@ -29,7 +29,7 @@ namespace AILZ80ASM
             var programKey = binResults.FirstOrDefault()?.Address.Program ?? default(UInt16);
             var outputKey = programKey + binResults.FirstOrDefault()?.Address.Output ?? default(UInt32);
             var dictionaryBytes = new Dictionary<UInt32, List<byte>>();
-            dictionaryBytes.Add(outputKey, new List<byte>());
+            //dictionaryBytes.Add(outputKey, new List<byte>());
 
             foreach (var item in binResults)
             {
@@ -37,11 +37,12 @@ namespace AILZ80ASM
                 {
                     throw new Exception("出力先アドレスが重複したため、HEXファイルの出力に失敗ました");
                 }
-                else if ((item.Address.Output ?? 0) != outputAddress)
+                else if ((item.Address.Output ?? 0) != outputAddress || ((outputAddress % 16) == 0))
                 {
                     // 新しいアドレス
                     outputKey = programKey + (item.Address.Output ?? 0);
                     dictionaryBytes.Add(outputKey, new List<byte>());
+                    outputAddress = (item.Address.Output ?? 0);
                 }
 
                 // 出力

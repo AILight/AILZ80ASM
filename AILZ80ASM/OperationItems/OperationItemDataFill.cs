@@ -22,22 +22,21 @@ namespace AILZ80ASM.OperationItems
         private DataTypeEnum DataType { get; set; }
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
-        private AsmLoad AsmLoad { get; set; }
         private string[] Arguments { get; set; }
 
         public override byte[] Bin => ItemDataBin;
         public override AsmLength Length => ItemDataLength;
 
-        private OperationItemDataFill(DataTypeEnum dataType, string[] valueStrings, AsmLoad asmLoad)
+        private OperationItemDataFill(DataTypeEnum dataType, string[] valueStrings, LineItem lineItem, AsmLoad asmLoad)
+            : base(lineItem, asmLoad)
         {
             DataType = dataType;
             Arguments = valueStrings;
-            AsmLoad = asmLoad;
         }
 
-        public static OperationItemDataFill Create(LineItem listItem, AsmLoad asmLoad)
+        public static OperationItemDataFill Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(listItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = Regex.Match(lineItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             var op1 = matched.Groups["op1"].Value;
             var op2 = matched.Groups["op2"].Value;
@@ -56,7 +55,7 @@ namespace AILZ80ASM.OperationItems
             }
 
             var ops = AIName.ParseArguments(op2);
-            return new OperationItemDataFill(dataType, ops, asmLoad);
+            return new OperationItemDataFill(dataType, ops, lineItem, asmLoad);
         }
 
         public override void PreAssemble(LineDetailExpansionItemOperation lineDetailExpansionItemOperation)
@@ -147,6 +146,10 @@ namespace AILZ80ASM.OperationItems
                             catch (ErrorLineItemException)
                             {
                                 throw;
+                            }
+                            catch (InvalidAIStringEscapeSequenceException ex)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, ex.Value);
                             }
                             catch (Exception)
                             {

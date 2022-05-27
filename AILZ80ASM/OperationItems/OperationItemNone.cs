@@ -13,21 +13,22 @@ namespace AILZ80ASM.OperationItems
         public override AsmLength Length => new AsmLength(0);
         public override AsmList List(AsmAddress asmAddress)
         {
-            return AsmList.CreateLineItem(LineDetailExpansionItemOperation.LineItem);
+            return AsmList.CreateLineItem(LineItem);
         }
 
-        private OperationItemNone()
+        private OperationItemNone(LineItem lineItem, AsmLoad asmLoad)
+            : base(lineItem, asmLoad)
         {
         }
 
-        public static OperationItemNone Create(LineItem listItem, AsmLoad asmLoad)
+        public static OperationItemNone Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            if (!string.IsNullOrEmpty(listItem.OperationString))
+            if (!string.IsNullOrEmpty(lineItem.OperationString))
             {
                 return default;
             }
 
-            return new OperationItemNone();
+            return new OperationItemNone(lineItem, asmLoad);
         }
 
         public override void Assemble(AsmLoad asmLoad)

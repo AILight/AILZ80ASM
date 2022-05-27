@@ -7,6 +7,23 @@ namespace AILZ80ASM.AILight
 {
     public static class AIString
     {
+        private static string[][] EscapeSequenceCharTables = new string[][]
+        {
+
+                new string[] { "\\\'", "\'" },
+                new string[] { "\\\"", "\"" },
+                new string[] { "\\\\", "\\" },
+                new string[] { "\\0", "\0" },
+                new string[] { "\\a", "\a" },
+                new string[] { "\\b", "\b" },
+                new string[] { "\\f", "\f" },
+                new string[] { "\\n", "\n" },
+                new string[] { "\\r", "\r" },
+                new string[] { "\\t", "\t" },
+                new string[] { "\\v", "\v" },
+        };
+
+
         /// <summary>
         /// 文字列の宣言かを調べる
         /// </summary>
@@ -16,7 +33,11 @@ namespace AILZ80ASM.AILight
         {
             if (target.EndsWith('\"'))
             {
-                return TryParseCharMap(target, asmLoad, out var dummy1, out var dummy2);
+                return InternalTryParseCharMap(target, '\"', asmLoad, out var _, out var _, out var _);
+            }
+            else if (target.EndsWith('\''))
+            {
+                return InternalTryParseCharMap(target, '\'', asmLoad, out var _, out var _, out var _);
             }
 
             return false;
@@ -31,7 +52,12 @@ namespace AILZ80ASM.AILight
         {
             if (target.EndsWith('\''))
             {
-                return TryParseCharMap(target, asmLoad, out var dummy1, out var dummy2);
+                var result = InternalTryParseCharMap(target, '\'', asmLoad, out var _ , out var charString, out var _);
+
+                if (result && charString.Length == 1)
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -44,27 +70,39 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static string EscapeSequence(string target)
         {
-            var tables = new[]
-            {
-                new [] { "\\\'", "\'" },
-                new [] { "\\\"", "\"" },
-                new [] { "\\\\", "\\" },
-                new [] { "\\0", "\0" },
-                new [] { "\\a", "\a" },
-                new [] { "\\b", "\b" },
-                new [] { "\\f", "\f" },
-                new [] { "\\n", "\n" },
-                new [] { "\\r", "\r" },
-                new [] { "\\t", "\t" },
-                new [] { "\\v", "\v" },
-            };
-
-            foreach (var item in tables)
+            // エスケープシーケンスの置き換え
+            foreach (var item in EscapeSequenceCharTables)
             {
                 target = target.Replace(item[0], item[1]);
             }
 
             return target;
+        }
+
+        /// <summary>
+        /// 無効なエスケープシーケンスが含まれているか確認
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool ValidEscapeSequence(string target)
+        {
+            // エスケープシーケンスの問題があるか確認
+            var index = 0;
+            while ((index = target.IndexOf('\\', index)) != -1)
+            {
+                if (index >= target.Length - 1)
+                {
+                    return false;
+                }
+
+                var checkString = target.Substring(index, 2);
+                if (!EscapeSequenceCharTables.Any(m => string.Compare(m[0], checkString, true) == 0))
+                {
+                    return false;
+                }
+                index += 2;
+            }
+            return true;
         }
 
         /// <summary>
@@ -88,19 +126,21 @@ namespace AILZ80ASM.AILight
         /// <param name="charpMap"></param>
         /// <param name="resultString"></param>
         /// <returns></returns>
-        public static bool TryParseCharMap(string target, AsmLoad asmLoad, out string charMap, out string resultString)
+        public static bool TryParseCharMap(string target, AsmLoad asmLoad, out string charMap, out string resultString, out bool validEscapeSequence)
         {
-            var result = InternalTryParseCharMap(target, '\"', asmLoad, out charMap, out resultString);
-            if (!result)
+            if (target.EndsWith('\"'))
             {
-                result = InternalTryParseCharMap(target, '\'', asmLoad, out charMap, out resultString);
-                if (result && resultString.Length != 1)
-                {
-                    return false;
-                }
+                return InternalTryParseCharMap(target, '\"', asmLoad, out charMap, out resultString, out validEscapeSequence);
             }
+            else if (target.EndsWith('\''))
+            {
+                return InternalTryParseCharMap(target, '\'', asmLoad, out charMap, out resultString, out validEscapeSequence);
+            }
+            charMap = "";
+            resultString = "";
+            validEscapeSequence = true;
 
-            return result;
+            return false;
         }
 
         /// <summary>
@@ -219,10 +259,19 @@ namespace AILZ80ASM.AILight
         /// <param name="charpMap"></param>
         /// <param name="resultString"></param>
         /// <returns></returns>
-        private static bool InternalTryParseCharMap(string target, char encloseChar, AsmLoad asmLoad, out string charMap, out string resultString)
+        private static bool InternalTryParseCharMap(string target, char encloseChar, AsmLoad asmLoad, out string charMap, out string resultString, out bool validEscapeSequence)
         {
             charMap = "";
             resultString = "";
+            validEscapeSequence = true;
+
+            // スペシャル対応
+            if (target.Length == 3 && target[0] == encloseChar && target[1] == '\\' && target[2] == encloseChar)
+            {
+                resultString = "\\";
+                validEscapeSequence = false;
+                return true;
+            }
 
             if (target.EndsWith(encloseChar))
             {
@@ -274,6 +323,8 @@ namespace AILZ80ASM.AILight
                         }
                     }
                 }
+
+                validEscapeSequence = ValidEscapeSequence(resultString);
                 resultString = EscapeSequence(resultString);
 
                 return true;
@@ -291,7 +342,7 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIStringException"></exception>
         public static byte[] GetBytesByChar(string target, AsmLoad asmLoad)
         {
-            return InternalGetBytesByString(target, '\'', asmLoad);
+            return InternalGetBytesByString(target, new[] { '\'' }, asmLoad);
         }
 
         /// <summary>
@@ -303,7 +354,7 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIStringException"></exception>
         public static byte[] GetBytesByString(string target, AsmLoad asmLoad)
         {
-            return InternalGetBytesByString(target, '\"', asmLoad);
+            return InternalGetBytesByString(target, new[] { '\'', '\"' }, asmLoad);
         }
 
         /// <summary>
@@ -315,20 +366,12 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         /// <exception cref="InvalidAIStringException"></exception>
         /// <exception cref="NotImplementedException"></exception>
-        private static byte[] InternalGetBytesByString(string target, char encloseChar, AsmLoad asmLoad)
+        private static byte[] InternalGetBytesByString(string target, char[] encloseChars, AsmLoad asmLoad)
         {
-            if (!target.EndsWith(encloseChar) ||
-                !TryParseCharMap(target, asmLoad, out var charMap, out var resultString))
+            if (!encloseChars.Any(m => target.EndsWith(m)) ||
+                !TryParseCharMap(target, asmLoad, out var charMap, out var resultString, out var invalidEscapeSequence))
             {
-                switch (encloseChar)
-                {
-                    case '\'':
-                        throw new InvalidAIStringException("正しい１文字を指定してください");
-                    case '\"':
-                        throw new InvalidAIStringException("正しい文字列を指定してください");
-                    default:
-                        throw new NotImplementedException();
-                }
+                throw new InvalidAIStringException("正しい文字列を指定してください");
             }
 
             if (string.IsNullOrEmpty(charMap))

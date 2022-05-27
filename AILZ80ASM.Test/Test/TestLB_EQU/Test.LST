@@ -99,4 +99,5 @@
        0003                     TEST.0          equ 00003H
        0004                     TEST.A          equ 00004H
        0005                     TEST.LD         equ 00005H
+       0006                     LABELTEST:equ 0006H
 [EOF:Test.Z80:UTF_8]
