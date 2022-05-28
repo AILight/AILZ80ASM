@@ -12,3 +12,5 @@ include ".\SubDir\Test3.bin", B, START
 include ".\SubDir\Test3.bin", B, , LENGTH
 
 include ".\SubDir\SubSubDir\TestSub.z80"
+	LD HL, addr
+addr: include "Test5.inc"

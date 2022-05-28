@@ -123,8 +123,8 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(errors.Length, 4);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2002, 3, "Include.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2003, 5, "Include.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2003, 6, "Include.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 1, "Include_error.z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2007, 6, "Include.Z80", errors);
         }
 
         [TestMethod]

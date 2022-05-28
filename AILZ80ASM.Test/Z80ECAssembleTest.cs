@@ -502,16 +502,6 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestEC_E2007()
-        {
-            var errors = Assemble("E2007.Z80");
-
-            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
-
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2007, 2, "E2007.Z80", errors);
-        }
-
-        [TestMethod]
         public void TestEC_E2008()
         {
             var errors = Assemble("E2008.Z80");

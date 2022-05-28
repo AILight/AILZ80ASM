@@ -63,7 +63,7 @@ namespace AILZ80ASM.Assembler
             E2004,
             E2005,
             E2006,
-            E2007,
+            //E2007,
             E2008,
             E2009,
 
@@ -191,7 +191,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E2004] = "Include 開始アドレスの指定が間違っています。",
             [ErrorCodeEnum.E2005] = "Include 長さの指定が間違っています。",
             [ErrorCodeEnum.E2006] = "Include 開始アドレスがファイルの長さを超えています。",
-            [ErrorCodeEnum.E2007] = "Include ラベルは設定できません。",
+            //[ErrorCodeEnum.E2007] = "",
             [ErrorCodeEnum.E2008] = "Include ファイルタイプには、TEXTかBINARYを指定してください。",
             [ErrorCodeEnum.E2009] = "Include ファイルタイプ:TEXTでは、開始位置、長さの指定は出来ません。",
 
