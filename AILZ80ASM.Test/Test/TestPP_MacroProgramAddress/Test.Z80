@@ -1,0 +1,17 @@
+﻿	ORG	$9000
+
+LB1:
+	DBFIL 126
+	GOTO LB1
+LB2:
+	DBFIL 127
+	GOTO LB2
+
+	;GOTO
+GOTO	macro _ADDRESS_
+  #IF (_ADDRESS_) >= ($+2-128) && (_ADDRESS_) < ($+2+128)
+	jr _ADDRESS_
+  #ELSE
+	jp _ADDRESS_
+  #ENDIF
+	endm
