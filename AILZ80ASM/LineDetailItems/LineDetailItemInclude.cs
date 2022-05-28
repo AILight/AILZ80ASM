@@ -67,11 +67,6 @@ namespace AILZ80ASM.LineDetailItems
             var matched = Regex.Match(lineItem.OperationString, RegexPatternInclude, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
-                if (!string.IsNullOrEmpty(lineItem.LabelString))
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2007);
-                }
-
                 var filename = matched.Groups["Filename"].Value;
                 var fileTypeString = matched.Groups["Filetype"].Value;
                 var startAddressString = matched.Groups["StartAddress"].Value;
@@ -123,6 +118,7 @@ namespace AILZ80ASM.LineDetailItems
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            Address = asmAddress;
             switch (FileType)
             {
                 case FileTypeEnum.Text:
