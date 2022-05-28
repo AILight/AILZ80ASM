@@ -152,10 +152,10 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.LeftParenthesis] = ArgumentTypeEnum.None,                // (
         };
 
-        private static readonly string RegexPatternHexadecimal_H = @"^(?<value>([0-9A-Fa-f_]+))H$";
-        private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f_]+))$";
-        private static readonly string RegexPatternHexadecimal_D = @"^\$(?<value>([0-9A-Fa-f_]+))$";
-        private static readonly string RegexPatternOctal_O = @"^(?<value>([0-7_]+))O$";
+        private static readonly string RegexPatternHexadecimal_H = @"^(?<value>([0-9A-Fa-f]+))H$";
+        private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f]+))$";
+        private static readonly string RegexPatternHexadecimal_D = @"^\$(?<value>([0-9A-Fa-f]+))$";
+        private static readonly string RegexPatternOctal_O = @"^(?<value>([0-7]+))O$";
         private static readonly string RegexPatternBinaryNumber_B = @"^(?<value>([01_]+))B$";
         private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
         private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
