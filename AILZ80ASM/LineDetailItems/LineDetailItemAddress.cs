@@ -13,7 +13,7 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
-                return new[] { AsmList.CreateLineItemORG(Address, new AsmLength(), LineItem) };
+                return new[] { AsmList.CreateLineItemORG(Address.Value, new AsmLength(), LineItem) };
             }
         }
 

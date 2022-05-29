@@ -12,7 +12,7 @@ namespace AILZ80ASM.LineDetailItems
         public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad { get; set; }
         
-        public AsmAddress Address { get; protected set; }
+        public AsmAddress? Address { get; protected set; }
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         //public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
         public virtual AsmResult[] BinResults => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResults).ToArray();
@@ -22,10 +22,7 @@ namespace AILZ80ASM.LineDetailItems
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
             LineItem = lineItem;
-
-            //AsmLoad = asmLoad.Clone();
             AsmLoad = asmLoad;
-
         }
 
         public static LineDetailItem CreateLineDetailItem(LineItem lineItem, AsmLoad asmLoad)
@@ -117,7 +114,7 @@ namespace AILZ80ASM.LineDetailItems
 
         public virtual void AdjustAssemble(ref UInt32 outputAddress)
         {
-            Address = new AsmAddress(Address.Program, outputAddress);
+            Address = new AsmAddress(Address.Value.Program, outputAddress);
 
             if (LineDetailScopeItems == default)
                 return;
