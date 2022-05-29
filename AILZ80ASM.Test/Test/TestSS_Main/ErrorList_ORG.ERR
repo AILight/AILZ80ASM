@@ -10,9 +10,11 @@ Copyright (C) 2022 by M.Ishino (AILight)
 - LST filename [ErrorList.LST]: Successful.
 
 # Error
+
 ErrorList.Z80:12  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[未定義:PORT.Sub3]
 
 # List
+
 ErrorList.LST:31  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[未定義:PORT.Sub3]
 
 

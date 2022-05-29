@@ -234,6 +234,16 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Print()
+        {
+            var errors = Assemble("Print.Z80");
+
+            Assert.AreEqual(errors.Length, 1);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.I0001, 4, "Print.Z80", errors);
+            Assert.AreEqual(errors[0].ErrorMessage, "#PRINT: ABC:1");
+        }
+
+        [TestMethod]
         public void TestER_Repeat()
         {
             var errors = Assemble("Repeat.Z80");

@@ -313,7 +313,7 @@ namespace AILZ80ASM
             }
         }
 
-        public bool SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
+        public bool SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> failedOutputFiles)
         {
             var result = true;
 
@@ -342,6 +342,10 @@ namespace AILZ80ASM
                 }
 
                 Trace.WriteLine($"- {item.Key.ToString()} filename [{item.Value.Name}]: {status}");
+            }
+            foreach (var item in failedOutputFiles)
+            {
+                Trace.WriteLine($"- {item.Key.ToString()} filename [{item.Value.Name}]: Failed");
             }
             Trace.WriteLine($"");
 
@@ -414,6 +418,7 @@ namespace AILZ80ASM
             if (errors.Any())
             {
                 Trace.WriteLine($"# List");
+                Trace.WriteLine("");
 
                 OutputErrorForList(errors, fileName);
             }
@@ -442,6 +447,7 @@ namespace AILZ80ASM
             if (errorLineItems.Length > 0)
             {
                 Trace.WriteLine($"# {title}");
+                Trace.WriteLine("");
                 InternalOutputError(errorLineItems, title);
                 Trace.WriteLine("");
             }

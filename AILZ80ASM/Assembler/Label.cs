@@ -328,7 +328,7 @@ namespace AILZ80ASM.Assembler
                 Calculation();
                 if (LineDetailExpansionItem != default && AsmLoad != default)
                 {
-                    AsmLoad.AddError(new ErrorLineItem(LineDetailExpansionItem.LineItem, Error.ErrorCodeEnum.I0001, $"{LabelShortName}"));
+                    AsmLoad.AddError(new ErrorLineItem(LineDetailExpansionItem.LineItem, Error.ErrorCodeEnum.I0002, $"{LabelShortName}"));
                 }
             }
             catch (Exception ex)

@@ -53,7 +53,7 @@ namespace AILZ80ASM.Test
             asmLoad.BuildLabel();
 
             Assert.AreEqual(asmLoad.AssembleInformation.Length, 1);
-            Assert.AreEqual(asmLoad.AssembleInformation[0].ErrorCode, Error.ErrorCodeEnum.I0001);
+            Assert.AreEqual(asmLoad.AssembleInformation[0].ErrorCode, Error.ErrorCodeEnum.I0002);
         }
 
         [TestMethod]

@@ -189,6 +189,7 @@ addr:
 - 16進数：先頭に$ or 0x もしくは末尾にHを付けます。
 - 1文字:先頭と末尾に **'** を付けます。半角を使うと1バイトの数値として扱えます。
 - 文字列:先頭と末尾に **"** を付けます。2バイトの数値として扱えます。
+- BOOL型:真:#TRUE, 偽:#FALSE
 
 ## 文字と文字列について
 - １文字を扱うときには、 **'** で囲んでください。
@@ -453,7 +454,6 @@ Function ABS(value) => value < 0 ? value * -1 : value
 - #ELIF: 前の条件付きアセンブルを終了して、指定された条件がTRUEの時にアセンブル対象になります。
 - #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
 - #ENDIF: 条件付きアセンブルを終了します。
-- #PRINT: アセンブル画面に情報を表示します。(将来実装予定)
 - #ERROR: 無条件にエラーを発生させます。
 - #TRUE: 真(bool型)
 - #FALSE: 偽(bool型)
@@ -461,6 +461,7 @@ Function ABS(value) => value < 0 ? value * -1 : value
 ```
 #if mode == 1
 	ld a,1
+	#print "mode == 1の処理がされました"
 #elif mode == 2
 	ld d,4
 #else
@@ -468,11 +469,17 @@ Function ABS(value) => value < 0 ? value * -1 : value
 #endif
 ```
 
-ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+###### #PRINT <引数1> [<引数2>]
+アセンブルの情報をインフォメーション[I0001]として表示します。
+
+- 引数1: 出力の文字列を設定します。{#}を指定すると、引数2以降の値を含めて出力出来ます。
+- 引数2: 引数1で指定したフォーマットに表示する値を設定します。
+
 ```
-#if LABEL.@EXISTS
-LABEL	equ 00FFH
-#endif
+TEST1	EQU 1
+TEST2	EQU 2
+
+	#PRINT "TEST1:{0}, TEST2:{1}", TEST1, TEST2
 ```
 
 #### PRAGMA (プラグマ)
@@ -483,7 +490,14 @@ LABEL	equ 00FFH
 
 LABEL	equ 00FFH
 ```
-				
+
+ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+```
+#if LABEL.@EXISTS
+LABEL	equ 00FFH
+#endif
+```
+
 ## 表記の揺れ対応
 - (IX) → (IX+0)
 - (IY) → (IY+0)
