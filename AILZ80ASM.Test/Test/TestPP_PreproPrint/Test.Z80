@@ -1,0 +1,4 @@
+﻿
+TEST	EQU 1
+
+	#PRINT "ABC:{0}", TEST

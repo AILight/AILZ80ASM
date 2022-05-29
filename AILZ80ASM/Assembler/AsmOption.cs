@@ -93,11 +93,11 @@ namespace AILZ80ASM.Assembler
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
             if (!CheckUnuseLabel)
             {
-                DisableWarningCodes = DisableWarningCodes.Concat(new[] { Error.ErrorCodeEnum.I0001 }).Distinct().ToArray();
+                DisableWarningCodes = DisableWarningCodes.Concat(new[] { Error.ErrorCodeEnum.I0002 }).Distinct().ToArray();
             }
             else
             {
-                DisableWarningCodes = DisableWarningCodes.Where(m => m != Error.ErrorCodeEnum.I0001).ToArray();
+                DisableWarningCodes = DisableWarningCodes.Where(m => m != Error.ErrorCodeEnum.I0002).ToArray();
             }
             GapByte = rootCommand.GetValue<byte>("gapByte");
         }

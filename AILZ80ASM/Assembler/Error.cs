@@ -56,6 +56,9 @@ namespace AILZ80ASM.Assembler
             E1031,
             E1032,
 
+            E1041,
+            E1042,
+
             // Include
             //E2001,
             E2002,
@@ -107,6 +110,7 @@ namespace AILZ80ASM.Assembler
             W9005,
 
             I0001,
+            I0002,
         }
 
         public static ErrorTypeEnum GetErrorType(ErrorCodeEnum errorCode)
@@ -184,6 +188,10 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E1031] = "#ERROR:{0}",
             [ErrorCodeEnum.E1032] = "#ERRORにラベルは設定できません。",
 
+            // プリント
+            [ErrorCodeEnum.E1041] = "引数の設定が間違っています。{0}",
+            [ErrorCodeEnum.E1042] = "#PRINTにラベルは設定できません。",
+
             // Include
             //[ErrorCodeEnum.E2001] = "",
             [ErrorCodeEnum.E2002] = "Include ファイルが存在しませんでした。[{0}]",
@@ -236,7 +244,8 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.W9004] = "EX HL,DE は、EX DE,HLとして処理されました。",
             [ErrorCodeEnum.W9005] = "ローカルラベルの「:」は、無いものとして処理されました。",
 
-            [ErrorCodeEnum.I0001] = "未使用ラベル: {0}"
+            [ErrorCodeEnum.I0001] = "#PRINT: {0}",
+            [ErrorCodeEnum.I0002] = "未使用ラベル: {0}"
         };
     }
 }

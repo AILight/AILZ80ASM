@@ -4,23 +4,23 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemError : LineDetailItem
+    public class LineDetailItemPreproError : LineDetailItem
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
-        private static readonly string RegexPatternError = @"^\s*#ERROR\s+""(?<message>.+)""$";
+        private static readonly string RegexPatternError = @"^#ERROR\s+""(?<message>.+)""$";
         public string Message { get; set; }
 
-        private LineDetailItemError(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemPreproError(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        public static LineDetailItemError Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemPreproError Create(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!lineItem.IsCollectOperationString)
             {
-                return default(LineDetailItemError);
+                return default(LineDetailItemPreproError);
             }
 
             var matched = Regex.Match(lineItem.OperationString, RegexPatternError, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -34,7 +34,7 @@ namespace AILZ80ASM.LineDetailItems
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1032);
                 }
 
-                var lineDetailItemError = new LineDetailItemError(lineItem, asmLoad)
+                var lineDetailItemError = new LineDetailItemPreproError(lineItem, asmLoad)
                 {
                     Message = matched.Groups["message"].Value
                 };

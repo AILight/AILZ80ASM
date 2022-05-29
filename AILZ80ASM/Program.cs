@@ -214,9 +214,11 @@ namespace AILZ80ASM
                 {
                     assembleResult = package.Errors.Length == 0;
                     var outputFiles = asmOption.OutputFiles.Where(m => m.Key != AsmEnum.FileTypeEnum.ERR).ToDictionary(k => k.Key, v => v.Value);
+                    var failOutputFiles = new Dictionary<AsmEnum.FileTypeEnum, FileInfo>();
                     // エラー発生時は、リスティングファイルだけでも出力する
                     if (package.Errors.Length != 0)
                     {
+                        failOutputFiles = outputFiles.Where(m => m.Key != AsmEnum.FileTypeEnum.LST).ToDictionary(k => k.Key, v => v.Value);
                         outputFiles = outputFiles.Where(m => m.Key == AsmEnum.FileTypeEnum.LST).ToDictionary(k => k.Key, v => v.Value);
                     }
                     
@@ -226,7 +228,7 @@ namespace AILZ80ASM
                     }
                     else
                     {
-                        assembleResult &= package.SaveOutput(outputFiles);
+                        assembleResult &= package.SaveOutput(outputFiles, failOutputFiles);
                     }
                 }
                 catch (Exception ex)

@@ -9,6 +9,7 @@ Copyright (C) 2022 by M.Ishino (AILight)
 
 
 # Error
+
 Error.Z80:1  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[未定義:g]
 
 

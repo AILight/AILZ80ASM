@@ -369,7 +369,7 @@ namespace AILZ80ASM.AILight
                     {
                         if (ValueInt32 < 0)
                         {
-                            return (T)(object)new [] { (byte)(byte.MaxValue + ValueInt32 + 1)};
+                            return (T)(object)new[] { (byte)(byte.MaxValue + ValueInt32 + 1) };
                         }
                         else
                         {
@@ -396,6 +396,29 @@ namespace AILZ80ASM.AILight
                         }
                     }
                     throw new InvalidAIValueException("16ビット数値型の配列に変換できません。");
+                }
+                else if ((typeof(T) == typeof(object)))
+                {
+                    if (ValueType.HasFlag(ValueTypeEnum.Int32))
+                    {
+                        return (T)(object)ValueInt32;
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.Bytes))
+                    {
+                        return (T)(object)string.Join(',', ValueBytes.Select(m => $"{m:2X}"));
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.String))
+                    {
+                        return (T)(object)ValueString;
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.Bool))
+                    {
+                        return (T)(object)(ValueBool ? "#TRUE" : "#FALSE");
+                    }
+                    else
+                    {
+                        throw new InvalidAIValueException("値に変換できません。");
+                    }
                 }
                 else
                 {
