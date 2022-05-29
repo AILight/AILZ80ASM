@@ -4,6 +4,8 @@ namespace AILZ80ASM.LineDetailItems
 {
     public class LineDetailItemInvalid : LineDetailItem
     {
+        public override AsmList[] Lists => new[] { AsmList.CreateLineItem(LineItem) };
+
         private LineDetailItemInvalid(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
@@ -18,7 +20,9 @@ namespace AILZ80ASM.LineDetailItems
                 errorMessage = "命令にASCIIコード以外の文字が含まれています。";
             }
 
-            throw new Exceptions.ErrorAssembleException(Error.ErrorCodeEnum.E0001, errorMessage);
+            asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E0001, errorMessage));
+
+            return new LineDetailItemInvalid(lineItem, asmLoad);
         }
 
     }
