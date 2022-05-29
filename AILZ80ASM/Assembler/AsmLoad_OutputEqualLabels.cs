@@ -43,7 +43,7 @@ namespace AILZ80ASM.Assembler
                 foreach (var label in equLabels)
                 {
                     var labelName = $"{label.LabelShortName}" + (label.LabelType == Label.LabelTypeEnum.Adr ? ":" : "");
-                    var equValue = $"${label.Value.ConvertTo<UInt16>():X4}";
+                    var equValue = $"${label.Value.ConvertTo<int>():X4}";
                     if (AIMath.TryParse(label.Value.OriginalValue, out var tmpAIValue) &&
                         label.Value.Equals(tmpAIValue))
                     {

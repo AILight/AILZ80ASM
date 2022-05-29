@@ -23,7 +23,7 @@ namespace AILZ80ASM.Assembler
                 }
                 foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.GlobalLabelName == globalLabelName))
                 {
-                    streamWriter.WriteLine($"{label.Value.ConvertTo<UInt16>():X4} {label.LabelShortName}");
+                    streamWriter.WriteLine($"{label.Value.ConvertTo<int>():X4} {label.LabelShortName}");
                 }
                 streamWriter.WriteLine();
             }
@@ -32,7 +32,7 @@ namespace AILZ80ASM.Assembler
             {
                 foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value))
                 {
-                    streamWriter.WriteLine($"{label.Value.ConvertTo<UInt16>():X4} {label.LabelFullName}");
+                    streamWriter.WriteLine($"{label.Value.ConvertTo<int>():X4} {label.LabelFullName}");
                 }
             }
         }
