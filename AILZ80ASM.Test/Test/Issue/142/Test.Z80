@@ -1,0 +1,13 @@
+﻿;
+;永久に解決できない矛盾コードのはずですが
+;マルチパスの評価が、GOAL = 0x10000 に到達すると
+;打ち切られて正常終了するようです。
+;
+;	org	02000h	;DISTANCE=E000 end
+	org	0E000h	;DISTANCE=2000 end
+;
+DISTANCE	equ	GOAL-$
+	defs	DISTANCE
+	nop
+GOAL	equ	$
+;

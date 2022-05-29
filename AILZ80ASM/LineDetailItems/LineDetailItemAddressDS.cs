@@ -54,7 +54,7 @@ namespace AILZ80ASM.LineDetailItems
             this.AsmLoad.AddORG(asmORG_DS);
             this.AsmLoad.AddLineDetailItem(this); // 自分自身を追加する
 
-            if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse(LengthLabel, this.AsmLoad, out var aiValue))
+            if (string.IsNullOrEmpty(LengthLabel) || !AIMath.TryParse(LengthLabel, this.AsmLoad, asmAddress, out var aiValue))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, LengthLabel);
             }
