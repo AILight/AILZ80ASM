@@ -24,7 +24,7 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 
 ## パフォーマンス
 - アセンブル時間
-	- 処理時間: 3.67 sec
+	- 処理時間: 1.583 sec
 	- 出力結果: 47,735 bytes
 	- 処理行数: 約20,000行
 - [ベンチマーク・プロジェクト](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark)
@@ -45,7 +45,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - -i, --input <files>        アセンブリ対象のファイルをスペース区切りで指定します。(オプション名の省略が可能）
 - -ie, --input-encode <mode> 入力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
 - -o, --output <file>        出力ファイルを指定します。
-- -om, --output-mode <mode>  出力ファイルのモードを選択します。 [bin, t88, cmt, sym, lst, equ, err, tag] デフォルト:bin
+- -om, --output-mode <mode>  出力ファイルのモードを選択します。 [bin, t88, cmt, hex, sym, lst, equ, err, tag] デフォルト:bin
 - -oe, --output-encode <mode>出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
 - -lm, --list-mode <mode>    リストの出力形式を選択します。 [simple, middle, full] デフォルト:full
 - -ts, --tab-size <size>     TABのサイズを指定します。 デフォルト:4
@@ -165,7 +165,7 @@ LABLE:			; ラベル指定
 - .@L をラベルに追加すると、下位1バイトを取得 （.@LOW  でも可能）
 - .@T をラベルに追加すると、ラベルに指定した名前を文字列として取得 （.@TEXT でも可能）
 - .@E をラベルに追加すると、ラベルが存在すると#TRUE、存在しないと#FALSE （.@EXISTS でも可能）
-- [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+- [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU/Test.Z80#L18)
 - [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
 - [@Eサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.INC#L1)
 
@@ -189,6 +189,7 @@ addr:
 - 16進数：先頭に$ or 0x もしくは末尾にHを付けます。
 - 1文字:先頭と末尾に **'** を付けます。半角を使うと1バイトの数値として扱えます。
 - 文字列:先頭と末尾に **"** を付けます。2バイトの数値として扱えます。
+- BOOL型:真:#TRUE, 偽:#FALSE
 
 ## 文字と文字列について
 - １文字を扱うときには、 **'** で囲んでください。
@@ -309,14 +310,14 @@ LB2000:
 - ロケーションカウンタの値を、<式>で設定した値を加算した場所に移動します。
 - <式>のバイト数、<ギャップ値>で埋めます。<式2>を設定するとその値で埋めます
 - DS以降のプログラム等の出力情報が無い場合には、出力結果は切り詰められます。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS/Test.Z80#L8)
 
 ## 制御命令
 #### <ラベル> EQU <式>
 - 指定したラベルに、<式> の値を持たせます。
 	- 即値、式、$、$$、（文字、文字列、#TRUE or #FALSE version:1.0.0以降）
 - ローカルラベルで利用することも可能です。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU/Test.Z80)
 
 ```
 PORT_A  equ $CC
@@ -337,7 +338,7 @@ PORT_A  equ $CC
 - ファイル形式
 	1. Json形式(UTF-8 with BOM)
 	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
-- [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap_Test/Test.Z80)
+- [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap/Test.Z80)
 	
 #### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>], [<文字変換:実装予定>]
 ファイル名の内容を読み取り、その場所に展開します
@@ -357,31 +358,31 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 
 #### DB <式>, [<式>]
 - <式>の1バイト値を設定します
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L4)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L8)
 
 #### DB [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
 - ネストも可能
 - 例：DB [Y=0..2:[X=0..4:Y*8+X]]
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L290)
 
 #### DW <式>, [<式>]
 - <式>の2バイト値を設定します
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L5)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L296)
 
 #### DW [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
 - ネストも可能
 - 例：DW [Y=24..0:$8000 + Y * $140]
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW_Test/Test.Z80#L292)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L292)
 
 #### DBFIL <式>, [<式2>]
 - <式>のバイト数、0で埋めます。<式2>を設定するとその値で埋めます
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS/Test.Z80#L9)
 
 #### DWFIL <式>, [<式2>]
 - <式>の２バイト数、0で埋めます。<式2>を設定するとその値で埋めます
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L11)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS/Test.Z80#L10)
 
 ## マクロ
 #### <マクロ名> MACRO [<引数1>, <引数2>]　～ ENDM
@@ -443,8 +444,9 @@ TestArg MACRO a1, a2
 Function ABS(value) => value < 0 ? value * -1 : value
 ```
 
-## END
+## END [<式1>]
 アセンブルの実行を中断します。これ以降のソースコードはアセンブルされません。アセンブル結果は出力されます。
+-  式1に設定した値は、エントリーポイントに使われます。利用個所: CMT出力
 
 ## プリプロセッサ
 #### 条件付きアセンブル
@@ -453,7 +455,6 @@ Function ABS(value) => value < 0 ? value * -1 : value
 - #ELIF: 前の条件付きアセンブルを終了して、指定された条件がTRUEの時にアセンブル対象になります。
 - #ELSE: 前の条件付きアセンブルを終了して、前条件がFALSEの時にアセンブル対象になります。
 - #ENDIF: 条件付きアセンブルを終了します。
-- #PRINT: アセンブル画面に情報を表示します。(将来実装予定)
 - #ERROR: 無条件にエラーを発生させます。
 - #TRUE: 真(bool型)
 - #FALSE: 偽(bool型)
@@ -461,6 +462,7 @@ Function ABS(value) => value < 0 ? value * -1 : value
 ```
 #if mode == 1
 	ld a,1
+	#print "mode == 1の処理がされました"
 #elif mode == 2
 	ld d,4
 #else
@@ -468,11 +470,17 @@ Function ABS(value) => value < 0 ? value * -1 : value
 #endif
 ```
 
-ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+###### #PRINT <引数1> [<引数2>]
+アセンブルの情報をインフォメーション[I0001]として表示します。
+
+- 引数1: 出力の文字列を設定します。{#}を指定すると、引数2以降の値を含めて出力出来ます。
+- 引数2: 引数1で指定したフォーマットに表示する値を設定します。
+
 ```
-#if LABEL.@EXISTS
-LABEL	equ 00FFH
-#endif
+TEST1	EQU 1
+TEST2	EQU 2
+
+	#PRINT "TEST1:{0}, TEST2:{1}", TEST1, TEST2
 ```
 
 #### PRAGMA (プラグマ)
@@ -483,7 +491,14 @@ LABEL	equ 00FFH
 
 LABEL	equ 00FFH
 ```
-				
+
+ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+```
+#if LABEL.@EXISTS
+LABEL	equ 00FFH
+#endif
+```
+
 ## 表記の揺れ対応
 - (IX) → (IX+0)
 - (IY) → (IY+0)
@@ -494,7 +509,7 @@ LABEL	equ 00FFH
 ## エラー
  - レベル分けされており、E:Error,W:Warning,I:Information があります。
  - Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
- - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Error.cs)
+ - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Assembler/Error.cs#L142)
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)

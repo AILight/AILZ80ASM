@@ -1,0 +1,13 @@
+﻿	org	0x100
+;
+LA32	equ	0x12345678
+;
+LA3	equ	LA32/0x1000000
+LA2	equ	LA32/0x10000
+LA1	equ	(LA32/0x100) & 0xffff
+LA0	equ	(LA32/1) & 0xffff
+;
+	db	LA32/0x1000000
+	db	LA32/0x10000
+	db	LA32/0x100
+	db	LA32

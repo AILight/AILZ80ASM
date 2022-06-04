@@ -40,7 +40,7 @@ namespace AILZ80ASM.Assembler
                 foreach (var label in equLabels)
                 {
                     var labelName = $"{label.LabelName}:";
-                    var equValue = $"${label.Value.ConvertTo<UInt16>():X4}";
+                    var equValue = $"${label.Value.ConvertTo<UInt32>():X4}";
                     if (AIMath.TryParse(label.Value.OriginalValue, out var tmpAIValue) &&
                         label.Value.Equals(tmpAIValue))
                     {
@@ -52,7 +52,7 @@ namespace AILZ80ASM.Assembler
                     foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && (m.LabelType == Label.LabelTypeEnum.Equ)))
                     {
                         var subLabelName = $".{item.SubLabelName}";
-                        var subEquValue = $"${item.Value.ConvertTo<UInt16>():X4}";
+                        var subEquValue = $"${item.Value.ConvertTo<UInt32>():X4}";
                         if (AIMath.TryParse(item.Value.OriginalValue, out var subTmpAIValue) &&
                             item.Value.Equals(subTmpAIValue))
                         {
@@ -88,7 +88,7 @@ namespace AILZ80ASM.Assembler
                         foreach (var item in labels.Where(m => m.LabelName == label.LabelName && m.LabelLevel == Label.LabelLevelEnum.SubLabel && m.LabelType == Label.LabelTypeEnum.Equ))
                         {
                             var subLabelName = $".{item.SubLabelName}";
-                            var equValue = $"${item.Value.ConvertTo<UInt16>():X4}";
+                            var equValue = $"${item.Value.ConvertTo<UInt32>():X4}";
                             if (AIMath.TryParse(item.Value.OriginalValue, out var tmpValue) && item.Value.Equals(tmpValue))
                             {
                                 equValue = item.Value.OriginalValue;

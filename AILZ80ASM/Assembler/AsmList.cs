@@ -21,7 +21,7 @@ namespace AILZ80ASM.Assembler
         }
 
         public UInt32? OutputAddress { get; set; }
-        public UInt16? ProgramAddress { get; set; }
+        public UInt32? ProgramAddress { get; set; }
         public byte[] Bin { get; set; }
         public string Status { get; set; }
         public Stack<NestedCodeTypeEnum> NestedCodeTypes { get; set; }
@@ -53,33 +53,38 @@ namespace AILZ80ASM.Assembler
 
         public static AsmList CreateSourceOnly(string target)
         {
-            return Create(default(UInt32?), default(UInt16?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.SourceOnly);
+            return Create(default(UInt32?), default(UInt32?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.SourceOnly);
         }
 
         public static AsmList CreateSource(string target)
         {
-            return Create(default(UInt32?), default(UInt16?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.Normal);
+            return Create(default(UInt32?), default(UInt32?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateSource(string target, Error.ErrorCodeEnum? errorCode, string errorMessage)
         {
-            return Create(default(UInt32?), default(UInt16?), errorCode, errorMessage, default(byte[]), "", target, ListStatusEnum.Normal);
+            return Create(default(UInt32?), default(UInt32?), errorCode, errorMessage, default(byte[]), "", target, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateLineItem(LineItem lineItem)
         {
             return CreateSource(lineItem.LineString, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
         }
+
         public static AsmList CreateLineItemEqual(Label equLabel, LineItem lineItem)
         {
-            var programAddress = default(UInt16?);
+            var programAddress = default(UInt32?);
 
             if (equLabel.DataType == Label.DataTypeEnum.Value && equLabel.Value.ValueType.HasFlag(AILight.AIValue.ValueTypeEnum.Int32))
             {
-                programAddress = equLabel.Value.ConvertTo<UInt16>();
+                programAddress = equLabel.Value.ConvertTo<UInt32>();
             }
             
             return CreateLineItem(default(UInt32?), programAddress, default(byte[]), "", lineItem);
+        }
+        public static AsmList CreateLineItemEnd(UInt16? entryPoint, LineItem lineItem)
+        {
+            return CreateLineItem(default(UInt32?), entryPoint, default(byte[]), "", lineItem);
         }
 
         public static AsmList CreateLineItemORG(AsmAddress address, AsmLength length, LineItem lineItem)
@@ -97,12 +102,12 @@ namespace AILZ80ASM.Assembler
             return CreateLineItem(asmAdddress.Output, asmAdddress.Program, bin, status, lineItem);
         }
 
-        public static AsmList CreateLineItem(UInt32? outputAddress, UInt16? programAddress, byte[] bin, string status, LineItem lineItem)
+        public static AsmList CreateLineItem(UInt32? outputAddress, UInt32? programAddress, byte[] bin, string status, LineItem lineItem)
         {
             return Create(outputAddress, programAddress, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, bin, status, lineItem.LineString, ListStatusEnum.Normal);
         }
 
-        public static AsmList Create(UInt32? outputAddress, UInt16? programAddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin, string status, string source, ListStatusEnum listStatus)
+        public static AsmList Create(UInt32? outputAddress, UInt32? programAddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin, string status, string source, ListStatusEnum listStatus)
         {
             return new AsmList
             {
@@ -126,7 +131,22 @@ namespace AILZ80ASM.Assembler
         public string ToString(AsmEnum.ListFormatEnum listFormat, int tabSize)
         {
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
-            var address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
+            var address2 = "";
+            if (ProgramAddress.HasValue && ProgramAddress.Value > UInt16.MaxValue)
+            {
+                if (string.IsNullOrEmpty(address1) && ProgramAddress <= 0xFFFFFF)
+                {
+                    address1 = $"{ProgramAddress:X6}";
+                }
+                else
+                {
+                    address2 = "----";
+                }
+            }
+            else
+            {
+                address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
+            }
             var binary = Bin != default ? string.Concat(Bin.Select(m => $"{m:X2}")) : "";
             var codeType = "";
             var status = this.Status;

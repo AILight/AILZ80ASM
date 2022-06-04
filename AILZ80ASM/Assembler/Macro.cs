@@ -49,7 +49,7 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
-        public LineDetailScopeItem[] Expansion(LineItem lineItem, string[] arguments, AsmLoad asmLoad, ref AsmAddress asmAddress)
+        public MacroExpansionResult Expansion(LineItem lineItem, string[] arguments, AsmLoad asmLoad, ref AsmAddress asmAddress)
         {
             if (asmLoad.Share.LoadMacros.Any(m => this == m))
             {
@@ -63,6 +63,8 @@ namespace AILZ80ASM.Assembler
             // Macro展開用のAsmLoadを作成する
             var guid = $"{Guid.NewGuid():N}";
             var lineItemList = new List<LineItem>();
+            var localAsmAddress = asmAddress;
+            var argumentLabelList = new List<Label>();
 
             asmLoad.CreateNewScope($"macro_{guid}", $"label_{guid}", localAsmLoad =>
             {
@@ -72,16 +74,17 @@ namespace AILZ80ASM.Assembler
                     // 引数の割り当て
                     foreach (var index in Enumerable.Range(0, arguments.Length))
                     {
-                        var argumentLabel = new LabelMacroArg(arguments[index], asmLoad, lineItem, asmLoad);
-                        var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalidate ?
+                        var argumentLabel = new LabelMacroArg(arguments[index], asmLoad, lineItem, asmLoad, localAsmAddress);
+                        var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.invalid ?
                                             argumentLabel.LabelFullName : arguments[index];
 
-                        var label = new LabelMacroArg(this.Args[index], argumentValue, localAsmLoad, lineItem, asmLoad);
+                        var label = new LabelMacroArg(this.Args[index], argumentValue, localAsmLoad, lineItem, asmLoad, localAsmAddress);
                         if (label.Invalidate)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E3005);
                         }
                         localAsmLoad.AddLabel(label);
+                        argumentLabelList.Add(label);
                     }
                 }
 
@@ -135,7 +138,7 @@ namespace AILZ80ASM.Assembler
 
             asmLoad.Share.LoadMacros.Pop();
 
-            return lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems ?? Array.Empty<LineDetailScopeItem>()).ToArray();
+            return new MacroExpansionResult() { LineItems = lineItemList.ToArray(), ArgumetLabels = argumentLabelList.ToArray() };
         }
 
         /// <summary>

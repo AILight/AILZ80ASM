@@ -12,7 +12,7 @@ namespace AILZ80ASM.Test
         {
             var warnings = Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
 
-            Assert.AreEqual(warnings.Length, 1);
+            Assert.AreEqual(1, warnings.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W9004, 1, "Test.Z80", warnings);
         }
 
@@ -20,8 +20,8 @@ namespace AILZ80ASM.Test
         public void TestWN_INDEX_Register()
         {
             var warnings = Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
-            
-            Assert.AreEqual(warnings.Length, 4);
+
+            Assert.AreEqual(4, warnings.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0003, 2, "Test.Z80", warnings);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0003, 3, "Test.Z80", warnings);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W0003, 7, "Test.Z80", warnings);
@@ -33,7 +33,7 @@ namespace AILZ80ASM.Test
         {
             var warnings = Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
 
-            Assert.AreEqual(warnings.Length, 402);
+            Assert.AreEqual(402, warnings.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W9001, 422, "Test.Z80", warnings);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W9002, 423, "Test.Z80", warnings);
         }
@@ -43,7 +43,7 @@ namespace AILZ80ASM.Test
         {
             var warnings = Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
 
-            Assert.AreEqual(warnings.Length, 1);
+            Assert.AreEqual(1, warnings.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W9005, 23, "Test.Z80", warnings);
         }
 
@@ -52,7 +52,7 @@ namespace AILZ80ASM.Test
         {
             var warnings = Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
 
-            Assert.AreEqual(warnings.Length, 17);
+            Assert.AreEqual(17, warnings.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W9003, 23, "Test.Z80", warnings);
         }
     }

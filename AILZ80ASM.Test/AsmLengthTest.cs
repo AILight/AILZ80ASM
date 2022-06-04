@@ -13,8 +13,8 @@ namespace AILZ80ASM.Test
         {
             var asmLength = new AsmLength(0x8000);
 
-            Assert.AreEqual(asmLength.Program, (UInt16)0x8000);
-            Assert.AreEqual(asmLength.Output, (UInt32)0x00008000);
+            Assert.AreEqual((UInt16)0x8000, asmLength.Program);
+            Assert.AreEqual((UInt32)0x00008000, asmLength.Output);
         }
 
         [TestMethod]
@@ -22,8 +22,8 @@ namespace AILZ80ASM.Test
         {
             var asmLength = new AsmLength(0x8000, 0x00108000);
 
-            Assert.AreEqual(asmLength.Program, (UInt16)0x8000);
-            Assert.AreEqual(asmLength.Output, (UInt32)0x00108000);
+            Assert.AreEqual((UInt16)0x8000, asmLength.Program);
+            Assert.AreEqual((UInt32)0x00108000, asmLength.Output);
         }
     }
 }

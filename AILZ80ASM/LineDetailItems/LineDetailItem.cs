@@ -12,7 +12,7 @@ namespace AILZ80ASM.LineDetailItems
         public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad { get; set; }
         
-        public AsmAddress Address { get; protected set; }
+        public AsmAddress? Address { get; protected set; }
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         //public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
         public virtual AsmResult[] BinResults => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResults).ToArray();
@@ -22,10 +22,7 @@ namespace AILZ80ASM.LineDetailItems
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {
             LineItem = lineItem;
-
-            //AsmLoad = asmLoad.Clone();
             AsmLoad = asmLoad;
-
         }
 
         public static LineDetailItem CreateLineDetailItem(LineItem lineItem, AsmLoad asmLoad)
@@ -79,10 +76,11 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemAddressORG.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressALIGN.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressDS.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemError.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPragma.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPreproError.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPreproPrint.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // 全角文字が命令に含まれていた時ここにたどり着く
 
@@ -116,7 +114,7 @@ namespace AILZ80ASM.LineDetailItems
 
         public virtual void AdjustAssemble(ref UInt32 outputAddress)
         {
-            Address = new AsmAddress(Address.Program, outputAddress);
+            Address = new AsmAddress(Address.Value.Program, outputAddress);
 
             if (LineDetailScopeItems == default)
                 return;

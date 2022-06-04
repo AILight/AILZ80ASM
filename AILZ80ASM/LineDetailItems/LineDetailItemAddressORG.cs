@@ -51,10 +51,28 @@ namespace AILZ80ASM.LineDetailItems
             // ProgramAddress
             var programAddress = AIMath.Calculation(ProgramLabel, this.AsmLoad, asmAddress).ConvertTo<UInt16>();
             asmAddress.Program = programAddress;
+            if (!string.IsNullOrEmpty(OutputLabel) &&
+                AIMath.TryParse(OutputLabel, AsmLoad, asmAddress, out var resultValue) &&
+                resultValue.TryParse<UInt32>(out var outputAddress))
+            {
+                asmAddress.Output = outputAddress;
+            }
+            else
+            {
+                asmAddress.Output = default(UInt32?);
+            }
 
             base.PreAssemble(ref asmAddress);
 
-            var asmORG = new AsmORG(programAddress, OutputLabel, FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            var asmORG = default(AsmORG);
+            if (asmAddress.Output.HasValue)
+            {
+                asmORG = new AsmORG(programAddress, asmAddress.Output.Value, FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            }
+            else
+            {
+                asmORG = new AsmORG(programAddress, OutputLabel, FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            }
             this.AsmLoad.AddORG(asmORG);
             this.AsmLoad.AddLineDetailItem(this); // 自分自身を追加する
         }

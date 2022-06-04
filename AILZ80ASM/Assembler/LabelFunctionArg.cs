@@ -25,18 +25,18 @@ namespace AILZ80ASM.Assembler
         }
 
         public LabelFunctionArg(string labelName, string valueString, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad)
-            : this(labelName, valueString, default(AIValue), asmLoad, calcLineItem, calcAsmLoad)
+            : this(labelName, valueString, default(AIValue), asmLoad, calcLineItem, calcAsmLoad, default(AsmAddress?))
         {
         }
 
         public LabelFunctionArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, AsmLoad calcAsmLoad)
-            : this(labelName, valueString, aiValue, asmLoad, default(LineItem), calcAsmLoad)
+            : this(labelName, valueString, aiValue, asmLoad, default(LineItem), calcAsmLoad, default(AsmAddress?))
         {
 
         }
 
-        public LabelFunctionArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad)
-            : base(labelName, valueString, aiValue, asmLoad, calcLineItem, calcAsmLoad, LabelTypeEnum.FunctionArg)
+        public LabelFunctionArg(string labelName, string valueString, AIValue aiValue, AsmLoad asmLoad, LineItem calcLineItem, AsmLoad calcAsmLoad, AsmAddress? calcAsmAddress)
+            : base(labelName, valueString, aiValue, asmLoad, calcLineItem, calcAsmLoad, calcAsmAddress, LabelTypeEnum.FunctionArg)
         {
         }
     }

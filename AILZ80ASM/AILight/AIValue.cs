@@ -268,7 +268,7 @@ namespace AILZ80ASM.AILight
 
         public T ConvertTo<T>()
         {
-            try
+            return AsmException.TryCatch(Error.ErrorCodeEnum.E0004, Value, () =>
             {
                 if (typeof(T) == typeof(int))
                 {
@@ -369,7 +369,7 @@ namespace AILZ80ASM.AILight
                     {
                         if (ValueInt32 < 0)
                         {
-                            return (T)(object)new [] { (byte)(byte.MaxValue + ValueInt32 + 1)};
+                            return (T)(object)new[] { (byte)(byte.MaxValue + ValueInt32 + 1) };
                         }
                         else
                         {
@@ -397,27 +397,34 @@ namespace AILZ80ASM.AILight
                     }
                     throw new InvalidAIValueException("16ビット数値型の配列に変換できません。");
                 }
+                else if ((typeof(T) == typeof(object)))
+                {
+                    if (ValueType.HasFlag(ValueTypeEnum.Int32))
+                    {
+                        return (T)(object)ValueInt32;
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.Bytes))
+                    {
+                        return (T)(object)string.Join(',', ValueBytes.Select(m => $"{m:2X}"));
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.String))
+                    {
+                        return (T)(object)ValueString;
+                    }
+                    else if (ValueType.HasFlag(ValueTypeEnum.Bool))
+                    {
+                        return (T)(object)(ValueBool ? "#TRUE" : "#FALSE");
+                    }
+                    else
+                    {
+                        throw new InvalidAIValueException("値に変換できません。");
+                    }
+                }
                 else
                 {
                     throw new NotImplementedException();
                 }
-            }
-            catch (ErrorAssembleException)
-            {
-                throw;
-            }
-            catch (ErrorLineItemException)
-            {
-                throw;
-            }
-            catch (InvalidAIValueException ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{Value} エラー:{ex.Message}");
-            }
-            catch (Exception)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{Value}");
-            }
+            });
         }
 
         /// <summary>
@@ -595,7 +602,8 @@ namespace AILZ80ASM.AILight
                     }
 
                     // PreAssemble中のアウトプット・ロケーションカウンターは参照できない
-                    if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
+                    //if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
+                    if (asmLoad != default && !asmAddress.Value.Output.HasValue)
                     {
                         throw new InvalidAIValueException("出力アドレスに影響する場所では$$は使えません。");
                     }

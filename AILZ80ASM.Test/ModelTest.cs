@@ -38,12 +38,12 @@ namespace AILZ80ASM.Test
                 profileArguments.AddRange(defaultProfile.DisableWarnings);
             }
 
-            Assert.AreEqual(profileArguments[0], "-e");
-            Assert.AreEqual(profileArguments[1], "-t");
-            Assert.AreEqual(profileArguments[2], "-dw");
-            Assert.AreEqual(profileArguments[3], "W0001");
-            Assert.AreEqual(profileArguments[4], "W9001");
-            Assert.AreEqual(profileArguments[5], "W9002");
+            Assert.AreEqual("-e",   profileArguments[0]);
+            Assert.AreEqual("-t",   profileArguments[1]);
+            Assert.AreEqual("-dw",  profileArguments[2]);
+            Assert.AreEqual("W0001", profileArguments[3]);
+            Assert.AreEqual("W9001", profileArguments[4]);
+            Assert.AreEqual("W9002", profileArguments[5]);
         }
     }
 }

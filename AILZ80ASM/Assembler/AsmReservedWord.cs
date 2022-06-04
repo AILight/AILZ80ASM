@@ -31,6 +31,7 @@ namespace AILZ80ASM.Assembler
                 new AsmReservedWord { Name = "MACRO", IsArgumentPath = false},
                 new AsmReservedWord { Name = "ENDM", IsArgumentPath = false},
                 new AsmReservedWord { Name = "REPT", IsArgumentPath = false},
+                new AsmReservedWord { Name = "REPEAT", IsArgumentPath = false},
                 new AsmReservedWord { Name = "FUNCTION", IsArgumentPath = false},
                 new AsmReservedWord { Name = "END", IsArgumentPath = false},
             };
@@ -41,6 +42,11 @@ namespace AILZ80ASM.Assembler
         public static AsmReservedWord[] GetReservedWordsForLabel()
         {
             return GetReservedWords().Where(m => m.Name != "MACRO").ToArray();
+        }
+
+        public static AsmReservedWord[] GetReservedWordsForEndArgument()
+        {
+            return GetReservedWords().Where(m => m.Name == "MACRO" || m.Name == "REPEAT").ToArray();
         }
     }
 }

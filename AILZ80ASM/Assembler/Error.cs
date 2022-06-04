@@ -21,7 +21,7 @@ namespace AILZ80ASM.Assembler
             E0003,
             E0004,
             E0005,
-            //E0006,
+            E0006,
             //E0007,
             //E0008,
             E0009,
@@ -55,6 +55,9 @@ namespace AILZ80ASM.Assembler
 
             E1031,
             E1032,
+
+            E1041,
+            E1042,
 
             // Include
             //E2001,
@@ -107,6 +110,7 @@ namespace AILZ80ASM.Assembler
             W9005,
 
             I0001,
+            I0002,
         }
 
         public static ErrorTypeEnum GetErrorType(ErrorCodeEnum errorCode)
@@ -146,7 +150,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0003] = $"相対ジャンプの範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
             [ErrorCodeEnum.E0004] = "演算、もしくはラベルの解決に失敗しました。定義を確認してください。[{0}]",
             [ErrorCodeEnum.E0005] = "エスケープシーケンスの表記が間違っています。[{0}]",
-            //[ErrorCodeEnum.E0006] = "",
+            [ErrorCodeEnum.E0006] = "0 で除算しようとしました。 [{0}]",
             //[ErrorCodeEnum.E0007] = "",
             //[ErrorCodeEnum.E0008] = "",
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
@@ -183,6 +187,10 @@ namespace AILZ80ASM.Assembler
             // エラー
             [ErrorCodeEnum.E1031] = "#ERROR:{0}",
             [ErrorCodeEnum.E1032] = "#ERRORにラベルは設定できません。",
+
+            // プリント
+            [ErrorCodeEnum.E1041] = "引数の設定が間違っています。{0}",
+            [ErrorCodeEnum.E1042] = "#PRINTにラベルは設定できません。",
 
             // Include
             //[ErrorCodeEnum.E2001] = "",
@@ -236,7 +244,8 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.W9004] = "EX HL,DE は、EX DE,HLとして処理されました。",
             [ErrorCodeEnum.W9005] = "ローカルラベルの「:」は、無いものとして処理されました。",
 
-            [ErrorCodeEnum.I0001] = "未使用ラベル: {0}"
+            [ErrorCodeEnum.I0001] = "#PRINT: {0}",
+            [ErrorCodeEnum.I0002] = "未使用ラベル: {0}"
         };
     }
 }
