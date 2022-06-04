@@ -263,13 +263,13 @@ namespace AILZ80ASM.Test
             // 反転テスト
             {
                 var result0 = AIValue.Calculation(aiValueNegation, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<int>(), ~1);
+                Assert.AreEqual(~1, result0.ConvertTo<int>());
                 
                 var result1 = AIValue.Calculation(aiValueNegation, aiValueTrue);
-                Assert.AreEqual(result1.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueNegation, aiValueFalse);
-                Assert.AreEqual(result2.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result2.ConvertTo<bool>());
                 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -280,7 +280,7 @@ namespace AILZ80ASM.Test
             // ビット反転
             {
                 var result0 = AIValue.Calculation(aiValueBitwiseComplement, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<int>(), ~1);
+                Assert.AreEqual(~1, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -296,10 +296,10 @@ namespace AILZ80ASM.Test
             // プラス
             {
                 var result0 = AIValue.Calculation(aiValuePlus, aiValue1, aiValue2);
-                Assert.AreEqual(result0.ConvertTo<int>(), 3);
+                Assert.AreEqual(3, result0.ConvertTo<int>());
 
                 var result1 = AIValue.Calculation(aiValuePlus, aiValueABC, aiValueDEF);
-                Assert.AreEqual(result1.ConvertTo<string>(), "ABCDEF");
+                Assert.AreEqual("ABCDEF", result1.ConvertTo<string>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -310,7 +310,7 @@ namespace AILZ80ASM.Test
             // マイナス
             {
                 var result0 = AIValue.Calculation(aiValueMinus, aiValue1, aiValue2);
-                Assert.AreEqual(result0.ConvertTo<int>(), -1);
+                Assert.AreEqual(-1, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -326,7 +326,7 @@ namespace AILZ80ASM.Test
             // 掛け算
             {
                 var result0 = AIValue.Calculation(aiValueMultiplication, aiValue1, aiValue2);
-                Assert.AreEqual(result0.ConvertTo<int>(), 2);
+                Assert.AreEqual(2, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -342,7 +342,7 @@ namespace AILZ80ASM.Test
             // 割り算
             {
                 var result0 = AIValue.Calculation(aiValueDivision, aiValue3, aiValue2);
-                Assert.AreEqual(result0.ConvertTo<int>(), 1);
+                Assert.AreEqual(1, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -358,7 +358,7 @@ namespace AILZ80ASM.Test
             // 余り
             {
                 var result0 = AIValue.Calculation(aiValueRemainder, aiValue1, aiValue2);
-                Assert.AreEqual(result0.ConvertTo<int>(), 1);
+                Assert.AreEqual(1, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -375,7 +375,7 @@ namespace AILZ80ASM.Test
             // 左シフト
             {
                 var result0 = AIValue.Calculation(aiValueLeftShift, aiValue1, aiValue2);
-                Assert.AreEqual(result0.ConvertTo<int>(), 4);
+                Assert.AreEqual(4, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -391,7 +391,7 @@ namespace AILZ80ASM.Test
             // 右シフト
             {
                 var result0 = AIValue.Calculation(aiValueRightShift, aiValue3, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<int>(), 1);
+                Assert.AreEqual(1, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -407,13 +407,13 @@ namespace AILZ80ASM.Test
             // より小さい
             {
                 var result0 = AIValue.Calculation(aiValueLess, aiValue1, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueLess, aiValue1, aiValue2);
-                Assert.AreEqual(result1.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueLess, aiValue2, aiValue1);
-                Assert.AreEqual(result2.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result2.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -429,13 +429,13 @@ namespace AILZ80ASM.Test
             // より大きい
             {
                 var result0 = AIValue.Calculation(aiValueGreater, aiValue1, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueGreater, aiValue1, aiValue2);
-                Assert.AreEqual(result1.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueGreater, aiValue2, aiValue1);
-                Assert.AreEqual(result2.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result2.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -451,13 +451,13 @@ namespace AILZ80ASM.Test
             // 以下
             {
                 var result0 = AIValue.Calculation(aiValueLessEqual, aiValue1, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueLessEqual, aiValue1, aiValue2);
-                Assert.AreEqual(result1.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueLessEqual, aiValue2, aiValue1);
-                Assert.AreEqual(result2.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result2.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -473,13 +473,13 @@ namespace AILZ80ASM.Test
             // 以上
             {
                 var result0 = AIValue.Calculation(aiValueGreaterEqual, aiValue1, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueGreaterEqual, aiValue1, aiValue2);
-                Assert.AreEqual(result1.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueGreaterEqual, aiValue2, aiValue1);
-                Assert.AreEqual(result2.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result2.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -496,28 +496,28 @@ namespace AILZ80ASM.Test
             // イコール
             {
                 var result0 = AIValue.Calculation(aiValueEqual, aiValue1, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueEqual, aiValue1, aiValue2);
-                Assert.AreEqual(result1.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueEqual, aiValue2, aiValue1);
-                Assert.AreEqual(result2.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result2.ConvertTo<bool>());
 
                 var result3 = AIValue.Calculation(aiValueEqual, aiValueABC, aiValueABC);
-                Assert.AreEqual(result3.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result3.ConvertTo<bool>());
 
                 var result4 = AIValue.Calculation(aiValueEqual, aiValueABC, aiValueDEF);
-                Assert.AreEqual(result4.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result4.ConvertTo<bool>());
 
                 var result5 = AIValue.Calculation(aiValueEqual, aiValueTrue, aiValueTrue);
-                Assert.AreEqual(result5.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result5.ConvertTo<bool>());
 
                 var result6 = AIValue.Calculation(aiValueEqual, aiValueTrue, aiValueFalse);
-                Assert.AreEqual(result6.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result6.ConvertTo<bool>());
 
                 var result7 = AIValue.Calculation(aiValueEqual, aiValueFalse, aiValueFalse);
-                Assert.AreEqual(result7.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result7.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -528,28 +528,28 @@ namespace AILZ80ASM.Test
             // Notイコール
             {
                 var result0 = AIValue.Calculation(aiValueNotEqual, aiValue1, aiValue1);
-                Assert.AreEqual(result0.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueNotEqual, aiValue1, aiValue2);
-                Assert.AreEqual(result1.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueNotEqual, aiValue2, aiValue1);
-                Assert.AreEqual(result2.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result2.ConvertTo<bool>());
 
                 var result3 = AIValue.Calculation(aiValueNotEqual, aiValueABC, aiValueABC);
-                Assert.AreEqual(result3.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result3.ConvertTo<bool>());
 
                 var result4 = AIValue.Calculation(aiValueNotEqual, aiValueABC, aiValueDEF);
-                Assert.AreEqual(result4.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result4.ConvertTo<bool>());
 
                 var result5 = AIValue.Calculation(aiValueNotEqual, aiValueTrue, aiValueTrue);
-                Assert.AreEqual(result5.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result5.ConvertTo<bool>());
 
                 var result6 = AIValue.Calculation(aiValueNotEqual, aiValueTrue, aiValueFalse);
-                Assert.AreEqual(result6.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result6.ConvertTo<bool>());
 
                 var result7 = AIValue.Calculation(aiValueNotEqual, aiValueFalse, aiValueFalse);
-                Assert.AreEqual(result7.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result7.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -560,7 +560,7 @@ namespace AILZ80ASM.Test
             // And
             {
                 var result0 = AIValue.Calculation(aiValueAnd, aiValue2, aiValue3);
-                Assert.AreEqual(result0.ConvertTo<int>(), 2);
+                Assert.AreEqual(2, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -576,7 +576,7 @@ namespace AILZ80ASM.Test
             // Xor
             {
                 var result0 = AIValue.Calculation(aiValueXor, aiValue2, aiValue3);
-                Assert.AreEqual(result0.ConvertTo<int>(), 1);
+                Assert.AreEqual(1, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -592,7 +592,7 @@ namespace AILZ80ASM.Test
             // Or
             {
                 var result0 = AIValue.Calculation(aiValueOr, aiValue1, aiValue2);
-                Assert.AreEqual(result0.ConvertTo<int>(), 3);
+                Assert.AreEqual(3, result0.ConvertTo<int>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -608,16 +608,16 @@ namespace AILZ80ASM.Test
             // 条件接続のOr
             {
                 var result0 = AIValue.Calculation(aiValueConditionalOr, aiValueTrue, aiValueTrue);
-                Assert.AreEqual(result0.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueConditionalOr, aiValueTrue, aiValueFalse);
-                Assert.AreEqual(result1.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueConditionalOr, aiValueFalse, aiValueTrue);
-                Assert.AreEqual(result2.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result2.ConvertTo<bool>());
 
                 var result3 = AIValue.Calculation(aiValueConditionalOr, aiValueFalse, aiValueFalse);
-                Assert.AreEqual(result3.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result3.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
@@ -633,16 +633,16 @@ namespace AILZ80ASM.Test
             // 条件接続のAnd
             {
                 var result0 = AIValue.Calculation(aiValueConditionalAnd, aiValueTrue, aiValueTrue);
-                Assert.AreEqual(result0.ConvertTo<bool>(), true);
+                Assert.AreEqual(true, result0.ConvertTo<bool>());
 
                 var result1 = AIValue.Calculation(aiValueConditionalAnd, aiValueTrue, aiValueFalse);
-                Assert.AreEqual(result1.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result1.ConvertTo<bool>());
 
                 var result2 = AIValue.Calculation(aiValueConditionalAnd, aiValueFalse, aiValueTrue);
-                Assert.AreEqual(result2.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result2.ConvertTo<bool>());
 
                 var result3 = AIValue.Calculation(aiValueConditionalAnd, aiValueFalse, aiValueFalse);
-                Assert.AreEqual(result3.ConvertTo<bool>(), false);
+                Assert.AreEqual(false, result3.ConvertTo<bool>());
 
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
