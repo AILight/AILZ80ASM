@@ -50,7 +50,16 @@ namespace AILZ80ASM.LineDetailItems
         {
             base.PreAssemble(ref asmAddress);
 
-            var asmORG_DS = new AsmORG(asmAddress.Program, "", FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            var asmORG_DS = default(AsmORG);
+            if (asmAddress.Output.HasValue)
+            {
+                asmORG_DS = new AsmORG(asmAddress.Program, asmAddress.Output.Value, FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            }
+            else
+            {
+                asmORG_DS = new AsmORG(asmAddress.Program, "", FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+            }
+
             this.AsmLoad.AddORG(asmORG_DS);
             this.AsmLoad.AddLineDetailItem(this); // 自分自身を追加する
 
@@ -59,10 +68,27 @@ namespace AILZ80ASM.LineDetailItems
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, LengthLabel);
             }
             var length = aiValue.ConvertTo<UInt16>();
+            var asmLength = new AsmLength(length);
 
-            asmAddress.Program += length;
+            asmAddress.Program = (UInt16)(asmAddress.Program + asmLength.Program);
+            if (asmAddress.Output.HasValue)
+            {
+                asmAddress.Output = (UInt32)(asmAddress.Output + asmLength.Output);
+            }
+            else
+            {
+                asmAddress.Output = default(UInt32?);
+            }
 
-            var asmORG_Next = new AsmORG(asmAddress.Program, "", "", this.LineItem, AsmORG.ORGTypeEnum.NextORG);
+            var asmORG_Next = default(AsmORG);
+            if (asmAddress.Output.HasValue)
+            {
+                asmORG_Next = new AsmORG(asmAddress.Program, asmAddress.Output.Value, "", this.LineItem, AsmORG.ORGTypeEnum.NextORG);
+            }
+            else
+            {
+                asmORG_Next = new AsmORG(asmAddress.Program, "", "", this.LineItem, AsmORG.ORGTypeEnum.NextORG);
+            }
             this.AsmLoad.AddORG(asmORG_Next);
         }
 

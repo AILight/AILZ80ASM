@@ -268,7 +268,7 @@ namespace AILZ80ASM.AILight
 
         public T ConvertTo<T>()
         {
-            try
+            return AsmException.TryCatch(Error.ErrorCodeEnum.E0004, Value, () =>
             {
                 if (typeof(T) == typeof(int))
                 {
@@ -424,23 +424,7 @@ namespace AILZ80ASM.AILight
                 {
                     throw new NotImplementedException();
                 }
-            }
-            catch (ErrorAssembleException)
-            {
-                throw;
-            }
-            catch (ErrorLineItemException)
-            {
-                throw;
-            }
-            catch (InvalidAIValueException ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{Value} エラー:{ex.Message}");
-            }
-            catch (Exception)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{Value}");
-            }
+            });
         }
 
         /// <summary>
@@ -618,7 +602,8 @@ namespace AILZ80ASM.AILight
                     }
 
                     // PreAssemble中のアウトプット・ロケーションカウンターは参照できない
-                    if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
+                    //if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
+                    if (asmLoad != default && !asmAddress.Value.Output.HasValue)
                     {
                         throw new InvalidAIValueException("出力アドレスに影響する場所では$$は使えません。");
                     }

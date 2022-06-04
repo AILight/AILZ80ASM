@@ -103,7 +103,7 @@ namespace AILZ80ASM.OperationItems
                     case DataTypeEnum.dwfill:
                         foreach (var valueItem in ValueStrings.Select((Value, Index) => new { Value, Index }))
                         {
-                            try
+                            var values = AsmException.TryCatch(Error.ErrorCodeEnum.E0022, valueItem.Value, () =>
                             {
                                 var values = AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<UInt16[]>();
                                 foreach (var value in values)
@@ -122,76 +122,17 @@ namespace AILZ80ASM.OperationItems
                                             throw new InvalidOperationException();
                                     }
                                 }
-                            }
-                            catch (CharMapNotFoundException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
-                            }
-                            catch (CharMapConvertException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
-                            }
-                            catch (InvalidAIValueException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                            }
-                            catch (InvalidAIMathException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                            }
-                            catch (ErrorAssembleException)
-                            {
-                                throw;
-                            }
-                            catch (ErrorLineItemException)
-                            {
-                                throw;
-                            }
-                            catch (InvalidAIStringEscapeSequenceException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, ex.Value);
-                            }
-                            catch (Exception)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0022, valueItem.Value);
-                            }
+                                return values;
+                            });
                         }
                         break;
                     case DataTypeEnum.dbfill:
                         foreach (var valueItem in ValueStrings.Select((Value, Index) => new { Value, Index }))
                         {
-                            try
+                            byteList.AddRange(AsmException.TryCatch(Error.ErrorCodeEnum.E0021, valueItem.Value, () =>
                             {
-                                byteList.AddRange(AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<byte[]>());
-                            }
-                            catch (CharMapNotFoundException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
-                            }
-                            catch (CharMapConvertException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
-                            }
-                            catch (InvalidAIValueException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                            }
-                            catch (InvalidAIMathException ex)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-                            }
-                            catch (ErrorAssembleException)
-                            {
-                                throw;
-                            }
-                            catch (ErrorLineItemException)
-                            {
-                                throw;
-                            }
-                            catch (Exception)
-                            {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0021, valueItem.Value);
-                            }
+                                 return AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<byte[]>();
+                            }));
                         }
                         break;
                     default:

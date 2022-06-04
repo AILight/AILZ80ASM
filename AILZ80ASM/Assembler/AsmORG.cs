@@ -18,7 +18,7 @@ namespace AILZ80ASM.Assembler
         }
 
         public UInt16 ProgramAddress { get; private set; }
-        public UInt32 OutputAddress { get; private set; }
+        public UInt32? OutputAddress { get; private set; }
         public string OutputAddressLabel { get; private set; }
         public string FillByteLabel { get; private set; }
         public bool IsRomMode => !string.IsNullOrEmpty(OutputAddressLabel);
@@ -30,16 +30,27 @@ namespace AILZ80ASM.Assembler
         public byte FillByte { get; internal set; }
 
         public AsmORG()
-            : this(0, "", "", default(LineItem), ORGTypeEnum.ORG)
+            : this(0, default(UInt32?), "", "", default(LineItem), ORGTypeEnum.ORG)
         {
 
         }
 
+        public AsmORG(UInt16 programAddress, UInt32 outputAddress, string fillByteLabel, LineItem lineItem, ORGTypeEnum orgType)
+            : this(programAddress, outputAddress, "", fillByteLabel, lineItem, orgType)
+        {
+        }
+
         public AsmORG(UInt16 programAddress, string outputAddressLabel, string fillByteLabel, LineItem lineItem, ORGTypeEnum orgType)
+            : this(programAddress, default(UInt32?), outputAddressLabel, fillByteLabel, lineItem, orgType)
+        {
+        }
+
+        private AsmORG(UInt16 programAddress, UInt32? outputAddress, string outputAddressLabel, string fillByteLabel, LineItem lineItem, ORGTypeEnum orgType)
         {
             ProgramAddress = programAddress;
+            OutputAddress = outputAddress;
             OutputAddressLabel = outputAddressLabel;
-;
+
             FillByteLabel = fillByteLabel;
             LineDetailItems = new List<LineDetailItem>();
             LineItem = lineItem;
