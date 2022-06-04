@@ -358,17 +358,17 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 
 #### DB <式>, [<式>]
 - <式>の1バイト値を設定します
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L4)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L8)
 
 #### DB [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
 - ネストも可能
 - 例：DB [Y=0..2:[X=0..4:Y*8+X]]
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L292)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L290)
 
 #### DW <式>, [<式>]
 - <式>の2バイト値を設定します
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L5)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DBDW/Test.Z80#L296)
 
 #### DW [<変数名>=<ループ開始値>..<ループ終了値>:<式>]
 - ループの条件で、式の内容を展開します
@@ -382,7 +382,7 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 
 #### DWFIL <式>, [<式2>]
 - <式>の２バイト数、0で埋めます。<式2>を設定するとその値で埋めます
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS/Test.Z80#L11)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS/Test.Z80#L10)
 
 ## マクロ
 #### <マクロ名> MACRO [<引数1>, <引数2>]　～ ENDM
@@ -509,7 +509,7 @@ LABEL	equ 00FFH
 ## エラー
  - レベル分けされており、E:Error,W:Warning,I:Information があります。
  - Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
- - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Error.cs)
+ - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Assembler/Error.cs#L142)
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
