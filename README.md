@@ -310,7 +310,7 @@ LB2000:
 - ロケーションカウンタの値を、<式>で設定した値を加算した場所に移動します。
 - <式>のバイト数、<ギャップ値>で埋めます。<式2>を設定するとその値で埋めます
 - DS以降のプログラム等の出力情報が無い場合には、出力結果は切り詰められます。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS_Test/Test.Z80#L9)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_DSDBSDWS/Test.Z80#L8)
 
 ## 制御命令
 #### <ラベル> EQU <式>
