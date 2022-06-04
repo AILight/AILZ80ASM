@@ -288,6 +288,16 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
+        /// Endステートメントでの有効文字列をチェック
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool ValidateNameEndArgument(string target)
+        {
+            return !AsmReservedWord.GetReservedWordsForEndArgument().Any(m => string.Compare(target, m.Name, true) == 0);
+        }
+
+        /// <summary>
         /// 名前のチェック（一般ラベル）
         /// </summary>
         /// <param name="target"></param>
@@ -436,5 +446,6 @@ namespace AILZ80ASM.AILight
             return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
                    !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
+
     }
 }

@@ -70,6 +70,7 @@ namespace AILZ80ASM.Assembler
         {
             return CreateSource(lineItem.LineString, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
         }
+
         public static AsmList CreateLineItemEqual(Label equLabel, LineItem lineItem)
         {
             var programAddress = default(UInt32?);
@@ -80,6 +81,10 @@ namespace AILZ80ASM.Assembler
             }
             
             return CreateLineItem(default(UInt32?), programAddress, default(byte[]), "", lineItem);
+        }
+        public static AsmList CreateLineItemEnd(UInt16? entryPoint, LineItem lineItem)
+        {
+            return CreateLineItem(default(UInt32?), entryPoint, default(byte[]), "", lineItem);
         }
 
         public static AsmList CreateLineItemORG(AsmAddress address, AsmLength length, LineItem lineItem)
