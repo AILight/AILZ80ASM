@@ -165,7 +165,7 @@ LABLE:			; ラベル指定
 - .@L をラベルに追加すると、下位1バイトを取得 （.@LOW  でも可能）
 - .@T をラベルに追加すると、ラベルに指定した名前を文字列として取得 （.@TEXT でも可能）
 - .@E をラベルに追加すると、ラベルが存在すると#TRUE、存在しないと#FALSE （.@EXISTS でも可能）
-- [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU_Test/Test.Z80)
+- [@H@Lサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_EQU/Test.Z80#L18)
 - [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
 - [@Eサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.INC#L1)
 
