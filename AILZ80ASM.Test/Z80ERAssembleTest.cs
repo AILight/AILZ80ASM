@@ -152,7 +152,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0018, 11, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0017, 14, "Label.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 17, "Label.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 20, "Label.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0006, 20, "Label.Z80", errors);
         }
 
         [TestMethod]

@@ -325,7 +325,10 @@ namespace AILZ80ASM.Assembler
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
                 }
                 this.Scope.Labels.Add(label);
-                this.Scope.LabelName = label.LabelName;
+                if (label.LabelType == Label.LabelTypeEnum.Equ || label.LabelType == Label.LabelTypeEnum.Adr)
+                {
+                    this.Scope.LabelName = label.LabelName;
+                }
             }
 
             this.Scope.IsRegisterLabel = label.LabelValueType == Label.LabelValueTypeEnum.Register;
@@ -520,7 +523,7 @@ namespace AILZ80ASM.Assembler
                 var length = default(UInt32);
                 if (index < endIndex)
                 {
-                    length = asmORGs[index + 1].OutputAddress - outputAddress;
+                    length = asmORGs[index + 1].OutputAddress.Value - outputAddress;
                 }
                 else
                 {

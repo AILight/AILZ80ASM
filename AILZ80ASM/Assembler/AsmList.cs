@@ -126,7 +126,22 @@ namespace AILZ80ASM.Assembler
         public string ToString(AsmEnum.ListFormatEnum listFormat, int tabSize)
         {
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
-            var address2 = ProgramAddress.HasValue ? ((ProgramAddress.Value > UInt16.MaxValue) ? "----" : $"{ProgramAddress:X4}") : "";
+            var address2 = "";
+            if (ProgramAddress.HasValue && ProgramAddress.Value > UInt16.MaxValue)
+            {
+                if (string.IsNullOrEmpty(address1) && ProgramAddress <= 0xFFFFFF)
+                {
+                    address1 = $"{ProgramAddress:X6}";
+                }
+                else
+                {
+                    address2 = "----";
+                }
+            }
+            else
+            {
+                address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
+            }
             var binary = Bin != default ? string.Concat(Bin.Select(m => $"{m:X2}")) : "";
             var codeType = "";
             var status = this.Status;

@@ -45,6 +45,7 @@ namespace AILZ80ASM.LineDetailItems
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
+            asmAddress.Output = default(UInt32?);
             base.PreAssemble(ref asmAddress);
 
             if (string.IsNullOrEmpty(AlignLabel) || !AIMath.TryParse(AlignLabel, this.AsmLoad, out var aiValue))

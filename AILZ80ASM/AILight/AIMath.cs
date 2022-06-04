@@ -55,7 +55,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static AIValue Calculation(string target, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
-            try
+            return AsmException.TryCatch(Error.ErrorCodeEnum.E0004, target, () => 
             {
                 if (string.IsNullOrEmpty(target))
                 {
@@ -69,39 +69,7 @@ namespace AILZ80ASM.AILight
                 var value = CalculationByReversePolish(rvpns, asmLoad, asmAddress);
 
                 return value;
-            }
-            catch (ErrorAssembleException)
-            {
-                throw;
-            }
-            catch (ErrorLineItemException)
-            {
-                throw;
-            }
-            catch (InvalidAIValueException ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-            }
-            catch (InvalidAIMathException ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
-            }
-            catch (CharMapNotFoundException ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
-            }
-            catch (CharMapConvertException ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2105, ex.Message);
-            }
-            catch (InvalidAIStringEscapeSequenceException ex)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, ex.Value);
-            }
-            catch (Exception)
-            {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, $"演算対象：{target}");
-            }
+            });
         }
 
         /// <summary>

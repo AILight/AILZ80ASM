@@ -2,21 +2,32 @@
 using AILZ80ASM.Exceptions;
 using System.Linq;
 using System.Collections.Generic;
+using System;
+using AILZ80ASM.LineDetailItems.ScopeItem;
 
 namespace AILZ80ASM.LineDetailItems
 {
     public class LineDetailItemMacro : LineDetailItem
     {
+        private MacroExpansionResult MacroResult { get; set; }
+
         public override AsmList[] Lists
         {
             get
             {
                 var lists = new List<AsmList>();
+                // 宣言行
                 lists.Add(AsmList.CreateLineItem(LineItem));
-
-                if (this.LineDetailScopeItems != default)
+                // 引数
+                foreach (var label in MacroResult.ArgumetLabels)
                 {
-                    foreach (var item in this.LineDetailScopeItems)
+                    var value = label.DataType == Label.DataTypeEnum.invalid ? "Invalid" : label.Value.ConvertTo<object>().ToString();
+                    lists.Add(AsmList.CreateSource($"; {label.LabelShortName} = {value}"));
+                } 
+
+                if (MacroResult.LineItems != default)
+                {
+                    foreach (var item in MacroResult.LineItems)
                     {
                         lists.AddRange(item.Lists);
                     }
@@ -57,8 +68,8 @@ namespace AILZ80ASM.LineDetailItems
         {
             base.PreAssemble(ref asmAddress);
 
-            var foundItem = Macro.Find(LineItem, AsmLoad);
-            if (foundItem == default)
+            var macro = Macro.Find(LineItem, AsmLoad);
+            if (macro == default)
             {
                 var errorMessage = "";
                 if (LineItem.LineString.Length > 0 && string.IsNullOrEmpty(LineItem.LabelString) && !char.IsWhiteSpace(LineItem.LineString[0]) && char.IsAscii(LineItem.LineString[0]))
@@ -70,7 +81,8 @@ namespace AILZ80ASM.LineDetailItems
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, errorMessage);
             }
 
-            this.LineDetailScopeItems = foundItem.Macro.Expansion(LineItem, foundItem.Arguments, AsmLoad, ref asmAddress);
+            MacroResult = macro.Macro.Expansion(LineItem, macro.Arguments, AsmLoad, ref asmAddress);
+            this.LineDetailScopeItems = MacroResult.LineItems.SelectMany(m => m.LineDetailItem.LineDetailScopeItems ?? Array.Empty<LineDetailScopeItem>()).ToArray();
         }
 
         public override void AdjustAssemble(ref uint outputAddress)

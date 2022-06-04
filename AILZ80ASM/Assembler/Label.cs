@@ -14,7 +14,7 @@ namespace AILZ80ASM.Assembler
         {
             None,
             Marker,
-            Invalidate,
+            invalid,
             Value,
         }
 
@@ -60,7 +60,7 @@ namespace AILZ80ASM.Assembler
             _ => throw new NotSupportedException()
         };
 
-        public bool Invalidate => this.DataType == DataTypeEnum.Invalidate;
+        public bool Invalidate => this.DataType == DataTypeEnum.invalid;
         public AIValue Value { get; private set; }
         public string ValueString { get; private set; }
         public LabelValueTypeEnum LabelValueType { get; private set; } = LabelValueTypeEnum.Normal;
@@ -115,19 +115,19 @@ namespace AILZ80ASM.Assembler
                 case LabelTypeEnum.Adr:
                     if (!AIName.DeclareLabelValidate(labelName, asmLoad))
                     {
-                        DataType = DataTypeEnum.Invalidate;
+                        DataType = DataTypeEnum.invalid;
                     }
                     break;
                 case LabelTypeEnum.FunctionArg:
                     if (!AIName.ValidateFunctionArgument(labelName, asmLoad))
                     {
-                        DataType = DataTypeEnum.Invalidate;
+                        DataType = DataTypeEnum.invalid;
                     }
                     break;
                 case LabelTypeEnum.MacroArg:
                     if (!AIName.ValidateMacroArgument(labelName, asmLoad))
                     {
-                        DataType = DataTypeEnum.Invalidate;
+                        DataType = DataTypeEnum.invalid;
                     }
                     break;
                 default:
@@ -135,7 +135,7 @@ namespace AILZ80ASM.Assembler
             }
 
 
-            if (DataType != DataTypeEnum.Invalidate)
+            if (DataType != DataTypeEnum.invalid)
             {
                 if (labelName.StartsWith('[') && labelName.EndsWith(']'))
                 {
@@ -168,7 +168,7 @@ namespace AILZ80ASM.Assembler
                         case 3:
                             if (splits.Any(m => string.IsNullOrEmpty(m)))
                             {
-                                DataType = DataTypeEnum.Invalidate;
+                                DataType = DataTypeEnum.invalid;
                             }
                             else
                             {
@@ -180,7 +180,7 @@ namespace AILZ80ASM.Assembler
                             break;
 
                         default:
-                            DataType = DataTypeEnum.Invalidate;
+                            DataType = DataTypeEnum.invalid;
                             break;
                     }
                 }
@@ -300,11 +300,6 @@ namespace AILZ80ASM.Assembler
 
         protected void InternalCalculation(AsmLoad asmLoad)
         {
-            if (DataType != DataTypeEnum.None)
-            {
-                return;
-            }
-
             var asmAddress = default(AsmAddress?);
             if (LineDetailExpansionItem != default)
             {
@@ -314,6 +309,17 @@ namespace AILZ80ASM.Assembler
             {
                 asmAddress = LineDetailItem.Address;
             }
+
+            InternalCalculation(asmLoad, asmAddress);
+        }
+
+        protected void InternalCalculation(AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            if (DataType != DataTypeEnum.None)
+            {
+                return;
+            }
+
             Value = AIMath.Calculation(ValueString, asmLoad, asmAddress);
             DataType = DataTypeEnum.Value;
         }

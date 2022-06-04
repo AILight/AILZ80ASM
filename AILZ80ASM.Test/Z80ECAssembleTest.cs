@@ -129,6 +129,16 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestEC_E0006()
+        {
+            var errors = Assemble("E0006.Z80");
+
+            Assert.AreEqual(errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count(), 1);
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0006, 2, "E0006.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestEC_E0009_1()
         {
             var errors = Assemble("E0009_1.Z80");
@@ -461,7 +471,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0001, 2, "E1041.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1041, 3, "E1041.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 4, "E1041.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 5, "E1041.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0006, 5, "E1041.Z80", errors);
         }
 
         [TestMethod]

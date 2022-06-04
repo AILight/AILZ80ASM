@@ -1,0 +1,160 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.21, LST:Full:4
+                                ;--------------------------------------------------------------------
+                                ;AILZ80ASM ,X1turbo バンクメモリ対応(ROMモード)テスト
+                                ;
+                                ;note
+                                ; memory map
+                                ; output address    : CPU address   : section
+                                ; 0x0_0000-0_0x7FFF : 0x0000-0x7FFF : メインメモリ (#16)
+                                ; 0x0_8000-0_0xFFFF : 0x8000-0xFFFF : メインメモリ 
+                                ; 0x1_0000-0_1x7FFF : 0x0000-0x7FFF : バンクメモリ #0 
+                                ;
+                                ;バンクメモリ上のエントリアドレスは FAR_LABEL疑似型として、
+                                ;出力アドレス($$)の値を持たせて、出力アドレスから
+                                ;バンク番号と論理アドレスを取得する。
+                                
+                                ;--------------------------------------------------------------------
+                                ;バンクメモリ　サポートマクロ
+       0010                     BANK_MAIN   equ 0x10    ;X1turboの仕様
+                                
+                                ;バンク番号（出力オフセット）を現状維持する ORG 疑似命令
+                                
+                                ;・マクロ内で $$ を参照するとエラーになる
+                                ;BORG   macro   __ADDR__
+                                ;   ORG __ADDR__ , __ADDR__+($$ & 0xFF8000)
+                                ;   endm
+                                
+                                ;・アンダースコアの付いた引数(__ADDR__)が展開できない？
+                                ;BORG   macro   __ADDR__,__HERE__
+                                ;   ORG __ADDR__ , __ADDR__+(__HERE__ & 0xFF8000)
+                                ;   endm
+                                
+                                ;引数で $$ を受け取っても参照できない
+                                BORG    macro   ADDR,HERE
+                                    ORG ADDR , ADDR+(HERE & 0x000F8000)
+                                    endm
+                                
+                                ;$$ を16bit値の範囲で受け取る
+                                ;ローカルラベルに事前定義
+                                BORG2   macro   ADDR,HERE15
+                                .here   equ (HERE15*0x8000)
+                                    ORG ADDR,.here+ADDR
+                                ;   dw  HERE15      ;verify OK
+                                ;   dw  .here/0x8000    ;verify OK
+                                    endm
+                                
+                                ;オフセット指定
+                                BORG3   macro   ADDR,OFFSET
+                                    ORG ADDR,ADDR+OFFSET
+                                    endm
+                                
+                                ;絶対指定
+                                BORG4   macro   ADDR,OUTADDR
+                                    ORG ADDR,OUTADDR
+                                    endm
+                                
+                                ;固定指定
+                                BORG5   macro   ADDR
+                                    ORG ADDR,0x10000
+                                    endm
+                                
+                                ;--------------------------------------------------------------------
+                                ;--------------------------------------------------------------------
+                                ;コモン
+                                ;・最初に0番地出力をしておかないとHEX形式出力でエラーになる？
+000000 0000                         org 0x0000
+000000 0000 00               4      nop
+                                ;
+                                ;--------------------------------------------------------------------
+                                ;--------------------------------------------------------------------
+                                ;BANK #0 (0x0000-0x7FFF -> 0x10000-0x17FFF)
+010000 0000                         org 0,0x00*0x8000 +0x10000  ;BANK0の先頭アドレス
+                                ;テスト用の定義
+                                ADDR:
+010000                          .HERE   equ $$
+010000                          LBASE   equ ADDR.HERE & 0xF8000
+010000                          HERE    equ $$
+010000                          BASE    equ (HERE & 0xF8000)
+010000                          BASED   equ 0x10000
+010000 0000 00               4      nop
+                                ;
+                                ;--------------------------------------
+                                ;現在のオフセット（バンク)の任意アドレスに移動したい
+010000 0000                         org 0,0x10000
+                                    borg    0x0100,$$               ;通らない
+                               +; ADDR = 256
+                               +; HERE = 65536
+010100 0100                    +    ORG ADDR , ADDR+(HERE & 0x000F8000)
+010100 0100 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg    0x0101,HERE             ;通らない
+                               +; ADDR = 257
+                               +; HERE = 65536
+010101 0101                    +    ORG ADDR , ADDR+(HERE & 0x000F8000)
+010101 0101 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg2   0x0102,HERE/0x8000          ;通らない
+                               +; ADDR = 258
+                               +; HERE15 = 2
+010000                         +.here   equ (HERE15*0x8000)
+010102 0102                    +    ORG ADDR,.here+ADDR
+                               +;   dw  HERE15      ;verify OK
+                               +;   dw  .here/0x8000    ;verify OK
+010102 0102 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg3   0x0103,BASE             ;通らない
+                               +; ADDR = 259
+                               +; OFFSET = 65536
+010103 0103                    +    ORG ADDR,ADDR+OFFSET
+010103 0103 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg2   0x0104,2                ;通らない
+                               +; ADDR = 260
+                               +; HERE15 = 2
+010000                         +.here   equ (HERE15*0x8000)
+010104 0104                    +    ORG ADDR,.here+ADDR
+                               +;   dw  HERE15      ;verify OK
+                               +;   dw  .here/0x8000    ;verify OK
+010104 0104 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg4   0x0105,0x0104+BASE          ;通らない
+                               +; ADDR = 261
+                               +; OUTADDR = 65796
+010104 0105                    +    ORG ADDR,OUTADDR
+010104 0105 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg4   0x0106,0x0105+BASED         ;通らない
+                               +; ADDR = 262
+                               +; OUTADDR = 65797
+010105 0106                    +    ORG ADDR,OUTADDR
+010105 0106 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg4   0x0107,0x10107              ;通らない
+                               +; ADDR = 263
+                               +; OUTADDR = 65799
+010107 0107                    +    ORG ADDR,OUTADDR
+010107 0107 00               4      nop
+010000 0000                         org 0,0x10000
+                                    borg5   0x0108                  ;通る
+                               +; ADDR = 264
+010000 0108                    +    ORG ADDR,0x10000
+010000 0108 **** E0009 ****  4      nop
+                                ;
+                                
+                                ;
+010000 0000                         org 0,0x10000
+010200 0200                         org 0x0200,0x0200+($$ & 0xF8000)        ;通る
+010200 0200 00               4      nop
+010000 0000                         org 0,0x10000
+010201 0201                         org 0x0201,0x0201+(ADDR.HERE & 0xF8000)     ;通らない
+010201 0201 00               4      nop
+010000 0000                         org 0,0x10000
+010202 0202                         org 0x0202,0x0202+LBASE         ;通らない
+010202 0202 00               4      nop
+010000 0000                         org 0,0x10000
+010203 0203                         org 0x0203,0x0203+(HERE & 0xF8000)      ;通る
+010203 0203 00               4      nop
+010000 0000                         org 0,0x10000
+010204 0204                         org 0x0204,0x0204+BASE          ;通る
+010204 0204 00               4      nop
+[EOF:Test.z80:UTF_8]
