@@ -44,7 +44,7 @@ namespace AILZ80ASM.Test
             var originalString = File.ReadAllText(path, AIEncode.GetEncodingUTF8());
             var testString = AIEncode.GetString(bytes);
             
-            Assert.AreEqual(testString, originalString);
+            Assert.AreEqual(originalString, testString);
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace AILZ80ASM.Test
             var originalString = File.ReadAllText(path, AIEncode.GetEncodingSJIS());
             var testString = AIEncode.GetString(bytes);
 
-            Assert.AreEqual(testString, originalString);
+            Assert.AreEqual(originalString, testString);
         }
     }
 }

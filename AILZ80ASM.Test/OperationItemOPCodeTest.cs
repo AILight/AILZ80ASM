@@ -28,7 +28,7 @@ namespace AILZ80ASM.Test
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
             var operationItem = OperationItemOPCode.Create(new LineItem("XOR A", 0, default(FileInfo)), asmLoad);
 
-            Assert.AreEqual(operationItem.Bin.Length, 0);
+            Assert.AreEqual(0, operationItem.Bin.Length);
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace AILZ80ASM.Test
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
             var operationItem = OperationItemOPCode.Create(new LineItem("XOR A", 0, default(FileInfo)), asmLoad);
 
-            Assert.AreEqual(operationItem.Length.Program, 1);
+            Assert.AreEqual(1, operationItem.Length.Program);
         }
     }
 }

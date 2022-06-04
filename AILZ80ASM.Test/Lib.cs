@@ -146,13 +146,13 @@ namespace AILZ80ASM.Test
                         case AsmEnum.FileDataTypeEnum.Binary:
                             using (var outputStream = file.Value.Value.OpenRead())
                             {
-                                Lib.AreSameBin(outputStream, file.Key, file.Value.Key);
+                                Lib.AreSameBin(file.Key, outputStream, file.Value.Key);
                             }
                             break;
                         case AsmEnum.FileDataTypeEnum.Text:
                             using (var outputStream = file.Value.Value.OpenRead())
                             {
-                                Lib.AreSameLst(outputStream, file.Key, file.Value.Key);
+                                Lib.AreSameLst(file.Key, outputStream, file.Value.Key);
                             }
                             break;
                         default:

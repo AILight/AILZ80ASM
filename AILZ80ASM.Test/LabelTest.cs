@@ -16,10 +16,10 @@ namespace AILZ80ASM.Test
             var globalLabel = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
             asmLoad.AddLabel(globalLabel);
 
-            Assert.AreEqual(new LabelAdr("ABC:", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.ABC");
-            Assert.AreEqual(new LabelAdr("ABC::", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.ABC");
-            Assert.AreEqual(new LabelAdr("ABC.DEF", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.ABC.DEF");
-            Assert.AreEqual(new LabelAdr("ABC.DEF.GHI", "", asmLoad).LabelFullName, "ABC.DEF.GHI");
+            Assert.AreEqual("NAME_SPACE_DEFAULT.ABC", new LabelAdr("ABC:", "", asmLoad).LabelFullName);
+            Assert.AreEqual("NAME_SPACE_DEFAULT.ABC", new LabelAdr("ABC::", "", asmLoad).LabelFullName);
+            Assert.AreEqual("NAME_SPACE_DEFAULT.ABC.DEF", new LabelAdr("ABC.DEF", "", asmLoad).LabelFullName);
+            Assert.AreEqual("ABC.DEF.GHI", new LabelAdr("ABC.DEF.GHI", "", asmLoad).LabelFullName);
 
         }
 
@@ -30,12 +30,12 @@ namespace AILZ80ASM.Test
             var globalLabel = new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad);
             asmLoad.AddLabel(globalLabel);
 
-            Assert.AreEqual(new LabelAdr("TEST.1CH", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.1CH");
-            Assert.AreEqual(new LabelAdr("TEST.2CH", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.2CH");
-            Assert.AreEqual(new LabelAdr("TEST.3CH", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.3CH");
-            Assert.AreEqual(new LabelAdr("TEST.0", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.0");
-            Assert.AreEqual(new LabelAdr("TEST.A", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.A");
-            Assert.AreEqual(new LabelAdr("TEST.LD", "", asmLoad).LabelFullName, "NAME_SPACE_DEFAULT.TEST.LD");
+            Assert.AreEqual("NAME_SPACE_DEFAULT.TEST.1CH", new LabelAdr("TEST.1CH", "", asmLoad).LabelFullName);
+            Assert.AreEqual("NAME_SPACE_DEFAULT.TEST.2CH", new LabelAdr("TEST.2CH", "", asmLoad).LabelFullName);
+            Assert.AreEqual("NAME_SPACE_DEFAULT.TEST.3CH", new LabelAdr("TEST.3CH", "", asmLoad).LabelFullName);
+            Assert.AreEqual("NAME_SPACE_DEFAULT.TEST.0", new LabelAdr("TEST.0", "", asmLoad).LabelFullName);
+            Assert.AreEqual("NAME_SPACE_DEFAULT.TEST.A", new LabelAdr("TEST.A", "", asmLoad).LabelFullName);
+            Assert.AreEqual("NAME_SPACE_DEFAULT.TEST.LD", new LabelAdr("TEST.LD", "", asmLoad).LabelFullName);
 
         }
 
@@ -52,8 +52,8 @@ namespace AILZ80ASM.Test
 
             asmLoad.BuildLabel();
 
-            Assert.AreEqual(asmLoad.AssembleInformation.Length, 1);
-            Assert.AreEqual(asmLoad.AssembleInformation[0].ErrorCode, Error.ErrorCodeEnum.I0002);
+            Assert.AreEqual(1, asmLoad.AssembleInformation.Length);
+            Assert.AreEqual(Error.ErrorCodeEnum.I0002, asmLoad.AssembleInformation[0].ErrorCode);
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@ namespace AILZ80ASM.Test
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    Assert.AreEqual(ex.ErrorCode, Error.ErrorCodeEnum.E0018);
+                    Assert.AreEqual(Error.ErrorCodeEnum.E0018, ex.ErrorCode);
                     throw;
                 }
             });
@@ -89,7 +89,7 @@ namespace AILZ80ASM.Test
                 }
                 catch (ErrorAssembleException ex)
                 {
-                    Assert.AreEqual(ex.ErrorCode, Error.ErrorCodeEnum.E0017);
+                    Assert.AreEqual(Error.ErrorCodeEnum.E0017, ex.ErrorCode);
                     throw;
                 }
             });

@@ -33,7 +33,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble(Path.Combine("Issue", "142"), "Test.Z80");
 
-            Assert.AreEqual(errors.Length, 1);
+            Assert.AreEqual(1, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 10, "Test.Z80", errors);
         }
 
@@ -42,7 +42,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble(Path.Combine("Issue", "145"), "Test.Z80");
 
-            Assert.AreEqual(errors.Length, 1);
+            Assert.AreEqual(1, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0009, 108, "Test.Z80", errors);
         }
     }

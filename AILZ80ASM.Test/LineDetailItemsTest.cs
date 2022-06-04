@@ -17,7 +17,7 @@ namespace AILZ80ASM.Test
         {
             var lineDetailExpansionItem = new LineDetailExpansionItem(default(LineItem));
 
-            Assert.AreEqual(lineDetailExpansionItem.BinResults, Array.Empty<AsmResult>());
+            Assert.AreEqual(Array.Empty<AsmResult>(), lineDetailExpansionItem.BinResults);
         }
 
         [TestMethod]
@@ -25,7 +25,7 @@ namespace AILZ80ASM.Test
         {
             var lineDetailExpansionItem = new LineDetailExpansionItem(default(LineItem));
 
-            Assert.AreEqual(lineDetailExpansionItem.List, default(AsmList));
+            Assert.AreEqual(default(AsmList), lineDetailExpansionItem.List);
         }
 
         [TestMethod]

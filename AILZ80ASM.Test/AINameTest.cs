@@ -13,7 +13,7 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("");
 
-            Assert.AreEqual(arguments.Length, 0);
+            Assert.AreEqual(0, arguments.Length);
         }
 
         [TestMethod]
@@ -21,9 +21,9 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("ABC,FUNC(),DEF");
 
-            Assert.AreEqual(arguments[0], "ABC");
-            Assert.AreEqual(arguments[1], "FUNC()");
-            Assert.AreEqual(arguments[2], "DEF");
+            Assert.AreEqual("ABC",arguments[0]);
+            Assert.AreEqual("FUNC()", arguments[1]);
+            Assert.AreEqual("DEF", arguments[2]);
         }
 
         [TestMethod]
@@ -31,9 +31,9 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("ABC,FUNC(GHI),DEF");
 
-            Assert.AreEqual(arguments[0], "ABC");
-            Assert.AreEqual(arguments[1], "FUNC(GHI)");
-            Assert.AreEqual(arguments[2], "DEF");
+            Assert.AreEqual("ABC", arguments[0]);
+            Assert.AreEqual("FUNC(GHI)", arguments[1]);
+            Assert.AreEqual("DEF", arguments[2]);
         }
 
         [TestMethod]
@@ -41,9 +41,9 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("ABC,FUNC(GHI,JKL),DEF");
 
-            Assert.AreEqual(arguments[0], "ABC");
-            Assert.AreEqual(arguments[1], "FUNC(GHI,JKL)");
-            Assert.AreEqual(arguments[2], "DEF");
+            Assert.AreEqual("ABC", arguments[0]);
+            Assert.AreEqual("FUNC(GHI,JKL)", arguments[1]);
+            Assert.AreEqual("DEF", arguments[2]);
         }
 
         [TestMethod]
@@ -51,9 +51,9 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("ABC,FUNC(GHI,JKL,FUNC(GHI,JKL)),DEF");
 
-            Assert.AreEqual(arguments[0], "ABC");
-            Assert.AreEqual(arguments[1], "FUNC(GHI,JKL,FUNC(GHI,JKL))");
-            Assert.AreEqual(arguments[2], "DEF");
+            Assert.AreEqual("ABC", arguments[0]);
+            Assert.AreEqual("FUNC(GHI,JKL,FUNC(GHI,JKL))", arguments[1]);
+            Assert.AreEqual("DEF", arguments[2]);
         }
 
         [TestMethod]
@@ -61,9 +61,9 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("ABC + TTT, FUNC(GHI,JKL,FUNC(GHI,JKL)) , DEF");
 
-            Assert.AreEqual(arguments[0], "ABC + TTT");
-            Assert.AreEqual(arguments[1], "FUNC(GHI,JKL,FUNC(GHI,JKL))");
-            Assert.AreEqual(arguments[2], "DEF");
+            Assert.AreEqual("ABC + TTT", arguments[0]);
+            Assert.AreEqual("FUNC(GHI,JKL,FUNC(GHI,JKL))", arguments[1]);
+            Assert.AreEqual("DEF", arguments[2]);
         }
 
         [TestMethod]
@@ -71,10 +71,10 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("\"ABC\", 123, \"ABC,DEF\", \"ABC\\\"DEF\"");
 
-            Assert.AreEqual(arguments[0], "\"ABC\"");
-            Assert.AreEqual(arguments[1], "123");
-            Assert.AreEqual(arguments[2], "\"ABC,DEF\"");
-            Assert.AreEqual(arguments[3], "\"ABC\\\"DEF\"");
+            Assert.AreEqual("\"ABC\"", arguments[0]);
+            Assert.AreEqual("123", arguments[1]);
+            Assert.AreEqual("\"ABC,DEF\"", arguments[2]);
+            Assert.AreEqual("\"ABC\\\"DEF\"", arguments[3]);
         }
 
         [TestMethod]
@@ -82,7 +82,7 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("\"0123456789:;<=>? \"");
 
-            Assert.AreEqual(arguments[0], "\"0123456789:;<=>? \"");
+            Assert.AreEqual("\"0123456789:;<=>? \"", arguments[0]);
         }
 
         [TestMethod]
@@ -90,8 +90,8 @@ namespace AILZ80ASM.Test
         {
             var arguments = AIName.ParseArguments("ABC(A)(B),DEF(G,H)");
 
-            Assert.AreEqual(arguments[0], "ABC(A)(B)");
-            Assert.AreEqual(arguments[1], "DEF(G,H)");
+            Assert.AreEqual("ABC(A)(B)", arguments[0]);
+            Assert.AreEqual("DEF(G,H)", arguments[1]);
         }
 
         [TestMethod]
@@ -100,18 +100,18 @@ namespace AILZ80ASM.Test
             {
                 var arguments = AIName.ParseArguments("ABC(A)(B),DEF(G,H),");
 
-                Assert.AreEqual(arguments[0], "ABC(A)(B)");
-                Assert.AreEqual(arguments[1], "DEF(G,H)");
-                Assert.AreEqual(arguments[2], "");
+                Assert.AreEqual("ABC(A)(B)", arguments[0]);
+                Assert.AreEqual("DEF(G,H)", arguments[1]);
+                Assert.AreEqual("", arguments[2]);
             }
 
             {
                 var arguments = AIName.ParseArguments("A,B,C,");
 
-                Assert.AreEqual(arguments[0], "A");
-                Assert.AreEqual(arguments[1], "B");
-                Assert.AreEqual(arguments[2], "C");
-                Assert.AreEqual(arguments[3], "");
+                Assert.AreEqual("A", arguments[0]);
+                Assert.AreEqual("B", arguments[1]);
+                Assert.AreEqual("C", arguments[2]);
+                Assert.AreEqual("",  arguments[3]);
             }
         }
 

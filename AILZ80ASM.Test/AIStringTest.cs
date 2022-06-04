@@ -106,19 +106,19 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void EscapeSequenceTest()
         {
-            Assert.AreEqual(AIString.EscapeSequence("\\'"), "'");
-            Assert.AreEqual(AIString.EscapeSequence("\\\""), "\"");
-            Assert.AreEqual(AIString.EscapeSequence("\\\\"), "\\");
-            Assert.AreEqual(AIString.EscapeSequence("\\0"), "\0");
-            Assert.AreEqual(AIString.EscapeSequence("\\a"), "\a");
-            Assert.AreEqual(AIString.EscapeSequence("\\b"), "\b");
-            Assert.AreEqual(AIString.EscapeSequence("\\f"), "\f");
-            Assert.AreEqual(AIString.EscapeSequence("\\n"), "\n");
-            Assert.AreEqual(AIString.EscapeSequence("\\r"), "\r");
-            Assert.AreEqual(AIString.EscapeSequence("\\t"), "\t");
-            Assert.AreEqual(AIString.EscapeSequence("\\v"), "\v");
+            Assert.AreEqual("'", AIString.EscapeSequence("\\'"));
+            Assert.AreEqual("\"", AIString.EscapeSequence("\\\""));
+            Assert.AreEqual("\\", AIString.EscapeSequence("\\\\"));
+            Assert.AreEqual("\0", AIString.EscapeSequence("\\0"));
+            Assert.AreEqual("\a", AIString.EscapeSequence("\\a"));
+            Assert.AreEqual("\b", AIString.EscapeSequence("\\b"));
+            Assert.AreEqual("\f", AIString.EscapeSequence("\\f"));
+            Assert.AreEqual("\n", AIString.EscapeSequence("\\n"));
+            Assert.AreEqual("\r", AIString.EscapeSequence("\\r"));
+            Assert.AreEqual("\t", AIString.EscapeSequence("\\t"));
+            Assert.AreEqual("\v", AIString.EscapeSequence("\\v"));
 
-            Assert.AreEqual(AIString.EscapeSequence("[\\'\\\"\\\\\\0\\a\\b\\f\\n\\r\\t\\v]"), "['\"\\\0\a\b\f\n\r\t\v]");
+            Assert.AreEqual("['\"\\\0\a\b\f\n\r\t\v]", AIString.EscapeSequence("[\\'\\\"\\\\\\0\\a\\b\\f\\n\\r\\t\\v]"));
         }
 
         [TestMethod]
@@ -135,15 +135,15 @@ namespace AILZ80ASM.Test
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 Assert.IsTrue(AIString.TryParseCharMap("\'A\'", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
-                Assert.AreEqual(charMap, "");
-                Assert.AreEqual(resultString, "A");
+                Assert.AreEqual("", charMap);
+                Assert.AreEqual("A", resultString);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
                 Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
-                Assert.AreEqual(charMap, "");
-                Assert.AreEqual(resultString, "ABC");
+                Assert.AreEqual("", charMap);
+                Assert.AreEqual("ABC", resultString);
             }
 
             {
@@ -151,8 +151,8 @@ namespace AILZ80ASM.Test
                 asmLoad.CharMapConverter_ReadCharMapFromResource("@SJIS");
 
                 Assert.IsTrue(AIString.TryParseCharMap("@SJIS:\"ABC\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
-                Assert.AreEqual(charMap, "@SJIS");
-                Assert.AreEqual(resultString, "ABC");
+                Assert.AreEqual("@SJIS", charMap);
+                Assert.AreEqual("ABC", resultString);
             }
         }
 
@@ -163,23 +163,23 @@ namespace AILZ80ASM.Test
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByChar("'A'", asmLoad);
-                Assert.AreEqual(bytes[0], 0x41);
+                Assert.AreEqual(0x41, bytes[0]);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByChar("'石'", asmLoad);
-                Assert.AreEqual(bytes[0], 0x90);
-                Assert.AreEqual(bytes[1], 0xCE);
+                Assert.AreEqual(0x90, bytes[0]);
+                Assert.AreEqual(0xCE, bytes[1]);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByChar("@SJIS:'野'", asmLoad);
-                Assert.AreEqual(bytes[0], 0x96);
-                Assert.AreEqual(bytes[1], 0xEC);
+                Assert.AreEqual(0x96, bytes[0]);
+                Assert.AreEqual(0xEC, bytes[1]);
             }
         }
 
@@ -191,7 +191,7 @@ namespace AILZ80ASM.Test
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByString("\"A\"", asmLoad);
-                Assert.AreEqual(bytes[0], 0x41);
+                Assert.AreEqual(0x41, bytes[0]);
             }
 
 
@@ -199,20 +199,20 @@ namespace AILZ80ASM.Test
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByString("\"石野\"", asmLoad);
-                Assert.AreEqual(bytes[0], 0x90);
-                Assert.AreEqual(bytes[1], 0xCE);
-                Assert.AreEqual(bytes[2], 0x96);
-                Assert.AreEqual(bytes[3], 0xEC);
+                Assert.AreEqual(0x90, bytes[0]);
+                Assert.AreEqual(0xCE, bytes[1]);
+                Assert.AreEqual(0x96, bytes[2]);
+                Assert.AreEqual(0xEC, bytes[3]);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByString("@SJIS:\"石野\"", asmLoad);
-                Assert.AreEqual(bytes[0], 0x90);
-                Assert.AreEqual(bytes[1], 0xCE);
-                Assert.AreEqual(bytes[2], 0x96);
-                Assert.AreEqual(bytes[3], 0xEC);
+                Assert.AreEqual(0x90, bytes[0]);
+                Assert.AreEqual(0xCE, bytes[1]);
+                Assert.AreEqual(0x96, bytes[2]);
+                Assert.AreEqual(0xEC, bytes[3]);
             }
 
 
@@ -221,27 +221,27 @@ namespace AILZ80ASM.Test
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByString("\'A\'", asmLoad);
-                Assert.AreEqual(bytes[0], 0x41);
+                Assert.AreEqual(0x41, bytes[0]);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByString("\'石野\'", asmLoad);
-                Assert.AreEqual(bytes[0], 0x90);
-                Assert.AreEqual(bytes[1], 0xCE);
-                Assert.AreEqual(bytes[2], 0x96);
-                Assert.AreEqual(bytes[3], 0xEC);
+                Assert.AreEqual(0x90, bytes[0]);
+                Assert.AreEqual(0xCE, bytes[1]);
+                Assert.AreEqual(0x96, bytes[2]);
+                Assert.AreEqual(0xEC, bytes[3]);
             }
 
             {
                 var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
                 var bytes = AIString.GetBytesByString("@SJIS:\'石野\'", asmLoad);
-                Assert.AreEqual(bytes[0], 0x90);
-                Assert.AreEqual(bytes[1], 0xCE);
-                Assert.AreEqual(bytes[2], 0x96);
-                Assert.AreEqual(bytes[3], 0xEC);
+                Assert.AreEqual(0x90, bytes[0]);
+                Assert.AreEqual(0xCE, bytes[1]);
+                Assert.AreEqual(0x96, bytes[2]);
+                Assert.AreEqual(0xEC, bytes[3]);
             }
         }
 
@@ -261,26 +261,26 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void IndexOfSkipStringTest()
         {
-            Assert.AreEqual(AIString.IndexOfSkipString("ABC \"aaa,bbb\"", ','), -1);
-            Assert.AreEqual(AIString.IndexOfSkipString("EX AF,AF'  ; ABC", ';'), 11);
-            Assert.AreEqual(AIString.IndexOfSkipString("LD A,'\0'  ; ABC", ';'), 10);
+            Assert.AreEqual(-1, AIString.IndexOfSkipString("ABC \"aaa,bbb\"", ','));
+            Assert.AreEqual(11, AIString.IndexOfSkipString("EX AF,AF'  ; ABC", ';'));
+            Assert.AreEqual(10, AIString.IndexOfSkipString("LD A,'\0'  ; ABC", ';'));
 
             // 開始位置のテスト
-            Assert.AreEqual(AIString.IndexOfSkipString("ABC \"A\\\"BC\", A,B,C", 'A', 0), 0);
-            Assert.AreEqual(AIString.IndexOfSkipString("ABC \"A\\\"BC\", A,B,C", 'A', 1), 13);
+            Assert.AreEqual(0,  AIString.IndexOfSkipString("ABC \"A\\\"BC\", A,B,C", 'A', 0));
+            Assert.AreEqual(13, AIString.IndexOfSkipString("ABC \"A\\\"BC\", A,B,C", 'A', 1));
         }
 
         [TestMethod]
         public void IndexOfAnySkipStringTest()
         {
-            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"aaa,bbb\"", new[] { ',', '(' }), -1);
-            Assert.AreEqual(AIString.IndexOfAnySkipString("EX AF,AF'  ; ABC", new[] { ';', '(' }), 11);
-            Assert.AreEqual(AIString.IndexOfAnySkipString("LD A,'\0'  ; ABC", new[] { ';', '(' }), 10);
+            Assert.AreEqual(-1, AIString.IndexOfAnySkipString("ABC \"aaa,bbb\"", new[] { ',', '(' }));
+            Assert.AreEqual(11, AIString.IndexOfAnySkipString("EX AF,AF'  ; ABC", new[] { ';', '(' }));
+            Assert.AreEqual(10, AIString.IndexOfAnySkipString("LD A,'\0'  ; ABC", new[] { ';', '(' }));
 
             // 開始位置のテスト
-            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 0, out var _), 1);
-            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 1, out var _), 1);
-            Assert.AreEqual(AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 3, out var _), 15);
+            Assert.AreEqual(1,  AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 0, out var _));
+            Assert.AreEqual(1,  AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 1, out var _));
+            Assert.AreEqual(15, AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 3, out var _));
         }
 
 
