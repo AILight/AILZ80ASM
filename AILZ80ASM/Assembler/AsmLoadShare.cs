@@ -53,5 +53,8 @@ namespace AILZ80ASM.Assembler
         
         // ギャップバイト
         public byte GapByte { get; set; } = byte.MaxValue;
+
+        // エントリーポイント
+        public UInt16? EntryPoint { get; set; } = default;
     }
 }

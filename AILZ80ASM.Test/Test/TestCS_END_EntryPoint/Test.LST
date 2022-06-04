@@ -1,0 +1,13 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.21, LST:Full:4
+000000 0000 C42301          17      call nz, $0123
+000003 0003 D46745          17      call nc, $4567
+000006 0006 E4AB89          17      call po, $89AB
+000009 0009 F4EFCD          17      call p, $CDEF
+00000C 000C CC0132          17      call z, $3201
+                                LB:
+00000F 000F DC4567          17      call c, $6745
+000012 0012 EC89AB          17      call pe, $AB89
+000015 0015 FCCDEF          17      call m, $EFCD
+       000F                         END LB
+                                    call $1234
+[EOF:Test.Z80:UTF_8]
