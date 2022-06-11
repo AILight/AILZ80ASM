@@ -40,6 +40,8 @@ namespace AILZ80ASM.AILight
             Minus,              // -
             Negation,           // !
             BitwiseComplement,  // ~
+            Low,                // low
+            High,               // high
             Multiplication,     // *
             Division,           // /
             Remainder,          // %
@@ -70,30 +72,32 @@ namespace AILZ80ASM.AILight
 
         private static readonly Dictionary<string, OperationTypeEnum> OperationTypeTable = new()
         {
-            ["("] =  OperationTypeEnum.LeftParenthesis,
-            [")"] =  OperationTypeEnum.RightParenthesis,
-            ["!"] =  OperationTypeEnum.Negation,
-            ["~"] =  OperationTypeEnum.BitwiseComplement,
-            ["*"] =  OperationTypeEnum.Multiplication,
-            ["/"] =  OperationTypeEnum.Division,
-            ["%"] =  OperationTypeEnum.Remainder,
-            ["+"] =  OperationTypeEnum.Plus,
-            ["-"] =  OperationTypeEnum.Minus,
-            ["<<"] = OperationTypeEnum.LeftShift,
-            [">>"] = OperationTypeEnum.RightShift,
-            ["<"] =  OperationTypeEnum.Less,
-            [">"] =  OperationTypeEnum.Greater,
-            ["<="] = OperationTypeEnum.LessEqual,
-            [">="] = OperationTypeEnum.GreaterEqual,
-            ["=="] = OperationTypeEnum.Equal,
-            ["!="] = OperationTypeEnum.NotEqual,
-            ["&"] =  OperationTypeEnum.And,
-            ["^"] =  OperationTypeEnum.Xor,
-            ["|"] =  OperationTypeEnum.Or,
-            ["&&"] = OperationTypeEnum.ConditionalAnd,
-            ["||"] = OperationTypeEnum.ConditionalOr,
-            ["?"] =  OperationTypeEnum.Ternary_Question,
-            [":"] =  OperationTypeEnum.Ternary_Colon,
+            ["("] =    OperationTypeEnum.LeftParenthesis,
+            [")"] =    OperationTypeEnum.RightParenthesis,
+            ["!"] =    OperationTypeEnum.Negation,
+            ["~"] =    OperationTypeEnum.BitwiseComplement,
+            ["low"] =  OperationTypeEnum.Low,
+            ["high"] = OperationTypeEnum.High,
+            ["*"] =    OperationTypeEnum.Multiplication,
+            ["/"] =    OperationTypeEnum.Division,
+            ["%"] =    OperationTypeEnum.Remainder,
+            ["+"] =    OperationTypeEnum.Plus,
+            ["-"] =    OperationTypeEnum.Minus,
+            ["<<"] =   OperationTypeEnum.LeftShift,
+            [">>"] =   OperationTypeEnum.RightShift,
+            ["<"] =    OperationTypeEnum.Less,
+            [">"] =    OperationTypeEnum.Greater,
+            ["<="] =   OperationTypeEnum.LessEqual,
+            [">="] =   OperationTypeEnum.GreaterEqual,
+            ["=="] =   OperationTypeEnum.Equal,
+            ["!="] =   OperationTypeEnum.NotEqual,
+            ["&"] =    OperationTypeEnum.And,
+            ["^"] =    OperationTypeEnum.Xor,
+            ["|"] =    OperationTypeEnum.Or,
+            ["&&"] =   OperationTypeEnum.ConditionalAnd,
+            ["||"] =   OperationTypeEnum.ConditionalOr,
+            ["?"] =    OperationTypeEnum.Ternary_Question,
+            [":"] =    OperationTypeEnum.Ternary_Colon,
         };
 
         private static readonly Dictionary<OperationTypeEnum, int> FormulaPriority = new()
@@ -101,6 +105,8 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.RightParenthesis] = 1,   // )
             [OperationTypeEnum.Negation] = 2,           // !
             [OperationTypeEnum.BitwiseComplement] = 2,  // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
+            [OperationTypeEnum.Low] = 2,                // low
+            [OperationTypeEnum.High] = 2,               // high
             [OperationTypeEnum.Multiplication] = 3,     // *
             [OperationTypeEnum.Division] = 3,           // /
             [OperationTypeEnum.Remainder] = 3,          // %
@@ -129,6 +135,8 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.RightParenthesis] = ArgumentTypeEnum.None,               // )
             [OperationTypeEnum.Negation] = ArgumentTypeEnum.SingleArgument,             // !
             [OperationTypeEnum.BitwiseComplement] = ArgumentTypeEnum.SingleArgument,    // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
+            [OperationTypeEnum.Low] = ArgumentTypeEnum.SingleArgument,                  // low
+            [OperationTypeEnum.High] = ArgumentTypeEnum.SingleArgument,                 // high
             [OperationTypeEnum.Multiplication] = ArgumentTypeEnum.DoubleArgument,       // *
             [OperationTypeEnum.Division] = ArgumentTypeEnum.DoubleArgument,             // /
             [OperationTypeEnum.Remainder] = ArgumentTypeEnum.DoubleArgument,            // %
@@ -152,6 +160,21 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.LeftParenthesis] = ArgumentTypeEnum.None,                // (
         };
 
+        /// <summary>
+        /// オペレーション判別用（文字列のみ）
+        /// </summary>
+        private static readonly string[] WordOperationKeys = OperationTypeTable.Keys.Where(m => char.IsLetter(m[0])).OrderByDescending(m => m.Length).ToArray();
+
+        /// <summary>
+        /// オペレーション判別用（記号のみ）
+        /// </summary>
+        private static readonly string[] SymbolOperationKeys = OperationTypeTable.Keys.Where(m => !char.IsLetter(m[0])).OrderByDescending(m => m.Length).ToArray();
+
+        /// <summary>
+        /// オペレーション判別・正規表現用（記号のみ）
+        /// </summary>
+        private static readonly string SymbolOperationKeysString = string.Join("|", SymbolOperationKeys.Select(m => Regex.Escape(m)));
+
         private static readonly string RegexPatternHexadecimal_H = @"^(?<value>([0-9A-Fa-f]+))H$";
         private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f]+))$";
         private static readonly string RegexPatternHexadecimal_D = @"^\$(?<value>([0-9A-Fa-f]+))$";
@@ -159,6 +182,7 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternBinaryNumber_B = @"^(?<value>([01_]+))B$";
         private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
         private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
+        private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
 
 
         private string Value { get; set; } = "";
@@ -213,6 +237,158 @@ namespace AILZ80ASM.AILight
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        /// <summary>
+        /// 演算子を抜き出す
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="resultFormula"></param>
+        /// <returns></returns>
+        public static bool TryParseFormula(ref string target, out string resultFormula)
+        {
+            var localTarget = target;
+            resultFormula = "";
+
+            // 記号のみのチェック
+            foreach (var key in SymbolOperationKeys)
+            {
+                if (Regex.IsMatch(localTarget, $"^{Regex.Escape(key)}", RegexOptions.IgnoreCase))
+                {
+                    resultFormula = key;
+                    target = localTarget.Substring(key.Length).TrimStart();
+                    return true;
+                }
+            }
+
+            // 文字列演算子のチェック
+            if (!WordOperationKeys.Any(m => Regex.IsMatch(localTarget, $"^{Regex.Escape(m)}($|\\s+)", RegexOptions.IgnoreCase)))
+            {
+                return false;
+            }
+
+            // この文字の次の演算子を調べる
+            foreach (var key in WordOperationKeys)
+            {
+                if (Regex.IsMatch(localTarget, $"^{Regex.Escape(key)}($|\\s+|{SymbolOperationKeysString})", RegexOptions.IgnoreCase))
+                {
+                    // 次の演算子を調査する
+                    var nextTarget = localTarget.Substring(key.Length).TrimStart();
+                    if (!string.IsNullOrEmpty(nextTarget))
+                    {
+                        foreach (var ope in SymbolOperationKeys)
+                        {
+                            if (Regex.IsMatch(nextTarget, $"^{Regex.Escape(ope)}", RegexOptions.IgnoreCase))
+                            {
+                                var operationType = OperationTypeTable[ope];
+                                var operationArgument = OperationArgumentType[operationType];
+                                switch (operationArgument)
+                                {
+                                    case ArgumentTypeEnum.None:
+                                    case ArgumentTypeEnum.SingleArgument:
+                                        // 文字の演算子が使える事を判別した
+                                        resultFormula = key;
+                                        target = localTarget.Substring(key.Length).TrimStart();
+                                        return true;
+                                    case ArgumentTypeEnum.DoubleArgument:
+                                    case ArgumentTypeEnum.TripleArgument:
+                                    default:
+                                        return false;
+                                }
+                            }
+                        }
+                        // 文字の演算子が使える事を判別した
+                        resultFormula = key;
+                        target = localTarget.Substring(key.Length).TrimStart();
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Functionを抜き出す
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="resultFunction"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidAIMathException"></exception>
+        public static bool TryParseFunction(ref string target, out string resultFunction)
+        {
+            var localTarget = target;
+            resultFunction = "";
+            var matched = Regex.Match(target, $"(?<formula>({SymbolOperationKeysString}|\"|'))", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matched.Success)
+            {
+                var formula = matched.Groups["formula"].Value;
+                if (formula.StartsWith("("))
+                {
+                    var targetIndex = localTarget.IndexOf('(') + 1;
+                    var startIndex = AIString.IndexOfAnySkipString(localTarget, '(', targetIndex);
+                    var endIndex= AIString.IndexOfAnySkipString(localTarget, ')', targetIndex);
+
+                    var counter = 0;
+                    var endFlgForLeftParenthesis = false;
+                    while ((startIndex != -1 || endFlgForLeftParenthesis) && endIndex != -1)
+                    {
+                        if (!endFlgForLeftParenthesis && startIndex < endIndex)
+                        {
+                            counter++;
+                            startIndex = AIString.IndexOfAnySkipString(localTarget, '(', startIndex + 1);
+                            if (startIndex == -1)
+                            {
+                                endFlgForLeftParenthesis = true;
+                            }
+                        }
+                        else
+                        {
+                            counter--;
+                            endIndex = AIString.IndexOfAnySkipString(localTarget, ')', endIndex + 1);
+
+                            if (counter == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (endIndex == -1)
+                    {
+                        throw new InvalidAIMathException("閉じ括弧が見つかりませんでした。");
+                    }
+
+                    if (counter != 0)
+                    {
+                        throw new InvalidAIMathException("括弧の数が一致しませんでした。");
+                    }
+
+                    if (startIndex == - 1)
+                    {
+                        target = localTarget.Substring(endIndex + 1).TrimStart();
+                        resultFunction = localTarget.Substring(0, endIndex + 1);
+                        return true;
+                    }
+                    
+                }
+            }
+            return false;
+        }
+
+        public static bool TryParseValue(ref string target, out string resultValue)
+        { 
+            var localTarget = target;
+            resultValue = "";
+            var matched = Regex.Match(target, RegexPatternValue, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matched.Success)
+            {
+                resultValue = matched.Groups["value"].Value;
+                target = localTarget.Substring(resultValue.Length).TrimStart();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -764,6 +940,10 @@ namespace AILZ80ASM.AILight
                     return AIValue.Negation(firstValue);
                 case OperationTypeEnum.BitwiseComplement:
                     return AIValue.BitwiseComplement(firstValue);
+                case OperationTypeEnum.Low:
+                    return AIValue.Low(firstValue);
+                case OperationTypeEnum.High:
+                    return AIValue.High(firstValue);
                 default:
                     throw new InvalidOperationException();
             }
@@ -899,6 +1079,36 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
                 return new AIValue(~firstValue.ValueInt32);
+            }
+
+            throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
+        }
+
+        /// <summary>
+        /// low:下位バイト
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Low(AIValue firstValue)
+        {
+            if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
+            {
+                return new AIValue(firstValue.ValueInt32 & 0xFF);
+            }
+
+            throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
+        }
+
+        /// <summary>
+        /// high:上位バイト
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue High(AIValue firstValue)
+        {
+            if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
+            {
+                return new AIValue((firstValue.ValueInt32 & 0xFF00) / 256);
             }
 
             throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");

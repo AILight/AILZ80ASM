@@ -33,6 +33,28 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void IsFunction()
+        {
+            {
+                var target = "ABC() + 10";
+                Assert.IsTrue(AIValue.TryParseFunction(ref target, out var resultFunction));
+                Assert.AreEqual(resultFunction, "ABC()");
+            }
+
+            {
+                var target = "ABC(ABC(ABC(ABC()))) + 10";
+                Assert.IsTrue(AIValue.TryParseFunction(ref target, out var resultFunction));
+                Assert.AreEqual(resultFunction, "ABC(ABC(ABC(ABC())))");
+            }
+
+            {
+                var target = "ABC(ABC(ABC(ABC(\")(\")))) + 10";
+                Assert.IsTrue(AIValue.TryParseFunction(ref target, out var resultFunction));
+                Assert.AreEqual(resultFunction, "ABC(ABC(ABC(ABC(\")(\"))))");
+            }
+        }
+
+        [TestMethod]
         public void ConstractorTest()
         {
             var valueBool = new AIValue(true);

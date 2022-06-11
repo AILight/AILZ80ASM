@@ -172,6 +172,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Calc_11()
+        {
+            Assert.AreEqual(0xEE, AIMath.Calculation("low $FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0xFF, AIMath.Calculation("high $FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0xEF, AIMath.Calculation("low $FFEE + 1").ConvertTo<byte>());
+            Assert.AreEqual(0xFE, AIMath.Calculation("high $FFEE - 1").ConvertTo<byte>());
+        }
+
+        [TestMethod]
         public void Calc_UInt32()
         {
             Assert.AreEqual((UInt32)(1 + 2 * ((2 + 1)) + 6 / 2), AIMath.Calculation("1+2*((2+1))+6/2").ConvertTo<UInt32>());

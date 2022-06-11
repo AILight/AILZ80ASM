@@ -10,17 +10,7 @@ namespace AILZ80ASM.AILight
 {
     public static class AIMath
     {
-        private enum MacroValueEnum
-        {
-            None,
-            High,
-            Low,
-            Text,
-            Exists,
-        }
-
         private static readonly string RegexPatternCharMap = @"^(?<charMap>@.*\:)";
-        private static readonly string RegexPatternFormulaChar = @"(?<formula>(\+|\-|\*|\/|\%|\~|\(|\)|!=|!|==|\<\<|\>\>|<=|\<|>=|\>|\&\&|\|\||\&|\||\^|\?|\:))";
 
         public static bool TryParse(string value, out AIValue resultValue)
         {
@@ -81,117 +71,33 @@ namespace AILZ80ASM.AILight
         {
             var terms = new List<AIValue>();
             var tmpValue = value.Trim();
-            var matched = default(Match);
 
             // 数式との分離
             while (!string.IsNullOrEmpty(tmpValue))
             {
-                var stringCheck = tmpValue;
-                var checkStartIndex = 1;
-                // Charmap
-                if ((matched = Regex.Match(tmpValue, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                if (TryParseString(ref tmpValue, out var resultString))
                 {
-                    checkStartIndex = matched.Groups["charMap"].Value.Length;
-                    stringCheck = tmpValue.Substring(checkStartIndex);
-                    checkStartIndex += 1;
+                    terms.Add(new AIValue(resultString));
                 }
-
-                // 文字列
-                if (stringCheck.StartsWith("\""))
+                else if (AIValue.TryParseFormula(ref tmpValue, out var resultFormula))
                 {
-                    var endIndex = tmpValue.IndexOf("\"", checkStartIndex);
-                    var escapeIndex = tmpValue.IndexOf("\\", checkStartIndex);
-                    while (endIndex != -1 && escapeIndex != -1 && endIndex - 1 == escapeIndex)
-                    {
-                        endIndex = tmpValue.IndexOf("\"", endIndex + 1);
-                        escapeIndex = tmpValue.IndexOf("\\", endIndex + 1);
-                    }
-                    if (endIndex == -1)
-                    {
-                        throw new InvalidAIMathException("演算に使えない文字が検出されました。");
-                    }
-                    else
-                    {
-                        terms.Add(new AIValue(tmpValue.Substring(0, endIndex + 1)));
-                        tmpValue = tmpValue.Substring(endIndex + 1).TrimStart();
-                    }
+                    terms.Add(new AIValue(resultFormula, AIValue.ValueTypeEnum.Operation));
                 }
-                else if (stringCheck.StartsWith("'"))
+                else if (AIValue.TryParseFunction(ref tmpValue, out var resultFunction))
                 {
-                    var endIndex = tmpValue.IndexOf("'", checkStartIndex);
-                    var escapeIndex = tmpValue.IndexOf("\\", checkStartIndex);
-
-                    if (escapeIndex != -1 && endIndex > escapeIndex && tmpValue.Length > escapeIndex + 2)
-                    {
-                        endIndex = tmpValue.IndexOf("'", escapeIndex + 2);
-                    }
-
-                    if (endIndex == -1)
-                    {
-                        throw new InvalidAIMathException("演算に使えない文字が検出されました。");
-                    }
-                    else
-                    {
-                        terms.Add(new AIValue(tmpValue.Substring(0, endIndex + 1)));
-                        tmpValue = tmpValue.Substring(endIndex + 1).TrimStart();
-                    }
+                    terms.Add(new AIValue(resultFunction, AIValue.ValueTypeEnum.Function));
                 }
-                else if ((matched = Regex.Match(tmpValue, "^" + RegexPatternFormulaChar, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                else if (AIValue.TryParseValue(ref tmpValue, out var resultValue))
                 {
-                    var formula = matched.Groups["formula"].Value;
-                    terms.Add(new AIValue(formula, AIValue.ValueTypeEnum.Operation));
-                    tmpValue = tmpValue.Substring(formula.Length).TrimStart();
+                    terms.Add(new AIValue(resultValue));
                 }
                 else
                 {
-                    matched = Regex.Match(tmpValue, RegexPatternFormulaChar, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                    if (matched.Success)
-                    {
-                        //Functionの判断
-                        var group = matched.Groups["formula"];
-                        if (group.Value.StartsWith("("))
-                        {
-                            //Functionの切り出し
-                            var valueString = "";
-                            var skipCounter = 0;
-                            foreach (var item in tmpValue.ToArray())
-                            {
-                                valueString += item;
-                                if (item == '(')
-                                {
-                                    skipCounter++;
-                                }
-                                else if (item == ')')
-                                {
-                                    skipCounter--;
-                                    if (skipCounter == 0)
-                                    {
-                                        break;
-                                    }
-                                    else if (skipCounter < 0)
-                                    {
-                                        throw new InvalidAIMathException("カッコの数が不一致です");
-                                    }
-                                }
-                            }
-                            terms.Add(new AIValue(valueString, AIValue.ValueTypeEnum.Function));
-                            tmpValue = tmpValue.Substring(valueString.Length).TrimStart();
-                        }
-                        else
-                        {
-                            var valueString = tmpValue.Substring(0, group.Index);
-                            terms.Add(new AIValue(valueString.Trim()));
-                            tmpValue = tmpValue.Substring(valueString.Length).TrimStart();
-                        }
-                    }
-                    else
-                    {
-                        terms.Add(new AIValue(tmpValue));
-                        tmpValue = "";
-                    }
+                    throw new InvalidAIMathException("演算に使えない文字が含まれています");
                 }
             }
 
+            // 符号処理
             var result = new List<AIValue>();
             for (int index = 0; index < terms.Count; index++)
             {
@@ -247,6 +153,61 @@ namespace AILZ80ASM.AILight
                 }
             }
             return result.ToArray();
+        }
+
+        private static bool TryParseString(ref string tmpValue, out string resultString)
+        {
+            var stringCheck = tmpValue;
+            var checkStartIndex = 0;
+            var matched = default(Match);
+            resultString = "";
+            // Charmap
+            if ((matched = Regex.Match(tmpValue, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            {
+                checkStartIndex = matched.Groups["charMap"].Value.Length;
+                stringCheck = tmpValue.Substring(checkStartIndex);
+            }
+
+            // 文字列
+            if (stringCheck.StartsWith("\""))
+            {
+                ParseString("\"", checkStartIndex, ref tmpValue, out resultString);
+                return true;
+            }
+            else if (stringCheck.StartsWith("'"))
+            {
+                ParseString("'", checkStartIndex, ref tmpValue, out resultString);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void ParseString(string stringMarkChar, int checkStartIndex, ref string tmpValue, out string resultString)
+        {
+            var endIndex = tmpValue.IndexOf(stringMarkChar, checkStartIndex + 1);
+            var escapeIndex = tmpValue.IndexOf("\\", checkStartIndex + 1);
+            while (endIndex != -1 && escapeIndex != -1 && endIndex - 1 == escapeIndex)
+            {
+                endIndex = tmpValue.IndexOf(stringMarkChar, endIndex + 1);
+                escapeIndex = tmpValue.IndexOf("\\", endIndex + 1);
+            }
+
+            if (endIndex == -1)
+            {
+                if (escapeIndex == -1)
+                {
+                    throw new InvalidAIMathException("演算に使えない文字が検出されました。");
+                }
+                else
+                {
+                    throw new InvalidAIStringEscapeSequenceException($"有効なエスケープシーケンスではありません。[{tmpValue}]", tmpValue);
+                }
+            }
+
+            resultString = tmpValue.Substring(0, endIndex + 1);
+            tmpValue = tmpValue.Substring(endIndex + 1).TrimStart();
+
         }
 
         private static void CalculationSetValue(AIValue[] terms, AsmLoad asmLoad, AsmAddress? asmAddress)
