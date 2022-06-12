@@ -53,13 +53,60 @@ namespace AILZ80ASM.AILight
                 }
 
                 var terms = CalculationParse(target);
-                CalculationSetValue(terms, asmLoad, asmAddress);
+                //CalculationSetValue(terms, asmLoad, asmAddress);
+                var lbmcs = CalculationLabelMacro(terms);
 
                 var rvpns = CalculationMakeReversePolish(terms);
                 var value = CalculationByReversePolish(rvpns, asmLoad, asmAddress);
+                
+                value.SetValue(asmLoad, asmAddress); // 未確定の値を確定する
 
                 return value;
             });
+        }
+
+        private static AIValue[] CalculationLabelMacro(AIValue[] terms)
+        {
+            var result = new List<AIValue>();
+            foreach (var item in terms)
+            {
+                if (item.ValueType == AIValue.ValueTypeEnum.None)
+                {
+                    var optionIndex = item.OriginalValue.IndexOf(".@");
+                    if (optionIndex > 0)
+                    {
+                        var option = item.OriginalValue.Substring(optionIndex);
+                        if (string.Compare(option, ".@H", true) == 0 ||
+                            string.Compare(option, ".@HIGH", true) == 0)
+                        {
+                            result.Add(new AIValue("high", AIValue.ValueTypeEnum.Operation));
+                        }
+                        else if (string.Compare(option, ".@L", true) == 0 ||
+                                 string.Compare(option, ".@LOW", true) == 0)
+                        {
+                            result.Add(new AIValue("low", AIValue.ValueTypeEnum.Operation));
+                        }
+                        else if (string.Compare(option, ".@T", true) == 0 ||
+                                 string.Compare(option, ".@TEXT", true) == 0)
+                        {
+                            result.Add(new AIValue("text", AIValue.ValueTypeEnum.Operation));
+                        }
+                        else if (string.Compare(option, ".@E", true) == 0 ||
+                                 string.Compare(option, ".@EXISTS", true) == 0)
+                        {
+                            result.Add(new AIValue("exists", AIValue.ValueTypeEnum.Operation));
+                        }
+                        else
+                        {
+                            throw new Exception("ここは処理を書く");
+                        }
+                        result.Add(new AIValue(item.OriginalValue.Substring(0, optionIndex)));
+                        continue;
+                    }
+                }
+                result.Add(item);
+            }
+            return result.ToArray();
         }
 
         /// <summary>
@@ -210,6 +257,7 @@ namespace AILZ80ASM.AILight
 
         }
 
+        /*
         private static void CalculationSetValue(AIValue[] terms, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
             foreach (var item in terms.Where(m => m.ValueType == AIValue.ValueTypeEnum.None || m.ValueType == AIValue.ValueTypeEnum.Function).ToArray())
@@ -217,7 +265,7 @@ namespace AILZ80ASM.AILight
                 item.SetValue(asmLoad, asmAddress);
             }
         }
-
+        */
 
         /// <summary>
         /// 逆ポーランド記法に変換する
@@ -318,7 +366,7 @@ namespace AILZ80ASM.AILight
 
                                 var firstValue = stack.Pop();
 
-                                var resultValue = AIValue.Calculation(item, firstValue);
+                                var resultValue = AIValue.Calculation(item, firstValue, asmLoad, asmAddress);
                                 stack.Push(resultValue);
                             }
                             break;
@@ -331,7 +379,7 @@ namespace AILZ80ASM.AILight
                                 var secondPopValue = stack.Pop();
                                 var firstValue = stack.Pop();
 
-                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue);
+                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue, asmLoad, asmAddress);
                                 stack.Push(resultValue);
                             }
                             break;
@@ -345,7 +393,7 @@ namespace AILZ80ASM.AILight
                                 var secondPopValue = stack.Pop();
                                 var firstValue = stack.Pop();
 
-                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue, thirdPopValue);
+                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue, thirdPopValue, asmLoad, asmAddress);
                                 stack.Push(resultValue);
                             }
                             break;

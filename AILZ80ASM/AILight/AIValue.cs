@@ -42,6 +42,7 @@ namespace AILZ80ASM.AILight
             BitwiseComplement,  // ~
             Low,                // low
             High,               // high
+            Exists,             // exists
             Multiplication,     // *
             Division,           // /
             Remainder,          // %
@@ -72,32 +73,33 @@ namespace AILZ80ASM.AILight
 
         private static readonly Dictionary<string, OperationTypeEnum> OperationTypeTable = new()
         {
-            ["("] =    OperationTypeEnum.LeftParenthesis,
-            [")"] =    OperationTypeEnum.RightParenthesis,
-            ["!"] =    OperationTypeEnum.Negation,
-            ["~"] =    OperationTypeEnum.BitwiseComplement,
-            ["low"] =  OperationTypeEnum.Low,
-            ["high"] = OperationTypeEnum.High,
-            ["*"] =    OperationTypeEnum.Multiplication,
-            ["/"] =    OperationTypeEnum.Division,
-            ["%"] =    OperationTypeEnum.Remainder,
-            ["+"] =    OperationTypeEnum.Plus,
-            ["-"] =    OperationTypeEnum.Minus,
-            ["<<"] =   OperationTypeEnum.LeftShift,
-            [">>"] =   OperationTypeEnum.RightShift,
-            ["<"] =    OperationTypeEnum.Less,
-            [">"] =    OperationTypeEnum.Greater,
-            ["<="] =   OperationTypeEnum.LessEqual,
-            [">="] =   OperationTypeEnum.GreaterEqual,
-            ["=="] =   OperationTypeEnum.Equal,
-            ["!="] =   OperationTypeEnum.NotEqual,
-            ["&"] =    OperationTypeEnum.And,
-            ["^"] =    OperationTypeEnum.Xor,
-            ["|"] =    OperationTypeEnum.Or,
-            ["&&"] =   OperationTypeEnum.ConditionalAnd,
-            ["||"] =   OperationTypeEnum.ConditionalOr,
-            ["?"] =    OperationTypeEnum.Ternary_Question,
-            [":"] =    OperationTypeEnum.Ternary_Colon,
+            ["("] =      OperationTypeEnum.LeftParenthesis,
+            [")"] =      OperationTypeEnum.RightParenthesis,
+            ["!"] =      OperationTypeEnum.Negation,
+            ["~"] =      OperationTypeEnum.BitwiseComplement,
+            ["low"] =    OperationTypeEnum.Low,
+            ["high"] =   OperationTypeEnum.High,
+            ["exists"] = OperationTypeEnum.Exists,
+            ["*"] =      OperationTypeEnum.Multiplication,
+            ["/"] =      OperationTypeEnum.Division,
+            ["%"] =      OperationTypeEnum.Remainder,
+            ["+"] =      OperationTypeEnum.Plus,
+            ["-"] =      OperationTypeEnum.Minus,
+            ["<<"] =     OperationTypeEnum.LeftShift,
+            [">>"] =     OperationTypeEnum.RightShift,
+            ["<"] =      OperationTypeEnum.Less,
+            [">"] =      OperationTypeEnum.Greater,
+            ["<="] =     OperationTypeEnum.LessEqual,
+            [">="] =     OperationTypeEnum.GreaterEqual,
+            ["=="] =     OperationTypeEnum.Equal,
+            ["!="] =     OperationTypeEnum.NotEqual,
+            ["&"] =      OperationTypeEnum.And,
+            ["^"] =      OperationTypeEnum.Xor,
+            ["|"] =      OperationTypeEnum.Or,
+            ["&&"] =     OperationTypeEnum.ConditionalAnd,
+            ["||"] =     OperationTypeEnum.ConditionalOr,
+            ["?"] =      OperationTypeEnum.Ternary_Question,
+            [":"] =      OperationTypeEnum.Ternary_Colon,
         };
 
         private static readonly Dictionary<OperationTypeEnum, int> FormulaPriority = new()
@@ -107,6 +109,7 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.BitwiseComplement] = 2,  // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
             [OperationTypeEnum.Low] = 2,                // low
             [OperationTypeEnum.High] = 2,               // high
+            [OperationTypeEnum.Exists] = 2,             // exists
             [OperationTypeEnum.Multiplication] = 3,     // *
             [OperationTypeEnum.Division] = 3,           // /
             [OperationTypeEnum.Remainder] = 3,          // %
@@ -137,6 +140,7 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.BitwiseComplement] = ArgumentTypeEnum.SingleArgument,    // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
             [OperationTypeEnum.Low] = ArgumentTypeEnum.SingleArgument,                  // low
             [OperationTypeEnum.High] = ArgumentTypeEnum.SingleArgument,                 // high
+            [OperationTypeEnum.Exists] = ArgumentTypeEnum.SingleArgument,               // exists
             [OperationTypeEnum.Multiplication] = ArgumentTypeEnum.DoubleArgument,       // *
             [OperationTypeEnum.Division] = ArgumentTypeEnum.DoubleArgument,             // /
             [OperationTypeEnum.Remainder] = ArgumentTypeEnum.DoubleArgument,            // %
@@ -376,6 +380,12 @@ namespace AILZ80ASM.AILight
             return false;
         }
 
+        /// <summary>
+        /// 値を抜き出す
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="resultValue"></param>
+        /// <returns></returns>
         public static bool TryParseValue(ref string target, out string resultValue)
         { 
             var localTarget = target;
@@ -610,7 +620,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public bool Equals(AIValue value)
         {
-            var aiValue = AIValue.Equal(this, value);
+            var aiValue = AIValue.Equal(this, value, default(AsmLoad), default(AsmAddress?));
             return aiValue.ValueBool;
         }
 
@@ -651,242 +661,272 @@ namespace AILZ80ASM.AILight
         /// <exception cref="NotImplementedException"></exception>
         public void SetValue(AsmLoad asmLoad, AsmAddress? asmAddress)
         {
-            if (ValueType == ValueTypeEnum.Function)
+            switch (ValueType)
             {
-                var startIndex = Value.IndexOf('(');
-                var functionName = Value.Substring(0, startIndex).Trim();
-                var function = asmLoad.FindFunction(functionName);
-
-                var lastIndex = Value.LastIndexOf(')');
-                if (function == default || lastIndex == -1)
-                {
-                    throw new InvalidAIValueException($"Functionが見つかりませんでした。{functionName}");
-                }
-                var arguments = AIName.ParseArguments(Value.Substring(startIndex + 1, lastIndex - startIndex - 1));
-
-                var calcValue = function.Calculation(arguments, asmLoad, asmAddress);
-
-                ValueType = calcValue.ValueType;
-                ValueInt32 = calcValue.ValueInt32;
-                ValueBool = calcValue.ValueBool;
-                ValueString = calcValue.ValueString;
-                ValueOperation = calcValue.ValueOperation;
+                case ValueTypeEnum.None:
+                    SetValueForNone(asmLoad, asmAddress);
+                    break;
+                case ValueTypeEnum.Function:
+                    SetValueForFunction(asmLoad, asmAddress);
+                    break;
             }
-            else if (ValueType == ValueTypeEnum.None)
+        }
+
+        /// <summary>
+        /// 値が確定できるか確認をする
+        /// </summary>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <returns></returns>
+        public bool TrySetValue(AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            try
             {
-                if (TryParse16(Value, out var result16))
-                {
-                    // 16進数
-                    try
-                    {
-                        ValueType = ValueTypeEnum.Int32;
-                        ValueInt32 = Convert.ToInt32(result16, 16);
-                    }
-                    catch
-                    {
-                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
-                    }
-                }
-                else if (TryParse2(Value, out var result2))
-                {
-                    // 2進数
-                    try
-                    {
-                        ValueType = ValueTypeEnum.Int32;
-                        ValueInt32 = Convert.ToInt32(result2, 2);
-                    }
-                    catch
-                    {
-                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
-                    }
-                }
-                else if (TryParse8(Value, out var result8))
-                {
-                    // 8進数
-                    try
-                    {
-                        ValueType = ValueTypeEnum.Int32;
-                        ValueInt32 = Convert.ToInt32(result8, 8);
-                    }
-                    catch
-                    {
-                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
-                    }
-                }
-                else if (TryParse10(Value, out var result10))
-                {
-                    // 10進数
-                    try
-                    {
-                        ValueType = ValueTypeEnum.Int32;
-                        ValueInt32 = Convert.ToInt32(result10, 10);
-                    }
-                    catch
-                    {
-                        throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
-                    }
-                }
-                else if (AIString.TryParseCharMap(Value, asmLoad, out var charMap, out var resultString, out var validEscapeSequence))
-                {
-                    if (!validEscapeSequence)
-                    {
-                        throw new InvalidAIStringEscapeSequenceException($"有効なエスケープシーケンスではありません。[{Value}]", Value);
-                    }
+                SetValue(asmLoad, asmAddress);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-                    ValueCharMap = charMap;
-                    ValueString = resultString;
-                    ValueType |= ValueTypeEnum.Bytes;
-                    if (AIString.IsChar(Value, asmLoad))
-                    {
-                        ValueType |= ValueTypeEnum.Char;
-                        ValueBytes = AIString.GetBytesByChar(Value, asmLoad);
-                    }
-                    else
-                    {
-                        ValueType |= ValueTypeEnum.String;
-                        ValueBytes = AIString.GetBytesByString(Value, asmLoad);
-                    }
-
-                    if (ValueBytes.Length > 0 && ValueBytes.Length <= 2)
-                    {
-                        ValueType |= ValueTypeEnum.Int32;
-                        if (ValueBytes.Length == 2)
-                        {
-                            ValueInt32 = ValueBytes[0] * 256 + ValueBytes[1];
-                        }
-                        else
-                        {
-                            ValueInt32 = ValueBytes[0];
-                        }
-                    }
-                }
-                else if (Value == "$")
+        private void SetValueForNone(AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            if (TryParse16(Value, out var result16))
+            {
+                // 16進数
+                try
                 {
-                    if (!asmAddress.HasValue)
-                    {
-                        throw new ArgumentNullException(nameof(asmAddress));
-                    }
-                    // プログラム・ロケーションカウンター
                     ValueType = ValueTypeEnum.Int32;
-                    ValueInt32 = (int)asmAddress.Value.Program;
+                    ValueInt32 = Convert.ToInt32(result16, 16);
                 }
-                else if (Value == "$$")
+                catch
                 {
-                    if (!asmAddress.HasValue)
-                    {
-                        throw new ArgumentNullException(nameof(asmAddress));
-                    }
-
-                    // PreAssemble中のアウトプット・ロケーションカウンターは参照できない
-                    //if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
-                    if (asmLoad != default && !asmAddress.Value.Output.HasValue)
-                    {
-                        throw new InvalidAIValueException("出力アドレスに影響する場所では$$は使えません。");
-                    }
-
-                    // アウトプット・ロケーションカウンター
+                    throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
+                }
+            }
+            else if (TryParse2(Value, out var result2))
+            {
+                // 2進数
+                try
+                {
                     ValueType = ValueTypeEnum.Int32;
-                    ValueInt32 = (int)asmAddress.Value.Output;
+                    ValueInt32 = Convert.ToInt32(result2, 2);
                 }
-                else if (string.Compare(Value, "#TRUE", true) == 0)
+                catch
                 {
-                    ValueType = ValueTypeEnum.Bool;
-                    ValueBool = true;
+                    throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
                 }
-                else if (string.Compare(Value, "#FALSE", true) == 0)
+            }
+            else if (TryParse8(Value, out var result8))
+            {
+                // 8進数
+                try
                 {
-                    ValueType = ValueTypeEnum.Bool;
-                    ValueBool = false;
+                    ValueType = ValueTypeEnum.Int32;
+                    ValueInt32 = Convert.ToInt32(result8, 8);
+                }
+                catch
+                {
+                    throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
+                }
+            }
+            else if (TryParse10(Value, out var result10))
+            {
+                // 10進数
+                try
+                {
+                    ValueType = ValueTypeEnum.Int32;
+                    ValueInt32 = Convert.ToInt32(result10, 10);
+                }
+                catch
+                {
+                    throw new InvalidAIValueException($"数値に変換できませんでした。[{Value}]");
+                }
+            }
+            else if (AIString.TryParseCharMap(Value, asmLoad, out var charMap, out var resultString, out var validEscapeSequence))
+            {
+                if (!validEscapeSequence)
+                {
+                    throw new InvalidAIStringEscapeSequenceException($"有効なエスケープシーケンスではありません。[{Value}]", Value);
+                }
+
+                ValueCharMap = charMap;
+                ValueString = resultString;
+                ValueType |= ValueTypeEnum.Bytes;
+                if (AIString.IsChar(Value, asmLoad))
+                {
+                    ValueType |= ValueTypeEnum.Char;
+                    ValueBytes = AIString.GetBytesByChar(Value, asmLoad);
                 }
                 else
                 {
-                    if (asmLoad == default)
-                    {
-                        throw new ArgumentNullException(nameof(asmLoad));
-                    }
+                    ValueType |= ValueTypeEnum.String;
+                    ValueBytes = AIString.GetBytesByString(Value, asmLoad);
+                }
 
-                    // Label
-                    var macroValue = MacroValueEnum.None;
-                    var tmpLabel = Value;
-                    var optionIndex = Value.IndexOf(".@");
-                    if (optionIndex > 0)
+                if (ValueBytes.Length > 0 && ValueBytes.Length <= 2)
+                {
+                    ValueType |= ValueTypeEnum.Int32;
+                    if (ValueBytes.Length == 2)
                     {
-                        var option = Value.Substring(optionIndex);
-                        if (string.Compare(option, ".@H", true) == 0 ||
-                            string.Compare(option, ".@HIGH", true) == 0)
-                        {
-                            tmpLabel = Value.Substring(0, optionIndex);
-                            macroValue = MacroValueEnum.High;
-                        }
-                        else if (string.Compare(option, ".@L", true) == 0 ||
-                                    string.Compare(option, ".@LOW", true) == 0)
-                        {
-                            tmpLabel = Value.Substring(0, optionIndex);
-                            macroValue = MacroValueEnum.Low;
-                        }
-                        else if (string.Compare(option, ".@T", true) == 0 ||
-                                    string.Compare(option, ".@TEXT", true) == 0)
-                        {
-                            tmpLabel = Value.Substring(0, optionIndex);
-                            macroValue = MacroValueEnum.Text;
-                        }
-                        else if (string.Compare(option, ".@E", true) == 0 ||
-                                    string.Compare(option, ".@EXISTS", true) == 0)
-                        {
-                            tmpLabel = Value.Substring(0, optionIndex);
-                            macroValue = MacroValueEnum.Exists;
-                        }
-                    }
-
-                    var label = asmLoad.FindLabel(tmpLabel);
-
-                    if (macroValue == MacroValueEnum.Exists)
-                    {
-                        // ラベルの存在チェックなので、それに合わせて応答を返す
-                        ValueType = ValueTypeEnum.Bool;
-                        ValueBool = (label != default);
+                        ValueInt32 = ValueBytes[0] * 256 + ValueBytes[1];
                     }
                     else
                     {
-                        if (label == default)
-                        {
-                            throw new InvalidAIValueException($"未定義:{Value}");
-                        }
-                        else
-                        {
-                            if (macroValue != MacroValueEnum.Text)
-                            {
-                                label.Calculation();
-                            }
-                        }
-
-                        var value = label.Value;
-
-                        switch (macroValue)
-                        {
-                            case MacroValueEnum.High:
-                                ValueType = ValueTypeEnum.Int32;
-                                ValueInt32 = value.ValueInt32 / 256;
-                                break;
-                            case MacroValueEnum.Low:
-                                ValueType = ValueTypeEnum.Int32;
-                                ValueInt32 = value.ValueInt32 % 256;
-                                break;
-                            case MacroValueEnum.Text:
-                                ValueType = ValueTypeEnum.String;
-                                ValueString = label.ValueString;
-                                break;
-                            default:
-                                ValueType = value.ValueType;
-                                ValueInt32 = value.ValueInt32;
-                                ValueBool = value.ValueBool;
-                                ValueString = value.ValueString;
-                                ValueOperation = value.ValueOperation;
-                                break;
-                        }
+                        ValueInt32 = ValueBytes[0];
                     }
                 }
             }
+            else if (Value == "$")
+            {
+                if (!asmAddress.HasValue)
+                {
+                    throw new ArgumentNullException(nameof(asmAddress));
+                }
+                // プログラム・ロケーションカウンター
+                ValueType = ValueTypeEnum.Int32;
+                ValueInt32 = (int)asmAddress.Value.Program;
+            }
+            else if (Value == "$$")
+            {
+                if (!asmAddress.HasValue)
+                {
+                    throw new ArgumentNullException(nameof(asmAddress));
+                }
+
+                // PreAssemble中のアウトプット・ロケーションカウンターは参照できない
+                //if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
+                if (asmLoad != default && !asmAddress.Value.Output.HasValue)
+                {
+                    throw new InvalidAIValueException("出力アドレスに影響する場所では$$は使えません。");
+                }
+
+                // アウトプット・ロケーションカウンター
+                ValueType = ValueTypeEnum.Int32;
+                ValueInt32 = (int)asmAddress.Value.Output;
+            }
+            else if (string.Compare(Value, "#TRUE", true) == 0)
+            {
+                ValueType = ValueTypeEnum.Bool;
+                ValueBool = true;
+            }
+            else if (string.Compare(Value, "#FALSE", true) == 0)
+            {
+                ValueType = ValueTypeEnum.Bool;
+                ValueBool = false;
+            }
+            else
+            {
+                if (asmLoad == default)
+                {
+                    throw new ArgumentNullException(nameof(asmLoad));
+                }
+
+                // Label
+                var macroValue = MacroValueEnum.None;
+                var tmpLabel = Value;
+                var optionIndex = Value.IndexOf(".@");
+                if (optionIndex > 0)
+                {
+                    var option = Value.Substring(optionIndex);
+                    if (string.Compare(option, ".@H", true) == 0 ||
+                        string.Compare(option, ".@HIGH", true) == 0)
+                    {
+                        tmpLabel = Value.Substring(0, optionIndex);
+                        macroValue = MacroValueEnum.High;
+                    }
+                    else if (string.Compare(option, ".@L", true) == 0 ||
+                                string.Compare(option, ".@LOW", true) == 0)
+                    {
+                        tmpLabel = Value.Substring(0, optionIndex);
+                        macroValue = MacroValueEnum.Low;
+                    }
+                    else if (string.Compare(option, ".@T", true) == 0 ||
+                                string.Compare(option, ".@TEXT", true) == 0)
+                    {
+                        tmpLabel = Value.Substring(0, optionIndex);
+                        macroValue = MacroValueEnum.Text;
+                    }
+                    else if (string.Compare(option, ".@E", true) == 0 ||
+                                string.Compare(option, ".@EXISTS", true) == 0)
+                    {
+                        tmpLabel = Value.Substring(0, optionIndex);
+                        macroValue = MacroValueEnum.Exists;
+                    }
+                }
+
+                var label = asmLoad.FindLabel(tmpLabel);
+
+                if (macroValue == MacroValueEnum.Exists)
+                {
+                    // ラベルの存在チェックなので、それに合わせて応答を返す
+                    ValueType = ValueTypeEnum.Bool;
+                    ValueBool = (label != default);
+                }
+                else
+                {
+                    if (label == default)
+                    {
+                        throw new InvalidAIValueException($"未定義:{Value}");
+                    }
+                    else
+                    {
+                        if (macroValue != MacroValueEnum.Text)
+                        {
+                            label.Calculation();
+                        }
+                    }
+
+                    var value = label.Value;
+
+                    switch (macroValue)
+                    {
+                        case MacroValueEnum.High:
+                            ValueType = ValueTypeEnum.Int32;
+                            ValueInt32 = value.ValueInt32 / 256;
+                            break;
+                        case MacroValueEnum.Low:
+                            ValueType = ValueTypeEnum.Int32;
+                            ValueInt32 = value.ValueInt32 % 256;
+                            break;
+                        case MacroValueEnum.Text:
+                            ValueType = ValueTypeEnum.String;
+                            ValueString = label.ValueString;
+                            break;
+                        default:
+                            ValueType = value.ValueType;
+                            ValueInt32 = value.ValueInt32;
+                            ValueBool = value.ValueBool;
+                            ValueString = value.ValueString;
+                            ValueOperation = value.ValueOperation;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void SetValueForFunction(AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            var startIndex = Value.IndexOf('(');
+            var functionName = Value.Substring(0, startIndex).Trim();
+            var function = asmLoad.FindFunction(functionName);
+
+            var lastIndex = Value.LastIndexOf(')');
+            if (function == default || lastIndex == -1)
+            {
+                throw new InvalidAIValueException($"Functionが見つかりませんでした。{functionName}");
+            }
+            var arguments = AIName.ParseArguments(Value.Substring(startIndex + 1, lastIndex - startIndex - 1));
+
+            var calcValue = function.Calculation(arguments, asmLoad, asmAddress);
+
+            ValueType = calcValue.ValueType;
+            ValueInt32 = calcValue.ValueInt32;
+            ValueBool = calcValue.ValueBool;
+            ValueString = calcValue.ValueString;
+            ValueOperation = calcValue.ValueOperation;
         }
 
         /// <summary>
@@ -927,7 +967,7 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public static AIValue Calculation(AIValue operation, AIValue firstValue)
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
             if (operation.ValueType != ValueTypeEnum.Operation)
             {
@@ -937,13 +977,15 @@ namespace AILZ80ASM.AILight
             switch (operation.ValueOperation)
             {
                 case OperationTypeEnum.Negation:
-                    return AIValue.Negation(firstValue);
+                    return AIValue.Negation(firstValue, asmLoad, asmAddress);
                 case OperationTypeEnum.BitwiseComplement:
-                    return AIValue.BitwiseComplement(firstValue);
+                    return AIValue.BitwiseComplement(firstValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Low:
-                    return AIValue.Low(firstValue);
+                    return AIValue.Low(firstValue, asmLoad, asmAddress);
                 case OperationTypeEnum.High:
-                    return AIValue.High(firstValue);
+                    return AIValue.High(firstValue, asmLoad, asmAddress);
+                case OperationTypeEnum.Exists:
+                    return AIValue.Exists(firstValue, asmLoad, asmAddress);
                 default:
                     throw new InvalidOperationException();
             }
@@ -957,7 +999,7 @@ namespace AILZ80ASM.AILight
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue)
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
             if (operation.ValueType != ValueTypeEnum.Operation)
             {
@@ -967,41 +1009,41 @@ namespace AILZ80ASM.AILight
             switch (operation.ValueOperation)
             {
                 case OperationTypeEnum.Plus:
-                    return AIValue.Plus(firstValue, secondPopValue);
+                    return AIValue.Plus(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Minus:
-                    return AIValue.Minus(firstValue, secondPopValue);
+                    return AIValue.Minus(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Multiplication:
-                    return AIValue.Multiplication(firstValue, secondPopValue);
+                    return AIValue.Multiplication(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Division:
-                    return AIValue.Division(firstValue, secondPopValue);
+                    return AIValue.Division(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Remainder:
-                    return AIValue.Remainder(firstValue, secondPopValue);
+                    return AIValue.Remainder(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.LeftShift:
-                    return AIValue.LeftShift(firstValue, secondPopValue);
+                    return AIValue.LeftShift(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.RightShift:
-                    return AIValue.RightShift(firstValue, secondPopValue);
+                    return AIValue.RightShift(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Less:
-                    return AIValue.Less(firstValue, secondPopValue);
+                    return AIValue.Less(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Greater:
-                    return AIValue.Greater(firstValue, secondPopValue);
+                    return AIValue.Greater(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.LessEqual:
-                    return AIValue.LessEqual(firstValue, secondPopValue);
+                    return AIValue.LessEqual(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.GreaterEqual:
-                    return AIValue.GreaterEqual(firstValue, secondPopValue);
+                    return AIValue.GreaterEqual(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Equal:
-                    return AIValue.Equal(firstValue, secondPopValue);
+                    return AIValue.Equal(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.NotEqual:
-                    return AIValue.NotEqual(firstValue, secondPopValue);
+                    return AIValue.NotEqual(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.And:
-                    return AIValue.And(firstValue, secondPopValue);
+                    return AIValue.And(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Xor:
-                    return AIValue.Xor(firstValue, secondPopValue);
+                    return AIValue.Xor(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Or:
-                    return AIValue.Or(firstValue, secondPopValue);
+                    return AIValue.Or(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.ConditionalAnd:
-                    return AIValue.ConditionalAnd(firstValue, secondPopValue);
+                    return AIValue.ConditionalAnd(firstValue, secondPopValue, asmLoad, asmAddress);
                 case OperationTypeEnum.ConditionalOr:
-                    return AIValue.ConditionalOr(firstValue, secondPopValue);
+                    return AIValue.ConditionalOr(firstValue, secondPopValue, asmLoad, asmAddress);
                 default:
                     throw new InvalidOperationException();
             }
@@ -1015,7 +1057,7 @@ namespace AILZ80ASM.AILight
         /// <param name="secondPopValue"></param>
         /// <param name="thirdPopValue"></param>
         /// <returns></returns>
-        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AIValue thirdPopValue)
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AIValue thirdPopValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
             if (operation.ValueType != ValueTypeEnum.Operation)
             {
@@ -1025,6 +1067,10 @@ namespace AILZ80ASM.AILight
             switch (operation.ValueOperation)
             {
                 case OperationTypeEnum.Ternary_Question:
+                    firstValue.SetValue(asmLoad, asmAddress);
+                    secondPopValue.SetValue(asmLoad, asmAddress);
+                    thirdPopValue.SetValue(asmLoad, asmAddress);
+                    
                     if (!firstValue.ValueType.HasFlag(ValueTypeEnum.Bool))
                     {
                         throw new InvalidAIValueException($"Bool型の指定が必要です。[{firstValue.Value}]");
@@ -1053,8 +1099,10 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue Negation(AIValue firstValue)
+        private static AIValue Negation(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
                 return new AIValue(~firstValue.ValueInt32);
@@ -1074,8 +1122,10 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue BitwiseComplement(AIValue firstValue)
+        private static AIValue BitwiseComplement(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
                 return new AIValue(~firstValue.ValueInt32);
@@ -1089,8 +1139,10 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue Low(AIValue firstValue)
+        private static AIValue Low(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
                 return new AIValue(firstValue.ValueInt32 & 0xFF);
@@ -1104,8 +1156,10 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue High(AIValue firstValue)
+        private static AIValue High(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
                 return new AIValue((firstValue.ValueInt32 & 0xFF00) / 256);
@@ -1115,13 +1169,33 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
+        /// exists:上位バイト
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Exists(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            if (firstValue.TrySetValue(asmLoad, asmAddress))
+            {
+                return new AIValue(true);
+            }
+            else
+            {
+                return new AIValue(false);
+            }
+        }
+
+        /// <summary>
         /// +:プラス
         /// </summary>
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Plus(AIValue firstValue, AIValue secondValue)
+        private static AIValue Plus(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.String) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.String))
             {
@@ -1142,8 +1216,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Minus(AIValue firstValue, AIValue secondValue)
+        private static AIValue Minus(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1159,8 +1236,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Multiplication(AIValue firstValue, AIValue secondValue)
+        private static AIValue Multiplication(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1176,8 +1256,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Division(AIValue firstValue, AIValue secondValue)
+        private static AIValue Division(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1193,8 +1276,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Remainder(AIValue firstValue, AIValue secondValue)
+        private static AIValue Remainder(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1211,8 +1297,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue LeftShift(AIValue firstValue, AIValue secondValue)
+        private static AIValue LeftShift(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1228,8 +1317,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue RightShift(AIValue firstValue, AIValue secondValue)
+        private static AIValue RightShift(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1245,8 +1337,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Less(AIValue firstValue, AIValue secondValue)
+        private static AIValue Less(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1262,8 +1357,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue Greater(AIValue firstValue, AIValue secondValue)
+        private static AIValue Greater(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1279,8 +1377,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue LessEqual(AIValue firstValue, AIValue secondValue)
+        private static AIValue LessEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1296,8 +1397,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue GreaterEqual(AIValue firstValue, AIValue secondValue)
+        private static AIValue GreaterEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1313,8 +1417,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Equal(AIValue firstValue, AIValue secondValue)
+        private static AIValue Equal(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.String) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.String))
             {
@@ -1340,8 +1447,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue NotEqual(AIValue firstValue, AIValue secondValue)
+        private static AIValue NotEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.String) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.String))
             {
@@ -1367,8 +1477,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue And(AIValue firstValue, AIValue secondValue)
+        private static AIValue And(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1384,8 +1497,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Xor(AIValue firstValue, AIValue secondValue)
+        private static AIValue Xor(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1401,8 +1517,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Or(AIValue firstValue, AIValue secondValue)
+        private static AIValue Or(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1418,8 +1537,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue ConditionalOr(AIValue firstValue, AIValue secondValue)
+        private static AIValue ConditionalOr(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bool) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))
             {
@@ -1435,8 +1557,11 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue ConditionalAnd(AIValue firstValue, AIValue secondValue)
+        private static AIValue ConditionalAnd(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            firstValue.SetValue(asmLoad, asmAddress);
+            secondValue.SetValue(asmLoad, asmAddress);
+
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bool) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))
             {

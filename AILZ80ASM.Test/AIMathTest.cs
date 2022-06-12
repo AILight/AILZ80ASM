@@ -181,6 +181,19 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Calc_12()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            asmLoad.AddLabel(new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad));
+            var label = new LabelAdr("LB01", "0xAA01", asmLoad);
+
+            asmLoad.AddLabel(label);
+
+            Assert.IsTrue(AIMath.Calculation("exists LB01", asmLoad).ConvertTo<bool>());
+            Assert.IsFalse(AIMath.Calculation("exists LB02", asmLoad).ConvertTo<bool>());
+        }
+
+        [TestMethod]
         public void Calc_UInt32()
         {
             Assert.AreEqual((UInt32)(1 + 2 * ((2 + 1)) + 6 / 2), AIMath.Calculation("1+2*((2+1))+6/2").ConvertTo<UInt32>());
