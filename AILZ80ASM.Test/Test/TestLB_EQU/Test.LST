@@ -100,4 +100,7 @@
        0004                     TEST.A          equ 00004H
        0005                     TEST.LD         equ 00005H
        0006                     LABELTEST:equ 0006H
+                                
+000055 8055 3E23             7          ld a, low  $0123
+000057 8057 3E01             7          ld a, high $0123
 [EOF:Test.Z80:UTF_8]

@@ -99,3 +99,6 @@ TEST.0			equ	00003H
 TEST.A			equ	00004H
 TEST.LD			equ	00005H
 LABELTEST:equ 0006H
+
+		ld a, low  $0123
+		ld a, high $0123

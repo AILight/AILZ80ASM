@@ -52,14 +52,11 @@ namespace AILZ80ASM.AILight
                     throw new InvalidAIMathException("式が空文字です");
                 }
 
-                var terms = CalculationParse(target);
-                //CalculationSetValue(terms, asmLoad, asmAddress);
-                var lbmcs = CalculationLabelMacro(terms);
-
-                var rvpns = CalculationMakeReversePolish(terms);
-                var value = CalculationByReversePolish(rvpns, asmLoad, asmAddress);
-                
-                value.SetValue(asmLoad, asmAddress); // 未確定の値を確定する
+                var terms = CalculationParse(target);            // 式の分解
+                var lbmcs = CalculationLabelMacro(terms);        // .@系命令を演算子に置き換える
+                var rvpns = CalculationMakeReversePolish(lbmcs); // 逆ポーランド
+                var value = CalculationByReversePolish(rvpns, asmLoad, asmAddress); // 演算
+                value.SetValue(asmLoad, asmAddress);            // 未確定の値になる場合に値を確定させる
 
                 return value;
             });
@@ -98,7 +95,10 @@ namespace AILZ80ASM.AILight
                         }
                         else
                         {
-                            throw new Exception("ここは処理を書く");
+                            // 該当外はローカルラベル
+                            result.Add(item);
+                            continue;
+
                         }
                         result.Add(new AIValue(item.OriginalValue.Substring(0, optionIndex)));
                         continue;

@@ -43,6 +43,7 @@ namespace AILZ80ASM.AILight
             Low,                // low
             High,               // high
             Exists,             // exists
+            Text,               // text
             Multiplication,     // *
             Division,           // /
             Remainder,          // %
@@ -80,6 +81,7 @@ namespace AILZ80ASM.AILight
             ["low"] =    OperationTypeEnum.Low,
             ["high"] =   OperationTypeEnum.High,
             ["exists"] = OperationTypeEnum.Exists,
+            ["text"] =   OperationTypeEnum.Text,
             ["*"] =      OperationTypeEnum.Multiplication,
             ["/"] =      OperationTypeEnum.Division,
             ["%"] =      OperationTypeEnum.Remainder,
@@ -105,32 +107,33 @@ namespace AILZ80ASM.AILight
         private static readonly Dictionary<OperationTypeEnum, int> FormulaPriority = new()
         {
             [OperationTypeEnum.RightParenthesis] = 1,   // )
-            [OperationTypeEnum.Negation] = 2,           // !
-            [OperationTypeEnum.BitwiseComplement] = 2,  // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
+            [OperationTypeEnum.Negation] = 3,           // !
+            [OperationTypeEnum.BitwiseComplement] = 3,  // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
             [OperationTypeEnum.Low] = 2,                // low
             [OperationTypeEnum.High] = 2,               // high
             [OperationTypeEnum.Exists] = 2,             // exists
-            [OperationTypeEnum.Multiplication] = 3,     // *
-            [OperationTypeEnum.Division] = 3,           // /
-            [OperationTypeEnum.Remainder] = 3,          // %
-            [OperationTypeEnum.Plus] = 4,               // +
-            [OperationTypeEnum.Minus] = 4,              // -
-            [OperationTypeEnum.LeftShift] = 5,          // <<
-            [OperationTypeEnum.RightShift] = 5,         // >>
-            [OperationTypeEnum.Less] = 6,               // <
-            [OperationTypeEnum.Greater] = 6,            // >
-            [OperationTypeEnum.LessEqual] = 6,          // <=
-            [OperationTypeEnum.GreaterEqual] = 6,       // >=
-            [OperationTypeEnum.Equal] = 7,              // ==
-            [OperationTypeEnum.NotEqual] = 7,           // !=
-            [OperationTypeEnum.And] = 8,                // &
-            [OperationTypeEnum.Xor] = 9,                // ^
-            [OperationTypeEnum.Or] = 10,                // |
-            [OperationTypeEnum.ConditionalAnd] = 11,    // &&
-            [OperationTypeEnum.ConditionalOr] = 12,     // ||
-            [OperationTypeEnum.Ternary_Question] = 14,  // ?
-            [OperationTypeEnum.Ternary_Colon] = 13,     // :
-            [OperationTypeEnum.LeftParenthesis] = 15,   // (
+            [OperationTypeEnum.Text] = 2,               // text
+            [OperationTypeEnum.Multiplication] = 4,     // *
+            [OperationTypeEnum.Division] = 4,           // /
+            [OperationTypeEnum.Remainder] = 4,          // %
+            [OperationTypeEnum.Plus] = 5,               // +
+            [OperationTypeEnum.Minus] = 5,              // -
+            [OperationTypeEnum.LeftShift] = 6,          // <<
+            [OperationTypeEnum.RightShift] = 6,         // >>
+            [OperationTypeEnum.Less] = 7,               // <
+            [OperationTypeEnum.Greater] = 7,            // >
+            [OperationTypeEnum.LessEqual] = 7,          // <=
+            [OperationTypeEnum.GreaterEqual] = 7,       // >=
+            [OperationTypeEnum.Equal] = 8,              // ==
+            [OperationTypeEnum.NotEqual] = 8,           // !=
+            [OperationTypeEnum.And] = 9,                // &
+            [OperationTypeEnum.Xor] = 10,                // ^
+            [OperationTypeEnum.Or] = 11,                // |
+            [OperationTypeEnum.ConditionalAnd] = 12,    // &&
+            [OperationTypeEnum.ConditionalOr] = 13,     // ||
+            [OperationTypeEnum.Ternary_Question] = 15,  // ?
+            [OperationTypeEnum.Ternary_Colon] = 14,     // :
+            [OperationTypeEnum.LeftParenthesis] = 16,   // (
         };
 
         private static readonly Dictionary<OperationTypeEnum, ArgumentTypeEnum> OperationArgumentType = new()
@@ -141,6 +144,7 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.Low] = ArgumentTypeEnum.SingleArgument,                  // low
             [OperationTypeEnum.High] = ArgumentTypeEnum.SingleArgument,                 // high
             [OperationTypeEnum.Exists] = ArgumentTypeEnum.SingleArgument,               // exists
+            [OperationTypeEnum.Text] = ArgumentTypeEnum.SingleArgument,                 // text
             [OperationTypeEnum.Multiplication] = ArgumentTypeEnum.DoubleArgument,       // *
             [OperationTypeEnum.Division] = ArgumentTypeEnum.DoubleArgument,             // /
             [OperationTypeEnum.Remainder] = ArgumentTypeEnum.DoubleArgument,            // %
@@ -827,36 +831,6 @@ namespace AILZ80ASM.AILight
                 // Label
                 var macroValue = MacroValueEnum.None;
                 var tmpLabel = Value;
-                var optionIndex = Value.IndexOf(".@");
-                if (optionIndex > 0)
-                {
-                    var option = Value.Substring(optionIndex);
-                    if (string.Compare(option, ".@H", true) == 0 ||
-                        string.Compare(option, ".@HIGH", true) == 0)
-                    {
-                        tmpLabel = Value.Substring(0, optionIndex);
-                        macroValue = MacroValueEnum.High;
-                    }
-                    else if (string.Compare(option, ".@L", true) == 0 ||
-                                string.Compare(option, ".@LOW", true) == 0)
-                    {
-                        tmpLabel = Value.Substring(0, optionIndex);
-                        macroValue = MacroValueEnum.Low;
-                    }
-                    else if (string.Compare(option, ".@T", true) == 0 ||
-                                string.Compare(option, ".@TEXT", true) == 0)
-                    {
-                        tmpLabel = Value.Substring(0, optionIndex);
-                        macroValue = MacroValueEnum.Text;
-                    }
-                    else if (string.Compare(option, ".@E", true) == 0 ||
-                                string.Compare(option, ".@EXISTS", true) == 0)
-                    {
-                        tmpLabel = Value.Substring(0, optionIndex);
-                        macroValue = MacroValueEnum.Exists;
-                    }
-                }
-
                 var label = asmLoad.FindLabel(tmpLabel);
 
                 if (macroValue == MacroValueEnum.Exists)
@@ -880,33 +854,21 @@ namespace AILZ80ASM.AILight
                     }
 
                     var value = label.Value;
-
-                    switch (macroValue)
-                    {
-                        case MacroValueEnum.High:
-                            ValueType = ValueTypeEnum.Int32;
-                            ValueInt32 = value.ValueInt32 / 256;
-                            break;
-                        case MacroValueEnum.Low:
-                            ValueType = ValueTypeEnum.Int32;
-                            ValueInt32 = value.ValueInt32 % 256;
-                            break;
-                        case MacroValueEnum.Text:
-                            ValueType = ValueTypeEnum.String;
-                            ValueString = label.ValueString;
-                            break;
-                        default:
-                            ValueType = value.ValueType;
-                            ValueInt32 = value.ValueInt32;
-                            ValueBool = value.ValueBool;
-                            ValueString = value.ValueString;
-                            ValueOperation = value.ValueOperation;
-                            break;
-                    }
+                    ValueType = value.ValueType;
+                    ValueInt32 = value.ValueInt32;
+                    ValueBool = value.ValueBool;
+                    ValueString = value.ValueString;
+                    ValueOperation = value.ValueOperation;
                 }
             }
         }
 
+        /// <summary>
+        /// ファンクションの値を求める
+        /// </summary>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <exception cref="InvalidAIValueException"></exception>
         private void SetValueForFunction(AsmLoad asmLoad, AsmAddress? asmAddress)
         {
             var startIndex = Value.IndexOf('(');
@@ -986,6 +948,8 @@ namespace AILZ80ASM.AILight
                     return AIValue.High(firstValue, asmLoad, asmAddress);
                 case OperationTypeEnum.Exists:
                     return AIValue.Exists(firstValue, asmLoad, asmAddress);
+                case OperationTypeEnum.Text:
+                    return AIValue.Text(firstValue, asmLoad, asmAddress);
                 default:
                     throw new InvalidOperationException();
             }
@@ -1169,7 +1133,7 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
-        /// exists:上位バイト
+        /// exists:ラベルの存在チェック
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
@@ -1183,6 +1147,22 @@ namespace AILZ80ASM.AILight
             {
                 return new AIValue(false);
             }
+        }
+
+        /// <summary>
+        /// text:ラベルの設定値を取得
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Text(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            var label = asmLoad.FindLabel(firstValue.OriginalValue);
+            if (label == default)
+            {
+                throw new InvalidAIValueException($"未定義:{firstValue.OriginalValue}");
+            }
+            return new AIValue(label.ValueString, ValueTypeEnum.String);
+
         }
 
         /// <summary>
