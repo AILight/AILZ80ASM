@@ -172,6 +172,28 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Calc_11()
+        {
+            Assert.AreEqual(0xEE, AIMath.Calculation("low $FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0xFF, AIMath.Calculation("high $FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0xEF, AIMath.Calculation("low $FFEE + 1").ConvertTo<byte>());
+            Assert.AreEqual(0xFE, AIMath.Calculation("high $FFEE - 1").ConvertTo<byte>());
+        }
+
+        [TestMethod]
+        public void Calc_12()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            asmLoad.AddLabel(new LabelAdr("[NAME_SPACE_DEFAULT]", asmLoad));
+            var label = new LabelAdr("LB01", "0xAA01", asmLoad);
+
+            asmLoad.AddLabel(label);
+
+            Assert.IsTrue(AIMath.Calculation("exists LB01", asmLoad).ConvertTo<bool>());
+            Assert.IsFalse(AIMath.Calculation("exists LB02", asmLoad).ConvertTo<bool>());
+        }
+
+        [TestMethod]
         public void Calc_UInt32()
         {
             Assert.AreEqual((UInt32)(1 + 2 * ((2 + 1)) + 6 / 2), AIMath.Calculation("1+2*((2+1))+6/2").ConvertTo<UInt32>());
@@ -213,8 +235,12 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@HIGH", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@L", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@LOW", asmLoad).ConvertTo<byte>());
+            Assert.IsTrue(AIMath.Calculation("LB.@T == \"0xAA02\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("LB.@TEXT == \"0xAA02\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("text LB == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB2.@T == \"LABEL\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB2.@TEXT == \"LABEL\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("text LB2 == \"LABEL\"", asmLoad).ConvertTo<bool>());
             Assert.IsFalse(AIMath.Calculation("LB2.@T == \"LABEL1\"", asmLoad).ConvertTo<bool>());
             Assert.AreEqual(0x8000, AIMath.Calculation("$", asmLoad, asmAddress).ConvertTo<UInt16>());
             Assert.AreEqual(0x8100, AIMath.Calculation("$$", asmLoad, asmAddress).ConvertTo<UInt16>());

@@ -194,6 +194,18 @@ namespace AILZ80ASM.AILight
         /// 文字列をスキップしてその中でvalueの文字位置を調べる
         /// </summary>
         /// <param name="target"></param>
+        /// <param name="value"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static int IndexOfAnySkipString(string target, char value, int index)
+        {
+            return IndexOfAnySkipString(target, new[] { value }, index, out var _);
+        }
+
+        /// <summary>
+        /// 文字列をスキップしてその中でvalueの文字位置を調べる
+        /// </summary>
+        /// <param name="target"></param>
         /// <param name="anyOf"></param>
         /// <param name="startIndex"></param>
         /// <param name="IsAllAsciiChars">全ての文字がASCII文字か？</param>
