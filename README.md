@@ -295,9 +295,7 @@ LDEX MACRO arg1, arg2
 	#ENDIF
 
 	ENDM
-
-``
-
+```
 
 ## アドレス指定について
 式に()を利用することが出来ますが、命令には()が含まれるものがあります。式の全体を()で囲むとアドレス指定をなります。
@@ -436,6 +434,7 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - 引数に付けた名前がマクロ内で利用できます
 - マクロ名に()を含める事が出来ます。ただし先頭に付ける事は出来ません
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroCompatible/Test.Z80)
+
 ```
 ARG1	equ 2
 .Three  equ 3
@@ -548,7 +547,7 @@ LABEL	equ 00FFH
 #if exists LABEL
 LABEL	equ 00FFH
 #endif
-
+```
 
 ## 表記の揺れ対応
 - (IX) → (IX+0)
