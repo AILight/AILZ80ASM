@@ -57,7 +57,7 @@ namespace AILZ80ASM
 
             Trace.Write($"{outputFile.Value.Name}: ");
 
-            if (outputFile.Key == AsmEnum.FileTypeEnum.LST)
+            if (AsmLoad.GetFileType(outputFile.Key) == AsmEnum.FileDataTypeEnum.Text)
             {
                 // テキスト比較
                 var originals = AILight.AIEncode.GetString(original).Replace("\r", "").Split('\n');
