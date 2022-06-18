@@ -29,6 +29,8 @@ namespace AILZ80ASM.Assembler
             Formula = formula;
         }
 
+        /*
+        // 使われていないので将来消す
         public static (Function function, string[] Arguments) Find(string operation, AsmLoad asmLoad)
         {
             var operationMatched = Regex.Match(operation, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -48,6 +50,7 @@ namespace AILZ80ASM.Assembler
             }
             return default;
         }
+        */
 
         /// <summary>
         /// Functionを計算する

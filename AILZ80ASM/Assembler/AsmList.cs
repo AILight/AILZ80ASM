@@ -36,11 +36,13 @@ namespace AILZ80ASM.Assembler
         {
         }
 
+        /*
+        // 必要になったら有効にする
         public static AsmList CreateFileInfoBOF(FileInfo fileInfo, AsmEnum.EncodeModeEnum encodeMode)
         {
             return CreateSourceOnly($"[BOF:{fileInfo.Name}:{encodeMode}]");
         }
-
+        */
         public static AsmList CreateFileInfoEOF(FileInfo fileInfo, int length)
         {
             return CreateSourceOnly($"[EOF:{fileInfo.Name}:{length}]");
@@ -82,6 +84,7 @@ namespace AILZ80ASM.Assembler
             
             return CreateLineItem(default(UInt32?), programAddress, default(byte[]), "", lineItem);
         }
+
         public static AsmList CreateLineItemEnd(UInt16? entryPoint, LineItem lineItem)
         {
             return CreateLineItem(default(UInt32?), entryPoint, default(byte[]), "", lineItem);

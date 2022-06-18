@@ -20,6 +20,7 @@ namespace AILZ80ASM
                 if (!item.Value.Exists)
                 {
                     Trace.WriteLine($"{item.Value.Name}: 不一致 ファイルが見つかりません。");
+                    result = false;
                     continue;
                 }
 

@@ -244,7 +244,7 @@ namespace AILZ80ASM.Assembler
         /// </summary>
         public void BuildLabel()
         {
-            foreach (var item in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.None))
+            foreach (var item in this.Scope.Labels.Where(m => m.LabelLevel != Label.LabelLevelEnum.GlobalLabel && m.DataType == Label.DataTypeEnum.None))
             {
                 item.BuildLabel();
             }
