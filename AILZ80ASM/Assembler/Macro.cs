@@ -75,7 +75,7 @@ namespace AILZ80ASM.Assembler
                     foreach (var index in Enumerable.Range(0, arguments.Length))
                     {
                         var argumentLabel = new LabelMacroArg(arguments[index], asmLoad, lineItem, asmLoad, localAsmAddress);
-                        var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.invalid ?
+                        var argumentValue = argumentLabel.DataType != Label.DataTypeEnum.Invalid ?
                                             argumentLabel.LabelFullName : arguments[index];
 
                         var label = new LabelMacroArg(this.Args[index], argumentValue, localAsmLoad, lineItem, asmLoad, localAsmAddress);

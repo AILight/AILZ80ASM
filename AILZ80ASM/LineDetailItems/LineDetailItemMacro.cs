@@ -21,7 +21,7 @@ namespace AILZ80ASM.LineDetailItems
                 // 引数
                 foreach (var label in MacroResult.ArgumetLabels)
                 {
-                    var value = label.DataType == Label.DataTypeEnum.invalid ? "Invalid" : label.Value.ConvertTo<object>().ToString();
+                    var value = label.DataType == Label.DataTypeEnum.Invalid ? "Invalid" : label.Value.ConvertTo<object>().ToString();
                     lists.Add(AsmList.CreateSource($"; {label.LabelShortName} = {value}"));
                 } 
 

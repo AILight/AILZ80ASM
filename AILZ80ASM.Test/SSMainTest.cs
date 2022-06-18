@@ -133,16 +133,56 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestArgumentValidate()
+        {
+            {
+                var result = Program.Main("TestArgumentValidate.z80", "-bin", "TestArgumentValidate.bin");
+                Assert.AreEqual(3, result);
+            }
+
+            {
+                var result = Program.Main("-bin", "TestArgumentValidate.bin");
+                Assert.AreEqual(2, result);
+            }
+
+            {
+                var result = Program.Main("Success.Z80", "-bin", "Success.Z80");
+                Assert.AreEqual(3, result);
+            }
+
+            {
+                var result = Program.Main("Success.Z80", "-bin", "Success.Z80", "-dw", "E0001");
+                Assert.AreEqual(2, result);
+            }
+        }
+
+        [TestMethod]
         public void TestDiffFile()
         {
-            var result_A = Program.Main(@"./Test/TestSS_Main/Success_df1.Z80", "-bin", "TestDiffFile.bin", "-lst", "TestDiffFile.lst");
-            Assert.AreEqual(0, result_A);
-            
-            var result_B = Program.Main(@"./Test/TestSS_Main/Success_df1.Z80", "-bin", "TestDiffFile.bin", "-lst", "TestDiffFile.lst", "-df");
-            Assert.AreEqual(0, result_B);
-            
-            var result_C = Program.Main(@"./Test/TestSS_Main/Success_df2.Z80", "-bin", "TestDiffFile.bin", "-lst", "TestDiffFile.lst", "-df");
-            Assert.AreEqual(1, result_C);
+            {
+                var result = Program.Main(@"./Test/TestSS_Main/Success_df1.Z80", "-bin", "TestDiffFile.bin", "-lst", "TestDiffFile.lst");
+                Assert.AreEqual(0, result);
+            }
+
+            {
+                var result = Program.Main(@"./Test/TestSS_Main/Success_df1.Z80", "-bin", "TestDiffFile.bin", "-lst", "TestDiffFile.lst", "-df");
+                Assert.AreEqual(0, result);
+            }
+
+            {
+                var result = Program.Main(@"./Test/TestSS_Main/Success_df2.Z80", "-bin", "TestDiffFile.bin", "-lst", "TestDiffFile.lst", "-df");
+                Assert.AreEqual(1, result);
+            }
+
+            {
+                var result = Program.Main(@"./Test/TestSS_Main/Success_df3.Z80", "-bin", "TestDiffFile.bin", "-lst", "TestDiffFile.lst", "-df");
+                Assert.AreEqual(1, result);
+            }
+
+            {
+                var result = Program.Main(@"./Test/TestSS_Main/Success_df1.Z80", "-bin", "TestDiffFile_NotFound.bin", "-lst", "TestDiffFile_NotFound.lst", "-df");
+                Assert.AreEqual(1, result);
+            }
         }
 
         [TestMethod]

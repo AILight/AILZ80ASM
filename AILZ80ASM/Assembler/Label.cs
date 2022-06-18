@@ -13,8 +13,7 @@ namespace AILZ80ASM.Assembler
         public enum DataTypeEnum
         {
             None,
-            Marker,
-            invalid,
+            Invalid,
             Value,
         }
 
@@ -30,7 +29,6 @@ namespace AILZ80ASM.Assembler
         {
             Equ,
             Adr,
-            //Arg,
             MacroArg,
             FunctionArg,
         }
@@ -46,7 +44,6 @@ namespace AILZ80ASM.Assembler
         private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!-/;-@\[-~]+:*))(\s+|$)";
         private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
         private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+\.[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
-        //private static readonly string RegexPatternArgumentLabel = @"(?<start>\s?)(?<value>([\w\.@]+))(?<end>\s?)";
 
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
@@ -60,7 +57,7 @@ namespace AILZ80ASM.Assembler
             _ => throw new NotSupportedException()
         };
 
-        public bool Invalidate => this.DataType == DataTypeEnum.invalid;
+        public bool Invalidate => this.DataType == DataTypeEnum.Invalid;
         public AIValue Value { get; private set; }
         public string ValueString { get; private set; }
         public LabelValueTypeEnum LabelValueType { get; private set; } = LabelValueTypeEnum.Normal;
@@ -95,7 +92,7 @@ namespace AILZ80ASM.Assembler
 
             if (string.IsNullOrEmpty(labelName))
             {
-                DataType = DataTypeEnum.Marker;
+                DataType = DataTypeEnum.Invalid;
                 return;
             }
 
@@ -115,19 +112,19 @@ namespace AILZ80ASM.Assembler
                 case LabelTypeEnum.Adr:
                     if (!AIName.DeclareLabelValidate(labelName, asmLoad))
                     {
-                        DataType = DataTypeEnum.invalid;
+                        DataType = DataTypeEnum.Invalid;
                     }
                     break;
                 case LabelTypeEnum.FunctionArg:
                     if (!AIName.ValidateFunctionArgument(labelName, asmLoad))
                     {
-                        DataType = DataTypeEnum.invalid;
+                        DataType = DataTypeEnum.Invalid;
                     }
                     break;
                 case LabelTypeEnum.MacroArg:
                     if (!AIName.ValidateMacroArgument(labelName, asmLoad))
                     {
-                        DataType = DataTypeEnum.invalid;
+                        DataType = DataTypeEnum.Invalid;
                     }
                     break;
                 default:
@@ -135,12 +132,13 @@ namespace AILZ80ASM.Assembler
             }
 
 
-            if (DataType != DataTypeEnum.invalid)
+            if (DataType != DataTypeEnum.Invalid)
             {
                 if (labelName.StartsWith('[') && labelName.EndsWith(']'))
                 {
                     // グローバルアドレス
                     GlobalLabelName = labelName.Substring(1, labelName.Length - 2);
+                    LabelName = "";
                     LabelLevel = LabelLevelEnum.GlobalLabel;
                 }
                 else
@@ -168,7 +166,7 @@ namespace AILZ80ASM.Assembler
                         case 3:
                             if (splits.Any(m => string.IsNullOrEmpty(m)))
                             {
-                                DataType = DataTypeEnum.invalid;
+                                DataType = DataTypeEnum.Invalid;
                             }
                             else
                             {
@@ -180,7 +178,7 @@ namespace AILZ80ASM.Assembler
                             break;
 
                         default:
-                            DataType = DataTypeEnum.invalid;
+                            DataType = DataTypeEnum.Invalid;
                             break;
                     }
                 }
