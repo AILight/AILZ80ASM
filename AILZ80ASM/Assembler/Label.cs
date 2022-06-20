@@ -256,7 +256,15 @@ namespace AILZ80ASM.Assembler
         /// <returns></returns>
         public static string GetLabelFullName(string labelName, AsmLoad asmLoad)
         {
+            //.@演算子を調整する
+            var atmarkIndex = labelName.IndexOf(".@");
+            if (atmarkIndex != -1 && atmarkIndex + 2 <= labelName.Length && "LHET".Any(m => string.Compare(labelName[atmarkIndex + 2].ToString(), m.ToString(), true) == 0))
+            {
+                labelName = labelName.Substring(0, atmarkIndex);
+            }
+
             var splits = labelName.Split('.');
+
             switch (splits.Length)
             {
                 case 1:
@@ -282,7 +290,7 @@ namespace AILZ80ASM.Assembler
                     {
                         throw new Exception($"ラベルの指定名が間違っています。{labelName}");
                     }
-                    return labelName;
+                    return $"{labelName}";
                 default:
                     throw new Exception($"ラベルの指定名が間違っています。{labelName}");
             }

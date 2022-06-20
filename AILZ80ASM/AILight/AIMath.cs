@@ -69,38 +69,55 @@ namespace AILZ80ASM.AILight
             {
                 if (item.ValueType == AIValue.ValueTypeEnum.None)
                 {
-                    var optionIndex = item.OriginalValue.IndexOf(".@");
-                    if (optionIndex > 0)
+                    var positionIndex = 0;
+                    var startPositionIndex = item.OriginalValue.IndexOf(".@", positionIndex);
+                    if (startPositionIndex > 0)
                     {
-                        var option = item.OriginalValue.Substring(optionIndex);
-                        if (string.Compare(option, ".@H", true) == 0 ||
-                            string.Compare(option, ".@HIGH", true) == 0)
+                        var localLabels = new List<AIValue>();
+                        var operations = new List<AIValue>();
+                        var optionIndex = startPositionIndex;
+                        while (optionIndex > 0)
                         {
-                            result.Add(new AIValue("high", AIValue.ValueTypeEnum.Operation));
+                            var nextPositionIndex = item.OriginalValue.IndexOf(".@", optionIndex + 1);
+                            var length = nextPositionIndex == -1 ? item.OriginalValue.Length - optionIndex : nextPositionIndex - optionIndex;
+                            var option = item.OriginalValue.Substring(optionIndex, length);
+                            if (string.Compare(option, ".@H", true) == 0 ||
+                                string.Compare(option, ".@HIGH", true) == 0)
+                            {
+                                operations.Add(new AIValue("high", AIValue.ValueTypeEnum.Operation));
+                            }
+                            else if (string.Compare(option, ".@L", true) == 0 ||
+                                        string.Compare(option, ".@LOW", true) == 0)
+                            {
+                                operations.Add(new AIValue("low", AIValue.ValueTypeEnum.Operation));
+                            }
+                            else if (string.Compare(option, ".@T", true) == 0 ||
+                                        string.Compare(option, ".@TEXT", true) == 0)
+                            {
+                                operations.Add(new AIValue("text", AIValue.ValueTypeEnum.Operation));
+                            }
+                            else if (string.Compare(option, ".@E", true) == 0 ||
+                                        string.Compare(option, ".@EXISTS", true) == 0)
+                            {
+                                operations.Add(new AIValue("exists", AIValue.ValueTypeEnum.Operation));
+                            }
+                            else
+                            {
+                                // 該当外はローカルラベル
+                                localLabels.Add(new AIValue(item.OriginalValue.Substring(0, optionIndex) + option));
+                            }
+                            optionIndex = nextPositionIndex;
                         }
-                        else if (string.Compare(option, ".@L", true) == 0 ||
-                                 string.Compare(option, ".@LOW", true) == 0)
+
+                        result.AddRange(operations.Reverse<AIValue>());
+                        if (localLabels.Count > 0)
                         {
-                            result.Add(new AIValue("low", AIValue.ValueTypeEnum.Operation));
-                        }
-                        else if (string.Compare(option, ".@T", true) == 0 ||
-                                 string.Compare(option, ".@TEXT", true) == 0)
-                        {
-                            result.Add(new AIValue("text", AIValue.ValueTypeEnum.Operation));
-                        }
-                        else if (string.Compare(option, ".@E", true) == 0 ||
-                                 string.Compare(option, ".@EXISTS", true) == 0)
-                        {
-                            result.Add(new AIValue("exists", AIValue.ValueTypeEnum.Operation));
+                            result.AddRange(localLabels);
                         }
                         else
                         {
-                            // 該当外はローカルラベル
-                            result.Add(item);
-                            continue;
-
+                            result.Add(new AIValue(item.OriginalValue.Substring(0, startPositionIndex)));
                         }
-                        result.Add(new AIValue(item.OriginalValue.Substring(0, optionIndex)));
                         continue;
                     }
                 }
@@ -296,7 +313,10 @@ namespace AILZ80ASM.AILight
                             formura.Pop();
                             break;
                         }
-                        else if (formura.Count == 0 || item.IsOperation(AIValue.OperationTypeEnum.LeftParenthesis) || formura.Peek().OperationPriority > item.OperationPriority)
+                        else if (formura.Count == 0 || 
+                                 item.IsOperation(AIValue.OperationTypeEnum.LeftParenthesis) ||
+                                 formura.Peek().OperationPriority > item.OperationPriority ||
+                                 (formura.Peek().ArgumentType == AIValue.ArgumentTypeEnum.SingleArgument && item.ArgumentType == AIValue.ArgumentTypeEnum.SingleArgument))
                         {
                             formura.Push(item);
                             break;

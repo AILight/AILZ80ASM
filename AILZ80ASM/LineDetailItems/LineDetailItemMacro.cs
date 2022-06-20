@@ -19,13 +19,13 @@ namespace AILZ80ASM.LineDetailItems
                 // 宣言行
                 lists.Add(AsmList.CreateLineItem(LineItem));
                 // 引数
-                foreach (var label in MacroResult.ArgumetLabels)
+                foreach (var label in MacroResult?.ArgumetLabels ?? Array.Empty<Label>())
                 {
                     var value = label.DataType == Label.DataTypeEnum.Invalid ? "Invalid" : label.Value.ConvertTo<object>().ToString();
                     lists.Add(AsmList.CreateSource($"; {label.LabelShortName} = {value}"));
                 } 
 
-                if (MacroResult.LineItems != default)
+                if (MacroResult?.LineItems != default)
                 {
                     foreach (var item in MacroResult.LineItems)
                     {

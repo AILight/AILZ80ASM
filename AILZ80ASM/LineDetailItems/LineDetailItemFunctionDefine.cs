@@ -56,11 +56,5 @@ namespace AILZ80ASM.LineDetailItems
 
             return default;
         }
-
-        public override void ExpansionItem()
-        {
-            LineDetailScopeItems = Array.Empty<LineDetailScopeItem>();
-        }
-
     }
 }

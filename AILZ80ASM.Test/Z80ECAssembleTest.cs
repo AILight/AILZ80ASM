@@ -87,7 +87,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("E0004.Z80");
 
-            Assert.AreEqual(27, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
+            Assert.AreEqual(42, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 3, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 5, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 7, "E0004.Z80", errors);
@@ -115,6 +115,22 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 49, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 50, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 59, "E0004.Z80", errors);
+            // 数値のバリデーションチェック
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 67, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 68, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 69, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 73, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 79, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 80, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 88, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 89, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 90, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 91, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 92, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 98, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 99, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 102, "E0004.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 103, "E0004.Z80", errors);
         }
 
         [TestMethod]
@@ -163,7 +179,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("E0013.Z80");
 
-            Assert.AreEqual(36, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
+            Assert.AreEqual(37, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "E0013.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 3, "E0013.Z80", errors);
@@ -201,6 +217,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 53, "E0013.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 57, "E0013.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 76, "E0013.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 90, "E0013.Z80", errors);
         }
 
         [TestMethod]
@@ -730,6 +747,16 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E4002, 4, "E4002.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestEC_E4003()
+        {
+            var errors = Assemble("E4003.Z80");
+
+            Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E4003, 2, "E4003.Z80", errors);
         }
 
         [TestMethod]

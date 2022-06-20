@@ -1,0 +1,27 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
+000000 9000                         ORG $9000
+       0001                     JJ  EQU 1
+       0002                     KK  EQU 2
+       0003                     LL  EQU 3
+       0004                     MM  EQU 4
+       0005                     NN  EQU 5
+       1234                     OO  EQU $1234
+                                
+000000 9000 DD7E69          19      LD A, (IX+FUNC(JJ+KK,FUNC(LL+MM,NN)))
+000003 9003 3E01             7      LD A, ABS(-1)
+000005 9005 0601             7      LD B, ABS(1)
+000007 9007 0E02             7      LD C, ABS(1) + ABS(-1)
+000009 9009 1600             7      LD D, H("(")
+00000B 900B 1E29             7      LD E, L(")")
+                                
+00000D 900D 0C22                    DB FUNC( 1, 2 ), FUNC(3, 4),
+00000F 900F 7800480D                DW FUNC(10, 20), FUNC(300, 400),
+000013 9013 06                      DB FUNC2(3)
+000014 9014 1234                    DB H(OO), L(OO)
+                                
+                                Function ABS(value) => value < 0 ? value * -1 : value
+                                Function FUNC(arg1, arg2) => arg1 * 10 + arg2
+                                Function FUNC2(H) => H + NAME_SPACE_DEFAULT.JJ + KK     ; レジスタ名の引数が使えるか
+                                Function H(v16) => v16 >> 8
+                                Function L(v16) => v16 & 0xFF
+[EOF:Test.Z80:UTF_8]

@@ -23,6 +23,9 @@ namespace AILZ80ASM.Test
         {
             Assert.AreEqual(1 + 2 * ((2 + 1)) + 6 / 2, AIMath.Calculation("1+2*((2+1))+6/2").ConvertTo<UInt16>());
             Assert.AreEqual((UInt16)((-2 + 1) & 0xFFFF), AIMath.Calculation("-2 + 1").ConvertTo<UInt16>());
+            Assert.AreEqual(1 + 2 - 3, AIMath.Calculation("1 + 2 - 3").ConvertTo<UInt16>());
+            Assert.AreEqual(1 + 2 * 3, AIMath.Calculation("1 + 2 * 3").ConvertTo<UInt16>());
+            Assert.AreEqual(1 * 2 + 3, AIMath.Calculation("1 * 2 + 3").ConvertTo<UInt16>());
             Assert.AreEqual(-1 + 1, AIMath.Calculation("-1 + 1").ConvertTo<UInt16>());
             Assert.AreEqual(+1 + 1, AIMath.Calculation("+1 + 1").ConvertTo<UInt16>());
             Assert.AreEqual(+1 + -1, AIMath.Calculation("+1 + -1").ConvertTo<UInt16>());
@@ -233,8 +236,10 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(0x55FE, AIMath.Calculation("-LB", asmLoad).ConvertTo<UInt16>());
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@H", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@HIGH", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("LB.@H.@H", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@L", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@LOW", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x02, AIMath.Calculation("LB.@L.@L", asmLoad).ConvertTo<byte>());
             Assert.IsTrue(AIMath.Calculation("LB.@T == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB.@TEXT == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("text LB == \"0xAA02\"", asmLoad).ConvertTo<bool>());

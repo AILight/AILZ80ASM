@@ -1,9 +1,15 @@
-*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.4, SYM
+;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, SYM
 [NS1]
 1234 LB
 
 [NS2]
 5678 LB
 
+[ABC]
+9000 EEE
+9000 EEE.FFF
+
 1234 NS1.LB
 5678 NS2.LB
+9000 ABC.EEE
+9000 ABC.EEE.FFF
