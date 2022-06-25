@@ -67,25 +67,20 @@ namespace AILZ80ASM.OperationItems
             ValueList.Clear();
             foreach (var item in ValueStrings.Select((value, index) => new { Value = value, Index = index }))
             {
-                //文字列の判断
-                if (AIString.IsChar(item.Value, AsmLoad) || AIString.IsString(item.Value, AsmLoad))
+                if (AIMath.TryParse(item.Value, AsmLoad, out var reaultValue) && reaultValue.ValueType.HasFlag(AIValue.ValueTypeEnum.Bytes))
                 {
-                    var aiValue = AsmException.TryCatch(Error.ErrorCodeEnum.E0022, item.Value, () =>
+                    switch (DataType)
                     {
-                        var aiValue = AIMath.Calculation(item.Value, AsmLoad, lineDetailExpansionItemOperation.Address);
-                        switch (DataType)
-                        {
-                            case DataTypeEnum.db:
-                                ValueList.AddRange(aiValue.ConvertTo<byte[]>().Select(m => m.ToString("0")));
-                                break;
-                            case DataTypeEnum.dw:
-                                ValueList.AddRange(aiValue.ConvertTo<UInt16[]>().Select(m => m.ToString("0")));
-                                break;
-                            default:
-                                throw new NotImplementedException();
-                        }
-                        return aiValue;
-                    });
+                        case DataTypeEnum.db:
+                            ValueList.AddRange(reaultValue.ConvertTo<byte[]>().Select(m => m.ToString("0")));
+                            break;
+                        case DataTypeEnum.dw:
+                            ValueList.AddRange(reaultValue.ConvertTo<UInt16[]>().Select(m => m.ToString("0")));
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+
                 }
                 else if (Regex.IsMatch(item.Value, RegexPatternDataFunction))
                 {
@@ -156,7 +151,7 @@ namespace AILZ80ASM.OperationItems
                 case DataTypeEnum.db:
                     foreach (var valueItem in ValueList.Select((Value, Index) => new { Value, Index }))
                     {
-                        byteList.AddRange(AsmException.TryCatch(Error.ErrorCodeEnum.E0021, valueItem.Value, () => 
+                        byteList.AddRange(AsmException.TryCatch(Error.ErrorCodeEnum.E0021, valueItem.Value, () =>
                         {
                             return AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<byte[]>();
                         }));

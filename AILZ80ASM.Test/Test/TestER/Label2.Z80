@@ -1,0 +1,20 @@
+﻿a b c:
+;a:
+;bc:
+;hl:
+;iy:
+;ix:
+lb:
+;lb:
+
+[NAME_SPACE_DEFAULT]
+;NAME_SPACE_DEFAULT:
+
+TEST:
+;[TEST]
+
+LABEL	EQU	"ABC"
+		LD	HL, LABEL
+
+TEST1	EQU 1
+TEST2	EQU 1/0

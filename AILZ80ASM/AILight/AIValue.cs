@@ -904,6 +904,7 @@ namespace AILZ80ASM.AILight
                     ValueInt32 = value.ValueInt32;
                     ValueBool = value.ValueBool;
                     ValueString = value.ValueString;
+                    ValueBytes = value.ValueBytes;
                     ValueOperation = value.ValueOperation;
                 }
             }
@@ -1462,6 +1463,11 @@ namespace AILZ80ASM.AILight
                      secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))
             {
                 return new AIValue(firstValue.ValueBool == secondValue.ValueBool);
+            }
+            if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bytes) &&
+                secondValue.ValueType.HasFlag(ValueTypeEnum.Bytes))
+            {
+                return new AIValue(firstValue.ValueBytes.SequenceEqual(secondValue.ValueBytes));
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型、Bool型もしくは文字列型です。{firstValue.Value},{secondValue.Value}");

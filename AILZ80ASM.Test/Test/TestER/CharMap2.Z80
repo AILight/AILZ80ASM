@@ -1,0 +1,21 @@
+﻿
+	;CHARMAP @TEST
+	
+	DB "ABC"
+
+	;CHARMAP @TEST, "test.json" 
+	;CHARMAP @TEST, "CharMap.error1.json"
+	;CHARMAP @TEST, "CharMap.error2.json"
+	;CHARMAP @TEST, "CharMap.error3.json"
+	;CHARMAP @TEST, "CharMap.error4.json"
+	;CHARMAP @TEST, "CharMap.error5.json"
+	;CHARMAP @TEST, "CharMap.error6.json"
+	;CHARMAP @TEST, "CharMap.error7.json"
+	CHARMAP @TEST, "CharMap.json"
+
+	DB @TEST:"国"
+	DB @TEST:"石"
+
+	DB @TES:"国"
+
+	DB @TEST:"両\q両"
