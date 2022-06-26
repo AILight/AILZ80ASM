@@ -884,7 +884,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_RepeatAlign\Test.LST">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_RepeatAlign\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

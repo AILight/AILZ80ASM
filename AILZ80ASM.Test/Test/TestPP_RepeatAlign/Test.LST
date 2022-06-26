@@ -1,0 +1,34 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
+                                INCLUDE "Test.INC"
+                                
+                                SCREEN:
+       0003                     .WIDTH      equ 3           ; 横のサイズ
+       0002                     .HEIGHT     equ 2           ; 縦のサイズ
+                                
+                                DATA:
+000000 0000 0001                .MY     db 0x00, 0x01
+[EOF:Test.INC:UTF_8]
+                                
+                                    ; 実行アドレスを整える
+                                ;   REPT    ($ + 15) / 16 * 16 - $
+                                ;   nop
+                                ;   ENDM
+000002 0002 00               4 +    nop
+000003 0003 00               4 +    nop
+000004 0004 00               4 +    nop
+000005 0005 00               4 +    nop
+000006 0006 00               4 +    nop
+000007 0007 00               4 +    nop
+000008 0008 00               4 +    nop
+000009 0009 00               4 +    nop
+00000A 000A 00               4 +    nop
+00000B 000B 00               4 +    nop
+00000C 000C 00               4 +    nop
+00000D 000D 00               4 +    nop
+00000E 000E 00               4 +    nop
+00000F 000F 00               4 +    nop
+                                
+000010 0010 3E03             7      LD A, SCREEN.WIDTH
+000012 0012 2600             7      LD H, DATA.MY + 0
+000014 0014 2E01             7      LD L, DATA.MY + 1
+[EOF:Test.Z80:UTF_8]
