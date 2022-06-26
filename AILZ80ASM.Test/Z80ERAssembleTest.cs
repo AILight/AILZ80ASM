@@ -118,12 +118,21 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_Error()
+        public void TestER_Error1()
         {
-            var errors = Assemble("Error.Z80");
+            var errors = Assemble("Error1.Z80");
 
             Assert.AreEqual(1, errors.Length);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1032, 3, "Error.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1032, 3, "Error1.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_Error2()
+        {
+            var errors = Assemble("Error2.Z80");
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1031, 2, "Error2.Z80", errors);
         }
 
         [TestMethod]
