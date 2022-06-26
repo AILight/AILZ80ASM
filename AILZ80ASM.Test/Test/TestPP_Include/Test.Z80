@@ -14,3 +14,6 @@ include ".\SubDir\Test3.bin", B, , LENGTH
 include ".\SubDir\SubSubDir\TestSub.z80"
 	LD HL, addr
 addr: include "Test5.inc"
+
+include ".\SubDir\Test3.bin", B, START, LENGTH
+include ".\SubDir\Test3.bin", B, START - 4, LENGTH
