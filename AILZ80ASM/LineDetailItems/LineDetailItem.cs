@@ -16,7 +16,7 @@ namespace AILZ80ASM.LineDetailItems
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         //public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
         public virtual AsmResult[] BinResults => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResults).ToArray();
-        public virtual AsmList[] Lists => LineDetailScopeItems == default ? Array.Empty<AsmList>() : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
+        public virtual AsmList[] Lists => LineDetailScopeItems == default ? new[] { AsmList.CreateLineItem(LineItem) } : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
 
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
@@ -62,6 +62,7 @@ namespace AILZ80ASM.LineDetailItems
             }
             else
             {
+                // ラベルの前処理を後処理を行うスコープ
                 asmLoad.ProcessLabel(() =>
                 {
                     lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);

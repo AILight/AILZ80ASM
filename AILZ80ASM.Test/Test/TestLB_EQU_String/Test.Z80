@@ -1,0 +1,52 @@
+﻿		org $8000
+
+MyName		equ "アセンブラ"
+YourName	equ "アセンブラ"
+Char		equ '山'
+TRUE		equ #TRUE
+FALSE		equ #FALSE
+
+			DB MyName, YourName
+			DB Char, Char
+
+#IF TRUE
+		LD A, 0
+#ELSE
+		LD A, 1
+#ENDIF
+
+#IF MyName == Char
+		LD A, 2
+#ELSE
+		LD A, 3
+#ENDIF
+
+#IF MyName == YourName
+		LD A, 4
+#ELSE
+		LD A, 5
+#ENDIF
+
+#IF TRUE == TRUE
+		LD A, 6
+#ELSE
+		LD A, 7
+#ENDIF
+
+#IF TRUE == FALSE
+		LD A, 8
+#ELSE
+		LD A, 9
+#ENDIF
+
+#IF TRUE == #TRUE
+		LD A, 10
+#ELSE
+		LD A, 11
+#ENDIF
+
+#IF FALSE == #FALSE
+		LD A, 12
+#ELSE
+		LD A, 13
+#ENDIF

@@ -1,0 +1,25 @@
+﻿	ld d,(bc)
+	ld (de),h
+	ld l,($0000)
+	ld sp,bc
+	ld hl,de
+	add a,(bc)
+	add a,(de)
+	jp (de)
+	jp (bc)
+
+	add hl,ix
+	add hl,iy
+	sbc hl,ix
+	sbc hl,iy
+	ld (hl),(ix+0)
+	ld (hl),(iy+0)
+
+	PUSH
+
+	;LD A,（$3000)	; 全角括弧
+	;LD A, ($3000）	; 全角括弧
+
+ABC					; コロン忘れ
+	LD A, ($3000)
+	;LD A,　($3000)	; 全角スペース

@@ -37,6 +37,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestLB_DS_FillByte()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestLB_DSDBSDWS()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
@@ -50,6 +56,12 @@ namespace AILZ80ASM.Test
 
         [TestMethod]
         public void TestLB_EQU()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestLB_EQU_String()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
@@ -80,6 +92,12 @@ namespace AILZ80ASM.Test
 
         [TestMethod]
         public void TestLB_LD_String()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestLB_LD_Value()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

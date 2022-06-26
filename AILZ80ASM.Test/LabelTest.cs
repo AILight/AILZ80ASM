@@ -38,6 +38,8 @@ namespace AILZ80ASM.Test
             Assert.AreEqual("NAME_SPACE_DEFAULT.ABC", Label.GetLabelFullName("ABC", asmLoad));
             Assert.AreEqual("NAME_SPACE_DEFAULT.ABC.DEF", Label.GetLabelFullName("ABC.DEF", asmLoad));
             Assert.AreEqual("ABC.DEF.GHI", Label.GetLabelFullName("ABC.DEF.GHI", asmLoad));
+            Assert.AreEqual("ABC.DEF.GHI", Label.GetLabelFullName("ABC.DEF.GHI.@H", asmLoad));
+            Assert.AreEqual("ABC.DEF.GHI", Label.GetLabelFullName("ABC.DEF.GHI.@H.@L", asmLoad));
 
             Assert.ThrowsException<Exception>(() =>
             {

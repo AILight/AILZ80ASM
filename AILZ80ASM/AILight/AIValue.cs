@@ -191,7 +191,7 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
         private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
-
+        private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
 
         private string Value { get; set; } = "";
         private int ValueInt32 { get; set; } = default(int);
@@ -325,6 +325,51 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIMathException"></exception>
         public static bool TryParseFunction(ref string target, out string resultFunction)
         {
+            resultFunction = "";
+
+            var matched = Regex.Match(target, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matched.Success)
+            {
+                var localTarget = target;
+
+                var function = matched.Groups["function"].Value;
+                var targetIndex = function.Length;
+                var startIndex = AIString.IndexOfAnySkipString(localTarget, '(', targetIndex);
+                var endIndex = AIString.IndexOfAnySkipString(localTarget, ')', targetIndex);
+                var counter = 1;
+                while (endIndex != -1)
+                {
+                    if (startIndex != -1 && startIndex < endIndex)
+                    {
+                        counter++;
+                        startIndex = AIString.IndexOfAnySkipString(localTarget, '(', startIndex + 1);
+                    }
+                    else
+                    {
+                        counter--;
+                        if (counter == 0)
+                        {
+                            break;
+                        }
+                        endIndex = AIString.IndexOfAnySkipString(localTarget, ')', endIndex + 1);
+                    }
+                }
+
+                if (endIndex == -1)
+                {
+                    throw new InvalidAIMathException("閉じ括弧が見つかりませんでした。");
+                }
+
+                if (counter != 0)
+                {
+                    throw new InvalidAIMathException("括弧の数が一致しませんでした。");
+                }
+
+                target = localTarget.Substring(endIndex + 1).TrimStart();
+                resultFunction = localTarget.Substring(0, endIndex + 1);
+                return true;
+            }
+            /*
             var localTarget = target;
             resultFunction = "";
             var matched = Regex.Match(target, $"(?<formula>({SymbolOperationKeysString}|\"|'))", RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -381,6 +426,7 @@ namespace AILZ80ASM.AILight
                     
                 }
             }
+            */
             return false;
         }
 
@@ -858,6 +904,7 @@ namespace AILZ80ASM.AILight
                     ValueInt32 = value.ValueInt32;
                     ValueBool = value.ValueBool;
                     ValueString = value.ValueString;
+                    ValueBytes = value.ValueBytes;
                     ValueOperation = value.ValueOperation;
                 }
             }
@@ -1416,6 +1463,11 @@ namespace AILZ80ASM.AILight
                      secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))
             {
                 return new AIValue(firstValue.ValueBool == secondValue.ValueBool);
+            }
+            if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bytes) &&
+                secondValue.ValueType.HasFlag(ValueTypeEnum.Bytes))
+            {
+                return new AIValue(firstValue.ValueBytes.SequenceEqual(secondValue.ValueBytes));
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型、Bool型もしくは文字列型です。{firstValue.Value},{secondValue.Value}");

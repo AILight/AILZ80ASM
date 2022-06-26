@@ -182,7 +182,7 @@ namespace AILZ80ASM.Assembler
                 // ラベルと同じ名前は付けられない
                 if (this.Scope.Labels.Any(m => string.Compare(m.LabelName, label.LabelFullName, true) == 0))
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017, label.LabelFullName);
                 }
 
                 if (!this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
@@ -198,7 +198,7 @@ namespace AILZ80ASM.Assembler
                 // ネームスペースとと同じ名前は付けられない
                 if (this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018, label.LabelName);
                 }
                 this.Scope.LabelName = label.LabelName;
             }
@@ -306,7 +306,7 @@ namespace AILZ80ASM.Assembler
                 // ラベルと同じ名前は付けられない
                 if (this.Scope.Labels.Any(m => string.Compare(m.LabelName, label.LabelFullName, true) == 0))
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017, label.LabelFullName);
                 }
 
                 if (!this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
@@ -322,7 +322,7 @@ namespace AILZ80ASM.Assembler
                 // ネームスペースとと同じ名前は付けられない
                 if (this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018, label.LabelName);
                 }
                 this.Scope.Labels.Add(label);
                 if (label.LabelType == Label.LabelTypeEnum.Equ || label.LabelType == Label.LabelTypeEnum.Adr)

@@ -17,7 +17,8 @@ namespace AILZ80ASM.Assembler
         public string[] Args { get; private set; }
         public string Formula { get; private set; }
 
-        private static readonly string RegexPatternFunction = @"^(?<function>[a-zA-Z0-9_\.]+)\s*(?<args>.*)$";
+        private int CallCounter { get; set; }
+        private const int LIMIT_MAX_RECURSIVE_CALL = 50;
 
         public Function(string functionName, string[] args, string formula, AsmLoad asmLoad)
         {
@@ -27,6 +28,7 @@ namespace AILZ80ASM.Assembler
             Args = args;
 
             Formula = formula;
+            CallCounter = 0;
         }
 
         /*
@@ -66,23 +68,39 @@ namespace AILZ80ASM.Assembler
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E4004);
             }
 
-            var guid = $"{Guid.NewGuid():N}";
-            return asmLoad.CreateLocalScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
+            try
             {
-                foreach (var index in Enumerable.Range(0, arguments.Length))
+                CallCounter++;
+                if (CallCounter > LIMIT_MAX_RECURSIVE_CALL)
                 {
-                    var label = new LabelFunctionArg(Args[index], arguments[index], localAsmLoad, asmLoad);
-                    if (label.Invalidate)
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E4005);
-                    }
-                    localAsmLoad.AddLabel(label);
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E4003);
                 }
 
+                var guid = $"{Guid.NewGuid():N}";
+                return asmLoad.CreateLocalScope($"function_{guid}", $"label_{guid}", localAsmLoad =>
+                {
+                    foreach (var index in Enumerable.Range(0, arguments.Length))
+                    {
+                        var label = new LabelFunctionArg(Args[index], arguments[index], localAsmLoad, asmLoad);
+                        if (label.Invalidate)
+                        {
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E4005);
+                        }
+                        localAsmLoad.AddLabel(label);
+                    }
 
-                return AIMath.Calculation(Formula, localAsmLoad);
+                    return AIMath.Calculation(Formula, localAsmLoad);
 
-            });
+                });
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                CallCounter--;
+            }
         }
 
         /// <summary>

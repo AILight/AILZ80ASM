@@ -1,0 +1,31 @@
+﻿		org $8000
+
+#IF #TRUE
+		LD A, 0
+LB_A:
+		LD A, 0
+#ELSE
+LB_A:
+		LD A, 1
+#ENDIF
+
+#IF #TRUE
+		LD A, low LB_A
+#ELSE
+		LD A, low LB_A
+#ENDIF
+
+#IF #FALSE
+		LD A, 0
+LB_B:
+		LD A, 0
+#ELSE
+LB_B:
+		LD A, 1
+#ENDIF
+
+#IF #FALSE
+		LD A, low LB_B
+#ELSE
+		LD A, low LB_B
+#ENDIF

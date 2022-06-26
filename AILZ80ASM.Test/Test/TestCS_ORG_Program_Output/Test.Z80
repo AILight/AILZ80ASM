@@ -1,0 +1,11 @@
+﻿
+	ORG $9000
+
+	LD HL, $
+	LD DE, $$
+	
+	ORG $8000
+
+	LD HL, $
+	LD DE, $$
+

@@ -1,0 +1,78 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
+                                include "Test.inc"
+                                #if !FALSE.@EXISTS
+                                
+       0000                         FALSE   equ 0       ; FALSE
+       FFFF                         TRUE    equ !FALSE  ; TRUE
+       0000                         NULL    equ 0       ; NULL
+       0008                         START   equ $0008
+       0008                         LENGTH  equ $0008
+                                
+                                #endif  
+[EOF:Test.inc:UTF_8]
+000000 8000                         ORG $8000
+000000 8000 3EFF             7      ld a, TRUE
+                                    ;ld b, 0
+000002 8002 0E00             7      ld c, FALSE
+                                include "Test1.inc"
+000004 8004 3EFF             7      ld a, TRUE
+                                include ".\SubDir\Test2.inc"
+                                LABEL:
+000006 8006 0E00             7      ld c, FALSE
+[EOF:Test2.inc:UTF_8]
+[EOF:Test1.inc:UTF_8]
+000008 8008 C30680          10      jp  LABEL
+00000B 800B                         DS  5
+                                
+                                include ".\SubDir\Test3.bin", B
+000010 8010 0001020304050607    
+            08090A0B0C0D0E0F    
+[EOF:Test3.bin:16]
+                                include ".\SubDir\Test3.bin", B, START
+000020 8020 08090A0B0C0D0E0F    
+[EOF:Test3.bin:8]
+                                include ".\SubDir\Test3.bin", B, , LENGTH
+000028 8028 0001020304050607    
+[EOF:Test3.bin:8]
+                                
+                                include ".\SubDir\SubSubDir\TestSub.z80"
+                                include "..\..\Test.inc"
+                                
+000030 8030 3EFF             7      ld a, TRUE
+                                    ;ld b, 0
+000032 8032 0E00             7      ld c, FALSE
+                                include "..\..\Test3.inc"
+000034 8034 3EFF             7      ld a, TRUE
+                                include "Test4.inc"
+                                LABEL1:
+000036 8036 0E00             7      ld c, FALSE
+[EOF:Test4.inc:UTF_8]
+[EOF:Test3.inc:UTF_8]
+000038 8038 C33680          10      jp  LABEL1
+00003B 803B                         DS  5
+                                
+                                include "..\Test3.bin", B
+000040 8040 0001020304050607    
+            08090A0B0C0D0E0F    
+[EOF:Test3.bin:16]
+                                include "..\Test3.bin", B, START
+000050 8050 08090A0B0C0D0E0F    
+[EOF:Test3.bin:8]
+                                include "..\Test3.bin", B, , LENGTH
+000058 8058 0001020304050607    
+[EOF:Test3.bin:8]
+[EOF:TestSub.z80:UTF_8]
+000060 8060 216380          10      LD HL, addr
+                                addr: include "Test5.inc"
+                                
+000063 8063 0001020304050607        db 0,1,2,3,4,5,6,7,8,9,10,11,12
+            08090A0B0C          
+[EOF:Test5.inc:UTF_8]
+                                
+                                include ".\SubDir\Test3.bin", B, START, LENGTH
+000070 8070 08090A0B0C0D0E0F    
+[EOF:Test3.bin:8]
+                                include ".\SubDir\Test3.bin", B, START - 4, LENGTH
+000078 8078 0405060708090A0B    
+[EOF:Test3.bin:8]
+[EOF:Test.Z80:UTF_8]
