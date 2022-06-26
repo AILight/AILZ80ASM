@@ -36,11 +36,13 @@ namespace AILZ80ASM.Assembler
         {
         }
 
+        /*
+        // 必要になったら有効にする
         public static AsmList CreateFileInfoBOF(FileInfo fileInfo, AsmEnum.EncodeModeEnum encodeMode)
         {
             return CreateSourceOnly($"[BOF:{fileInfo.Name}:{encodeMode}]");
         }
-
+        */
         public static AsmList CreateFileInfoEOF(FileInfo fileInfo, int length)
         {
             return CreateSourceOnly($"[EOF:{fileInfo.Name}:{length}]");
@@ -71,6 +73,11 @@ namespace AILZ80ASM.Assembler
             return CreateSource(lineItem.LineString, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
         }
 
+        public static AsmList CreateLineItemCommentOut(LineItem lineItem)
+        {
+            return CreateSource($";{lineItem.LineString}", lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
+        }
+
         public static AsmList CreateLineItemEqual(Label equLabel, LineItem lineItem)
         {
             var programAddress = default(UInt32?);
@@ -82,6 +89,7 @@ namespace AILZ80ASM.Assembler
             
             return CreateLineItem(default(UInt32?), programAddress, default(byte[]), "", lineItem);
         }
+
         public static AsmList CreateLineItemEnd(UInt16? entryPoint, LineItem lineItem)
         {
             return CreateLineItem(default(UInt32?), entryPoint, default(byte[]), "", lineItem);
@@ -132,7 +140,9 @@ namespace AILZ80ASM.Assembler
         {
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
             var address2 = "";
-            if (ProgramAddress.HasValue && ProgramAddress.Value > UInt16.MaxValue)
+            if (ProgramAddress.HasValue && 
+                ProgramAddress.Value > UInt16.MaxValue &&
+               (ProgramAddress.Value & 0xFFFF8000) != 0xFFFF8000)
             {
                 if (string.IsNullOrEmpty(address1) && ProgramAddress <= 0xFFFFFF)
                 {
@@ -145,7 +155,7 @@ namespace AILZ80ASM.Assembler
             }
             else
             {
-                address2 = ProgramAddress.HasValue ? $"{ProgramAddress:X4}" : "";
+                address2 = ProgramAddress.HasValue ? $"{(ProgramAddress & 0xFFFF):X4}" : "";
             }
             var binary = Bin != default ? string.Concat(Bin.Select(m => $"{m:X2}")) : "";
             var codeType = "";

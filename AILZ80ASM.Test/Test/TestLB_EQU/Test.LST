@@ -1,4 +1,4 @@
-                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.14, LST:Full:4
+                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
 000000 8000                         org $8000
 000000 8000 3E00             7      ld a, 0
        C000                         GREEN_ADDR equ $C000
@@ -103,4 +103,8 @@
                                 
 000055 8055 3E23             7          ld a, low  $0123
 000057 8057 3E01             7          ld a, high $0123
+                                
+FF1234                          LB      EQU 0xFF1234
+                                
+000059 8059 213412          10          LD HL, LB
 [EOF:Test.Z80:UTF_8]

@@ -102,10 +102,10 @@ namespace AILZ80ASM.Test
             asmOption.ListMode = AsmEnum.ListFormatEnum.Full;
 
             var package = new Package(asmOption, AsmISA.Z80);
-            package.Assemble();
-
             if (package.Errors.Length == 0)
             {
+                package.Assemble();
+
                 foreach (var item in outputFiles)
                 {
                     package.SaveOutput(item.Key, item.Value);

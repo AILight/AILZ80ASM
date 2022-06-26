@@ -1,0 +1,56 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
+000000 8000                             org $8000
+                                
+                                MyName      equ "アセンブラ"
+                                YourName    equ "アセンブラ"
+       8E52                     Char        equ '山'
+                                TRUE        equ #TRUE
+                                FALSE       equ #FALSE
+                                
+000000 8000 8341835A83938375                DB MyName, YourName
+            83898341835A8393    
+            83758389            
+000014 8014 8E528E52                        DB Char, Char
+                                
+                                #IF TRUE
+000018 8018 3E00             7          LD A, 0
+                                #ELSE
+                                        LD A, 1
+                                #ENDIF
+                                
+                                #IF MyName == Char
+                                        LD A, 2
+                                #ELSE
+00001A 801A 3E03             7          LD A, 3
+                                #ENDIF
+                                
+                                #IF MyName == YourName
+00001C 801C 3E04             7          LD A, 4
+                                #ELSE
+                                        LD A, 5
+                                #ENDIF
+                                
+                                #IF TRUE == TRUE
+00001E 801E 3E06             7          LD A, 6
+                                #ELSE
+                                        LD A, 7
+                                #ENDIF
+                                
+                                #IF TRUE == FALSE
+                                        LD A, 8
+                                #ELSE
+000020 8020 3E09             7          LD A, 9
+                                #ENDIF
+                                
+                                #IF TRUE == #TRUE
+000022 8022 3E0A             7          LD A, 10
+                                #ELSE
+                                        LD A, 11
+                                #ENDIF
+                                
+                                #IF FALSE == #FALSE
+000024 8024 3E0C             7          LD A, 12
+                                #ELSE
+                                        LD A, 13
+                                #ENDIF
+[EOF:Test.Z80:UTF_8]

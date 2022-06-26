@@ -4,3 +4,12 @@
 	LD	A, 1
 	ALIGN 256, $AA
 	LD	A, 2
+	ALIGN 16, 0
+
+	LD A, 1
+	ALIGN 16
+	LD B, 2
+	ALIGN 8
+	LD C, 3
+	ALIGN 256
+	LD D, 4

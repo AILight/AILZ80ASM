@@ -17,6 +17,8 @@ namespace AILZ80ASM.AILight
 
         public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
         {
+            var isGlobalLabel = false;
+
             if (target.StartsWith(".") && target.EndsWith(":"))
             {
                 target = target.Substring(1, target.Length - 2);
@@ -32,6 +34,7 @@ namespace AILZ80ASM.AILight
             if (target.StartsWith("[") && target.EndsWith("]"))
             {
                 target = target.Substring(1, target.Length - 2);
+                isGlobalLabel = true;
             }
 
             if (target.EndsWith(":"))
@@ -51,6 +54,12 @@ namespace AILZ80ASM.AILight
             else
             {
                 var splits = target.Split('.');
+                if (isGlobalLabel && splits.Length != 1)
+                {
+                    // GlobalLabelは、.は含める事が出来ない。
+                    return false;
+                }
+
                 switch (splits.Length)
                 {
                     case 1:

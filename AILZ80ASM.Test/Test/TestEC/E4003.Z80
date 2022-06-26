@@ -1,0 +1,4 @@
+﻿
+		LD A, Test(-1)
+
+Function Test(value) => value < 0 ? value * -1 + Test(value) : value

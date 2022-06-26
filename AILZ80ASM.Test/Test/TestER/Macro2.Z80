@@ -1,0 +1,65 @@
+﻿
+		ALLLD
+		TestArg1 1			; 引数不一致
+		TESTARG1 1, 2
+		TestArg1 1, 2, 3	; 引数不一致
+		ABC
+
+MACRO ABC
+		ld a,1
+END MACRO
+
+;MACRO ABC
+;		ld b,1
+;END MACRO
+
+MACRO ALLLD
+;[DEF]						; ローカルラベル以外不許可
+		ld a,1
+		ld b,2
+;ABC:	ld c,3				; ローカルラベル以外不許可
+		ld d,4
+		ld e,5
+.LP		ld h,6
+		ld l,7
+END MACRO
+
+macro TestArg1 a1, a2
+	ld a, a1
+	ld b, a2
+end macro
+
+
+;macro TestArg a1,			; 引数が不完全
+;	ld a, a1
+;	ld b, a2
+;end macro
+
+;macro LD a1, a2		; 使えない名前
+;	ld a, a1
+;	ld b, a2
+;end macro
+
+; 先頭が(は使えない
+;MACRO (DEF
+;		ld a,1
+;END MACRO
+
+; 先頭が)は使えない
+;MACRO )DEF
+;		ld a,1
+;END MACRO
+
+; 16進数は使えない
+;MACRO FFFFH
+;		ld a,1
+;END MACRO
+
+; 数値スタートは使えない
+;MACRO 0START
+;		ld a,1
+;END MACRO
+
+;macro NoEnd a1, a2
+;	ld a, a1
+;	ld b, a2

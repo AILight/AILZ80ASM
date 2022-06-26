@@ -1,0 +1,6 @@
+﻿	ORG	$8000
+
+	;include "Include.z80"		; ファイル無し
+	include "Include_error.z80"	; アセンブルエラー
+	;include "Include2.z80"		; 循環エラー
+LB:	;include "Include_error.z80"		; インクルードにはラベルが付けられない（付けられるように変更した）

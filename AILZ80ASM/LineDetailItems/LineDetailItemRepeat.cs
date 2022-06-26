@@ -18,6 +18,30 @@ namespace AILZ80ASM.LineDetailItems
         private readonly List<LineItem> RepeatLines = new List<LineItem>();
         private int RepeatNestedCount { get; set; } = 0;
 
+        public override AsmList[] Lists
+        {
+            get
+            {
+                var asmList = new List<AsmList>();
+                // 宣言
+                foreach (var item in this.RepeatLines)
+                {
+                    asmList.Add(AsmList.CreateLineItemCommentOut(item));
+                }
+
+                // 実体
+                foreach (var item in this.LineDetailScopeItems.ToList().SelectMany(m => m.Lists))
+                {
+                    item.PushNestedCodeType(AsmList.NestedCodeTypeEnum.Repeat);
+                    asmList.Add(item);
+                }
+
+                return asmList.ToArray();
+
+                //return base.Lists;
+            }
+        }
+
         protected LineDetailItemRepeat(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {

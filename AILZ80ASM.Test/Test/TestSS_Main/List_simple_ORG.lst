@@ -1,4 +1,4 @@
-﻿                        ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13, LST:Simple:4
+﻿                        ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Simple:4
                                 include "Success.INC"
                             ;Include Test
   0014                  CHAR01  EQU     20
@@ -16,11 +16,14 @@
   0004  3E02                    ld a, 2
   0003                  .MNO    equ 3
                         
-  0006  00                      NOP
-  0007  00                      NOP
-  0008  00                      NOP
-  0009  00                      NOP
-  000A  00                      NOP
+                        ;       REPT 5
+                        ;       NOP
+                        ;       ENDM
+  0006  00             +        NOP
+  0007  00             +        NOP
+  0008  00             +        NOP
+  0009  00             +        NOP
+  000A  00             +        NOP
                         
                         [GB2]
   0001                  ABC     equ 1

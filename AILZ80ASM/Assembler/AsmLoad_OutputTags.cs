@@ -15,16 +15,7 @@ namespace AILZ80ASM.Assembler
             var globalLabels = this.Scope.Labels.GroupBy(m => m.GlobalLabelName).Select(m => m.Key);
             var globalLabelMode = globalLabels.Count() > 1;
 
-            // GlobalLabel
-            if (globalLabelMode)
-            {
-                foreach (var item in this.Scope.Labels.Where(m => m.LabelLevel == Label.LabelLevelEnum.GlobalLabel && m.LineItem != default && m.LineItem.FileInfo != default))
-                {
-                    var lineItem = item.LineItem;
-                    streamWriter.WriteLine($"{lineItem.FileInfo.Name}({lineItem.LineIndex}) : {item.LabelShortName}");
-                }
-            }
-
+            // GlobalLabelは重複登録ができるので出力対象外とする
             // LabelName
             foreach (var item in this.Scope.Labels.Where(m => (m.LabelLevel == Label.LabelLevelEnum.Label || m.LabelLevel == Label.LabelLevelEnum.SubLabel) && m.LineItem != default && m.LineItem.FileInfo != default))
             {

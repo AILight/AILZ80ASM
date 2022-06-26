@@ -9,6 +9,9 @@ OO	EQU $1234
 	LD A, (IX+FUNC(JJ+KK,FUNC(LL+MM,NN)))
 	LD A, ABS(-1)
 	LD B, ABS(1)
+	LD C, ABS(1) + ABS(-1)
+	LD D, H("(")
+	LD E, L(")")
 
 	DB FUNC( 1, 2 ), FUNC(3, 4),
 	DW FUNC(10, 20), FUNC(300, 400),

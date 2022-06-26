@@ -102,3 +102,7 @@ LABELTEST:equ 0006H
 
 		ld a, low  $0123
 		ld a, high $0123
+
+LB		EQU 0xFF1234
+
+		LD HL, LB

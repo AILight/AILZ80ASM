@@ -61,3 +61,43 @@ LABEL_3		equ BBB
 			ENDM
 
 			Function ABS(value) => value < 0 ? value * -1 : value
+
+			LD A, %1111_0000
+			LD A,  1111_0000b
+			LD A, %1111_0000b
+			LD A, %1112_0000
+			LD A,  1111_0002b
+			LD A, %1111_0000_1111
+
+			LD B, 67o
+			LD B, 68o
+			LD B, 12o
+
+			LD C, 12
+			LD C, 255
+			LD C, -1
+			LD C, 12_3
+			LD C, AB
+
+			LD D, $34
+			LD D, 34H
+			LD D, 0x34
+			LD D, $EF
+			LD D, EFH
+			LD D, 0xEF
+			LD D, $FG
+			LD D, FGH
+			LD D, 0xFG
+			LD D, $12H
+			LD D, 0x12H
+
+			LD E, "A"
+			LD E, 'A'
+			LD E, "AB"
+			LD E, 'AB'
+			LD E, "ABC"
+			LD E, 'ABC'
+			LD DE, 'AB'
+			LD DE, "AB"
+			LD DE, 'ABC'
+			LD DE, "ABC"

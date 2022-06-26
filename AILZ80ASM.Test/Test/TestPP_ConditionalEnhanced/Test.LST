@@ -1,0 +1,33 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
+000000 8000                             org $8000
+                                
+                                #IF #TRUE
+000000 8000 3E00             7          LD A, 0
+                                LB_A:
+000002 8002 3E00             7          LD A, 0
+                                #ELSE
+                                LB_A:
+                                        LD A, 1
+                                #ENDIF
+                                
+                                #IF #TRUE
+000004 8004 3E02             7          LD A, low LB_A
+                                #ELSE
+                                        LD A, low LB_A
+                                #ENDIF
+                                
+                                #IF #FALSE
+                                        LD A, 0
+                                LB_B:
+                                        LD A, 0
+                                #ELSE
+                                LB_B:
+000006 8006 3E01             7          LD A, 1
+                                #ENDIF
+                                
+                                #IF #FALSE
+                                        LD A, low LB_B
+                                #ELSE
+000008 8008 3E06             7          LD A, low LB_B
+                                #ENDIF
+[EOF:Test.Z80:UTF_8]

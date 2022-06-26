@@ -23,6 +23,9 @@ namespace AILZ80ASM.Test
         {
             Assert.AreEqual(1 + 2 * ((2 + 1)) + 6 / 2, AIMath.Calculation("1+2*((2+1))+6/2").ConvertTo<UInt16>());
             Assert.AreEqual((UInt16)((-2 + 1) & 0xFFFF), AIMath.Calculation("-2 + 1").ConvertTo<UInt16>());
+            Assert.AreEqual(1 + 2 - 3, AIMath.Calculation("1 + 2 - 3").ConvertTo<UInt16>());
+            Assert.AreEqual(1 + 2 * 3, AIMath.Calculation("1 + 2 * 3").ConvertTo<UInt16>());
+            Assert.AreEqual(1 * 2 + 3, AIMath.Calculation("1 * 2 + 3").ConvertTo<UInt16>());
             Assert.AreEqual(-1 + 1, AIMath.Calculation("-1 + 1").ConvertTo<UInt16>());
             Assert.AreEqual(+1 + 1, AIMath.Calculation("+1 + 1").ConvertTo<UInt16>());
             Assert.AreEqual(+1 + -1, AIMath.Calculation("+1 + -1").ConvertTo<UInt16>());
@@ -33,6 +36,23 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(5 << 5, AIMath.Calculation("5<<5").ConvertTo<UInt16>());
             Assert.AreEqual(5 >> 1, AIMath.Calculation("5>>1").ConvertTo<UInt16>());
             Assert.AreEqual(5 >> 5, AIMath.Calculation("5>>5").ConvertTo<UInt16>());
+            Assert.AreEqual(-1 + 1, AIMath.Calculation("-1 + 1").ConvertTo<UInt16>());
+            Assert.AreEqual(10 + 20 % 5, AIMath.Calculation("10 + 20 % 5").ConvertTo<UInt16>());
+            Assert.AreEqual(10 + 20 / 5, AIMath.Calculation("10 + 20 / 5").ConvertTo<UInt16>());
+            Assert.AreEqual(0x01 & 0xAA, AIMath.Calculation("0x01 & 0xAA").ConvertTo<UInt16>());
+            Assert.AreEqual(0x02 & 0xAA, AIMath.Calculation("0x02 & 0xAA").ConvertTo<UInt16>());
+            Assert.AreEqual(1 + 0x02 & 0xAA + 2, AIMath.Calculation("1 + 0x02 & 0xAA + 2").ConvertTo<UInt16>());
+            Assert.AreEqual(1 + 0x02 ^ 0xAA + 2, AIMath.Calculation("1 + 0x02 ^ 0xAA + 2").ConvertTo<UInt16>());
+            Assert.AreEqual(1 + 0x03 | 0xAA + 2, AIMath.Calculation("1 + 0x03 | 0xAA + 2").ConvertTo<UInt16>());
+            Assert.AreEqual(2 == 2 && 1 == 1, AIMath.Calculation("2 == 2 && 1 == 1").ConvertTo<bool>());
+            Assert.AreEqual(2 == 2 && 2 == 1, AIMath.Calculation("2 == 2 && 2 == 1").ConvertTo<bool>());
+            Assert.AreEqual(2 == 2 || 1 == 1, AIMath.Calculation("2 == 2 || 1 == 1").ConvertTo<bool>());
+            Assert.AreEqual(2 == 2 || 2 == 1, AIMath.Calculation("2 == 2 || 2 == 1").ConvertTo<bool>());
+            Assert.AreEqual(2 == 1 || 2 == 1, AIMath.Calculation("2 == 1 || 2 == 1").ConvertTo<bool>());
+            Assert.AreEqual(1 == 1 ? 1 + 1 : 2 + 2, AIMath.Calculation("1 == 1 ? 1 + 1 : 2 + 2").ConvertTo<UInt16>());
+            Assert.AreEqual(1 == 2 ? 1 + 1 : 2 + 2, AIMath.Calculation("1 == 2 ? 1 + 1 : 2 + 2").ConvertTo<UInt16>());
+            Assert.AreEqual(0x55AA, AIMath.Calculation("!0xAA55").ConvertTo<UInt16>());
+            Assert.AreEqual(0x55AA, AIMath.Calculation("~0xAA55").ConvertTo<UInt16>());
         }
 
         [TestMethod]
@@ -233,8 +253,10 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(0x55FE, AIMath.Calculation("-LB", asmLoad).ConvertTo<UInt16>());
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@H", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@HIGH", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("LB.@H.@H", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@L", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@LOW", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x02, AIMath.Calculation("LB.@L.@L", asmLoad).ConvertTo<byte>());
             Assert.IsTrue(AIMath.Calculation("LB.@T == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB.@TEXT == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("text LB == \"0xAA02\"", asmLoad).ConvertTo<bool>());

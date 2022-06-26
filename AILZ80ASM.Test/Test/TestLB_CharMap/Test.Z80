@@ -15,3 +15,16 @@
 	charmap @PPP, "Test.json"
 	
 	DB @PPP:"国語算数理科社会"
+
+	; 文字列テスト	
+	DB 'テスト'        ; SJISで変換、アセンブラのデフォルト値
+	DB @JIS12:'テスト' ; JIS第一・二水準で変換
+	DB @SJIS:'テスト'  ; SJISで変換
+
+	DBFIL 14
+
+	DB "テスト"        ; SJISで変換、アセンブラのデフォルト値
+	DB @JIS12:"テスト" ; JIS第一・二水準で変換
+	DB @SJIS:"テスト"  ; SJISで変換
+
+	DBFIL 14
