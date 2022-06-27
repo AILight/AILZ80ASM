@@ -3,7 +3,7 @@
                                 
                                 #IF #TRUE
 000000 8000 3E00             7          LD A, 0
-                                LB_A:
+       8002                     LB_A:
 000002 8002 3E00             7          LD A, 0
                                 #ELSE
                                 LB_A:
@@ -21,7 +21,7 @@
                                 LB_B:
                                         LD A, 0
                                 #ELSE
-                                LB_B:
+       8006                     LB_B:
 000006 8006 3E01             7          LD A, 1
                                 #ENDIF
                                 

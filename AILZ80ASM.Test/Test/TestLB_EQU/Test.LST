@@ -26,13 +26,13 @@
 00001D 801D 00               4      NOP
 00001E 801E 00               4      NOP
 00001F 801F 00               4      NOP
-                                ForwardLabel:
+       8020                     ForwardLabel:
 000020 8020 ED732680        20      LD (.stack), SP
 000024 8024 00               4      NOP
        8026                     .stack  equ $ + 1
 000025 8025 310000          10      LD   SP, 0
                                 
-                                LocalLabel:
+       8028                     LocalLabel:
        0000                     .C  equ 0
        0001                     .CP equ 1
        0002                     .D  equ 2
@@ -68,13 +68,13 @@
 000047 8047 210500          10      ld  hl, SF.FST
 00004A 804A 2100C0          10      ld  hl, SF.MAP
                                 
-                                EqualTest1:
+       804D                     EqualTest1:
        0036                     .@1 equ %00110110   ; 1
        0076                     .@2 equ %01110110   ; 2
        00B6                     .@3 equ %10110110   ; 3
        00F6                     .All    equ (.@1 | .@2 | .@3)
                                 
-                                EqualTest2:
+       804D                     EqualTest2:
        000C                     .@1 equ %00001100   ; 1
        000D                     .@2 equ %00001101   ; 2
        000E                     .@3 equ %00001110   ; 3

@@ -1,11 +1,11 @@
 ﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
                                 INCLUDE "Test.INC"
                                 
-                                SCREEN:
+       0000                     SCREEN:
        0003                     .WIDTH      equ 3           ; 横のサイズ
        0002                     .HEIGHT     equ 2           ; 縦のサイズ
                                 
-                                DATA:
+       0000                     DATA:
 000000 0000 0001                .MY     db 0x00, 0x01
 [EOF:Test.INC:UTF_8]
                                 

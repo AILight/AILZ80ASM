@@ -372,5 +372,9 @@ namespace AILZ80ASM.Assembler
             LineDetailExpansionItem = lineDetailExpansionItem;
         }
 
+        public static bool IsGlobalLabel(string labelString)
+        {
+            return Regex.IsMatch(labelString, RegexPatternGlobalLabel);
+        }
     }
 }

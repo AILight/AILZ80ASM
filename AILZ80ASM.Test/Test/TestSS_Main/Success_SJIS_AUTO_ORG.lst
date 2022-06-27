@@ -3,17 +3,17 @@
        0001                     ABC     equ 1   ;SJISƒeƒXƒg
        0002                     .DEF    equ 2
 000000 0000 3E00             7          ld a, 0
-                                GHI:
+       0002                     GHI:
 000002 0002 3E01             7          ld a, 1
-                                .JKL
+       0004                     .JKL
 000004 0004 3E02             7          ld a, 2
                                 
                                 [GB2]
        0001                     ABC     equ 1
        0002                     .DEF    equ 2
 000006 0006 3E00             7          ld a, 0
-                                GHI:
+       0008                     GHI:
 000008 0008 3E01             7          ld a, 1
-                                .JKL
+       000A                     .JKL
 00000A 000A 3E02             7          ld a, 2
 [EOF:Success_SJIS.Z80:SHIFT_JIS]

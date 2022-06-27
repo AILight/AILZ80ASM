@@ -17,7 +17,7 @@
                                 include "Test1.inc"
 000004 8004 3EFF             7      ld a, TRUE
                                 include ".\SubDir\Test2.inc"
-                                LABEL:
+       8006                     LABEL:
 000006 8006 0E00             7      ld c, FALSE
 [EOF:Test2.inc:UTF_8]
 [EOF:Test1.inc:UTF_8]
@@ -44,7 +44,7 @@
                                 include "..\..\Test3.inc"
 000034 8034 3EFF             7      ld a, TRUE
                                 include "Test4.inc"
-                                LABEL1:
+       8036                     LABEL1:
 000036 8036 0E00             7      ld c, FALSE
 [EOF:Test4.inc:UTF_8]
 [EOF:Test3.inc:UTF_8]

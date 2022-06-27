@@ -1,6 +1,6 @@
                                 *** AILZ80ASM *** Z-80 Assembler, version 0.9.9.3
                                     ; 00
-                                LB00:
+       0000                     LB00:
 000000 0000 00               4      NOP
 000001 0001 011122          10      LD BC,$2211
 000004 0004 02               7      LD (BC),A
@@ -18,7 +18,7 @@
 000011 0011 0EA0             7      LD C,$A0
 000013 0013 0F               4      RRCA
                                     ; 10
-                                LB10:
+       0014                     LB10:
 000014 0014 10FD            13      DJNZ $ -1
 000016 0016 118855          10      LD DE,$5588
 000019 0019 12               7      LD (DE),A
@@ -36,7 +36,7 @@
 000027 0027 1E33             7      LD E,$33
 000029 0029 1F               4      RRA
                                     ; 20
-                                LB20:
+       002A                     LB20:
 00002A 002A 20FE            12      JR NZ,LB20
 00002C 002C 213412          10      LD HL,$1234
 00002F 002F 227856          16      LD ($5678),HL
@@ -54,7 +54,7 @@
 000041 0041 2EF0             7      LD L,$DEF0
 000043 0043 2F               4      CPL
                                     ; 30
-                                LB30:
+       0044                     LB30:
 000044 0044 3018            12      JR NC,LB40
 000046 0046 312211          10      LD SP,$1122
 000049 0049 324433          13      LD ($3344),A
@@ -72,7 +72,7 @@
 00005B 005B 3E99             7      LD A,$99
 00005D 005D 3F               4      CCF
                                     ; 40
-                                LB40:
+       005E                     LB40:
 00005E 005E 40               4      LD B,B
 00005F 005F 41               4      LD B,C
 000060 0060 42               4      LD B,D
@@ -90,7 +90,7 @@
 00006C 006C 4E               7      LD C,(HL)
 00006D 006D 4F               4      LD C,A
                                     ; 50
-                                LB50:
+       006E                     LB50:
 00006E 006E 50               4      LD D,B
 00006F 006F 51               4      LD D,C
 000070 0070 52               4      LD D,D
@@ -108,7 +108,7 @@
 00007C 007C 5E               7      LD E,(HL)
 00007D 007D 5F               4      LD E,A
                                     ; 60
-                                LB60:
+       007E                     LB60:
 00007E 007E 60               4      LD H,B
 00007F 007F 61               4      LD H,C
 000080 0080 62               4      LD H,D
@@ -126,7 +126,7 @@
 00008C 008C 6E               7      LD L,(HL)
 00008D 008D 6F               4      LD L,A
                                     ; 70
-                                LB70:
+       008E                     LB70:
 00008E 008E 70               7      LD (HL),B
 00008F 008F 71               7      LD (HL),C
 000090 0090 72               7      LD (HL),D
@@ -144,7 +144,7 @@
 00009C 009C 7E               7      LD A,(HL)
 00009D 009D 7F               4      LD A,A
                                     ; 80
-                                LB80:
+       009E                     LB80:
 00009E 009E 80               4      ADD A,B
 00009F 009F 81               4      ADD A,C
 0000A0 00A0 82               4      ADD A,D
@@ -162,7 +162,7 @@
 0000AC 00AC 8E               7      ADC A,(HL)
 0000AD 00AD 8F               4      ADC A,A
                                     ; 90
-                                LB90:
+       00AE                     LB90:
 0000AE 00AE 90               4      SUB B
 0000AF 00AF 91               4      SUB C
 0000B0 00B0 92               4      SUB D
@@ -180,7 +180,7 @@
 0000BC 00BC 9E               7      SBC A,(HL)
 0000BD 00BD 9F               4      SBC A,A
                                     ; A0
-                                LBA0:
+       00BE                     LBA0:
 0000BE 00BE A0               4      AND B
 0000BF 00BF A1               4      AND C
 0000C0 00C0 A2               4      AND D
@@ -198,7 +198,7 @@
 0000CC 00CC AE               7      XOR (HL)
 0000CD 00CD AF               4      XOR A
                                     ; B0
-                                LBB0:
+       00CE                     LBB0:
 0000CE 00CE B0               4      OR B
 0000CF 00CF B1               4      OR C
 0000D0 00D0 B2               4      OR D
@@ -216,7 +216,7 @@
 0000DC 00DC BE               7      CP (HL)
 0000DD 00DD BF               4      CP A
                                     ; C0
-                                LBC0:
+       00DE                     LBC0:
 0000DE 00DE C0              11      RET NZ
 0000DF 00DF C1              10      POP BC
 0000E0 00E0 C23412          10      JP NZ,$1234
@@ -234,7 +234,7 @@
 0000F8 00F8 CE31             7      ADC A,$31
 0000FA 00FA CF              12      RST 08H
                                     ; D0
-                                LBD0:
+       00FB                     LBD0:
 0000FB 00FB D0              11      RET NC
 0000FC 00FC D1              10      POP DE
 0000FD 00FD D2FB00          10      JP NC,LBD0
@@ -252,7 +252,7 @@
 000113 0113 DE08             7      SBC A,$8
 000115 0115 DF              12      RST 18H
                                     ; E0
-                                LBE0:
+       0116                     LBE0:
 000116 0116 E0              11      RET PO
 000117 0117 E1              10      POP HL
 000118 0118 E2CE00          10      JP PO,LBB0
@@ -270,7 +270,7 @@
 00012C 012C EEFF             7      XOR $FF
 00012E 012E EF              12      RST 28H
                                     ; F0
-                                LBF0:
+       012F                     LBF0:
 00012F 012F F0              11      RET P
 000130 0130 F1              10      POP AF
 000131 0131 F23412          10      JP P,$1234

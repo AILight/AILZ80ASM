@@ -10,9 +10,9 @@
        0001                     ABC     equ 1
        0002                     .DEF    equ 2
 000000 0000 3E00             7          ld a, 0
-                                GHI:
+       0002                     GHI:
 000002 0002 3E01             7          ld a, 1
-                                .JKL
+       0004                     .JKL
 000004 0004 3E02             7          ld a, 2
        0003                     .MNO    equ 3
                                 
@@ -29,9 +29,9 @@
        0001                     ABC     equ 1
        0002                     .DEF    equ 2
 00000B 000B 3E00             7          ld a, 0
-                                GHI:
+       000D                     GHI:
 00000D 000D 3E01             7          ld a, 1
-                                .JKL
+       000F                     .JKL
 00000F 000F 3E02             7          ld a, 2
                                         MACROTEST
 000011 0011 3E00             7 +        LD A,0

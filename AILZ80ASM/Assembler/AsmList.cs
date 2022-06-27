@@ -73,6 +73,11 @@ namespace AILZ80ASM.Assembler
             return CreateSource(lineItem.LineString, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
         }
 
+        public static AsmList CreateLineItem(LineItem lineItem, AsmAddress asmAddress)
+        {
+            return Create(default(UInt32?), asmAddress.Program, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, default(byte[]), "", lineItem.LineString, ListStatusEnum.Normal);
+        }
+
         public static AsmList CreateLineItemCommentOut(LineItem lineItem)
         {
             return CreateSource($";{lineItem.LineString}", lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
