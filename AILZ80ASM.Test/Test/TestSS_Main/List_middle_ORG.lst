@@ -10,28 +10,33 @@
 0001                     ABC     equ 1
 0002                     .DEF    equ 2
 0000 3E00             7          ld a, 0
-                         GHI:
+0002                     GHI:
 0002 3E01             7          ld a, 1
-                         .JKL
+0004                     .JKL
 0004 3E02             7          ld a, 2
 0003                     .MNO    equ 3
                          
-                         ;       REPT 5
-                         ;       NOP
-                         ;       ENDM
+                                 REPT 5
+                                 NOP
+                                 ENDM
+                        + #0001
 0006 00               4 +        NOP
+                        + #0002
 0007 00               4 +        NOP
+                        + #0003
 0008 00               4 +        NOP
+                        + #0004
 0009 00               4 +        NOP
+                        + #0005
 000A 00               4 +        NOP
                          
                          [GB2]
 0001                     ABC     equ 1
 0002                     .DEF    equ 2
 000B 3E00             7          ld a, 0
-                         GHI:
+000D                     GHI:
 000D 3E01             7          ld a, 1
-                         .JKL
+000F                     .JKL
 000F 3E02             7          ld a, 2
                                  MACROTEST
 0011 3E00             7 +        LD A,0

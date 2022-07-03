@@ -11,11 +11,19 @@ namespace AILZ80ASM.LineDetailItems
 {
     public abstract class LineDetailItemRepeat : LineDetailItem
     {
+        private class RepeatItem
+        {
+            public int Index { get; set; }
+            public Label Label { get; set; }
+            public LineItem[] LineItems { get; set; }
+
+        }
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private string RepeatCountLabel { get; set; }
         private string RepeatLastLabel { get; set; }
 
         private readonly List<LineItem> RepeatLines = new List<LineItem>();
+        private readonly List<RepeatItem> RepeatItems = new List<RepeatItem>();
         private int RepeatNestedCount { get; set; } = 0;
 
         public override AsmList[] Lists
@@ -26,14 +34,23 @@ namespace AILZ80ASM.LineDetailItems
                 // 宣言
                 foreach (var item in this.RepeatLines)
                 {
-                    asmList.Add(AsmList.CreateLineItemCommentOut(item));
+                    asmList.Add(AsmList.CreateLineItem(item));
                 }
 
                 // 実体
-                foreach (var item in this.LineDetailScopeItems.ToList().SelectMany(m => m.Lists))
+                foreach (var repeatItem in RepeatItems)
                 {
-                    item.PushNestedCodeType(AsmList.NestedCodeTypeEnum.Repeat);
-                    asmList.Add(item);
+                    var headerList = AsmList.CreateSource($" #{repeatItem.Index:0000}");
+                    headerList.PushNestedCodeType(AsmList.NestedCodeTypeEnum.Repeat);
+                    asmList.Add(headerList);
+                    foreach (var item in repeatItem.LineItems)
+                    {
+                        foreach (var list in item.Lists)
+                        {
+                            list.PushNestedCodeType(AsmList.NestedCodeTypeEnum.Repeat);
+                            asmList.Add(list);
+                        }
+                    }
                 }
 
                 return asmList.ToArray();
@@ -134,8 +151,6 @@ namespace AILZ80ASM.LineDetailItems
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
             base.PreAssemble(ref asmAddress);
-
-            // リピート数が設定されているものを処理する
             if (!string.IsNullOrEmpty(RepeatCountLabel) && RepeatLines.Count > 2)
             {
                 var count = AIMath.Calculation(RepeatCountLabel, this.AsmLoad, asmAddress).ConvertTo<int>();
@@ -151,6 +166,7 @@ namespace AILZ80ASM.LineDetailItems
 
                 foreach (var repeatCounter in Enumerable.Range(1, count))
                 {
+                    var repeatItem = new RepeatItem() { Index = repeatCounter };
                     var lineItems = default(LineItem[]);
                     var guid = $"{Guid.NewGuid():N}";
                     AsmLoad.CreateNewScope($"repeat_{guid}", $"label_{guid}", localAsmLoad =>
@@ -217,10 +233,10 @@ namespace AILZ80ASM.LineDetailItems
                                 AsmLoad.AddError(ex.ErrorLineItem);
                             }
                         }
+                        repeatItem.LineItems = lineItems;
                         lineItemList.AddRange(lineItems);
                     });
-
-                    
+                    RepeatItems.Add(repeatItem);
                 }
 
                 foreach (var item in lineItemList)

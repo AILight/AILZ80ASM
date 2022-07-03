@@ -1,6 +1,6 @@
 ﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13, LST:Full:4
        FE00                         org     $FE00
-                                TEST:
+       FE00                     TEST:
        FE00                     .Work1      ds 1
        FE01                     .Work2      ds 2
        FE03                     .Work3      ds 3
@@ -8,7 +8,7 @@
                                 
                                 
 000000 8000                         org $8000
-                                MAIN:
+       8000                     MAIN:
 000000 8000 F3               4      di
 000001 8001 3A06FE          13      ld  a, (TEST.Work4)
 000004 8004 FB               4      ei
