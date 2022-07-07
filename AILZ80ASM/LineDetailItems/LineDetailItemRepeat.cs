@@ -102,7 +102,7 @@ namespace AILZ80ASM.LineDetailItems
                 var repeatLines = asmLoad_LineDetailItemRepeat.RepeatLines;
 
                 // ローカルラベル以外は使用禁止
-                if (lineItem.LabelString.EndsWith(":"))
+                if (lineItem.LabelString.EndsWith(':'))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1014);
                 }

@@ -51,8 +51,8 @@ namespace AILZ80ASM.LineDetailItems
                 }
 
                 // ローカルラベル以外は使用禁止
-                if ((lineItem.LabelString.StartsWith("[") && lineItem.LabelString.EndsWith("]")) || 
-                    lineItem.LabelString.EndsWith(":"))
+                if ((lineItem.LabelString.StartsWith('[') && 
+                     lineItem.LabelString.EndsWith(']')) || lineItem.LabelString.EndsWith(':'))
                 {
                     asmLoad.Share.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.E3006));
                 }

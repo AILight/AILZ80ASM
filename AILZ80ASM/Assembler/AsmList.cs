@@ -95,7 +95,12 @@ namespace AILZ80ASM.Assembler
             return CreateLineItem(default(UInt32?), programAddress, default(byte[]), "", lineItem);
         }
 
-        public static AsmList CreateLineItemEnd(UInt16? entryPoint, LineItem lineItem)
+        public static AsmList CreateLineItemEnd(LineItem lineItem)
+        {
+            return CreateLineItem(default(UInt32?), default(UInt32?), default(byte[]), "", lineItem);
+        }
+
+        public static AsmList CreateLineItemEndDefine(UInt16? entryPoint, LineItem lineItem)
         {
             return CreateLineItem(default(UInt32?), entryPoint, default(byte[]), "", lineItem);
         }

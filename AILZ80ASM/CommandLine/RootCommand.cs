@@ -172,8 +172,7 @@ namespace AILZ80ASM.CommandLine
                 // デフォルト値の設定
                 foreach (var item in Options.Where(m => !string.IsNullOrEmpty(m.DefaultValue)))
                 {
-                    item.SetValue(new[] { item.DefaultValue });
-                    item.Selected = false;                      // デフォルト設定は選択をクリア
+                    item.SettingDefaultValue();
                 }
 
                 // オプションに値を積む
@@ -267,7 +266,7 @@ namespace AILZ80ASM.CommandLine
 
             foreach (var value in args)
             {
-                if (value.StartsWith("-") && !helpMode)
+                if (value.StartsWith('-') && !helpMode)
                 {
                     // saveParameterに値があったら、オプションとして積む
                     ParameterEntry(saveOption, saveParameter, existOptionForParameter, result);
