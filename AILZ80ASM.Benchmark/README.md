@@ -14,6 +14,21 @@
   - [Benchmark1](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark/TestSource/Benchmark1) をアセンブルした処理時間
 
 ## ベンチマーク結果
+#### v0.9.9.24: 2022/07/09
+- 演算処理のパフォーマンスチューニング
+```
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1766 (21H1/May2021Update)
+Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK=6.0.203
+  [Host]     : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
+  DefaultJob : .NET 6.0.6 (6.0.622.26707), X64 RyuJIT
+
+
+|     Method |    Mean |    Error |   StdDev |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 1.608 s | 0.0236 s | 0.0210 s |
+```
+
 #### v0.9.9.24: 2022/07/03
 - 演算処理を強化
 ```

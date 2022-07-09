@@ -19,10 +19,10 @@ namespace AILZ80ASM.AILight
         {
             var isGlobalLabel = false;
 
-            if (target.StartsWith(".") && target.EndsWith(":"))
+            if (target.StartsWith('.') && target.EndsWith(':'))
             {
                 target = target.Substring(1, target.Length - 2);
-                while (target.EndsWith(":"))
+                while (target.EndsWith(':'))
                 {
                     target = target.Substring(0, target.Length - 1);
                 }
@@ -31,21 +31,21 @@ namespace AILZ80ASM.AILight
             }
 
             // ラベルの名称だけを取得
-            if (target.StartsWith("[") && target.EndsWith("]"))
+            if (target.StartsWith('[') && target.EndsWith(']'))
             {
                 target = target.Substring(1, target.Length - 2);
                 isGlobalLabel = true;
             }
 
-            if (target.EndsWith(":"))
+            if (target.EndsWith(':'))
             {
-                while (target.EndsWith(":"))
+                while (target.EndsWith(':'))
                 {
                     target = target.Substring(0, target.Length - 1);
                 }
             }
 
-            if (target.StartsWith("."))
+            if (target.StartsWith('.'))
             {
                 target = target.Substring(1);
 
@@ -126,7 +126,7 @@ namespace AILZ80ASM.AILight
             }
 
             // 先頭に()は使えない
-            if (target.StartsWith("(") || target.StartsWith(")"))
+            if (target.StartsWith('(') || target.StartsWith(')'))
             {
                 return false;
             }

@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.AILight
 {
     public static class AIMath
     {
-        private static readonly string RegexPatternCharMap = @"^(?<charMap>@.*\:)";
+        private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
 
         public static bool TryParse(string value, out AIValue resultValue)
         {
@@ -133,6 +134,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         private static AIValue[] CalculationParse(string value)
         {
+            // 式の分解処理
             var terms = new List<AIValue>();
             var tmpValue = value.Trim();
 
@@ -159,6 +161,12 @@ namespace AILZ80ASM.AILight
                 {
                     throw new InvalidAIMathException("演算に使えない文字が含まれています");
                 }
+            }
+
+            // 分解が小さい場合は抜ける(高速化対応)
+            if (terms.Count <= 1)
+            {
+                return terms.ToArray();
             }
 
             // 符号処理
@@ -197,22 +205,26 @@ namespace AILZ80ASM.AILight
             }
 
             // 演算子、数値が連続しているものがないか確認をする
-            var checkValues = result.Where(m => !m.IsOperation(AIValue.OperationTypeEnum.LeftParenthesis) && 
-                                                !m.IsOperation(AIValue.OperationTypeEnum.RightParenthesis)).ToArray();
-            if (checkValues.Length > 0)
+            if (result.Count >= 2)
             {
-                foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
+                var checkValues = result.Where(m => !m.IsOperation(AIValue.OperationTypeEnum.LeftParenthesis) &&
+                                                    !m.IsOperation(AIValue.OperationTypeEnum.RightParenthesis)).ToArray();
+                if (checkValues.Length >= 2)
                 {
-                    if (!checkValues[index + 0].IsOperation() &&
-                        !checkValues[index + 1].IsOperation())
+                    var firstOperation = checkValues.First().IsOperation();
+                    foreach (var item in checkValues.Skip(1))
                     {
-                        throw new InvalidAIMathException("数値と数値の間には演算子が必要です");
-                    }
+                        var secondOperation = item.IsOperation();
+                        if (!firstOperation && !secondOperation)
+                        {
+                            throw new InvalidAIMathException("数値と数値の間には演算子が必要です");
+                        }
 
-                    if (checkValues[index + 0].IsOperation() &&
-                        checkValues[index + 1].IsOperation())
-                    {
-                        throw new InvalidAIMathException("演算子が連続で指定されています。");
+                        if (firstOperation && secondOperation && item.ArgumentType != AIValue.ArgumentTypeEnum.SingleArgument)
+                        {
+                            throw new InvalidAIMathException("演算子が連続で指定されています。");
+                        }
+                        firstOperation = secondOperation;
                     }
                 }
             }
@@ -221,29 +233,31 @@ namespace AILZ80ASM.AILight
 
         private static bool TryParseString(ref string tmpValue, out string resultString)
         {
-            var stringCheck = tmpValue;
-            var checkStartIndex = 0;
-            var matched = default(Match);
+            var matched = Regex.Match(tmpValue, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matched.Success)
+            {
+                var stringCheck = tmpValue;
+                var checkStartIndex = 0;
+                if (!string.IsNullOrEmpty(matched.Groups["charMap"].Value))
+                {
+                    checkStartIndex = matched.Groups["charMap"].Value.Length;
+                    stringCheck = tmpValue.Substring(checkStartIndex);
+                }
+
+                // 文字列
+                if (stringCheck.StartsWith('\"'))
+                {
+                    ParseString("\"", checkStartIndex, ref tmpValue, out resultString);
+                    return true;
+                }
+                else if (stringCheck.StartsWith('\''))
+                {
+                    ParseString("'", checkStartIndex, ref tmpValue, out resultString);
+                    return true;
+                }
+            }
+
             resultString = "";
-            // Charmap
-            if ((matched = Regex.Match(tmpValue, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
-            {
-                checkStartIndex = matched.Groups["charMap"].Value.Length;
-                stringCheck = tmpValue.Substring(checkStartIndex);
-            }
-
-            // 文字列
-            if (stringCheck.StartsWith("\""))
-            {
-                ParseString("\"", checkStartIndex, ref tmpValue, out resultString);
-                return true;
-            }
-            else if (stringCheck.StartsWith("'"))
-            {
-                ParseString("'", checkStartIndex, ref tmpValue, out resultString);
-                return true;
-            }
-
             return false;
         }
 

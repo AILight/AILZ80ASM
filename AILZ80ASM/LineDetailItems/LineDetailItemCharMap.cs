@@ -1,5 +1,6 @@
 ﻿using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -42,8 +43,7 @@ namespace AILZ80ASM.LineDetailItems
                 }
                 else
                 {
-                    if (!filePath.StartsWith("\"") ||
-                        !filePath.EndsWith("\""))
+                    if (!filePath.StartsWith('\"') || !filePath.EndsWith('\"'))
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E2103, filePath);
                     }

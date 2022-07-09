@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace AILZ80ASM.AILight
 {
@@ -169,6 +170,11 @@ namespace AILZ80ASM.AILight
         };
 
         /// <summary>
+        /// オペレーション判別用
+        /// </summary>
+        private static readonly string[] OperationKeys = OperationTypeTable.Keys.OrderByDescending(m => m.Length).ToArray();
+
+        /// <summary>
         /// オペレーション判別用（文字列のみ）
         /// </summary>
         private static readonly string[] WordOperationKeys = OperationTypeTable.Keys.Where(m => char.IsLetter(m[0])).OrderByDescending(m => m.Length).ToArray();
@@ -179,13 +185,39 @@ namespace AILZ80ASM.AILight
         private static readonly string[] SymbolOperationKeys = OperationTypeTable.Keys.Where(m => !char.IsLetter(m[0])).OrderByDescending(m => m.Length).ToArray();
 
         /// <summary>
+        /// オペレーション判別・正規表現用
+        /// </summary>
+        private static readonly string OperationKeysString = string.Join("|", OperationKeys.Select(m => Regex.Escape(m)));
+
+        /// <summary>
+        /// オペレーション判別・正規表現用（文字列のみ）
+        /// </summary>
+        private static readonly string WordOperationKeysString = string.Join("|", WordOperationKeys.Select(m => Regex.Escape(m)));
+
+        /// <summary>
         /// オペレーション判別・正規表現用（記号のみ）
         /// </summary>
         private static readonly string SymbolOperationKeysString = string.Join("|", SymbolOperationKeys.Select(m => Regex.Escape(m)));
 
-        private static readonly string RegexPatternHexadecimal_H = @"^(?<value>([0-9A-Fa-f]+))H$";
-        private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f]+))$";
+        /// <summary>
+        /// オペレーション判別・正規表現用
+        /// </summary>
+        private static readonly string RegexPatternOperation = $"^(?<operation>({OperationKeysString}))";
+
+        /// <summary>
+        /// オペレーション判別・正規表現用（文字列のみ）
+        /// </summary>
+        private static readonly string RegexPatternWordOperation = $"^(?<operation>({WordOperationKeysString}))";
+
+        /// <summary>
+        /// オペレーション判別・正規表現用（記号のみ）
+        /// </summary>
+        private static readonly string RegexPatternSymbolOperation = $"^(?<operation>({SymbolOperationKeysString}))";
+
         private static readonly string RegexPatternHexadecimal_D = @"^\$(?<value>([0-9A-Fa-f]+))$";
+        private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f]+))$";
+        private static readonly string RegexPatternHexadecimal_H = @"^(?<value>([0-9A-Fa-f]+))H$";
+
         private static readonly string RegexPatternOctal_O = @"^(?<value>([0-7]+))O$";
         private static readonly string RegexPatternBinaryNumber_B = @"^(?<value>([01_]+))B$";
         private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
@@ -255,64 +287,75 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool TryParseFormula(ref string target, out string resultFormula)
         {
+            var matchOperation = Regex.Match(target, RegexPatternOperation, RegexOptions.IgnoreCase);
+            if (!matchOperation.Success)
+            {
+                resultFormula = "";
+                return false;
+            }
+
+            // 記号のみチェック
+            var matchSymbol = Regex.Match(target, RegexPatternSymbolOperation, RegexOptions.IgnoreCase);
+            if (matchSymbol.Success)
+            {
+                resultFormula = matchSymbol.Groups["operation"].Value;
+                target = target.Substring(resultFormula.Length).TrimStart();
+                return true;
+            }
+
+            // 文字列演算子のチェック
+            if (!Regex.IsMatch(target, $"{RegexPatternWordOperation}($|\\s+)", RegexOptions.IgnoreCase))
+            {
+                resultFormula = "";
+                return false;
+            }
+
             var localTarget = target;
             resultFormula = "";
 
-            // 記号のみのチェック
-            foreach (var key in SymbolOperationKeys)
+            // この文字の次の演算子を調べる
+            var matchWord = Regex.Match(localTarget, $"{RegexPatternWordOperation}($|\\s+|{SymbolOperationKeysString})", RegexOptions.IgnoreCase);
+            if (matchWord.Success)
             {
-                if (Regex.IsMatch(localTarget, $"^{Regex.Escape(key)}", RegexOptions.IgnoreCase))
+                // 次の演算子を調査する
+                var key = matchWord.Groups["operation"].Value;
+                var nextTarget = localTarget.Substring(key.Length).TrimStart();
+                
+                if (!string.IsNullOrEmpty(nextTarget))
                 {
+                    var matchNextSymbol = Regex.Match(nextTarget, RegexPatternSymbolOperation, RegexOptions.IgnoreCase);
+                    if (matchNextSymbol.Success)
+                    {
+                        var operationType = OperationTypeTable[matchNextSymbol.Groups["operation"].Value];
+                        var operationArgument = OperationArgumentType[operationType];
+                        if (operationType == OperationTypeEnum.Plus ||
+                            operationType == OperationTypeEnum.Minus)
+                        {
+                            operationArgument = ArgumentTypeEnum.SingleArgument;
+                        }
+
+                        switch (operationArgument)
+                        {
+                            case ArgumentTypeEnum.None:
+                            case ArgumentTypeEnum.SingleArgument:
+                                // 文字の演算子が使える事を判別した
+                                resultFormula = key;
+                                target = localTarget.Substring(key.Length).TrimStart();
+                                return true;
+                            case ArgumentTypeEnum.DoubleArgument:
+                            case ArgumentTypeEnum.TripleArgument:
+                            default:
+                                return false;
+                        }
+                    }
+                    // 文字の演算子が使える事を判別した
                     resultFormula = key;
                     target = localTarget.Substring(key.Length).TrimStart();
                     return true;
                 }
-            }
-
-            // 文字列演算子のチェック
-            if (!WordOperationKeys.Any(m => Regex.IsMatch(localTarget, $"^{Regex.Escape(m)}($|\\s+)", RegexOptions.IgnoreCase)))
-            {
                 return false;
             }
-
-            // この文字の次の演算子を調べる
-            foreach (var key in WordOperationKeys)
-            {
-                if (Regex.IsMatch(localTarget, $"^{Regex.Escape(key)}($|\\s+|{SymbolOperationKeysString})", RegexOptions.IgnoreCase))
-                {
-                    // 次の演算子を調査する
-                    var nextTarget = localTarget.Substring(key.Length).TrimStart();
-                    if (!string.IsNullOrEmpty(nextTarget))
-                    {
-                        foreach (var ope in SymbolOperationKeys)
-                        {
-                            if (Regex.IsMatch(nextTarget, $"^{Regex.Escape(ope)}", RegexOptions.IgnoreCase))
-                            {
-                                var operationType = OperationTypeTable[ope];
-                                var operationArgument = OperationArgumentType[operationType];
-                                switch (operationArgument)
-                                {
-                                    case ArgumentTypeEnum.None:
-                                    case ArgumentTypeEnum.SingleArgument:
-                                        // 文字の演算子が使える事を判別した
-                                        resultFormula = key;
-                                        target = localTarget.Substring(key.Length).TrimStart();
-                                        return true;
-                                    case ArgumentTypeEnum.DoubleArgument:
-                                    case ArgumentTypeEnum.TripleArgument:
-                                    default:
-                                        return false;
-                                }
-                            }
-                        }
-                        // 文字の演算子が使える事を判別した
-                        resultFormula = key;
-                        target = localTarget.Substring(key.Length).TrimStart();
-                        return true;
-                    }
-                    return false;
-                }
-            }
+            
             return false;
         }
 
@@ -325,8 +368,6 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIMathException"></exception>
         public static bool TryParseFunction(ref string target, out string resultFunction)
         {
-            resultFunction = "";
-
             var matched = Regex.Match(target, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
@@ -369,64 +410,8 @@ namespace AILZ80ASM.AILight
                 resultFunction = localTarget.Substring(0, endIndex + 1);
                 return true;
             }
-            /*
-            var localTarget = target;
+
             resultFunction = "";
-            var matched = Regex.Match(target, $"(?<formula>({SymbolOperationKeysString}|\"|'))", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (matched.Success)
-            {
-                var formula = matched.Groups["formula"].Value;
-                if (formula.StartsWith("("))
-                {
-                    var targetIndex = localTarget.IndexOf('(') + 1;
-                    var startIndex = AIString.IndexOfAnySkipString(localTarget, '(', targetIndex);
-                    var endIndex= AIString.IndexOfAnySkipString(localTarget, ')', targetIndex);
-
-                    var counter = 0;
-                    var endFlgForLeftParenthesis = false;
-                    while ((startIndex != -1 || endFlgForLeftParenthesis) && endIndex != -1)
-                    {
-                        if (!endFlgForLeftParenthesis && startIndex < endIndex)
-                        {
-                            counter++;
-                            startIndex = AIString.IndexOfAnySkipString(localTarget, '(', startIndex + 1);
-                            if (startIndex == -1)
-                            {
-                                endFlgForLeftParenthesis = true;
-                            }
-                        }
-                        else
-                        {
-                            counter--;
-                            endIndex = AIString.IndexOfAnySkipString(localTarget, ')', endIndex + 1);
-
-                            if (counter == 0)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (endIndex == -1)
-                    {
-                        throw new InvalidAIMathException("閉じ括弧が見つかりませんでした。");
-                    }
-
-                    if (counter != 0)
-                    {
-                        throw new InvalidAIMathException("括弧の数が一致しませんでした。");
-                    }
-
-                    if (startIndex == - 1)
-                    {
-                        target = localTarget.Substring(endIndex + 1).TrimStart();
-                        resultFunction = localTarget.Substring(0, endIndex + 1);
-                        return true;
-                    }
-                    
-                }
-            }
-            */
             return false;
         }
 
@@ -438,16 +423,15 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool TryParseValue(ref string target, out string resultValue)
         { 
-            var localTarget = target;
-            resultValue = "";
             var matched = Regex.Match(target, RegexPatternValue, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
                 resultValue = matched.Groups["value"].Value;
-                target = localTarget.Substring(resultValue.Length).TrimStart();
+                target = target.Substring(resultValue.Length).TrimStart();
                 return true;
             }
 
+            resultValue = "";
             return false;
         }
 
@@ -510,7 +494,7 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Int32))
                     {
-                        return (T)(object)ValueInt32;
+                        return (T)(dynamic)ValueInt32;
                     }
                     throw new InvalidAIValueException("int型に変換できません。");
                 }
@@ -520,11 +504,11 @@ namespace AILZ80ASM.AILight
                     {
                         if (ValueInt32 < 0)
                         {
-                            return (T)(object)(UInt32)(UInt32.MaxValue + ValueInt32 + 1);
+                            return (T)(dynamic)(UInt32)(UInt32.MaxValue + ValueInt32 + 1);
                         }
                         else
                         {
-                            return (T)(object)(UInt32)(ValueInt32 & UInt32.MaxValue);
+                            return (T)(dynamic)(UInt32)(ValueInt32 & UInt32.MaxValue);
                         }
                     }
                     throw new InvalidAIValueException("32ビット数値型に変換できません。");
@@ -541,11 +525,11 @@ namespace AILZ80ASM.AILight
 
                         if (ValueInt32 < 0)
                         {
-                            return (T)(object)(UInt16)(UInt16.MaxValue + ValueInt32 + 1);
+                            return (T)(dynamic)(UInt16)(UInt16.MaxValue + ValueInt32 + 1);
                         }
                         else
                         {
-                            return (T)(object)(UInt16)(ValueInt32 & UInt16.MaxValue);
+                            return (T)(dynamic)(UInt16)(ValueInt32 & UInt16.MaxValue);
                         }
                     }
                     throw new InvalidAIValueException("16ビット数値型に変換できません。");
@@ -562,11 +546,11 @@ namespace AILZ80ASM.AILight
 
                         if (ValueInt32 < 0)
                         {
-                            return (T)(object)(byte)(byte.MaxValue + ValueInt32 + 1);
+                            return (T)(dynamic)(byte)(byte.MaxValue + ValueInt32 + 1);
                         }
                         else
                         {
-                            return (T)(object)(byte)(ValueInt32 & byte.MaxValue);
+                            return (T)(dynamic)(byte)(ValueInt32 & byte.MaxValue);
                         }
                     }
                     throw new InvalidAIValueException("8ビット数値型に変換できません。");
@@ -575,7 +559,7 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Bool))
                     {
-                        return (T)(object)ValueBool;
+                        return (T)(dynamic)ValueBool;
                     }
                     throw new InvalidAIValueException("Bool型に変換できません。");
                 }
@@ -583,7 +567,7 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.String))
                     {
-                        return (T)(object)ValueString;
+                        return (T)(dynamic)ValueString;
                     }
                     throw new InvalidAIValueException("String型に変換できません。");
                 }
@@ -591,7 +575,7 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Char) && ValueString.Length == 1)
                     {
-                        return (T)(object)ValueString[0];
+                        return (T)(dynamic)ValueString[0];
                     }
                     throw new InvalidAIValueException("Char型に変換できません。");
                 }
@@ -599,17 +583,17 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Bytes))
                     {
-                        return (T)(object)ValueBytes;
+                        return (T)(dynamic)ValueBytes;
                     }
                     else if (ValueType.HasFlag(ValueTypeEnum.Int32))
                     {
                         if (ValueInt32 < 0)
                         {
-                            return (T)(object)new[] { (byte)(byte.MaxValue + ValueInt32 + 1) };
+                            return (T)(dynamic)new[] { (byte)(byte.MaxValue + ValueInt32 + 1) };
                         }
                         else
                         {
-                            return (T)(object)new[] { (byte)(ValueInt32 & byte.MaxValue) };
+                            return (T)(dynamic)new[] { (byte)(ValueInt32 & byte.MaxValue) };
                         }
                     }
                     throw new InvalidAIValueException("8ビット数値型の配列に変換できません。");
@@ -618,17 +602,17 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Bytes))
                     {
-                        return (T)(object)ValueBytes.Select(m => (UInt16)m).ToArray();
+                        return (T)(dynamic)ValueBytes.Select(m => (UInt16)m).ToArray();
                     }
                     else if (ValueType.HasFlag(ValueTypeEnum.Int32))
                     {
                         if (ValueInt32 < 0)
                         {
-                            return (T)(object)new[] { (UInt16)(UInt16.MaxValue + ValueInt32 + 1) };
+                            return (T)(dynamic)new[] { (UInt16)(UInt16.MaxValue + ValueInt32 + 1) };
                         }
                         else
                         {
-                            return (T)(object)new[] { (UInt16)(ValueInt32 & UInt16.MaxValue) };
+                            return (T)(dynamic)new[] { (UInt16)(ValueInt32 & UInt16.MaxValue) };
                         }
                     }
                     throw new InvalidAIValueException("16ビット数値型の配列に変換できません。");
@@ -637,19 +621,19 @@ namespace AILZ80ASM.AILight
                 {
                     if (ValueType.HasFlag(ValueTypeEnum.Int32))
                     {
-                        return (T)(object)ValueInt32;
+                        return (T)(dynamic)ValueInt32;
                     }
                     else if (ValueType.HasFlag(ValueTypeEnum.Bytes))
                     {
-                        return (T)(object)string.Join(',', ValueBytes.Select(m => $"{m:2X}"));
+                        return (T)(dynamic)string.Join(',', ValueBytes.Select(m => $"{m:2X}"));
                     }
                     else if (ValueType.HasFlag(ValueTypeEnum.String))
                     {
-                        return (T)(object)ValueString;
+                        return (T)(dynamic)ValueString;
                     }
                     else if (ValueType.HasFlag(ValueTypeEnum.Bool))
                     {
-                        return (T)(object)(ValueBool ? "#TRUE" : "#FALSE");
+                        return (T)(dynamic)(ValueBool ? "#TRUE" : "#FALSE");
                     }
                     else
                     {
@@ -1613,9 +1597,9 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+            if ((matched = Regex.Match(value, RegexPatternHexadecimal_D, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
                 (matched = Regex.Match(value, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternHexadecimal_D, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+                (matched = Regex.Match(value, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;
