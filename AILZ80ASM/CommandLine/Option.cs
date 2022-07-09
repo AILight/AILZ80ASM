@@ -43,7 +43,45 @@ namespace AILZ80ASM.CommandLine
                 return;
             }
 
-            if (typeof(T) == typeof(FileInfo))
+            if (typeof(T) == typeof(string))
+            {
+                if (values.Length > 1 && string.IsNullOrEmpty(DefaultValue))
+                {
+                    var optionName = "値";
+                    if (Parameters != default)
+                    {
+                        optionName = string.Join(", ", Parameters.Select(m => m.Name));
+                    }
+                    throw new Exception($"{Name}に、{optionName}を指定する必要があります。");
+                }
+
+                if (values.Length == 0)
+                {
+                    Value = (T)(dynamic)DefaultValue;
+                }
+                else
+                {
+                    var parameterName = values[0];
+                    if (Parameters != default)
+                    {
+                        var parameter = Parameters.Where(m => string.Compare(m.Name, parameterName, true) == 0).FirstOrDefault();
+                        if (parameter != default)
+                        {
+                            Value = (T)(dynamic)parameter.Name;
+                        }
+                        else
+                        {
+                            throw new Exception($"{Name}に、{string.Join(", ", Parameters.Select(m => m.Name))}を指定する必要があります。");
+                        }
+                    }
+                    else
+                    {
+                        Value = (T)(dynamic)parameterName;
+                    }
+                }
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(FileInfo))
             {
                 if (values.Length != 1)
                 {
@@ -97,44 +135,6 @@ namespace AILZ80ASM.CommandLine
                 Value = (T)(dynamic)true;
                 HasValue = true;
             }
-            else if (typeof(T) == typeof(string))
-            {
-                if (values.Length > 1 && string.IsNullOrEmpty(DefaultValue))
-                {
-                    var optionName = "値";
-                    if (Parameters != default)
-                    {
-                        optionName = string.Join(", ", Parameters.Select(m => m.Name));
-                    }
-                    throw new Exception($"{Name}に、{optionName}を指定する必要があります。");
-                }
-
-                if (values.Length == 0)
-                {
-                    Value = (T)(dynamic)DefaultValue;
-                }
-                else
-                {
-                    var parameterName = values[0];
-                    if (Parameters != default)
-                    {
-                        var parameter = Parameters.Where(m => string.Compare(m.Name, parameterName, true) == 0).FirstOrDefault();
-                        if (parameter != default)
-                        {
-                            Value = (T)(dynamic)parameter.Name;
-                        }
-                        else
-                        {
-                            throw new Exception($"{Name}に、{string.Join(", ", Parameters.Select(m => m.Name))}を指定する必要があります。");
-                        }
-                    }
-                    else
-                    {
-                        Value = (T)(dynamic)parameterName;
-                    }
-                }
-                HasValue = true;
-            }
             else if (typeof(T) == typeof(Error.ErrorCodeEnum[]))
             {
                 if (values.Length == 0)
@@ -166,23 +166,7 @@ namespace AILZ80ASM.CommandLine
 
         public void SettingDefaultValue()
         {
-            /*
-            if (typeof(T) == typeof(string))
-            {
-                // ストリングだけ特別処理をする(高速化対応)
-                var parameter = Parameters.Where(m => m.Name == DefaultValue).FirstOrDefault();
-                if (parameter == default)
-                {
-                    throw new Exception($"{Name}に、デフォルト値の{DefaultValue}は設定できません。");
-                }
-                Value = (T)(dynamic)parameter.Name;
-                HasValue = true;
-            }
-            else
-            */
-            {
-                SetValue(new[] { DefaultValue });
-            }
+            SetValue(new[] { DefaultValue });
             Selected = false;
         }
     }

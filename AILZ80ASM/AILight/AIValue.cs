@@ -368,8 +368,6 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIMathException"></exception>
         public static bool TryParseFunction(ref string target, out string resultFunction)
         {
-            resultFunction = "";
-
             var matched = Regex.Match(target, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
@@ -412,7 +410,8 @@ namespace AILZ80ASM.AILight
                 resultFunction = localTarget.Substring(0, endIndex + 1);
                 return true;
             }
-            
+
+            resultFunction = "";
             return false;
         }
 
