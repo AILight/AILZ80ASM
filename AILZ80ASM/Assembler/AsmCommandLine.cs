@@ -311,7 +311,8 @@ namespace AILZ80ASM.Assembler
                 Name = "version",
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",
-                Required = false
+                Required = false,
+                OptionFunc = (argument) => { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
             });
 
             rootCommand.AddOption(new Option<string>()

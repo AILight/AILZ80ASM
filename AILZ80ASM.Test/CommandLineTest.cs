@@ -53,11 +53,49 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Test_CommandLine_Version()
         {
-            var rootCommand = AsmCommandLine.SettingRootCommand();
-            var arguments = new[] { "-v" };
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-v" };
 
-            Assert.IsFalse(rootCommand.Parse(arguments));
-            Assert.IsTrue(Version.TryParse(rootCommand.ParseMessage, out var _));
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(Version.TryParse(rootCommand.ParseMessage, out var _));
+            }
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "--version" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(Version.TryParse(rootCommand.ParseMessage, out var _));
+
+            }
+        }
+
+        [TestMethod]
+        public void Test_CommandLine_Force()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-v" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsFalse(rootCommand.GetValue<bool>("force"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-f" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("force"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "--force" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("force"));
+            }
         }
 
         [TestMethod]
