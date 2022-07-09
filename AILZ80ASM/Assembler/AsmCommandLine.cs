@@ -284,7 +284,7 @@ namespace AILZ80ASM.Assembler
             {
                 Name = "gapByte",
                 Aliases = new[] { "-gap", "--gap-default" },
-                Description = "アセンブラのギャップのデフォルト値を指定します。初期値:$FF",
+                Description = "アセンブラのギャップのデフォルト値を指定します。",
                 DefaultValue = "$FF",
                 Required = false,
             });
@@ -299,12 +299,19 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<bool>()
             {
+                Name = "force",
+                Aliases = new[] { "-f", "--force" },
+                Description = "出力ファイルを上書きします。",
+                Required = false,
+                IsSimple = true,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
                 Name = "version",
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",
-                Required = false,
-                IsSimple = true,
-                OptionFunc = (argument) => { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
+                Required = false
             });
 
             rootCommand.AddOption(new Option<string>()

@@ -182,14 +182,22 @@ namespace AILZ80ASM
 
                 // アセンブル実行
                 var package = new Package(asmOption, AsmISA.Z80);
+
+                // ファイル上書き確認
+                if (!ConfirmOverwrite(asmOption, package))
+                {
+                    return false;
+                }
+
                 //　パッケージステータス
-                package.Trace_Information();
+                package.TraceTitle_Inputs();
 
                 // エラーが無ければアセンブル
                 if (package.Errors.Length == 0)
                 {
                     try
                     {
+                        package.TraceTitle_AssembleStatus();
                         package.Assemble();
                     }
                     catch (ErrorAssembleException ex)
@@ -224,10 +232,14 @@ namespace AILZ80ASM
                     
                     if (asmOption.DiffFile)
                     {
+                        package.TraceTitle_DiffFileMode();
+
                         assembleResult &= package.DiffOutput(outputFiles);
                     }
                     else
                     {
+                        package.TraceTitle_Outputs();
+
                         assembleResult &= package.SaveOutput(outputFiles, failOutputFiles);
                     }
                 }
@@ -279,6 +291,53 @@ namespace AILZ80ASM
             Trace.WriteLine(ProductInfo.ProductLongName);
             Trace.WriteLine(ProductInfo.Copyright);
             Trace.WriteLine("");
+        }
+
+        private static bool ConfirmOverwrite(AsmOption asmOption, Package package)
+        {
+            if (!asmOption.Force && !asmOption.DiffFile)
+            {
+                var files = asmOption.OutputFiles.Where(m => m.Value.Exists).ToDictionary(m => m.Key, m => m.Value);
+                if (files.Any())
+                {
+                    var abortFlg = true;
+
+                    package.TraceTitle_OutputFilesConfirm(files);
+
+                    Trace.Write("Overwrite files? (y/n) ");
+                    var timeoutCounter = 600;
+                    while (!Console.KeyAvailable && timeoutCounter > 0)
+                    {
+                        System.Threading.Thread.Sleep(100);
+                        timeoutCounter--;
+                    }
+
+                    if (timeoutCounter > 0)
+                    {
+                        var keyInfo = Console.ReadKey();
+                        Trace.WriteLine($"");
+                        Trace.WriteLine($"");
+
+                        if (keyInfo.Key == ConsoleKey.Y)
+                        {
+                            abortFlg = false;
+                        }
+                    }
+                    else
+                    {
+                        Trace.WriteLine($"timeout");
+                        Trace.WriteLine($"");
+                    }
+
+                    if (abortFlg)
+                    {
+                        package.TraceTitle_AbortAssemble();
+
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
     }
