@@ -5,6 +5,15 @@ Copyright (C) 2022 by M.Ishino (AILight)
 
 - Z80 filename [Error.Z80]
 
+# Assemble Status
+
+- Expand       (1/6)
+- PreAssemble  (2/6)
+- AdjAssemble  (3/6)
+- MainAssemble (4/6)
+- Validate     (5/6)
+- Complete     (6/6)
+
 # Outputs
 
 

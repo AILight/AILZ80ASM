@@ -14,6 +14,7 @@ namespace AILZ80ASM
     {
         private List<FileItem> FileItems { get; set; } = new List<FileItem>();
         private AsmOption AssembleOption { get; set; } = default;
+        private const int AssembleStatusLength = 15;
 
         public AsmLoad AssembleLoad { get; private set; }
         public ErrorLineItem[] Errors => AssembleLoad.AssembleErrors;
@@ -46,17 +47,22 @@ namespace AILZ80ASM
         public void Assemble()
         {
             // 命令を展開する
+            Trace.WriteLine($"- Expand".PadRight(AssembleStatusLength) + "(1/6)");
             ExpansionItem();
 
             // プレアセンブル
+            Trace.WriteLine($"- PreAssemble".PadRight(AssembleStatusLength) + "(2/6)");
             PreAssemble();
 
             // アジャストアセンブル
+            Trace.WriteLine($"- AdjAssemble".PadRight(AssembleStatusLength) + "(3/6)");
             AdjustAssemble();
 
             // アセンブルを行う
+            Trace.WriteLine($"- MainAssemble".PadRight(AssembleStatusLength) + "(4/6)");
             InternalAssemble();
 
+            Trace.WriteLine($"- Validate".PadRight(AssembleStatusLength) + "(5/6)");
             // 未使用ラベルの値確定
             BuildLabel();
 
@@ -65,6 +71,8 @@ namespace AILZ80ASM
 
             // 完了
             Complete();
+            Trace.WriteLine($"- Complete".PadRight(AssembleStatusLength) + "(6/6)");
+            Trace.WriteLine($"");
         }
 
         /// <summary>
@@ -389,33 +397,9 @@ namespace AILZ80ASM
             this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.Complete;
         }
 
-        public void Trace_Information()
-        {
-            Trace.WriteLine($"# Inputs");
-            Trace.WriteLine("");
-
-            foreach (var item in AssembleOption.InputFiles)
-            {
-                foreach (var fileInfo in item.Value)
-                {
-                    Trace.WriteLine($"- {item.Key.ToString()} filename [{fileInfo.Name}]");
-                }
-            }
-            Trace.WriteLine("");
-
-            if (AssembleOption.DiffFile)
-            {
-                Trace.WriteLine("# 出力ファイル差分確認モード");
-                Trace.WriteLine("");
-            }
-        }
-
         public bool SaveOutput(Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> failedOutputFiles)
         {
             var result = true;
-
-            Trace.WriteLine($"# Outputs");
-            Trace.WriteLine("");
 
             foreach (var item in outputFiles)
             {
