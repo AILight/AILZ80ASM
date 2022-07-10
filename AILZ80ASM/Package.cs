@@ -149,47 +149,6 @@ namespace AILZ80ASM
             // ROM出力調整
             AdjustAssembleForROM();
 
-            /*
-            foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.Where(m => m.IsRomMode).OrderBy(m => m.ProgramAddress))
-            {
-                try
-                {
-                    var outputAddress = default(UInt32);
-
-                    if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, out var outputAddressValue))
-                    {
-                        // 最後のアドレスを取得して再計算する
-                        var foundAsmORG = this.AssembleLoad.Share.AsmORGs.Where(m => m != asmORG && m.HasBinResult && m.ProgramAddress <= asmORG.ProgramAddress).LastOrDefault();
-                        var resultAddress = new AsmAddress();
-                        if (foundAsmORG != default)
-                        {
-                            var lastBinResult = foundAsmORG.LineDetailItems.Where(m => m.LineDetailScopeItems != default).SelectMany(m => m.LineDetailScopeItems.SelectMany(n => n.LineDetailExpansionItems.Select(m => new { m.Address, m.Length }))).OrderByDescending(m => m.Address.Output).FirstOrDefault();
-                            resultAddress = new AsmAddress((UInt16)(lastBinResult.Address.Program + lastBinResult.Length.Program), (UInt32)(lastBinResult.Address.Output + lastBinResult.Length.Output));
-                        }
-                        if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, resultAddress, out outputAddressValue))
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.OutputAddressLabel);
-                        }
-                    }
-                    outputAddress = outputAddressValue.ConvertTo<UInt32>();
-
-                    asmORG.AdjustAssemble(outputAddress, AssembleLoad);
-                }
-                catch (ErrorAssembleException ex)
-                {
-                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, ex));
-                }
-                catch (ErrorLineItemException ex)
-                {
-                    AssembleLoad.AddError(ex.ErrorLineItem);
-                }
-                catch (Exception ex)
-                {
-                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
-                }
-            }
-            */
-
             // FillByteLabelの確定
             var defaultFillByte = AssembleLoad.Share.GapByte;
             foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.OrderBy(m => m.OutputAddress))
@@ -278,47 +237,6 @@ namespace AILZ80ASM
                     AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
                 }
             }
-
-            /*
-            foreach (var asmORG in this.AssembleLoad.Share.AsmORGs.Where(m => m.IsRomMode).OrderBy(m => m.ProgramAddress))
-            {
-                try
-                {
-                    var outputAddress = default(UInt32);
-
-                    if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, out var outputAddressValue))
-                    {
-                        // 最後のアドレスを取得して再計算する
-                        var foundAsmORG = this.AssembleLoad.Share.AsmORGs.Where(m => m != asmORG && m.HasBinResult && m.ProgramAddress <= asmORG.ProgramAddress).LastOrDefault();
-                        var resultAddress = new AsmAddress();
-                        if (foundAsmORG != default)
-                        {
-                            var lastBinResult = foundAsmORG.LineDetailItems.Where(m => m.LineDetailScopeItems != default).SelectMany(m => m.LineDetailScopeItems.SelectMany(n => n.LineDetailExpansionItems.Select(m => new { m.Address, m.Length }))).OrderByDescending(m => m.Address.Output).FirstOrDefault();
-                            resultAddress = new AsmAddress((UInt16)(lastBinResult.Address.Program + lastBinResult.Length.Program), (UInt32)(lastBinResult.Address.Output + lastBinResult.Length.Output));
-                        }
-                        if (!AIMath.TryParse(asmORG.OutputAddressLabel, this.AssembleLoad, resultAddress, out outputAddressValue))
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORG.OutputAddressLabel);
-                        }
-                    }
-                    outputAddress = outputAddressValue.ConvertTo<UInt32>();
-
-                    asmORG.AdjustAssemble(outputAddress, AssembleLoad);
-                }
-                catch (ErrorAssembleException ex)
-                {
-                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, ex));
-                }
-                catch (ErrorLineItemException ex)
-                {
-                    AssembleLoad.AddError(ex.ErrorLineItem);
-                }
-                catch (Exception ex)
-                {
-                    AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
-                }
-            }
-            */
         }
 
 

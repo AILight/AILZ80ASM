@@ -43,6 +43,7 @@ namespace AILZ80ASM.Assembler
             return CreateSourceOnly($"[BOF:{fileInfo.Name}:{encodeMode}]");
         }
         */
+
         public static AsmList CreateFileInfoEOF(FileInfo fileInfo, int length)
         {
             return CreateSourceOnly($"[EOF:{fileInfo.Name}:{length}]");

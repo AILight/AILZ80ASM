@@ -47,10 +47,7 @@ namespace AILZ80ASM.CommandLine
 
             // オプション
             result += $"Options:{Environment.NewLine}";
-            foreach (var item in Options.Where(m => !m.IsHide && !m.IsShortCut && (!simpleMessage || m.IsSimple)))
-            {
-                result += OptionToString(item);
-            }
+            result += OptionsToString(Options.Where(m => !m.IsHide && !m.IsShortCut && (!simpleMessage || m.IsSimple)));
 
             // ショートカット
             var options = Options.Where(m => !m.IsHide && m.IsShortCut && (!simpleMessage || m.IsSimple));
@@ -58,10 +55,7 @@ namespace AILZ80ASM.CommandLine
             {
                 result += $"{Environment.NewLine}";
                 result += $"ShortCut Options:{Environment.NewLine}";
-                foreach (var item in options)
-                {
-                    result += OptionToString(item);
-                }
+                result += OptionsToString(options);
             }
             return result;
         }
@@ -355,69 +349,74 @@ namespace AILZ80ASM.CommandLine
             }
         }
 
-        public static string OptionToString(IOption option)
+        public static string OptionsToString(IEnumerable<IOption> options)
         {
-            var commandList = new List<string>();
-            var descriptionList = new List<string>();
             var result = "";
+            var commandWidth = options.Max(m => ($"{String.Join(", ", m.Aliases)} {options.Max(m => (m.GetType().GenericTypeArguments[0] != typeof(bool) ? $"<{m.ArgumentName}>" : ""))}").Length);
 
-            // コマンド作成
-            var tmpList = new List<string>();
-            for (var index = 0; index < option.Aliases.Length; index++)
+            foreach (var option in options)
             {
-                var outputAliase = option.Aliases[index];
-                if (index < option.Aliases.Length - 1)
-                {
-                    outputAliase += ", ";
-                }
-                else if (index == option.Aliases.Length - 1 && option.GetType().GenericTypeArguments[0] != typeof(bool))
-                {
-                    outputAliase += $" <{option.ArgumentName}>";
-                }
-
-                tmpList.Add(outputAliase);
-            }
-
-            // コマンド側のリストを作成
-            foreach (var command in tmpList)
-            {
-                if (commandList.Count == 0 || (commandList.Last() + command).Length > COMMAND_WIDTH)
-                {
-                    commandList.Add("");
-                }
-                commandList[commandList.Count - 1] += command;
-            }
-
-            // 説明文の作成
-            var description = option.Description;
-            if (option.IsDefineOptional)
-            {
-                description += "(オプション名の省略が可能）";
-            }
-
-            descriptionList.Add(description);
-
-            // 表示処理を作成
-            foreach (var index in Enumerable.Range(0, Math.Max(commandList.Count, descriptionList.Count)))
-            {
-                var tmpComand = (commandList.Count > index ? commandList[index] : "").PadRight(COMMAND_WIDTH);
-                var tmpDescription = descriptionList.Count > index ? descriptionList[index] : "";
-                
-                if (option.Parameters != default && option.Parameters.Length > 0)
-                {
-                    tmpDescription += $" [{string.Join(", ", option.Parameters.Select(m => m.Name))}]";
-                }
-
-                if (!string.IsNullOrEmpty(option.DefaultValue))
-                {
-                    tmpDescription += $" デフォルト:{option.DefaultValue}";
-                }
-
-                result += $"  {tmpComand}{tmpDescription}{Environment.NewLine}";
+                result += OptionToString(option, commandWidth + 1);
             }
 
             return result;
         }
 
+
+        public static string OptionToString(IOption option, int commandWidth)
+        {
+            var result = "";
+            var command = String.Join(", ", option.Aliases);
+            var argument = option.GetType().GenericTypeArguments[0] != typeof(bool) ? $"<{option.ArgumentName}>" : "";
+            var description = option.Description + (option.IsDefineOptional ? " (オプション名の省略が可能)" : "");
+            var optionDescription = option.Parameters != default && option.Parameters.Length > 0 ? $" [{string.Join(", ", option.Parameters.Select(m => m.Name))}]" : "";
+            var optionDefault = !string.IsNullOrEmpty(option.DefaultValue) ? $" デフォルト値:{option.DefaultValue}" : "";
+
+            var commandList = new List<string>();
+            var descriptionList = new List<string>();
+
+            // コマンド作成
+            commandList.Add($"{command} {argument}".PadRight(commandWidth));
+
+            // 説明文作成
+            if (GetWidth(description + optionDescription + optionDefault) + commandWidth < 110 || string.IsNullOrEmpty(optionDescription))
+            {
+                descriptionList.Add(description + optionDescription + optionDefault);
+            }
+            else
+            {
+                descriptionList.Add(description);
+                descriptionList.Add((optionDescription + optionDefault).TrimStart());
+            }
+
+            // 行数を合わせる
+            if (commandList.Count > descriptionList.Count)
+            {
+                descriptionList.Add("");
+            }
+            else if (commandList.Count < descriptionList.Count)
+            {
+                commandList.Add("");
+            }
+
+            for (var index = 0; index < commandList.Count; index++)
+            {
+                result += $"  {commandList[index].PadRight(commandWidth)}";
+                result += $" {descriptionList[index]}{Environment.NewLine}";
+
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 文字の幅を求める
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private static int GetWidth(string target)
+        {
+            return target.ToArray().Sum(m => char.IsAscii(m) ? 1 : 2);
+        }
     }
 }

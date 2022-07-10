@@ -288,16 +288,6 @@ namespace AILZ80ASM.AILight
 
         }
 
-        /*
-        private static void CalculationSetValue(AIValue[] terms, AsmLoad asmLoad, AsmAddress? asmAddress)
-        {
-            foreach (var item in terms.Where(m => m.ValueType == AIValue.ValueTypeEnum.None || m.ValueType == AIValue.ValueTypeEnum.Function).ToArray())
-            {
-                item.SetValue(asmLoad, asmAddress);
-            }
-        }
-        */
-
         /// <summary>
         /// 逆ポーランド記法に変換する
         /// </summary>
