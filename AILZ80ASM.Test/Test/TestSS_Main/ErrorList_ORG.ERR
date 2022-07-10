@@ -26,5 +26,4 @@ ErrorList.Z80:12  E0004: 演算、もしくはラベルの解決に失敗しま�
 
 ErrorList.LST:31  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[未定義:PORT.Sub3]
 
-
- 1 error(s), 0 warning(s), 0 information
+1 error(s), 0 warning(s), 0 information

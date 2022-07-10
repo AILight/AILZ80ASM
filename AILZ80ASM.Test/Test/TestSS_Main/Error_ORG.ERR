@@ -21,5 +21,4 @@ Copyright (C) 2022 by M.Ishino (AILight)
 
 Error.Z80:1  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[未定義:g]
 
-
- 1 error(s), 0 warning(s), 0 information
+1 error(s), 0 warning(s), 0 information
