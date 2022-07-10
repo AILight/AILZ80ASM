@@ -14,7 +14,7 @@
   - [Benchmark1](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark/TestSource/Benchmark1) をアセンブルした処理時間
 
 ## ベンチマーク結果
-#### v0.9.9.24: 2022/07/09
+#### v0.9.9.25: 2022/07/09
 - 演算処理のパフォーマンスチューニング
 ```
 BenchmarkDotNet=v0.13.1, OS=Windows 10.0.19043.1766 (21H1/May2021Update)
