@@ -9,20 +9,6 @@ namespace AILZ80ASM.Assembler
 {
     public class LabelEqu : Label
     {
-        /*
-        public LabelEqu(string labelName, AsmLoad asmLoad)
-            : base(labelName, asmLoad, LabelTypeEnum.Equ)
-        {
-        }
-        */
-
-        /*
-        public LabelEqu(string labelName, string valueString, AsmLoad asmLoad)
-            :base(labelName, valueString, asmLoad, LabelTypeEnum.Equ)
-        {
-        }
-        */
-
         public LabelEqu(LineDetailItemEqual lineDetailItemEqual, AsmLoad asmLoad)
             : base(lineDetailItemEqual, asmLoad, LabelTypeEnum.Equ)
         {

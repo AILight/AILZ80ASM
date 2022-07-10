@@ -42,27 +42,32 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 - 誤認識する場合には、コマンドラインオプション(--input-encode)をお使いください。
 
 ## コマンドラインオプション
-- -i, --input <files>        アセンブリ対象のファイルをスペース区切りで指定します。(オプション名の省略が可能）
-- -ie, --input-encode <mode> 入力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
-- -o, --output <file>        出力ファイルを指定します。
-- -om, --output-mode <mode>  出力ファイルのモードを選択します。 [bin, t88, cmt, hex, sym, lst, equ, err, tag] デフォルト:bin
-- -oe, --output-encode <mode>出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト:auto
-- -lm, --list-mode <mode>    リストの出力形式を選択します。 [simple, middle, full] デフォルト:full
-- -ts, --tab-size <size>     TABのサイズを指定します。 デフォルト:4
-- -dw,                       Warning、Informationをオフにするコードをスペース区切りで指定します。
-- --disable-warning <codes>
-- -ul, --unused-label        未使用ラベルを確認します。
-- -cd,                       アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
-- --change-dir <directory>
-- -gap, --gap-default <byte> アセンブル出力ギャップに設定するバイトを指定します。デフォルト:$FF
-- -df, --diff-file           アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
-- -v, --version              バージョンを表示します。
-- -?, -h, --help <help>      ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --output-mode
-- -??, --readme              Readme.mdを表示します。
+| コマンドライン | 説明
+----|----
+| -i, --input <files>            | アセンブリ対象のファイルをスペース区切りで指定します。 (オプション名の省略が可能)
+| -ie, --input-encode <mode>     | 入力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
+| -o, --output <file>            | 出力ファイルを指定します。
+| -om, --output-mode <mode>      | 出力ファイルのモードを選択します。 [bin, hex, t88, cmt, sym, equ, lst, err, tag] デフォルト値:bin
+| -oe, --output-encode <mode>    | 出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
+| -lm, --list-mode <mode>        | リストの出力形式を選択します。 [simple, middle, full] デフォルト値:full
+| -ts, --tab-size <size>         | TABのサイズを指定します。 デフォルト値:4
+| -dw, --disable-warning <codes> | Warning、Informationをオフにするコードをスペース区切りで指定します。
+| -ul, --unused-label            | 未使用ラベルを確認します。
+| -cd, --change-dir <directory>  | アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
+| -gap, --gap-default <gapByte>  | アセンブラのギャップのデフォルト値を指定します。 デフォルト値:$FF
+| -df, --diff-file               | アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
+| -f, --force                    | 出力ファイルを上書きします。
+| -v, --version                  | バージョンを表示します。
+| -?, -h, --help <help>          | ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
+| -??, --readme                  | Readme.mdを表示します。
 
+#### コマンドライン例
 ```
 ■ sample.z80をアセンブル、出力はBIN形式
 > AILZ80ASM sample.z80
+
+■ sample.z80をアセンブル、出力はBIN形式、上書き確認プロンプトを表示しないで上書きをする
+> AILZ80ASM sample.z80 -f
 
 ■ sample.z80をアセンブル、出力はBIN形式、ログファイルを出力
 > AILZ80ASM sample.z80 -bin -err

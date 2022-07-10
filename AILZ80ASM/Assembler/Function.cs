@@ -31,29 +31,6 @@ namespace AILZ80ASM.Assembler
             CallCounter = 0;
         }
 
-        /*
-        // 使われていないので将来消す
-        public static (Function function, string[] Arguments) Find(string operation, AsmLoad asmLoad)
-        {
-            var operationMatched = Regex.Match(operation, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (operationMatched.Success)
-            {
-                var functionName = operationMatched.Groups["function"].Value;
-                var functionArgs = operationMatched.Groups["args"].Value;
-                var function = asmLoad.FindFunction(functionName);
-
-                if (function == default)
-                {
-                    return default;
-                }
-                var arguments = string.IsNullOrEmpty(functionArgs) ? Array.Empty<string>() : functionArgs.Split(',').Select(m => m.Trim()).ToArray();
-
-                return (function, arguments);
-            }
-            return default;
-        }
-        */
-
         /// <summary>
         /// Functionを計算する
         /// </summary>
