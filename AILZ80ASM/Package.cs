@@ -432,8 +432,8 @@ namespace AILZ80ASM
             var warnings = AssembleLoad.AssembleWarnings;
             var informations = AssembleLoad.AssembleInformation;
 
+            Trace.WriteLine($"{errors.Length:0} error(s), {warnings.Length} warning(s), {informations.Length} information");
             Trace.WriteLine($"");
-            Trace.WriteLine($" {errors.Length:0} error(s), {warnings.Length} warning(s), {informations.Length} information");
         }
 
         /// <summary>
