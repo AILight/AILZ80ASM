@@ -4,12 +4,18 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <Version>0.9.9</Version>
-    <AssemblyVersion>0.9.9.24</AssemblyVersion>
-    <FileVersion>0.9.9.24</FileVersion>
+    <AssemblyVersion>0.9.9.25</AssemblyVersion>
+    <FileVersion>0.9.9.25</FileVersion>
     <Authors>Mitsuhito Ishino</Authors>
     <Company>AILight</Company>
     <Description>Z80 Assembler 'AILZ80ASM'</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <None Remove="Interfaces\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="CharMaps\JIS1.json" />
@@ -34,7 +40,6 @@
 
   <ItemGroup>
     <Folder Include="Documents\" />
-    <Folder Include="Interfaces\" />
   </ItemGroup>
 
   <ItemGroup>

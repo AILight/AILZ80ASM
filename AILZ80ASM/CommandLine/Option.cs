@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using AILZ80ASM.Assembler;
+using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.CommandLine
 {
@@ -37,69 +38,14 @@ namespace AILZ80ASM.CommandLine
         {
             Selected = true;
 
-            var localValues = values.ToList();
-            if (localValues.Count == 0 && DefaultFunc != default)
+            if (values.Length == 0 && DefaultFunc != default)
             {
                 return;
             }
 
-            if (typeof(T) == typeof(FileInfo))
+            if (typeof(T) == typeof(string))
             {
-                if (localValues.Count != 1)
-                {
-                    throw new Exception($"{Name}に、ファイルを指定する必要があります。（1ファイルのみ指定可能）");
-                }
-
-                Value = (T)(object)new FileInfo(localValues.First());
-                HasValue = true;
-            }
-            else if (typeof(T) == typeof(FileInfo[]))
-            {
-                if (localValues.Count == 0)
-                {
-                    throw new Exception($"{Name}に、ファイルを指定する必要があります。（複数ファイル指定可能）");
-                }
-
-                Value = (T)(object)localValues.Select(m => new FileInfo(m)).ToArray();
-                HasValue = true;
-            }
-            else if (typeof(T) == typeof(DirectoryInfo))
-            {
-                if (localValues.Count != 1)
-                {
-                    throw new Exception($"{Name}に、ディレクトリを指定する必要があります。（1ディレクトリのみ指定可能）");
-                }
-
-                Value = (T)(object)new DirectoryInfo(localValues.First());
-                HasValue = true;
-            }
-            else if (typeof(T) == typeof(int))
-            {
-                if (localValues.Count != 1)
-                {
-                    throw new Exception($"{Name}に、数値を指定する必要があります。");
-                }
-
-                Value = (T)(object)Convert.ToInt32(localValues[0]);
-                HasValue = true;
-            }
-            else if (typeof(T) == typeof(byte))
-            {
-                if (localValues.Count != 1)
-                {
-                    throw new Exception($"{Name}に、数値を指定する必要があります。");
-                }
-                Value = (T)(object)AILight.AIMath.Calculation(localValues[0]).ConvertTo<byte>();
-                HasValue = true;
-            }
-            else if (typeof(T) == typeof(bool))
-            {
-                Value = (T)(object)true;
-                HasValue = true;
-            }
-            else if (typeof(T) == typeof(string))
-            {
-                if (localValues.Count > 1 && string.IsNullOrEmpty(DefaultValue))
+                if (values.Length > 1 && string.IsNullOrEmpty(DefaultValue))
                 {
                     var optionName = "値";
                     if (Parameters != default)
@@ -109,19 +55,19 @@ namespace AILZ80ASM.CommandLine
                     throw new Exception($"{Name}に、{optionName}を指定する必要があります。");
                 }
 
-                if (localValues.Count == 0)
+                if (values.Length == 0)
                 {
-                    Value = (T)(object)DefaultValue;
+                    Value = (T)(dynamic)DefaultValue;
                 }
                 else
                 {
-                    var parameterName = localValues[0];
+                    var parameterName = values[0];
                     if (Parameters != default)
                     {
-                        var parameter = Parameters.FirstOrDefault(m => string.Compare(m.Name, parameterName, true) == 0);
+                        var parameter = Parameters.Where(m => string.Compare(m.Name, parameterName, true) == 0).FirstOrDefault();
                         if (parameter != default)
                         {
-                            Value = (T)(object)parameter.Name;
+                            Value = (T)(dynamic)parameter.Name;
                         }
                         else
                         {
@@ -130,20 +76,74 @@ namespace AILZ80ASM.CommandLine
                     }
                     else
                     {
-                        Value = (T)(object)parameterName;
+                        Value = (T)(dynamic)parameterName;
                     }
                 }
                 HasValue = true;
             }
+            else if (typeof(T) == typeof(FileInfo))
+            {
+                if (values.Length != 1)
+                {
+                    throw new Exception($"{Name}に、ファイルを指定する必要があります。（1ファイルのみ指定可能）");
+                }
+
+                Value = (T)(dynamic)new FileInfo(values.First());
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(FileInfo[]))
+            {
+                if (values.Length == 0)
+                {
+                    throw new Exception($"{Name}に、ファイルを指定する必要があります。（複数ファイル指定可能）");
+                }
+
+                Value = (T)(dynamic)values.Select(m => new FileInfo(m)).ToArray();
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(DirectoryInfo))
+            {
+                if (values.Length != 1)
+                {
+                    throw new Exception($"{Name}に、ディレクトリを指定する必要があります。（1ディレクトリのみ指定可能）");
+                }
+
+                Value = (T)(dynamic)new DirectoryInfo(values.First());
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(int))
+            {
+                if (values.Length != 1)
+                {
+                    throw new Exception($"{Name}に、数値を指定する必要があります。");
+                }
+
+                Value = (T)(dynamic)Convert.ToInt32(values[0]);
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(byte))
+            {
+                if (values.Length != 1)
+                {
+                    throw new Exception($"{Name}に、数値を指定する必要があります。");
+                }
+                Value = (T)(dynamic)AILight.AIMath.Calculation(values[0]).ConvertTo<byte>();
+                HasValue = true;
+            }
+            else if (typeof(T) == typeof(bool))
+            {
+                Value = (T)(dynamic)true;
+                HasValue = true;
+            }
             else if (typeof(T) == typeof(Error.ErrorCodeEnum[]))
             {
-                if (localValues.Count == 0)
+                if (values.Length == 0)
                 {
                     throw new Exception($"{Name}に、ワーニング・コードを指定する必要があります。（複数コード指定可能）");
                 }
                 // 全部変換できるか確認
                 var result = new List<Error.ErrorCodeEnum>();
-                foreach (var item in localValues)
+                foreach (var item in values)
                 {
                     if (Enum.TryParse<Error.ErrorCodeEnum>(item, out var errorCode))
                     {
@@ -155,13 +155,19 @@ namespace AILZ80ASM.CommandLine
                     }
                 }
 
-                Value = (T)(object)result.ToArray();
+                Value = (T)(dynamic)result.ToArray();
                 HasValue = true;
             }
             else
             {
                 throw new NotImplementedException();
             }    
+        }
+
+        public void SettingDefaultValue()
+        {
+            SetValue(new[] { DefaultValue });
+            Selected = false;
         }
     }
 }

@@ -198,6 +198,12 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(0xFF, AIMath.Calculation("high $FFEE").ConvertTo<byte>());
             Assert.AreEqual(0xEF, AIMath.Calculation("low $FFEE + 1").ConvertTo<byte>());
             Assert.AreEqual(0xFE, AIMath.Calculation("high $FFEE - 1").ConvertTo<byte>());
+
+            Assert.AreEqual(0x11, AIMath.Calculation("low !$FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("high !$FFEE").ConvertTo<byte>());
+
+            Assert.AreEqual(0xFF, AIMath.Calculation("low +65535").ConvertTo<byte>());
+            Assert.AreEqual(0xFF, AIMath.Calculation("high +65535").ConvertTo<byte>());
         }
 
         [TestMethod]
@@ -297,6 +303,7 @@ namespace AILZ80ASM.Test
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("LB", asmLoad).ConvertTo<UInt16>(); });
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("$", asmLoad).ConvertTo<UInt16>(); });
             Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("$$", asmLoad).ConvertTo<UInt16>(); });
+            Assert.ThrowsException<ErrorAssembleException>(() => { AIMath.Calculation("low * 10", asmLoad).ConvertTo<UInt16>(); });
         }
 
         [TestMethod]

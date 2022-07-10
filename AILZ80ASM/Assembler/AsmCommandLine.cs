@@ -105,7 +105,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputBin",
                 ArgumentName = "file",
                 Aliases = new[] { "-bin" },
-                Description = "BIN形式で出力します。（file名を省略可能）",
+                Description = "BIN形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 IsSimple = true,
@@ -117,7 +117,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputHex",
                 ArgumentName = "file",
                 Aliases = new[] { "-hex" },
-                Description = "HEX形式で出力します。（file名を省略可能）",
+                Description = "HEX形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".hex"); }
@@ -128,7 +128,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputT88",
                 ArgumentName = "file",
                 Aliases = new[] { "-t88" },
-                Description = "T88形式で出力します。（file名を省略可能）",
+                Description = "T88形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".t88"); }
@@ -139,7 +139,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputCMT",
                 ArgumentName = "file",
                 Aliases = new[] { "-cmt" },
-                Description = "CMT形式で出力します。（file名を省略可能）",
+                Description = "CMT形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".cmt"); }
@@ -150,7 +150,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputSYM",
                 ArgumentName = "file",
                 Aliases = new[] { "-sym" },
-                Description = "シンボルファイルを出力します。（file名を省略可能）",
+                Description = "シンボルファイルを出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 IsSimple = true,
@@ -162,7 +162,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputEQU",
                 ArgumentName = "file",
                 Aliases = new[] { "-equ" },
-                Description = "イコールラベルファイルを出力します。（file名を省略可能）",
+                Description = "イコールラベルファイルを出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 IsSimple = true,
@@ -174,7 +174,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputADR",
                 ArgumentName = "file",
                 Aliases = new[] { "-adr" },
-                Description = "アドレスラベルファイルを出力します。（file名を省略可能）",
+                Description = "アドレスラベルファイルを出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 IsSimple = true,
@@ -186,7 +186,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputLST",
                 ArgumentName = "file",
                 Aliases = new[] { "-lst" },
-                Description = "リストファイルを出力します。（file名を省略可能）",
+                Description = "リストファイルを出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 IsSimple = true,
@@ -198,7 +198,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputERR",
                 ArgumentName = "file",
                 Aliases = new[] { "-err" },
-                Description = "アセンブル結果を出力します。（file名を省略可能）",
+                Description = "アセンブル結果を出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 IsSimple = true,
@@ -211,7 +211,7 @@ namespace AILZ80ASM.Assembler
                 Name = "outputTAG",
                 ArgumentName = "file",
                 Aliases = new[] { "-tag" },
-                Description = "タグファイルを出力します。（file名を省略可能）",
+                Description = "タグファイルを出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
                 IsSimple = true,
@@ -284,7 +284,7 @@ namespace AILZ80ASM.Assembler
             {
                 Name = "gapByte",
                 Aliases = new[] { "-gap", "--gap-default" },
-                Description = "アセンブラのギャップのデフォルト値を指定します。初期値:$FF",
+                Description = "アセンブラのギャップのデフォルト値を指定します。",
                 DefaultValue = "$FF",
                 Required = false,
             });
@@ -299,11 +299,19 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<bool>()
             {
+                Name = "force",
+                Aliases = new[] { "-f", "--force" },
+                Description = "出力ファイルを上書きします。",
+                Required = false,
+                IsSimple = true,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
                 Name = "version",
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",
                 Required = false,
-                IsSimple = true,
                 OptionFunc = (argument) => { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
             });
 

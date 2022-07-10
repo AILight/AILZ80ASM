@@ -82,6 +82,7 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemPragma.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPreproError.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPreproPrint.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemEndDefine.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // 全角文字が命令に含まれていた時ここにたどり着く
 

@@ -13,7 +13,14 @@ namespace AILZ80ASM.OperationItems
         public override AsmLength Length => new AsmLength(0);
         public override AsmList List(AsmAddress asmAddress)
         {
-            return AsmList.CreateLineItem(LineItem);
+            if (!string.IsNullOrEmpty(this.LineItem.LabelString) && !Label.IsGlobalLabel(this.LineItem.LabelString))
+            {
+                return AsmList.CreateLineItem(LineItem, asmAddress);
+            }
+            else
+            {
+                return AsmList.CreateLineItem(LineItem);
+            }
         }
 
         private OperationItemNone(LineItem lineItem, AsmLoad asmLoad)

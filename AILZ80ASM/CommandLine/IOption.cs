@@ -24,6 +24,7 @@ namespace AILZ80ASM.CommandLine
 
         void Clear();
         void SetValue(string[] values);
+        void SettingDefaultValue();
     }
 
 }

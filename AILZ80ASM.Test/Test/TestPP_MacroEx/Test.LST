@@ -1,7 +1,7 @@
 ﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.23, LST:Full:4
 000000 9000                         ORG $9000
                                 
-                                ADDR:
+       9000                     ADDR:
                                     REGTEST HL
                                +; target = HL
                                +#IF target.@Text != "HL"

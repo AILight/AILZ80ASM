@@ -27,6 +27,9 @@ namespace AILZ80ASM.Assembler
         // 未使用ラベルのチェック
         public bool CheckUnuseLabel { get; set; } = false;
 
+        // フォースオプション
+        public bool Force { get; set; } = false;
+
         // ワーニングのオフになる対象一覧
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; set; }
         // 入力Encode
@@ -89,6 +92,7 @@ namespace AILZ80ASM.Assembler
             DiffFile = rootCommand.GetValue<bool>("diffFile");
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
+            Force = rootCommand.GetValue<bool>("force");
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
             if (!CheckUnuseLabel)

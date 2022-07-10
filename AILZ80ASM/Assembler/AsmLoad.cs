@@ -232,7 +232,8 @@ namespace AILZ80ASM.Assembler
 
                 this.AddLabel(label);
                 // ローカルラベルの末尾に「:」がついている場合にはワーニング
-                if (lineDetailItem.LineItem.LabelString.StartsWith(".") && lineDetailItem.LineItem.LabelString.EndsWith(":"))
+                if (lineDetailItem.LineItem.LabelString.StartsWith('.') && 
+                    lineDetailItem.LineItem.LabelString.EndsWith(':'))
                 {
                     this.AddError(new ErrorLineItem(lineDetailItem.LineItem, Error.ErrorCodeEnum.W9005));
                 }

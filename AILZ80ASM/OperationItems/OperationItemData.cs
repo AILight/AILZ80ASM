@@ -16,6 +16,22 @@ namespace AILZ80ASM.OperationItems
             db = 1, // DataLength = 1
             dw = 2, // DataLength = 2
         }
+
+        private enum DataValueTypeEnum
+        {
+            ByteValue,
+            UInt16Value,
+            StringValue,
+        }
+
+        private class DataValue
+        {
+            public DataValueTypeEnum DataValueType;
+            public byte ByteValue { get; set; }
+            public UInt16 UInt16Value { get; set; }
+            public string StringValue { get; set; }
+        }
+
         private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
 
@@ -23,7 +39,7 @@ namespace AILZ80ASM.OperationItems
         private DataTypeEnum DataType { get; set; }
         private byte[] ItemDataBin { get; set; }
         private AsmLength ItemDataLength { get; set; }
-        private List<string> ValueList { get; set; } = new List<string>();
+        private List<DataValue> ValueList { get; set; } = new List<DataValue>();
 
         public override byte[] Bin => ItemDataBin;
         public override AsmLength Length => ItemDataLength;
@@ -72,10 +88,10 @@ namespace AILZ80ASM.OperationItems
                     switch (DataType)
                     {
                         case DataTypeEnum.db:
-                            ValueList.AddRange(reaultValue.ConvertTo<byte[]>().Select(m => m.ToString("0")));
+                            ValueList.AddRange(reaultValue.ConvertTo<byte[]>().Select(m => new DataValue { DataValueType = DataValueTypeEnum.ByteValue, ByteValue = m }));
                             break;
                         case DataTypeEnum.dw:
-                            ValueList.AddRange(reaultValue.ConvertTo<UInt16[]>().Select(m => m.ToString("0")));
+                            ValueList.AddRange(reaultValue.ConvertTo<UInt16[]>().Select(m => new DataValue { DataValueType = DataValueTypeEnum.UInt16Value, UInt16Value = m }));
                             break;
                         default:
                             throw new NotImplementedException();
@@ -84,7 +100,7 @@ namespace AILZ80ASM.OperationItems
                 }
                 else if (Regex.IsMatch(item.Value, RegexPatternDataFunction))
                 {
-                    ValueList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, AsmLoad));
+                    ValueList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, AsmLoad).Select(m => new DataValue { DataValueType = DataValueTypeEnum.StringValue, StringValue = m }));
                 }
                 else
                 {
@@ -106,7 +122,7 @@ namespace AILZ80ASM.OperationItems
                     }
                     else
                     {
-                        ValueList.Add(item.Value);
+                        ValueList.Add(new DataValue { DataValueType = DataValueTypeEnum.StringValue, StringValue = item.Value });
                     }
                 }
             }
@@ -123,38 +139,94 @@ namespace AILZ80ASM.OperationItems
             switch (DataType)
             {
                 case DataTypeEnum.dw:
-                    foreach (var valueItem in ValueList.Select((Value, Index) => new { Value, Index}))
+                    foreach (var valueItem in ValueList.Select((Value, Index) => new { Value, Index }))
                     {
-                        var values = AsmException.TryCatch(Error.ErrorCodeEnum.E0022, valueItem.Value, () => 
+                        switch (valueItem.Value.DataValueType)
                         {
-                            var values = AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<UInt16[]>();
-                            foreach (var value in values)
-                            {
-                                switch (asmLoad.ISA.Endianness)
+                            case DataValueTypeEnum.ByteValue:
                                 {
-                                    case InstructionSet.ISA.EndiannessEnum.LittleEndian:
-                                        byteList.Add((byte)(value % 256));
-                                        byteList.Add((byte)(value / 256));
-                                        break;
-                                    case InstructionSet.ISA.EndiannessEnum.BigEndian:
-                                        byteList.Add((byte)(value / 256));
-                                        byteList.Add((byte)(value % 256));
-                                        break;
-                                    default:
-                                        throw new InvalidOperationException();
+                                    var value = (UInt16)valueItem.Value.ByteValue;
+                                    switch (asmLoad.ISA.Endianness)
+                                    {
+                                        case InstructionSet.ISA.EndiannessEnum.LittleEndian:
+                                            byteList.Add((byte)(value % 256));
+                                            byteList.Add((byte)(value / 256));
+                                            break;
+                                        case InstructionSet.ISA.EndiannessEnum.BigEndian:
+                                            byteList.Add((byte)(value / 256));
+                                            byteList.Add((byte)(value % 256));
+                                            break;
+                                        default:
+                                            throw new InvalidOperationException();
+                                    }
                                 }
-                            }
-                            return values;
-                        });
+                                break;
+                            case DataValueTypeEnum.UInt16Value:
+                                {
+                                    var value = valueItem.Value.UInt16Value;
+                                    switch (asmLoad.ISA.Endianness)
+                                    {
+                                        case InstructionSet.ISA.EndiannessEnum.LittleEndian:
+                                            byteList.Add((byte)(value % 256));
+                                            byteList.Add((byte)(value / 256));
+                                            break;
+                                        case InstructionSet.ISA.EndiannessEnum.BigEndian:
+                                            byteList.Add((byte)(value / 256));
+                                            byteList.Add((byte)(value % 256));
+                                            break;
+                                        default:
+                                            throw new InvalidOperationException();
+                                    }
+                                }
+                                break;
+                            case DataValueTypeEnum.StringValue:
+                                AsmException.TryCatch(Error.ErrorCodeEnum.E0022, valueItem.Value.StringValue, () =>
+                                {
+                                    var values = AIMath.Calculation(valueItem.Value.StringValue, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<UInt16[]>();
+                                    foreach (var value in values)
+                                    {
+                                        switch (asmLoad.ISA.Endianness)
+                                        {
+                                            case InstructionSet.ISA.EndiannessEnum.LittleEndian:
+                                                byteList.Add((byte)(value % 256));
+                                                byteList.Add((byte)(value / 256));
+                                                break;
+                                            case InstructionSet.ISA.EndiannessEnum.BigEndian:
+                                                byteList.Add((byte)(value / 256));
+                                                byteList.Add((byte)(value % 256));
+                                                break;
+                                            default:
+                                                throw new InvalidOperationException();
+                                        }
+                                    }
+                                    return values;
+                                });
+                                break;
+                            default:
+                                throw new InvalidOperationException();
+                        }
                     }
                     break;
                 case DataTypeEnum.db:
                     foreach (var valueItem in ValueList.Select((Value, Index) => new { Value, Index }))
                     {
-                        byteList.AddRange(AsmException.TryCatch(Error.ErrorCodeEnum.E0021, valueItem.Value, () =>
+                        switch (valueItem.Value.DataValueType)
                         {
-                            return AIMath.Calculation(valueItem.Value, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<byte[]>();
-                        }));
+                            case DataValueTypeEnum.ByteValue:
+                                byteList.Add(valueItem.Value.ByteValue);
+                                break;
+                            case DataValueTypeEnum.UInt16Value:
+                                byteList.Add((byte)valueItem.Value.UInt16Value);
+                                break;
+                            case DataValueTypeEnum.StringValue:
+                                byteList.AddRange(AsmException.TryCatch(Error.ErrorCodeEnum.E0021, valueItem.Value.StringValue, () =>
+                                {
+                                    return AIMath.Calculation(valueItem.Value.StringValue, asmLoad, new AsmAddress(LineDetailExpansionItemOperation.Address, new AsmLength(valueItem.Index * (int)DataType))).ConvertTo<byte[]>();
+                                }));
+                                break;
+                            default:
+                                throw new InvalidOperationException();
+                        }
                     }
                     break;
                 default:

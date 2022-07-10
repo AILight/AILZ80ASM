@@ -294,7 +294,7 @@ namespace AILZ80ASM.AILight
                 }
                 resultString = target.Substring(startIndex + 1, target.Length - (startIndex + 1) - 1);
 
-                if (target.StartsWith("@"))
+                if (target.StartsWith('@'))
                 {
                     var colonIndex = target.IndexOf(":");
                     if (colonIndex == -1 || colonIndex > startIndex)

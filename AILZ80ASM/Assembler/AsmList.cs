@@ -43,6 +43,7 @@ namespace AILZ80ASM.Assembler
             return CreateSourceOnly($"[BOF:{fileInfo.Name}:{encodeMode}]");
         }
         */
+
         public static AsmList CreateFileInfoEOF(FileInfo fileInfo, int length)
         {
             return CreateSourceOnly($"[EOF:{fileInfo.Name}:{length}]");
@@ -73,6 +74,11 @@ namespace AILZ80ASM.Assembler
             return CreateSource(lineItem.LineString, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
         }
 
+        public static AsmList CreateLineItem(LineItem lineItem, AsmAddress asmAddress)
+        {
+            return Create(default(UInt32?), asmAddress.Program, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, default(byte[]), "", lineItem.LineString, ListStatusEnum.Normal);
+        }
+
         public static AsmList CreateLineItemCommentOut(LineItem lineItem)
         {
             return CreateSource($";{lineItem.LineString}", lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage);
@@ -90,7 +96,12 @@ namespace AILZ80ASM.Assembler
             return CreateLineItem(default(UInt32?), programAddress, default(byte[]), "", lineItem);
         }
 
-        public static AsmList CreateLineItemEnd(UInt16? entryPoint, LineItem lineItem)
+        public static AsmList CreateLineItemEnd(LineItem lineItem)
+        {
+            return CreateLineItem(default(UInt32?), default(UInt32?), default(byte[]), "", lineItem);
+        }
+
+        public static AsmList CreateLineItemEndDefine(UInt16? entryPoint, LineItem lineItem)
         {
             return CreateLineItem(default(UInt32?), entryPoint, default(byte[]), "", lineItem);
         }

@@ -19,7 +19,7 @@ namespace AILZ80ASM.Benshmark
         [Benchmark]
         public int Benchmark1()
         {
-            var result = AILZ80ASM.Program.Main(@"./Main.Z80", @"-cd", @"./TestSource/Benchmark1", "-dw", "W0001", "W0002", "W0003", "-lst", "-bin", "-sym");
+            var result = AILZ80ASM.Program.Main(@"./Main.Z80", @"-cd", @"./TestSource/Benchmark1", "-f", "-dw", "W0001", "W0002", "W0003", "-lst", "-bin", "-sym");
 
             return result;
         }
