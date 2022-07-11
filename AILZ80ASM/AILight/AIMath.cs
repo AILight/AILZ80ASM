@@ -344,9 +344,9 @@ namespace AILZ80ASM.AILight
             }
 
             // 三項演算子のチェック
-            var checkValues = result.ToArray();
-            if (checkValues.Length > 0)
+            if (result.Count > 0)
             {
+                var checkValues = result.ToArray();
                 foreach (var index in Enumerable.Range(0, checkValues.Length - 1))
                 {
                     if (( checkValues[index + 0].IsOperation(AIValue.OperationTypeEnum.Ternary_Colon) && !checkValues[index + 1].IsOperation(AIValue.OperationTypeEnum.Ternary_Question)) ||
@@ -421,6 +421,8 @@ namespace AILZ80ASM.AILight
                                 stack.Push(resultValue);
                             }
                             break;
+                        default:
+                            throw new InvalidOperationException();
                     }
                 }
                 else

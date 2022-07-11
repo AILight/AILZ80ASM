@@ -695,6 +695,7 @@ namespace AILZ80ASM.AILight
         /// <exception cref="NotImplementedException"></exception>
         public void SetValue(AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            // 値が決まっているものは処理しない。
             switch (ValueType)
             {
                 case ValueTypeEnum.None:
