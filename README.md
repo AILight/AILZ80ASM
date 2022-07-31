@@ -1,4 +1,4 @@
-# Z80 Assembler 'AILZ80ASM' ベータ版
+# Z80 Assembler 'AILZ80ASM'
 [![Build Status](https://ailight.visualstudio.com/AILight%20Games/_apis/build/status/AILight.AILZ80ASM_Test?branchName=main)](https://ailight.visualstudio.com/AILight%20Games/_build/latest?definitionId=8&branchName=main)
 
 AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラです。
@@ -7,7 +7,6 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 - 「あいるぜっとはちまるあせむ」
 
 ##### 免責事項
-- 現在、ベータ版です。不具合が残っている可能性がありますので、ご注意ください。
 - ご利用は自己責任でお願いします。利用により損害等が発生したとき、作者は責任をおいかねます。
 
 ##### 連絡方法
@@ -21,6 +20,9 @@ AILZ80ASMは、C#で書かれた.NET 6の環境で動作するZ80アセンブラ
 	- 実行形式: win-x64版、osx-x64版、linux-x64版
 
 ※ 実行形式は、「[自己完結型の実行可能ファイル](https://docs.microsoft.com/ja-jp/dotnet/core/deploying/#publish-self-contained)」になっています。.NETの環境を用意する必要はありません。
+
+## サポートツール
+- [Visual Studio Code 拡張機能(色付け機能)](https://marketplace.visualstudio.com/items?itemName=AILight.ailight-z80-assembler)
 
 ## パフォーマンス
 - アセンブル時間
