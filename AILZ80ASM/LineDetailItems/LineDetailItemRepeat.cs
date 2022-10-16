@@ -267,5 +267,21 @@ namespace AILZ80ASM.LineDetailItems
         {
             Address = new AsmAddress(Address.Value.Program, outputAddress);
         }
+
+        public static bool IsMatchStart(LineItem lineItem, string regexPatternRepeatFullStart, string regexPatternRepeatSimpleStart)
+        {
+            var startMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startSimpleMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            return startMatched.Success || startSimpleMatched.Success;
+        }
+
+        public static bool IsMatchEnd(LineItem lineItem, string regexPatternRepeatEnd)
+        {
+            var endMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            return endMatched.Success;
+
+        }
     }
 }
