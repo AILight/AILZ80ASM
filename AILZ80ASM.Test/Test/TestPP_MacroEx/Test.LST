@@ -21,7 +21,7 @@
                                     TEST_MACRO
                                +
                                +    ; 実行アドレスを整える
-                               +    REPT    ($ + 15) / 16 * 16 - $
+                               +    REPT    11
                                +    nop
                                +    ld a, 0
                                +    nop
@@ -90,7 +90,7 @@
                                 TEST_MACRO MACRO
                                 
                                     ; 実行アドレスを整える
-                                    REPT    ($ + 15) / 16 * 16 - $
+                                    REPT    11
                                     nop
                                     ld a, 0
                                     nop
