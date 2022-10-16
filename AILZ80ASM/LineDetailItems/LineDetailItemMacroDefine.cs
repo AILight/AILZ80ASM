@@ -61,26 +61,45 @@ namespace AILZ80ASM.LineDetailItems
                     asmLoad_LineDetailItemMacro.MacroLines.Add(lineItem);
                 }
 
-                if (endMatched.Success)
+                // リピート開始
+                if (LineDetailItemRepeatCompatible.IsMatchStart(lineItem) ||
+                    LineDetailItemRepeatModern.IsMatchStart(lineItem))
                 {
-                    // Macro登録
-                    var lineDetailItemMacro = asmLoad_LineDetailItemMacro;
-                    var macro = new Macro(lineDetailItemMacro.MacroName, lineDetailItemMacro.MacroArgs, lineDetailItemMacro.MacroLines.ToArray(), asmLoad);
-                    //同名マクロチェック
-                    if (asmLoad.FindMacro(macro.FullName) != default)
+                    asmLoad.Share.LineDetailItemForExpandItem.NestCounter++;
+                }
+
+                // リピート終了
+                if (asmLoad.Share.LineDetailItemForExpandItem.NestCounter > 0)
+                {
+                    if (LineDetailItemRepeatCompatible.IsMatchEnd(lineItem) ||
+                        LineDetailItemRepeatModern.IsMatchEnd(lineItem))
                     {
-                        asmLoad.Share.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(asmLoad_LineDetailItemMacro.LineItem, Error.ErrorCodeEnum.E3010));
+                        asmLoad.Share.LineDetailItemForExpandItem.NestCounter--;
                     }
-
-                    if (asmLoad.Share.LineDetailItemForExpandItem.Errors.Where(m => m.ErrorCode != Error.ErrorCodeEnum.E3006).Count() == 0)
+                }
+                else
+                {
+                    if (endMatched.Success)
                     {
-                        asmLoad.AddMacro(macro);
+                        // Macro登録
+                        var lineDetailItemMacro = asmLoad_LineDetailItemMacro;
+                        var macro = new Macro(lineDetailItemMacro.MacroName, lineDetailItemMacro.MacroArgs, lineDetailItemMacro.MacroLines.ToArray(), asmLoad);
+                        // 同名マクロチェック
+                        if (asmLoad.FindMacro(macro.FullName) != default)
+                        {
+                            asmLoad.Share.LineDetailItemForExpandItem.Errors.Add(new ErrorLineItem(asmLoad_LineDetailItemMacro.LineItem, Error.ErrorCodeEnum.E3010));
+                        }
+
+                        if (asmLoad.Share.LineDetailItemForExpandItem.Errors.Where(m => m.ErrorCode != Error.ErrorCodeEnum.E3006).Count() == 0)
+                        {
+                            asmLoad.AddMacro(macro);
+                        }
+
+                        asmLoad.AddErrors(asmLoad.Share.LineDetailItemForExpandItem.Errors);
+
+                        // 終了
+                        asmLoad.Share.LineDetailItemForExpandItem = default;
                     }
-
-                    asmLoad.AddErrors(asmLoad.Share.LineDetailItemForExpandItem.Errors);
-
-                    // 終了
-                    asmLoad.Share.LineDetailItemForExpandItem = default;
                 }
 
                 return lineDetailItemMacroDefine;
