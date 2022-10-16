@@ -28,5 +28,15 @@ namespace AILZ80ASM.LineDetailItems
 
             return (LineDetailItemRepeatCompatible)Create(new LineDetailItemRepeatCompatible(lineItem, asmLoad), RegexPatternRepeatFullStart, RegexPatternRepeatSimpleStart, RegexPatternRepeatEnd, asmLoad);
         }
+
+        public static bool IsMatchStart(LineItem lineItem)
+        {
+            return LineDetailItemRepeat.IsMatchStart(lineItem, RegexPatternRepeatFullStart, RegexPatternRepeatSimpleStart);
+        }
+
+        public static bool IsMatchEnd(LineItem lineItem)
+        {
+            return LineDetailItemRepeat.IsMatchEnd(lineItem, RegexPatternRepeatEnd);
+        }
     }
 }

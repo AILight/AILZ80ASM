@@ -18,6 +18,7 @@ namespace AILZ80ASM.LineDetailItems
         public virtual AsmResult[] BinResults => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResults).ToArray();
         public virtual AsmList[] Lists => LineDetailScopeItems == default ? new[] { AsmList.CreateLineItem(LineItem) } : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
+        public int NestCounter { get; set; } = 0;
 
         protected LineDetailItem(LineItem lineItem, AsmLoad asmLoad)
         {

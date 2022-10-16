@@ -4,6 +4,7 @@ ADDR:
 	REGTEST HL
 	REGTEST ADDR
 	ABC(DEF)
+	TEST_MACRO
 
 ; レジスター指定テスト
 MACRO REGTEST target
@@ -18,3 +19,15 @@ END MACRO
 MACRO ABC(DEF)
 	XOR A
 END MACRO
+
+; マクロ内リピート
+TEST_MACRO MACRO
+
+	; 実行アドレスを整える
+	REPT	11
+	nop
+	ld a, 0
+	nop
+	ENDM
+
+ENDM
