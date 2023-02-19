@@ -12,5 +12,10 @@ namespace AILZ80ASM.Exceptions
         {
             ErrorLineItem = errorLineItem;
         }
+
+        public void AssociateErrorLineItem()
+        {
+            ErrorLineItem.AssociateErrorLineItem();
+        }
     }
 }

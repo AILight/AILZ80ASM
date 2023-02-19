@@ -650,5 +650,17 @@ namespace AILZ80ASM.Assembler
         {
             this.Share.CharMapConverter.ReadCharMapFromFile(map, fileInfo, this);
         }
+
+        /// <summary>
+        /// エラーをリストに関連付ける
+        /// </summary>
+        public void AssociateError()
+        {
+            //Share.Errors
+            foreach (var error in Share.Errors)
+            {
+                error.AssociateErrorLineItem();
+            }
+        }
     }
 }

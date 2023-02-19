@@ -319,7 +319,7 @@ namespace AILZ80ASM.Assembler
             }
             else if (LineDetailItem != default)
             {
-                asmAddress = LineDetailItem.Address ?? new AsmAddress();
+                asmAddress = LineDetailItem.Address;
             }
 
             InternalCalculation(asmLoad, asmAddress, entryLabels);
