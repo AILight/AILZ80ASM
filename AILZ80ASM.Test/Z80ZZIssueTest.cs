@@ -47,6 +47,16 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_171()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-lst", "Issue171.lst", "-err", "Issue171.err", "-cd", "./Test/Issue/171");
+            Assert.AreEqual(0, result);
+
+            Lib.AreSameLst(File.OpenRead("./Test/Issue/171/Issue171.lst"), File.OpenRead("./Test/Issue/171/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/Issue/171/Issue171.err"), File.OpenRead("./Test/Issue/171/Test.ERR"), Assembler.AsmEnum.FileTypeEnum.ERR);
+        }
+
+        [TestMethod]
         public void Issue_181()
         {
             var errors = Assemble(Path.Combine("Issue", "181"), "Test.Z80");

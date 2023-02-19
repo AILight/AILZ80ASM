@@ -1,0 +1,26 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0, LST:Full:4
+                                ;--------------------------------------------------------------------
+                                ;AILZ80ASM macro前方参照エラーテスト
+                                ;--------------------------------------------------------------------
+                                
+                                TEST    macro   __LABEL__
+                                    dw  __LABEL__
+                                    endm
+                                ;
+000000 0000                         org 0
+       0000                     label1:
+                                ;DIRECT
+000000 0000 0000                    dw  label1
+                                ;MACRO
+                                    TEST    label1
+                               +; __LABEL__ = 0
+000002 0002 0000               +    dw  __LABEL__
+                                ;DIRECT
+000004 0004 0000                    dw  label2
+                                ;MACRO
+                                    TEST    label2
+                               +; __LABEL__ = 0
+000006 0006 0000               +    dw  __LABEL__
+                                ;
+       0008                     label2:
+[EOF:Test.Z80:UTF_8]
