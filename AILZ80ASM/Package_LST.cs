@@ -29,6 +29,8 @@ namespace AILZ80ASM
             var title = $";{ProductInfo.ProductLongName}, LST:{AssembleLoad.AssembleOption.ListMode}:{AssembleLoad.AssembleOption.TabSize}";
             streamWriter.WriteLine(AsmList.CreateSource(title).ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
 
+            AssembleLoad.AssociateError();
+
             foreach (var item in FileItems)
             {
                 item.SaveList(streamWriter, ref lineIndex);

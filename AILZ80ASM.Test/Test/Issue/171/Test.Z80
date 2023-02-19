@@ -1,0 +1,20 @@
+﻿;--------------------------------------------------------------------
+;AILZ80ASM macro前方参照エラーテスト
+;--------------------------------------------------------------------
+
+TEST	macro	__LABEL__
+	dw	__LABEL__
+	endm
+;
+	org	0
+label1:
+;DIRECT
+	dw	label1
+;MACRO
+	TEST	label1
+;DIRECT
+	dw	label2
+;MACRO
+	TEST	label2
+;
+label2:

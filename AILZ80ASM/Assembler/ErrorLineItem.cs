@@ -23,10 +23,14 @@ namespace AILZ80ASM.Assembler
         public ErrorLineItem(LineItem lineItem, Error.ErrorCodeEnum errorCode, params object[] parameters)
         {
             LineItem = lineItem;
-            LineItem.ErrorLineItem = this; //エラー情報と紐づけ
 
             ErrorCode = errorCode;
             Parameters = parameters;
+        }
+
+        public void AssociateErrorLineItem()
+        {
+            LineItem.ErrorLineItem = this; //エラー情報と紐づけ
         }
     }
 }
