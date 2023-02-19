@@ -43,6 +43,10 @@ namespace AILZ80ASM.Assembler
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0005, ex.Value);
             }
+            catch (CircularReferenceException ex)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0007, ex.Message);
+            }
             catch (DivideByZeroException)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0006, target);

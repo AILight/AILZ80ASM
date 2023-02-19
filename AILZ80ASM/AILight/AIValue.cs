@@ -654,7 +654,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public bool Equals(AIValue value)
         {
-            var aiValue = AIValue.Equal(this, value, default(AsmLoad), default(AsmAddress?));
+            var aiValue = AIValue.Equal(this, value, default(AsmLoad), default(AsmAddress?), new List<Label>());
             return aiValue.ValueBool;
         }
 
@@ -692,14 +692,24 @@ namespace AILZ80ASM.AILight
         /// <summary>
         /// 値を確定する
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
         public void SetValue(AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            SetValue(asmLoad, asmAddress, new List<Label>());
+        }
+
+        /// <summary>
+        /// 値を確定する
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public void SetValue(AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             // 値が決まっているものは処理しない。
             switch (ValueType)
             {
                 case ValueTypeEnum.None:
-                    SetValueForNone(asmLoad, asmAddress);
+                    SetValueForNone(asmLoad, asmAddress, entryLabels);
                     break;
                 case ValueTypeEnum.Function:
                     SetValueForFunction(asmLoad, asmAddress);
@@ -713,11 +723,11 @@ namespace AILZ80ASM.AILight
         /// <param name="asmLoad"></param>
         /// <param name="asmAddress"></param>
         /// <returns></returns>
-        public bool TrySetValue(AsmLoad asmLoad, AsmAddress? asmAddress)
+        public bool TrySetValue(AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             try
             {
-                SetValue(asmLoad, asmAddress);
+                SetValue(asmLoad, asmAddress, entryLabels);
                 return true;
             }
             catch
@@ -726,7 +736,7 @@ namespace AILZ80ASM.AILight
             }
         }
 
-        private void SetValueForNone(AsmLoad asmLoad, AsmAddress? asmAddress)
+        private void SetValueForNone(AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             if (TryParse16(Value, out var result16))
             {
@@ -880,7 +890,18 @@ namespace AILZ80ASM.AILight
                     {
                         if (macroValue != MacroValueEnum.Text)
                         {
-                            label.Calculation();
+                            // 再エントリーチェック
+                            if (entryLabels.Any(m => m == label))
+                            {
+                                throw new CircularReferenceException($"ラベル:{Value}");
+
+                            }
+                            else
+                            {
+                                entryLabels.Add(label);
+                            }
+
+                            label.Calculation(entryLabels);
                         }
                     }
 
@@ -963,6 +984,21 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidOperationException"></exception>
         public static AIValue Calculation(AIValue operation, AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
+            return Calculation(operation, firstValue, asmLoad, asmAddress, new List<Label>());
+        }
+
+        /// <summary>
+        /// 値を計算する
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <param name="firstValue"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <param name="entryLabels"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
             if (operation.ValueType != ValueTypeEnum.Operation)
             {
                 throw new InvalidOperationException("演算子が必要な場所に、それ以外の値が指定されました。");
@@ -971,20 +1007,25 @@ namespace AILZ80ASM.AILight
             switch (operation.ValueOperation)
             {
                 case OperationTypeEnum.Negation:
-                    return AIValue.Negation(firstValue, asmLoad, asmAddress);
+                    return AIValue.Negation(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.BitwiseComplement:
-                    return AIValue.BitwiseComplement(firstValue, asmLoad, asmAddress);
+                    return AIValue.BitwiseComplement(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Low:
-                    return AIValue.Low(firstValue, asmLoad, asmAddress);
+                    return AIValue.Low(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.High:
-                    return AIValue.High(firstValue, asmLoad, asmAddress);
+                    return AIValue.High(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Exists:
-                    return AIValue.Exists(firstValue, asmLoad, asmAddress);
+                    return AIValue.Exists(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Text:
-                    return AIValue.Text(firstValue, asmLoad, asmAddress);
+                    return AIValue.Text(firstValue, asmLoad, asmAddress, entryLabels);
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            return Calculation(operation, firstValue, secondPopValue, asmLoad, asmAddress, new List<Label>());
         }
 
         /// <summary>
@@ -995,7 +1036,7 @@ namespace AILZ80ASM.AILight
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             if (operation.ValueType != ValueTypeEnum.Operation)
             {
@@ -1005,44 +1046,49 @@ namespace AILZ80ASM.AILight
             switch (operation.ValueOperation)
             {
                 case OperationTypeEnum.Plus:
-                    return AIValue.Plus(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Plus(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Minus:
-                    return AIValue.Minus(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Minus(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Multiplication:
-                    return AIValue.Multiplication(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Multiplication(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Division:
-                    return AIValue.Division(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Division(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Remainder:
-                    return AIValue.Remainder(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Remainder(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.LeftShift:
-                    return AIValue.LeftShift(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.LeftShift(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.RightShift:
-                    return AIValue.RightShift(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.RightShift(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Less:
-                    return AIValue.Less(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Less(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Greater:
-                    return AIValue.Greater(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Greater(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.LessEqual:
-                    return AIValue.LessEqual(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.LessEqual(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.GreaterEqual:
-                    return AIValue.GreaterEqual(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.GreaterEqual(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Equal:
-                    return AIValue.Equal(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Equal(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.NotEqual:
-                    return AIValue.NotEqual(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.NotEqual(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.And:
-                    return AIValue.And(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.And(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Xor:
-                    return AIValue.Xor(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Xor(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Or:
-                    return AIValue.Or(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.Or(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.ConditionalAnd:
-                    return AIValue.ConditionalAnd(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.ConditionalAnd(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.ConditionalOr:
-                    return AIValue.ConditionalOr(firstValue, secondPopValue, asmLoad, asmAddress);
+                    return AIValue.ConditionalOr(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AIValue thirdPopValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            return Calculation(operation, firstValue, secondPopValue, thirdPopValue, asmLoad, asmAddress, new List<Label>());
         }
 
         /// <summary>
@@ -1053,7 +1099,7 @@ namespace AILZ80ASM.AILight
         /// <param name="secondPopValue"></param>
         /// <param name="thirdPopValue"></param>
         /// <returns></returns>
-        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AIValue thirdPopValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        public static AIValue Calculation(AIValue operation, AIValue firstValue, AIValue secondPopValue, AIValue thirdPopValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             if (operation.ValueType != ValueTypeEnum.Operation)
             {
@@ -1063,9 +1109,9 @@ namespace AILZ80ASM.AILight
             switch (operation.ValueOperation)
             {
                 case OperationTypeEnum.Ternary_Question:
-                    firstValue.SetValue(asmLoad, asmAddress);
-                    secondPopValue.SetValue(asmLoad, asmAddress);
-                    thirdPopValue.SetValue(asmLoad, asmAddress);
+                    firstValue.SetValue(asmLoad, asmAddress, entryLabels);
+                    secondPopValue.SetValue(asmLoad, asmAddress, entryLabels);
+                    thirdPopValue.SetValue(asmLoad, asmAddress, entryLabels);
                     
                     if (!firstValue.ValueType.HasFlag(ValueTypeEnum.Bool))
                     {
@@ -1095,9 +1141,9 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue Negation(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Negation(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1118,9 +1164,9 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue BitwiseComplement(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue BitwiseComplement(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1135,9 +1181,9 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue Low(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Low(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1152,9 +1198,9 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue High(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue High(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
@@ -1169,9 +1215,9 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue Exists(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Exists(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            if (firstValue.TrySetValue(asmLoad, asmAddress))
+            if (firstValue.TrySetValue(asmLoad, asmAddress, entryLabels.ToList()))
             {
                 return new AIValue(true);
             }
@@ -1186,7 +1232,7 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="firstValue"></param>
         /// <returns></returns>
-        private static AIValue Text(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Text(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             var label = asmLoad.FindLabel(firstValue.OriginalValue);
             if (label == default)
@@ -1203,10 +1249,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Plus(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Plus(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.String) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.String))
@@ -1228,10 +1274,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Minus(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Minus(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1248,10 +1294,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Multiplication(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Multiplication(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1268,10 +1314,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Division(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Division(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1288,10 +1334,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Remainder(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Remainder(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1309,10 +1355,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue LeftShift(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue LeftShift(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1329,10 +1375,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue RightShift(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue RightShift(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1349,10 +1395,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Less(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Less(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1369,10 +1415,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue Greater(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Greater(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1389,10 +1435,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue LessEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue LessEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1409,10 +1455,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondPopValue"></param>
         /// <returns></returns>
-        private static AIValue GreaterEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue GreaterEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1429,10 +1475,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Equal(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Equal(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.String) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.String))
@@ -1464,10 +1510,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue NotEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue NotEqual(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.String) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.String))
@@ -1494,10 +1540,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue And(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue And(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1514,10 +1560,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Xor(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Xor(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1534,10 +1580,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue Or(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue Or(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
@@ -1554,10 +1600,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue ConditionalOr(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue ConditionalOr(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bool) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))
@@ -1574,10 +1620,10 @@ namespace AILZ80ASM.AILight
         /// <param name="firstValue"></param>
         /// <param name="secondValue"></param>
         /// <returns></returns>
-        private static AIValue ConditionalAnd(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue ConditionalAnd(AIValue firstValue, AIValue secondValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            firstValue.SetValue(asmLoad, asmAddress);
-            secondValue.SetValue(asmLoad, asmAddress);
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+            secondValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bool) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Bool))

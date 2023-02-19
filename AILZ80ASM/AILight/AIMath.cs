@@ -15,27 +15,33 @@ namespace AILZ80ASM.AILight
 
         public static bool TryParse(string value, out AIValue resultValue)
         {
-            return InternalTryParse(value, default(AsmLoad), default(AsmAddress?), out resultValue);
+            return InternalTryParse(value, default(AsmLoad), default(AsmAddress?), new List<Label>(), out resultValue);
         }
 
         public static bool TryParse(string value, AsmLoad asmLoad, out AIValue resultValue)
         {
-            return InternalTryParse(value, asmLoad, default(AsmAddress?), out resultValue);
+            return InternalTryParse(value, asmLoad, default(AsmAddress?), new List<Label>(), out resultValue);
         }
 
         public static bool TryParse(string value, AsmLoad asmLoad, AsmAddress? asmAddress, out AIValue resultValue)
         {
-            return InternalTryParse(value, asmLoad, asmAddress, out resultValue);
+            return InternalTryParse(value, asmLoad, asmAddress, new List<Label>(), out resultValue);
         }
 
         public static AIValue Calculation(string value)
         {
-            return Calculation(value, default(AsmLoad), default(AsmAddress?));
+            return Calculation(value, default(AsmLoad), default(AsmAddress?), new List<Label>());
         }
 
         public static AIValue Calculation(string value, AsmLoad asmLoad)
         {
-            return Calculation(value, asmLoad, default(AsmAddress?));
+            return Calculation(value, asmLoad, default(AsmAddress?), new List<Label>());
+        }
+
+
+        public static AIValue Calculation(string target, AsmLoad asmLoad, AsmAddress? asmAddress)
+        {
+            return Calculation(target, asmLoad, asmAddress, new List<Label>());
         }
 
         /// <summary>
@@ -44,7 +50,7 @@ namespace AILZ80ASM.AILight
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static AIValue Calculation(string target, AsmLoad asmLoad, AsmAddress? asmAddress)
+        public static AIValue Calculation(string target, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             return AsmException.TryCatch(Error.ErrorCodeEnum.E0004, target, () => 
             {
@@ -56,8 +62,8 @@ namespace AILZ80ASM.AILight
                 var terms = CalculationParse(target);            // 式の分解
                 var lbmcs = CalculationLabelMacro(terms);        // .@系命令を演算子に置き換える
                 var rvpns = CalculationMakeReversePolish(lbmcs); // 逆ポーランド
-                var value = CalculationByReversePolish(rvpns, asmLoad, asmAddress); // 演算
-                value.SetValue(asmLoad, asmAddress);            // 未確定の値になる場合に値を確定させる
+                var value = CalculationByReversePolish(rvpns, asmLoad, asmAddress, entryLabels); // 演算
+                value.SetValue(asmLoad, asmAddress, entryLabels);            // 未確定の値になる場合に値を確定させる
 
                 return value;
             });
@@ -366,7 +372,7 @@ namespace AILZ80ASM.AILight
         /// <typeparam name="T"></typeparam>
         /// <param name="rpns"></param>
         /// <returns></returns>
-        private static AIValue CalculationByReversePolish(AIValue[] rpns, AsmLoad asmLoad, AsmAddress? asmAddress)
+        private static AIValue CalculationByReversePolish(AIValue[] rpns, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             var stack = new Stack<AIValue>();
 
@@ -390,7 +396,7 @@ namespace AILZ80ASM.AILight
 
                                 var firstValue = stack.Pop();
 
-                                var resultValue = AIValue.Calculation(item, firstValue, asmLoad, asmAddress);
+                                var resultValue = AIValue.Calculation(item, firstValue, asmLoad, asmAddress, entryLabels);
                                 stack.Push(resultValue);
                             }
                             break;
@@ -403,7 +409,7 @@ namespace AILZ80ASM.AILight
                                 var secondPopValue = stack.Pop();
                                 var firstValue = stack.Pop();
 
-                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue, asmLoad, asmAddress);
+                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                                 stack.Push(resultValue);
                             }
                             break;
@@ -417,7 +423,7 @@ namespace AILZ80ASM.AILight
                                 var secondPopValue = stack.Pop();
                                 var firstValue = stack.Pop();
 
-                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue, thirdPopValue, asmLoad, asmAddress);
+                                var resultValue = AIValue.Calculation(item, firstValue, secondPopValue, thirdPopValue, asmLoad, asmAddress, entryLabels);
                                 stack.Push(resultValue);
                             }
                             break;
@@ -443,11 +449,11 @@ namespace AILZ80ASM.AILight
         /// <param name="asmAddress"></param>
         /// <param name="resultValue"></param>
         /// <returns></returns>
-        private static bool InternalTryParse(string value, AsmLoad asmLoad, AsmAddress? asmAddress, out AIValue resultValue)
+        private static bool InternalTryParse(string value, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels, out AIValue resultValue)
         {
             try
             {
-                resultValue = Calculation(value, asmLoad, asmAddress);
+                resultValue = Calculation(value, asmLoad, asmAddress, entryLabels);
                 return true;
             }
             catch

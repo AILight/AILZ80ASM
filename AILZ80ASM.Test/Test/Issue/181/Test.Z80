@@ -1,0 +1,6 @@
+﻿
+test0: equ 0 + 0
+test1: equ test1
+
+test3: equ test2
+test2: equ test3

@@ -1,6 +1,7 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -20,11 +21,11 @@ namespace AILZ80ASM.Assembler
             CalculationAsmAddress = calcAsmAddress;
         }
 
-        public override void Calculation()
+        public override void Calculation(List<Label> entryLabels)
         {
             try
             {
-                InternalCalculation(CalculationAsmLoad, CalculationAsmAddress);
+                InternalCalculation(CalculationAsmLoad, CalculationAsmAddress, entryLabels);
             }
             catch (ErrorAssembleException ex)
             {

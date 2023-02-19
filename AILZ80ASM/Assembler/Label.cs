@@ -3,6 +3,7 @@ using AILZ80ASM.Exceptions;
 using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -296,15 +297,20 @@ namespace AILZ80ASM.Assembler
             }
         }
 
+        public virtual void Calculation()
+        {
+            InternalCalculation(AsmLoad, new List<Label>());
+        }
+
         /// <summary>
         /// ラベルの値を計算する
         /// </summary>
-        public virtual void Calculation()
+        public virtual void Calculation(List<Label> entryLabels)
         {
-            InternalCalculation(AsmLoad);
+            InternalCalculation(AsmLoad, entryLabels);
         }
 
-        protected void InternalCalculation(AsmLoad asmLoad)
+        protected void InternalCalculation(AsmLoad asmLoad, List<Label> entryLabels)
         {
             var asmAddress = default(AsmAddress?);
             if (LineDetailExpansionItem != default)
@@ -316,17 +322,17 @@ namespace AILZ80ASM.Assembler
                 asmAddress = LineDetailItem.Address;
             }
 
-            InternalCalculation(asmLoad, asmAddress);
+            InternalCalculation(asmLoad, asmAddress, entryLabels);
         }
 
-        protected void InternalCalculation(AsmLoad asmLoad, AsmAddress? asmAddress)
+        protected void InternalCalculation(AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
             if (DataType != DataTypeEnum.None)
             {
                 return;
             }
 
-            Value = AIMath.Calculation(ValueString, asmLoad, asmAddress);
+            Value = AIMath.Calculation(ValueString, asmLoad, asmAddress, entryLabels);
             DataType = DataTypeEnum.Value;
         }
 
