@@ -1,0 +1,6 @@
+﻿;AILZ80ASM test code
+;特定の名称のラベルが定義できない
+	org	0
+C8025H:
+PE:
+	nop
