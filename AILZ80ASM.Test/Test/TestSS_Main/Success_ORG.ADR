@@ -1,4 +1,4 @@
-﻿;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13, ADR
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0, ADR
 #pragma once
 
 
@@ -15,11 +15,11 @@ ABC: equ 1
 .DEF equ 2
 
 
-     org $0002
+     org $1236
 GHI: 
 .MNO equ 3 
 
-     org $0002
+     org $1236
 .JKL            
 
 
@@ -29,10 +29,10 @@ ABC: equ 1
 .DEF equ 2
 
 
-     org $000D
+     org $1241
 GHI: 
 .MNO equ 3 
 
-     org $000D
+     org $1241
 .JKL            
 

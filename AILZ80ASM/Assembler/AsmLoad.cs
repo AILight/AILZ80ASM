@@ -72,14 +72,17 @@ namespace AILZ80ASM.Assembler
 
             Share = new AsmLoadShare();
             Share.Errors = new List<ErrorLineItem>();
+            Share.LineDetailItemForExpandItem = default;
             Share.AsmORGs = new List<AsmORG>() { new AsmORG() };
             Share.LoadFiles = new Stack<FileInfo>();
             Share.LoadMacros = new Stack<Macro>();
             Share.ListedFiles = new List<FileInfo>();
+            Share.AsmStep = AsmLoadShare.AsmStepEnum.None;
             Share.PragmaOnceFiles = new List<FileInfo>();
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = assembleOption.GapByte;
+            Share.EntryPoint = null;
             Share.AsmSuperAssembleMode = new AsmSuperAssemble();
 
             Scope = new AsmLoadScope();
@@ -98,14 +101,17 @@ namespace AILZ80ASM.Assembler
             var asmSuperAssembleMode = this.Share.AsmSuperAssembleMode;
             Share = new AsmLoadShare();
             Share.Errors = new List<ErrorLineItem>();
+            Share.LineDetailItemForExpandItem = default;
             Share.AsmORGs = new List<AsmORG>() { new AsmORG() };
             Share.LoadFiles = new Stack<FileInfo>();
             Share.LoadMacros = new Stack<Macro>();
             Share.ListedFiles = new List<FileInfo>();
+            Share.AsmStep = AsmLoadShare.AsmStepEnum.None;
             Share.PragmaOnceFiles = new List<FileInfo>();
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = AssembleOption.GapByte;
+            Share.EntryPoint = null;
             Share.AsmSuperAssembleMode = asmSuperAssembleMode;
 
             Scope = new AsmLoadScope();

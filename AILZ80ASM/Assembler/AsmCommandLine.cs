@@ -244,6 +244,15 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<ushort?>()
+            {
+                Name = "entryPoint",
+                ArgumentName = "address",
+                Aliases = new[] { "-ep", "--entry-point" },
+                Description = "エントリーポイントを指定します。",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<int>()
             {
                 Name = "tabSize",

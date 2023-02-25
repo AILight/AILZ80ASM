@@ -71,6 +71,50 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Test_CommandLine_EntryPoint()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                Assert.IsNull(rootCommand.GetValue<ushort?>("entryPoint"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-ep" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsNull(rootCommand.GetValue<ushort?>("entryPoint"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "--entry-point" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsNull(rootCommand.GetValue<ushort?>("entryPoint"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-ep", "1234" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                Assert.AreEqual((UInt16)1234, rootCommand.GetValue<ushort?>("entryPoint"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "--entry-point", "$1234" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                Assert.AreEqual((UInt16)0x1234, rootCommand.GetValue<ushort?>("entryPoint"));
+            }
+        }
+
+        [TestMethod]
         public void Test_CommandLine_Force()
         {
             {

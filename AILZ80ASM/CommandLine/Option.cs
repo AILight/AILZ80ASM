@@ -135,6 +135,16 @@ namespace AILZ80ASM.CommandLine
                 Value = (T)(dynamic)true;
                 HasValue = true;
             }
+            else if (typeof(T) == typeof(ushort?))
+            {
+                if (values.Length != 1)
+                {
+                    throw new Exception($"{Name}に、数値を指定する必要があります。");
+                }
+
+                Value = (T)(dynamic)AILight.AIMath.Calculation(values[0]).ConvertTo<ushort>();
+                HasValue = true;
+            }
             else if (typeof(T) == typeof(Error.ErrorCodeEnum[]))
             {
                 if (values.Length == 0)
