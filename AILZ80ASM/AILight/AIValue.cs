@@ -257,7 +257,7 @@ namespace AILZ80ASM.AILight
             }
             if (valueType.HasFlag(ValueTypeEnum.Operation))
             {
-                ValueOperation = OperationTypeTable[value];
+                ValueOperation = OperationTypeTable[value.ToLower()];
             }
             if (valueType.HasFlag(ValueTypeEnum.Char) ||
                 valueType.HasFlag(ValueTypeEnum.String))
@@ -326,7 +326,7 @@ namespace AILZ80ASM.AILight
                     var matchNextSymbol = Regex.Match(nextTarget, RegexPatternSymbolOperation, RegexOptions.IgnoreCase);
                     if (matchNextSymbol.Success)
                     {
-                        var operationType = OperationTypeTable[matchNextSymbol.Groups["operation"].Value];
+                        var operationType = OperationTypeTable[matchNextSymbol.Groups["operation"].Value.ToLower()];
                         var operationArgument = OperationArgumentType[operationType];
                         if (operationType == OperationTypeEnum.Plus ||
                             operationType == OperationTypeEnum.Minus)

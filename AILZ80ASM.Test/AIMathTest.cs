@@ -204,6 +204,17 @@ namespace AILZ80ASM.Test
 
             Assert.AreEqual(0xFF, AIMath.Calculation("low +65535").ConvertTo<byte>());
             Assert.AreEqual(0xFF, AIMath.Calculation("high +65535").ConvertTo<byte>());
+
+            Assert.AreEqual(0xEE, AIMath.Calculation("LOW $FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0xFF, AIMath.Calculation("HIGH $FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0xEF, AIMath.Calculation("LOW $FFEE + 1").ConvertTo<byte>());
+            Assert.AreEqual(0xFE, AIMath.Calculation("HIGH $FFEE - 1").ConvertTo<byte>());
+
+            Assert.AreEqual(0x11, AIMath.Calculation("LOW !$FFEE").ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("HIGH !$FFEE").ConvertTo<byte>());
+
+            Assert.AreEqual(0xFF, AIMath.Calculation("LOW +65535").ConvertTo<byte>());
+            Assert.AreEqual(0xFF, AIMath.Calculation("HIGH +65535").ConvertTo<byte>());
         }
 
         [TestMethod]
@@ -217,6 +228,9 @@ namespace AILZ80ASM.Test
 
             Assert.IsTrue(AIMath.Calculation("exists LB01", asmLoad).ConvertTo<bool>());
             Assert.IsFalse(AIMath.Calculation("exists LB02", asmLoad).ConvertTo<bool>());
+            
+            Assert.IsTrue(AIMath.Calculation("EXISTS LB01", asmLoad).ConvertTo<bool>());
+            Assert.IsFalse(AIMath.Calculation("EXISTS LB02", asmLoad).ConvertTo<bool>());
         }
 
         [TestMethod]
@@ -262,14 +276,31 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(0x00, AIMath.Calculation("LB.@H.@H", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@L", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@LOW", asmLoad).ConvertTo<byte>());
+
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@L.@L", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0xAA, AIMath.Calculation("LB.@h", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0xAA, AIMath.Calculation("LB.@high", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("LB.@h.@h", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x02, AIMath.Calculation("LB.@l", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x02, AIMath.Calculation("LB.@low", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x02, AIMath.Calculation("LB.@l.@l", asmLoad).ConvertTo<byte>());
+
             Assert.IsTrue(AIMath.Calculation("LB.@T == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB.@TEXT == \"0xAA02\"", asmLoad).ConvertTo<bool>());
-            Assert.IsTrue(AIMath.Calculation("text LB == \"0xAA02\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("TEXT LB == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB2.@T == \"LABEL\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB2.@TEXT == \"LABEL\"", asmLoad).ConvertTo<bool>());
-            Assert.IsTrue(AIMath.Calculation("text LB2 == \"LABEL\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("TEXT LB2 == \"LABEL\"", asmLoad).ConvertTo<bool>());
             Assert.IsFalse(AIMath.Calculation("LB2.@T == \"LABEL1\"", asmLoad).ConvertTo<bool>());
+
+            Assert.IsTrue(AIMath.Calculation("LB.@t == \"0xAA02\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("LB.@text == \"0xAA02\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("text LB == \"0xAA02\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("LB2.@t == \"LABEL\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("LB2.@text == \"LABEL\"", asmLoad).ConvertTo<bool>());
+            Assert.IsTrue(AIMath.Calculation("text LB2 == \"LABEL\"", asmLoad).ConvertTo<bool>());
+            Assert.IsFalse(AIMath.Calculation("LB2.@t == \"LABEL1\"", asmLoad).ConvertTo<bool>());
+
             Assert.AreEqual(0x8000, AIMath.Calculation("$", asmLoad, asmAddress).ConvertTo<UInt16>());
             Assert.AreEqual(0x8100, AIMath.Calculation("$$", asmLoad, asmAddress).ConvertTo<UInt16>());
         }
