@@ -18,6 +18,9 @@ namespace AILZ80ASM.Assembler
         // 出力結果の差分を取るか
         public bool DiffFile { get; set; } = false;
 
+        // エントリーポイント
+        public UInt16? EntryPoint { get; set; } = default;
+
         // タブサイズ
         public int TabSize { get; set; } = 4;
 
@@ -29,6 +32,9 @@ namespace AILZ80ASM.Assembler
 
         // フォースオプション
         public bool Force { get; set; } = false;
+
+        // スーパーアセンブルモードの不使用
+        public bool NoSuperAsmAssemble { get; set; } = false;
 
         // ワーニングのオフになる対象一覧
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; set; }
@@ -90,9 +96,11 @@ namespace AILZ80ASM.Assembler
 
             ListMode = rootCommand.GetListMode();
             DiffFile = rootCommand.GetValue<bool>("diffFile");
+            EntryPoint = rootCommand.GetValue<ushort?>("entryPoint");
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");
+            NoSuperAsmAssemble = rootCommand.GetValue<bool>("noSuperAssemble");
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
             if (!CheckUnuseLabel)

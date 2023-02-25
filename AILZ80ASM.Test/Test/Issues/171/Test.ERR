@@ -1,0 +1,22 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0
+Copyright (C) 2022 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [Test.Z80]
+
+# Assemble Status
+
+- Expand       (1/6)
+- PreAssemble  (2/6)
+- AdjAssemble  (3/6)
+- MainAssemble (4/6)
+- Validate     (5/6)
+- Complete     (6/6)
+
+# Outputs
+
+- LST filename [Issue171.lst]: Successful.
+
+0 error(s), 0 warning(s), 0 information
+

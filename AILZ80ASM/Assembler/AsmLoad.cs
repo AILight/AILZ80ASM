@@ -72,14 +72,47 @@ namespace AILZ80ASM.Assembler
 
             Share = new AsmLoadShare();
             Share.Errors = new List<ErrorLineItem>();
+            Share.LineDetailItemForExpandItem = default;
             Share.AsmORGs = new List<AsmORG>() { new AsmORG() };
             Share.LoadFiles = new Stack<FileInfo>();
             Share.LoadMacros = new Stack<Macro>();
             Share.ListedFiles = new List<FileInfo>();
+            Share.AsmStep = AsmLoadShare.AsmStepEnum.None;
             Share.PragmaOnceFiles = new List<FileInfo>();
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = assembleOption.GapByte;
+            Share.EntryPoint = null;
+            Share.AsmSuperAssembleMode = new AsmSuperAssemble();
+
+            Scope = new AsmLoadScope();
+            Scope.Labels = new List<Label>();
+            Scope.Macros = new List<Macro>();
+            Scope.Functions = new List<Function>();
+            Scope.GlobalLabelNames = new List<string>();
+            Scope.IsRegisterLabel = false;
+        }
+
+        /// <summary>
+        /// 再アセンブル用に内容を初期化します
+        /// </summary>
+        public void ReAssembleInitialize()
+        {
+            var asmSuperAssembleMode = this.Share.AsmSuperAssembleMode;
+            Share = new AsmLoadShare();
+            Share.Errors = new List<ErrorLineItem>();
+            Share.LineDetailItemForExpandItem = default;
+            Share.AsmORGs = new List<AsmORG>() { new AsmORG() };
+            Share.LoadFiles = new Stack<FileInfo>();
+            Share.LoadMacros = new Stack<Macro>();
+            Share.ListedFiles = new List<FileInfo>();
+            Share.AsmStep = AsmLoadShare.AsmStepEnum.None;
+            Share.PragmaOnceFiles = new List<FileInfo>();
+            Share.CharMapConverter = new CharMaps.CharMapConverter();
+            Share.AsmLists = new List<AsmList>();
+            Share.GapByte = AssembleOption.GapByte;
+            Share.EntryPoint = null;
+            Share.AsmSuperAssembleMode = asmSuperAssembleMode;
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -373,6 +406,15 @@ namespace AILZ80ASM.Assembler
         }
 
         /// <summary>
+        /// ORGにぶら下がるエラー明細を追加
+        /// </summary>
+        /// <param name="lineDetailItem"></param>
+        public void AddErrorLineDetailItem(LineDetailItem lineDetailItem)
+        {
+            this.Share.AsmORGs.Last().AddErrorLineDetailItem(lineDetailItem);
+        }
+
+        /// <summary>
         /// 読み込みファイルを追加
         /// </summary>
         /// <param name="fileInfo"></param>
@@ -649,6 +691,18 @@ namespace AILZ80ASM.Assembler
         public void CharMapConverter_ReadCharMapFromFile(string map, FileInfo fileInfo)
         {
             this.Share.CharMapConverter.ReadCharMapFromFile(map, fileInfo, this);
+        }
+
+        /// <summary>
+        /// エラーをリストに関連付ける
+        /// </summary>
+        public void AssociateError()
+        {
+            //Share.Errors
+            foreach (var error in Share.Errors)
+            {
+                error.AssociateErrorLineItem();
+            }
         }
     }
 }

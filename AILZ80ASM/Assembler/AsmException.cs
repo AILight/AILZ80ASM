@@ -51,6 +51,10 @@ namespace AILZ80ASM.Assembler
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0006, target);
             }
+            catch (OutputAddressUsageException)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0010);
+            }
             catch (Exception)
             {
                 throw new ErrorAssembleException(errorCode, $"演算対象：{target}");

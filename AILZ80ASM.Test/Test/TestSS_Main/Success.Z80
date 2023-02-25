@@ -1,5 +1,6 @@
 ﻿		include "Success.INC"
 
+		ORG $1234
 [GB1]
 ABC		equ 1
 .DEF	equ 2

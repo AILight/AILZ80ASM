@@ -244,6 +244,15 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<ushort?>()
+            {
+                Name = "entryPoint",
+                ArgumentName = "address",
+                Aliases = new[] { "-ep", "--entry-point" },
+                Description = "エントリーポイントを指定します。",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<int>()
             {
                 Name = "tabSize",
@@ -294,6 +303,14 @@ namespace AILZ80ASM.Assembler
                 Name = "diffFile",
                 Aliases = new[] { "-df", "--diff-file" },
                 Description = "アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。",
+                Required = false,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
+                Name = "noSuperAssemble",
+                Aliases = new[] { "-nsa", "--no-super-asm" },
+                Description = "スーパーアセンブルモードを無効にします。",
                 Required = false,
             });
 

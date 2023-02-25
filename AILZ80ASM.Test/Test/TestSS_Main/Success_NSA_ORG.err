@@ -1,0 +1,33 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0
+Copyright (C) 2022 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [Success_NSA.Z80]
+
+# Assemble Status
+
+- Expand       (1/6)
+- PreAssemble  (2/6)
+- AdjAssemble  (3/6)
+- MainAssemble (4/6)
+- Validate     (5/6)
+- Complete     (6/6)
+
+# Outputs
+
+- LST filename [Success_NSA.LST]: Successful.
+- BIN filename [Success_NSA.BIN]: Failed
+
+# Error
+
+Success_NSA.Z80:3  E0010: 出力アドレスに影響する場所では$$は使えません。
+Success_NSA.Z80:10  E0010: 出力アドレスに影響する場所では$$は使えません。
+
+# List
+
+Success_NSA.LST:4  E0010: 出力アドレスに影響する場所では$$は使えません。
+Success_NSA.LST:11  E0010: 出力アドレスに影響する場所では$$は使えません。
+
+2 error(s), 0 warning(s), 0 information
+

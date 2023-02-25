@@ -1,0 +1,15 @@
+﻿
+    org 0x100
+    #if $$==0x100
+        db  1
+    #else
+        db  2
+    #endif
+
+    org 0x200
+    #if $$==0x100
+        db  3
+    #else
+        db  4
+    #endif
+
