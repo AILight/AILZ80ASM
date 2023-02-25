@@ -171,9 +171,10 @@ namespace AILZ80ASM.Test
             }
         }
 
-        public static ErrorLineItem[] Assemble_AreSame(string directoryName)
+        public static ErrorLineItem[] Assemble_AreSame(params string[] directoryNames)
         {
-            var targetDirectoryName = Path.Combine(".", "Test", directoryName);
+            var directories = (new[] { ".", "Test" }).Union(directoryNames).ToArray();
+            var targetDirectoryName = Path.Combine(directories);
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, "Test.Z80")) };
             var outputFiles = Enum.GetValues<AsmEnum.FileTypeEnum>().Where(m => m != AsmEnum.FileTypeEnum.Z80)
                                   .ToDictionary(m => m, n => new FileInfo(Path.Combine(targetDirectoryName, $"Test.{n}")));

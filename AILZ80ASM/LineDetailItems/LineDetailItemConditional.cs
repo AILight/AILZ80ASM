@@ -150,33 +150,42 @@ namespace AILZ80ASM.LineDetailItems
             else
             {
                 // リピート数が設定されているものを処理する
-                foreach (var condition in Conditions.Keys)
+                try
                 {
-                    if (string.IsNullOrEmpty(condition) || AIMath.Calculation(condition, AsmLoad, asmAddress).ConvertTo<bool>())
+                    foreach (var condition in Conditions.Keys)
                     {
-                        foreach (var item in Conditions[condition].ToArray())
+                        if (string.IsNullOrEmpty(condition) || AIMath.Calculation(condition, AsmLoad, asmAddress).ConvertTo<bool>())
                         {
-                            var lineItem = item.LineItem;
-                            try
+                            foreach (var item in Conditions[condition].ToArray())
                             {
-                                lineItem.CreateLineDetailItem(AsmLoad);
+                                var lineItem = item.LineItem;
+                                try
+                                {
+                                    lineItem.CreateLineDetailItem(AsmLoad);
+                                }
+                                catch (ErrorAssembleException ex)
+                                {
+                                    this.AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
+                                }
+                                catch (ErrorLineItemException ex)
+                                {
+                                    this.AsmLoad.AddError(ex.ErrorLineItem);
+                                }
+                                catch (Exception ex)
+                                {
+                                    this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                                }
+                                item.EnableAssemble = true;
                             }
-                            catch (ErrorAssembleException ex)
-                            {
-                                this.AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
-                            }
-                            catch (ErrorLineItemException ex)
-                            {
-                                this.AsmLoad.AddError(ex.ErrorLineItem);
-                            }
-                            catch (Exception ex)
-                            {
-                                this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
-                            }
-                            item.EnableAssemble = true;
+                            break;
                         }
-                        break;
                     }
+                }
+                catch
+                {
+                    // 解析でエラーが出た場合ORGに積む
+                    AsmLoad.AddErrorLineDetailItem(this);
+                    throw;
                 }
             }
 

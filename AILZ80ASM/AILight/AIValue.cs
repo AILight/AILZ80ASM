@@ -845,7 +845,8 @@ namespace AILZ80ASM.AILight
                 //if (asmLoad != default && asmLoad.Share.AsmStep == AsmLoadShare.AsmStepEnum.PreAssemble)
                 if (asmLoad != default && !asmAddress.Value.Output.HasValue)
                 {
-                    throw new InvalidAIValueException("出力アドレスに影響する場所では$$は使えません。");
+                    // アウトプットアドレスが確定していない
+                    throw new OutputAddressUsageException();
                 }
 
                 // アウトプット・ロケーションカウンター

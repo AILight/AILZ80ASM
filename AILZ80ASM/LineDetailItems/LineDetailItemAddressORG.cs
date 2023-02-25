@@ -3,6 +3,7 @@ using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
@@ -60,6 +61,14 @@ namespace AILZ80ASM.LineDetailItems
             else
             {
                 asmAddress.Output = default(UInt32?);
+                if (AsmLoad.Share.AsmSuperAssembleMode.IsInitializeOutputAddress)
+                {
+                    if (AsmLoad.Share.AsmSuperAssembleMode.AsmORG_AddressList.Any(m => m.Program == programAddress))
+                    {
+                        var asmORG_Address = AsmLoad.Share.AsmSuperAssembleMode.AsmORG_AddressList.First(m => m.Program == programAddress);
+                        asmAddress.Output = asmORG_Address.Output;
+                    }
+                }
             }
 
             base.PreAssemble(ref asmAddress);

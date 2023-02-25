@@ -19,10 +19,12 @@ namespace AILZ80ASM.Assembler
 
         public UInt16 ProgramAddress { get; private set; }
         public UInt32? OutputAddress { get; private set; }
+        public UInt32? SavedOutputAddress { get; private set; }
         public string OutputAddressLabel { get; private set; }
         public string FillByteLabel { get; private set; }
         public bool IsRomMode => !string.IsNullOrEmpty(OutputAddressLabel);
         public List<LineDetailItem> LineDetailItems { get; private set; }
+        public List<LineDetailItem> ErrorLineDetailItems { get; private set; }
         public LineItem LineItem { get; private set; } = default;
         public ORGTypeEnum ORGType { get; private set; } = ORGTypeEnum.ORG;
         public bool HasBinResult => LineDetailItems.Any(m => m.BinResults.Any());
@@ -53,6 +55,7 @@ namespace AILZ80ASM.Assembler
 
             FillByteLabel = fillByteLabel;
             LineDetailItems = new List<LineDetailItem>();
+            ErrorLineDetailItems = new List<LineDetailItem>();
             LineItem = lineItem;
             ORGType = orgType;
         }
@@ -60,6 +63,11 @@ namespace AILZ80ASM.Assembler
         public void AddLineDetailItem(LineDetailItem lineDetailItem)
         {
             LineDetailItems.Add(lineDetailItem);
+        }
+
+        public void AddErrorLineDetailItem(LineDetailItem lineDetailItem)
+        {
+            ErrorLineDetailItems.Add(lineDetailItem);
         }
 
         public void AdjustAssemble(UInt32 outputAddress, AsmLoad asmLoad)
@@ -81,6 +89,14 @@ namespace AILZ80ASM.Assembler
                     asmLoad.AddError(ex.ErrorLineItem);
                 }
             }
+        }
+
+        /// <summary>
+        /// OutputAddressを一時保存します
+        /// </summary>
+        public void SaveOutputAddress()
+        {
+            this.SavedOutputAddress = this.OutputAddress;
         }
     }
 }

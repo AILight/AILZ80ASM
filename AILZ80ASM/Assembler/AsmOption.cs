@@ -30,6 +30,9 @@ namespace AILZ80ASM.Assembler
         // フォースオプション
         public bool Force { get; set; } = false;
 
+        // スーパーアセンブルモードの不使用
+        public bool NoSuperAsmAssemble { get; set; } = false;
+
         // ワーニングのオフになる対象一覧
         public Error.ErrorCodeEnum[] DisableWarningCodes { get; set; }
         // 入力Encode
@@ -93,6 +96,7 @@ namespace AILZ80ASM.Assembler
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");
+            NoSuperAsmAssemble = rootCommand.GetValue<bool>("noSuperAssemble");
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
             if (!CheckUnuseLabel)

@@ -299,6 +299,14 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<bool>()
             {
+                Name = "noSuperAssemble",
+                Aliases = new[] { "-nsa", "--no-super-asm" },
+                Description = "スーパーアセンブルモードを無効にします。",
+                Required = false,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
                 Name = "force",
                 Aliases = new[] { "-f", "--force" },
                 Description = "出力ファイルを上書きします。",

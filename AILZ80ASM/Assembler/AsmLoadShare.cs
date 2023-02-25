@@ -56,5 +56,8 @@ namespace AILZ80ASM.Assembler
 
         // エントリーポイント
         public UInt16? EntryPoint { get; set; } = default;
+
+        // スーパーアセンブル用
+        public AsmSuperAssemble AsmSuperAssembleMode { get; set; } = default;
     }
 }
