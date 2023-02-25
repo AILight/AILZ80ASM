@@ -236,6 +236,38 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestCMT_ALL()
+        {
+            var result = Program.Main(@"Success_CMT_ALL.Z80", "-f", "-cmt", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_CMT_ALL_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_CMT_ALL.cmt"), Assembler.AsmEnum.FileTypeEnum.CMT);
+        }
+
+        [TestMethod]
+        public void TestCMT_CEP()
+        {
+            var result = Program.Main(@"Success_CMT_CEP.Z80", "-f", "-cmt", "-cd", "./Test/TestSS_Main/", "-ep", "$5678");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_CMT_CEP_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_CMT_CEP.cmt"), Assembler.AsmEnum.FileTypeEnum.CMT);
+        }
+
+        [TestMethod]
+        public void TestCMT_END()
+        {
+            var result = Program.Main(@"Success_CMT_END.Z80", "-f", "-cmt", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_CMT_END_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_CMT_END.cmt"), Assembler.AsmEnum.FileTypeEnum.CMT);
+        }
+
+        [TestMethod]
+        public void TestCMT_ORG()
+        {
+            var result = Program.Main(@"Success_CMT_ORG.Z80", "-f", "-cmt", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_CMT_ORG_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_CMT_ORG.cmt"), Assembler.AsmEnum.FileTypeEnum.CMT);
+        }
+
+        [TestMethod]
         public void TestT88()
         {
             var result = Program.Main(@"Success.Z80", "-f", "-t88", "-cd", "./Test/TestSS_Main/");

@@ -121,6 +121,19 @@ namespace AILZ80ASM
         {
             this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.AdjustAssemble;
 
+            // エントリポイントを確定させる
+            if (!this.AssembleLoad.Share.EntryPoint.HasValue)
+            {
+                if (this.AssembleLoad.Share.AsmORGs.Count >= 2)
+                {
+                    this.AssembleLoad.Share.EntryPoint = this.AssembleLoad.Share.AsmORGs[1].ProgramAddress;
+                }
+            }
+            if (this.AssembleOption.EntryPoint.HasValue)
+            {
+                this.AssembleLoad.Share.EntryPoint = this.AssembleOption.EntryPoint;
+            }
+
             // OutputAddressを一時保存します
             this.AssembleLoad.Share.AsmORGs.ForEach(m => m.SaveOutputAddress());
 

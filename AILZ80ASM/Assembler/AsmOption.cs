@@ -18,6 +18,9 @@ namespace AILZ80ASM.Assembler
         // 出力結果の差分を取るか
         public bool DiffFile { get; set; } = false;
 
+        // エントリーポイント
+        public UInt16? EntryPoint { get; set; } = default;
+
         // タブサイズ
         public int TabSize { get; set; } = 4;
 
@@ -93,6 +96,7 @@ namespace AILZ80ASM.Assembler
 
             ListMode = rootCommand.GetListMode();
             DiffFile = rootCommand.GetValue<bool>("diffFile");
+            EntryPoint = rootCommand.GetValue<ushort?>("entryPoint");
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");

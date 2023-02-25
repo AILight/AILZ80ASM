@@ -1,4 +1,4 @@
-﻿;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.13, EQU
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0, EQU
 #pragma once
 
 
@@ -13,8 +13,8 @@ CHAR03      equ 60
 
 ABC         equ 1
 ABC.DEF     equ 2
-GHI:        equ $0002
-GHI.JKL:    equ $0004
+GHI:        equ $1236
+GHI.JKL:    equ $1238
 GHI.MNO     equ 3
 
 
@@ -22,7 +22,7 @@ GHI.MNO     equ 3
 
 ABC         equ 1
 ABC.DEF     equ 2
-GHI:        equ $000D
-GHI.JKL:    equ $000F
+GHI:        equ $1241
+GHI.JKL:    equ $1243
 GHI.MNO     equ 3
 
