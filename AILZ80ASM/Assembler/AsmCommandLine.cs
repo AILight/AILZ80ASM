@@ -308,6 +308,14 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<bool>()
             {
+                Name = "noSuperAssemble",
+                Aliases = new[] { "-nsa", "--no-super-asm" },
+                Description = "スーパーアセンブルモードを使わないようになります。",
+                Required = false,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
                 Name = "version",
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",

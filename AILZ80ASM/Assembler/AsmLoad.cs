@@ -80,6 +80,33 @@ namespace AILZ80ASM.Assembler
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = assembleOption.GapByte;
+            Share.AsmSuperAssembleMode = new AsmSuperAssemble();
+
+            Scope = new AsmLoadScope();
+            Scope.Labels = new List<Label>();
+            Scope.Macros = new List<Macro>();
+            Scope.Functions = new List<Function>();
+            Scope.GlobalLabelNames = new List<string>();
+            Scope.IsRegisterLabel = false;
+        }
+
+        /// <summary>
+        /// 再アセンブル用に内容を初期化します
+        /// </summary>
+        public void ReAssembleInitialize()
+        {
+            var asmSuperAssembleMode = this.Share.AsmSuperAssembleMode;
+            Share = new AsmLoadShare();
+            Share.Errors = new List<ErrorLineItem>();
+            Share.AsmORGs = new List<AsmORG>() { new AsmORG() };
+            Share.LoadFiles = new Stack<FileInfo>();
+            Share.LoadMacros = new Stack<Macro>();
+            Share.ListedFiles = new List<FileInfo>();
+            Share.PragmaOnceFiles = new List<FileInfo>();
+            Share.CharMapConverter = new CharMaps.CharMapConverter();
+            Share.AsmLists = new List<AsmList>();
+            Share.GapByte = AssembleOption.GapByte;
+            Share.AsmSuperAssembleMode = asmSuperAssembleMode;
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -370,6 +397,15 @@ namespace AILZ80ASM.Assembler
         public void AddLineDetailItem(LineDetailItem lineDetailItem)
         {
             this.Share.AsmORGs.Last().AddLineDetailItem(lineDetailItem);
+        }
+
+        /// <summary>
+        /// ORGにぶら下がるエラー明細を追加
+        /// </summary>
+        /// <param name="lineDetailItem"></param>
+        public void AddErrorLineDetailItem(LineDetailItem lineDetailItem)
+        {
+            this.Share.AsmORGs.Last().AddErrorLineDetailItem(lineDetailItem);
         }
 
         /// <summary>

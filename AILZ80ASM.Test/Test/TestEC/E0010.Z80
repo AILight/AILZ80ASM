@@ -1,0 +1,12 @@
+﻿
+	org $8000
+	xor a
+#IF $$ == 1
+	LD	C, 1
+#ELSE
+	LD	C, 2
+#ENDIF
+
+	org $7000
+	LD	C, 3
+
