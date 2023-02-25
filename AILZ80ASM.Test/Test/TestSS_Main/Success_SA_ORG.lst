@@ -1,0 +1,17 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0, LST:Full:4
+                                
+000000 0100                         org 0x100
+                                    #if $$==0x100
+                                        db  1
+                                    #else
+000000 0100 02                          db  2
+                                    #endif
+                                
+000100 0200                         org 0x200
+                                    #if $$==0x100
+000100 0200 03                          db  3
+                                    #else
+                                        db  4
+                                    #endif
+                                
+[EOF:Success_SA.Z80:UTF_8]

@@ -99,6 +99,34 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Test_CommandLine_NoSuperAssemble()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-v" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsFalse(rootCommand.GetValue<bool>("noSuperAssemble"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-nsa" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("noSuperAssemble"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "--no-super-asm" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("noSuperAssemble"));
+            }
+        }
+
+        [TestMethod]
         public void Test_CommandLine_Input()
         {
             {
