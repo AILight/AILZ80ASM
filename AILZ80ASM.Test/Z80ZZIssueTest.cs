@@ -88,9 +88,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Issue_187()
         {
-            var errors = Assemble(Path.Combine("Issues", "187"), "Test.Z80");
-
-            Assert.AreEqual(0, errors.Length);
+            Lib.Assemble_AreSame(Path.Combine("Issues", "187"));
         }
     }
 }
