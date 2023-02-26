@@ -468,7 +468,9 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - MACROからENDMまでがマクロとして定義されます
 - 引数に付けた名前がマクロ内で利用できます
 - マクロ名に()を含める事が出来ます。ただし先頭に付ける事は出来ません
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroCompatible/Test.Z80)
+- [サンプル1](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroCompatible/Test.Z80)
+- [サンプル2](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80)
+- [サンプル3](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroRegister/Test.Z80)
 
 ```
 ARG1	equ 2
@@ -476,6 +478,7 @@ ARG1	equ 2
 	
 	ALLLD
 	TestArg ARG1, ARG1.Three
+	INITLD B	; レジスター名を指定
 
 ALLLD MACRO
 	ld a,1
@@ -490,6 +493,11 @@ ALLLD MACRO
 TestArg MACRO a1, a2
 	ld a, a1
 	ld b, a2
+	ENDM
+
+INITLD MACRO REG
+	LD A, REG
+	LD REG, 0
 	ENDM
 ```
 

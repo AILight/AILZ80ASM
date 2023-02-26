@@ -1,0 +1,21 @@
+﻿;(u24)AHL = (u8)A * (u16)DE , ZERO_REG = 0
+ umul0816_ahl_a_de	macro ZERO_REG
+	ld	hl,0
+	ld	ZERO_REG,h	;<-- 無効な命令が指定されました。   
+;	ld	h,ZERO_REG	;<-- こちらは通りました
+	add	a,a		;CF=XL[7]
+	jr	nc,$+2+2	;bit7
+	ld	l,e		;+Y
+	ld	h,d
+;30 : 33
+  REPT 7	;bit6..0
+	add	hl,hl
+	adc	a,a		
+	jr	nc,$+2+2
+	add	hl,de		;+Y
+	adc	a,ZERO_REG	;+CY
+  ENDM
+;27 : 37 x7
+ endm				;<--  END MACRO (ENDM) が先に見つかりました。
+
+	umul0816_ahl_a_de C  ; ZERO_REG に Cレジスタを指定 
