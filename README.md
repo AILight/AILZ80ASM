@@ -572,7 +572,7 @@ TEST2	EQU 2
 LABEL	equ 00FFH
 ```
 
-ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+ラベルの再定義エラーを回避する方法 (#pragma onceの利用を推奨)
 ```
 #if LABEL.@EXISTS
 LABEL	equ 00FFH
