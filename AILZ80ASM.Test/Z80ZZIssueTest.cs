@@ -84,5 +84,11 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0007, 5, "Test.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0007, 6, "Test.Z80", errors);
         }
+
+        [TestMethod]
+        public void Issue_187()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "187"));
+        }
     }
 }

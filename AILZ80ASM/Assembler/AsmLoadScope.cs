@@ -55,7 +55,6 @@ namespace AILZ80ASM.Assembler
             asmLoadScope.Macros = new List<Macro>();
             asmLoadScope.Functions = new List<Function>();
             asmLoadScope.GlobalLabelNames = new List<string>();
-            asmLoadScope.IsRegisterLabel = false;
 
             return asmLoadScope;
         }
@@ -65,6 +64,7 @@ namespace AILZ80ASM.Assembler
             this.GlobalLabelName = scope.GlobalLabelName;
             this.LabelName = scope.LabelName;
             this.AssembleEndFlg = scope.AssembleEndFlg;
+            this.IsRegisterLabel = scope.IsRegisterLabel;
         }
 
     }

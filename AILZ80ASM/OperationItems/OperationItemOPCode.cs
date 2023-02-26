@@ -1,8 +1,10 @@
-﻿using AILZ80ASM.Assembler;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using AILZ80ASM.InstructionSet;
 using AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AILZ80ASM.OperationItems
@@ -27,7 +29,17 @@ namespace AILZ80ASM.OperationItems
 
         public static OperationItemOPCode Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var asssembleResult = asmLoad.ISA.PreAssemble(lineItem.OperationString);
+            var asssembleResult = default(AssembleResult);
+            if (asmLoad.Scope.IsRegisterLabel &&
+                TryReplaceRegisterLabels(lineItem.OperationString, asmLoad, out var tmpString))
+            {
+                // ラベルの展開を行う
+                asssembleResult = asmLoad.ISA.PreAssemble(tmpString);
+            }
+            else 
+            {
+                asssembleResult = asmLoad.ISA.PreAssemble(lineItem.OperationString);
+            }
 
             if (asssembleResult == default)
             {
@@ -55,6 +67,44 @@ namespace AILZ80ASM.OperationItems
             }
 
             return new OperationItemOPCode(asssembleResult, lineItem, asmLoad);
+        }
+
+        private static bool TryReplaceRegisterLabels(string operationString, AsmLoad asmLoad, out string replacedString)
+        {
+            var result = false;
+            replacedString = "";
+            var splitChars = new char[] { ' ', ',', '\t' };
+            var startIndex = 0;
+
+            while (startIndex < operationString.Length)
+            {
+                var splitChar = "";
+                var nextIndex = operationString.IndexOfAny(splitChars, startIndex);
+                if (nextIndex != -1)
+                {
+                    splitChar = operationString.Substring(nextIndex, 1);
+                }
+                else
+                {
+                    nextIndex = operationString.Length;
+                }
+                var target = operationString.Substring(startIndex, nextIndex - startIndex);
+                
+                var label = asmLoad.FindLabelForRegister(target);
+                if (label != default)
+                {
+                    result = true;
+                    replacedString += label.ValueString;
+                }
+                else
+                {
+                    replacedString += target;
+                }
+                replacedString += splitChar;
+                startIndex = nextIndex + 1;
+            }
+
+            return result;
         }
 
         public override void Assemble(AsmLoad asmLoad)
