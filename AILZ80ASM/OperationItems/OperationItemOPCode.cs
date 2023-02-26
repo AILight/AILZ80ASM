@@ -45,26 +45,6 @@ namespace AILZ80ASM.OperationItems
             {
                 return default;
             }
-            if (asmLoad.Scope.IsRegisterLabel && asssembleResult.InstructionItem.InstructionValueDic.Count > 0)
-            {
-                var operation = asssembleResult.ParseResult.Instruction;
-                foreach (var item in asssembleResult.ParseResult.ArgumentDic)
-                {
-                    var label = asmLoad.FindLabelForRegister(item.Value);
-                    if (label != default)
-                    {
-                        operation = operation.Replace(item.Key, label.ValueString);
-                    }
-                }
-                if (operation != asssembleResult.ParseResult.Instruction)
-                {
-                    asssembleResult = asmLoad.ISA.PreAssemble(operation);
-                    if (asssembleResult == default)
-                    {
-                        return default;
-                    }
-                }
-            }
 
             return new OperationItemOPCode(asssembleResult, lineItem, asmLoad);
         }
