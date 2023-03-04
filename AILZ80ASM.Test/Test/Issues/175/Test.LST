@@ -1,0 +1,14 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.3.0, LST:Full:4
+                                        ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.0.0, LST:Full:4
+                                        ;--------------------------------------
+                                        ;AILZ80ASM test code
+                                        ;$$ が条件で参照できない
+                                        ;
+000000 0100                             org 0x100
+                                        ;   org 0x100,0x100 ;第2パラメータを指定すると通る
+                                        #if $$==0x100
+                                            db  1
+                                        #else
+000000 0100 01                              db  1
+                                        #endif
+[EOF:Test.Z80:UTF_8]

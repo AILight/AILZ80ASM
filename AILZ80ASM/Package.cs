@@ -1,6 +1,7 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
+using AILZ80ASM.SuperAssembles;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -266,7 +267,6 @@ namespace AILZ80ASM
             }
         }
 
-
         /// <summary>
         /// アセンブルを実行する
         /// </summary>
@@ -280,107 +280,78 @@ namespace AILZ80ASM
             }
         }
 
+        /// <summary>
+        /// スーパーアセンブルを実行する
+        /// </summary>
         private void SuperAssemble()
         {
             if (this.AssembleOption.NoSuperAsmAssemble)
             {
+                // スーパーアセンブルモードが無効の場合
                 return;
             }
 
-            while (this.AssembleLoad.Share.AsmSuperAssembleMode.IsLoop)
+            var sp = this.AssembleLoad.Share.AsmSuperAssembleMode;
+            // スーパーアセンブルモード
+            while (true)
             {
-
                 if (this.AssembleLoad.AssembleErrors.Length == 0)
                 {
-                    // エラーが無い場合には、スーパーアセンブルモードには入らない
+                    // エラーが無い場合には、スーパーアセンブルモードから抜ける
                     return;
                 }
 
-                if (this.AssembleLoad.Share.AsmSuperAssembleMode.HasSameError(this.AssembleLoad.AssembleErrors))
-                {
-                    // 解決すべきエラーが再度発生したら中断する
-                    return;
-                }
-
-                var superAssembleMode = false;
-                // スーパーアセンブルモードに入る事が出来るか確認
-                // E0010: 出力アドレスに影響する場所では$$は使えません。
-                var error0010 = this.AssembleLoad.AssembleErrors.FirstOrDefault(m => m.ErrorCode == Error.ErrorCodeEnum.E0010);
-                if (error0010 != default)
-                {
-                    // ROM出力モードには未対応
-                    if (this.AssembleLoad.Share.AsmORGs.All(m => this.AssembleLoad.Share.AsmSuperAssembleMode.AsmORG_AddressList.Any(n => n.Program == m .ProgramAddress) ||
-                                                                 !m.SavedOutputAddress.HasValue && string.IsNullOrEmpty(m.OutputAddressLabel)))
-                    {
-                        // エラーが含まれるORGを取得
-                        var asmORGs = this.AssembleLoad.Share.AsmORGs.Select((v, i) => new { Item = v, Index = i }).ToArray();
-                        var asmORG = asmORGs.FirstOrDefault(m => m.Item.LineDetailItems.Any(n => n.LineItem == error0010.LineItem) ||
-                                                                 m.Item.ErrorLineDetailItems.Any(n => n.LineItem == error0010.LineItem));
-
-                        if (asmORG != default)
-                        {
-                            // 自分以降に自分より前に出力対象が無いことが条件
-                            if (asmORGs.Where(m => m.Index > asmORG.Index).All(m => m.Item.ProgramAddress > asmORG.Item.ProgramAddress))
-                            {
-                                // ORGの計算を行う
-                                var asmAddress = new AsmAddress();
-
-                                var beforeAsmORG = asmORG.Index == 0 ? default : asmORGs[asmORG.Index - 1];
-                                var beforeHasBinResult = beforeAsmORG == default ? false : beforeAsmORG.Item.HasBinResult;
-                                var beforeOutputAddress = beforeAsmORG == default ? 0 : beforeAsmORG.Item.OutputAddress ?? 0;
-
-                                asmAddress.Program = asmORG.Item.ProgramAddress;
-                                if (beforeHasBinResult)
-                                {
-                                    var beforeProgramAddress = beforeAsmORG == default ? (ushort)0 : beforeAsmORG.Item.ProgramAddress;
-                                    var nextOutputAddress = (ushort)(asmORG.Item.ProgramAddress - beforeProgramAddress);
-
-                                    asmAddress.Output = nextOutputAddress;
-                                }
-                                else
-                                {
-                                    asmAddress.Output = beforeOutputAddress;
-                                }
-
-                                // スーバーアセンブルモードに移行
-                                this.AssembleLoad.Share.AsmSuperAssembleMode.AsmORG_AddressList.Add(asmAddress);
-                                this.AssembleLoad.Share.AsmSuperAssembleMode.Errors.Add(error0010);
-                                superAssembleMode = true;
-                            }
-                        }
-                    }
-                }
-
-                // スーパーアセンブルモードが必要か確認
-                if (!superAssembleMode)
+                var superAssembler = sp.GetSuperAssembler(this.AssembleLoad);
+                if (superAssembler == default)
                 {
                     return;
                 }
 
-                // スーパーアセンブルモードの実行
-                ReAssembleInitialize();
+                // スーパーアセンブルを開始
+                sp.StartSuperAssemble();
 
-                Trace.WriteLine($"  - Super Assemble Mode ({this.AssembleLoad.Share.AsmSuperAssembleMode.LoopCounter + 1})");
+                // 実際の処理を動かす
+                var isLoop = true;
+                while (isLoop)
+                {
+                    // アセンブル処理
+                    SuperAssembleInternal(superAssembler);
 
-                // 命令を展開する
-                Trace.WriteLine($"    - Expand".PadRight(SuperAssembleStatusLength) + "(1/4)");
-                ExpansionItem();
+                    // アセンブルの結果確認処理
+                    isLoop = superAssembler.TarminateSuperAssemble(this.AssembleLoad);
 
-                // プレアセンブル
-                Trace.WriteLine($"    - PreAssemble".PadRight(SuperAssembleStatusLength) + "(2/4)");
-                PreAssemble();
-
-                // アジャストアセンブル
-                Trace.WriteLine($"    - AdjAssemble".PadRight(SuperAssembleStatusLength) + "(3/4)");
-                AdjustAssemble();
-
-                // アセンブルを行う
-                Trace.WriteLine($"    - MainAssemble".PadRight(SuperAssembleStatusLength) + "(4/4)");
-                InternalAssemble();
-
-                // アセンブルが完了したら呼び出す
-                this.AssembleLoad.Share.AsmSuperAssembleMode.Assembled();
+                    // スーパーアセンブルを終了
+                    sp.EndSuperAssemble();
+                }
             }
+        }
+
+        /// <summary>
+        /// スーパーアセンブルの実際の処理
+        /// </summary>
+        /// <param name="superAssemble"></param>
+        private void SuperAssembleInternal(ISuperAssemble superAssemble)
+        {
+            // スーパーアセンブルモードの実行
+            ReAssembleInitialize();
+
+            Trace.Write($"  - Super Assemble Mode ({superAssemble.Title}:{this.AssembleLoad.Share.AsmSuperAssembleMode.LoopCounter})");
+
+            // 命令を展開する
+            Trace.Write($" E");
+            ExpansionItem();
+
+            // プレアセンブル
+            Trace.Write($"->P");
+            PreAssemble();
+
+            // アジャストアセンブル
+            Trace.Write($"->A");
+            AdjustAssemble();
+
+            // アセンブルを行う
+            Trace.WriteLine($"->M");
+            InternalAssemble();
         }
 
         /// <summary>
@@ -597,7 +568,7 @@ namespace AILZ80ASM
         /// <param name="errorLineItems"></param>
         private static void InternalOutputError(ErrorLineItem[] errorLineItems, string title)
         {
-            foreach (var errorLineItem in errorLineItems.Distinct())
+            foreach (var errorLineItem in errorLineItems.Distinct().OrderBy(m => m?.LineItem?.FileInfo?.Name).ThenBy(m => m?.LineItem?.LineIndex))
             {
                 var errorCode = errorLineItem.ErrorCode.ToString();
                 var filePosition = $"{errorLineItem.LineItem.FileInfo.Name}:{(errorLineItem.LineItem.LineIndex)} ";

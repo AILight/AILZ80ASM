@@ -719,5 +719,16 @@ namespace AILZ80ASM.Assembler
                 error.AssociateErrorLineItem();
             }
         }
+
+        /// <summary>
+        /// 同じエラーを持っているか確認する
+        /// </summary>
+        public bool HasSameError(ErrorLineItem errorListItem)
+        {
+            return this.Share.Errors.Any(m => m.ErrorCode == errorListItem.ErrorCode &&
+                                              m.LineItem.LineString == errorListItem.LineItem.LineString &&
+                                              m.LineItem.LineIndex == errorListItem.LineItem.LineIndex &&
+                                             (m.LineItem?.FileInfo.FullName ?? "") == (errorListItem.LineItem?.FileInfo.FullName ?? ""));
+        }
     }
 }

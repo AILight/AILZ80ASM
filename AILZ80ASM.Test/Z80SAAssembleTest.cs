@@ -4,12 +4,18 @@ using System.Reflection;
 namespace AILZ80ASM.Test
 {
     [TestClass]
-    public class Z80SAAssembleTest
+    public class Z80SPAssembleTest
     {
         [TestMethod]
-        public void InitializeOutputAddress()
+        public void E0010()
         {
-            Lib.Assemble_AreSame("TestSA", MethodBase.GetCurrentMethod().Name);
+            Lib.Assemble_AreSame("TestSP", MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void E0011()
+        {
+            Lib.Assemble_AreSame("TestSP", MethodBase.GetCurrentMethod().Name);
         }
     }
 }
