@@ -29,12 +29,18 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void Issue_142()
+        public void Issue_142_1()
         {
-            var errors = Assemble(Path.Combine("Issues", "142"), "Test.Z80");
+            var errors = Assemble(Path.Combine("Issues", "142_1"), "Test.Z80");
 
             Assert.AreEqual(1, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 10, "Test.Z80", errors);
+        }
+
+        [TestMethod]
+        public void Issue_142_2()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "142_2"));
         }
 
         [TestMethod]
@@ -69,9 +75,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Issue_175()
         {
-            var errors = Assemble(Path.Combine("Issues", "175"), "Test.Z80");
-
-            Assert.AreEqual(0, errors.Length);
+            Lib.Assemble_AreSame(Path.Combine("Issues", "175"));
         }
 
         [TestMethod]

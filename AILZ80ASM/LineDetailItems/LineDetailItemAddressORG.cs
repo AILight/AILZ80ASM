@@ -61,11 +61,11 @@ namespace AILZ80ASM.LineDetailItems
             else
             {
                 asmAddress.Output = default(UInt32?);
-                if (AsmLoad.Share.AsmSuperAssembleMode.IsInitializeOutputAddress)
+                if (AsmLoad.Share.AsmSuperAssembleMode.IsE0010)
                 {
-                    if (AsmLoad.Share.AsmSuperAssembleMode.AsmORG_AddressList.Any(m => m.Program == programAddress))
+                    if (AsmLoad.Share.AsmSuperAssembleMode.E0010_AddressList.Any(m => m.Program == programAddress))
                     {
-                        var asmORG_Address = AsmLoad.Share.AsmSuperAssembleMode.AsmORG_AddressList.First(m => m.Program == programAddress);
+                        var asmORG_Address = AsmLoad.Share.AsmSuperAssembleMode.E0010_AddressList.First(m => m.Program == programAddress);
                         asmAddress.Output = asmORG_Address.Output;
                     }
                 }

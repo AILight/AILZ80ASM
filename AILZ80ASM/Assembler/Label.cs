@@ -310,6 +310,12 @@ namespace AILZ80ASM.Assembler
             InternalCalculation(AsmLoad, entryLabels);
         }
 
+        public virtual void PredictCalculation(UInt16 address)
+        {
+            Value = new AIValue(address);
+            DataType = DataTypeEnum.Value;
+        }
+
         protected void InternalCalculation(AsmLoad asmLoad, List<Label> entryLabels)
         {
             var asmAddress = default(AsmAddress?);
