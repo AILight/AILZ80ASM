@@ -589,6 +589,8 @@ namespace AILZ80ASM.Assembler
                     readme = Regex.Replace(readme, "^ - ", " ・ ", RegexOptions.Multiline);
                     readme = Regex.Replace(readme, "^\t- ", " 　 → ", RegexOptions.Multiline);
                     readme = Regex.Replace(readme, "^```", $"{Environment.NewLine}{new String('-', 80)}{Environment.NewLine}", RegexOptions.Multiline);
+                    readme = Regex.Replace(readme, " \\*\\*", "", RegexOptions.Multiline);
+                    readme = Regex.Replace(readme, "\\*\\* ", "", RegexOptions.Multiline);
 
                     return readme;
                 }
