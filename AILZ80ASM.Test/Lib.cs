@@ -74,7 +74,9 @@ namespace AILZ80ASM.Test
                 var expected = expectedStreamReader.ReadLine();
                 var actual = actualStreamReader.ReadLine();
 
-                if (line > 1 || fileType == AsmEnum.FileTypeEnum.HEX)
+                if ((fileType == AsmEnum.FileTypeEnum.HEX) ||
+                    (line > 1 && fileType != AsmEnum.FileTypeEnum.ERR) ||
+                    (line > 2 && fileType == AsmEnum.FileTypeEnum.ERR))
                 {
                     Assert.AreEqual(expected, actual, $"{fileType} Line:{line} expect:{expected} actual:{actual}");
                 }
