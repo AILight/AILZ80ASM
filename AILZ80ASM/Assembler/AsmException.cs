@@ -55,6 +55,10 @@ namespace AILZ80ASM.Assembler
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0010);
             }
+            catch (UnresolvedProgramAddressException ex)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0011, ex, ex.Message);
+            }
             catch (Exception)
             {
                 throw new ErrorAssembleException(errorCode, $"演算対象：{target}");

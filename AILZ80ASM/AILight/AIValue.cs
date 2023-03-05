@@ -2,6 +2,7 @@
 using AILZ80ASM.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -214,13 +215,15 @@ namespace AILZ80ASM.AILight
         /// </summary>
         private static readonly string RegexPatternSymbolOperation = $"^(?<operation>({SymbolOperationKeysString}))";
 
-        private static readonly string RegexPatternHexadecimal_D = @"^\$(?<value>([0-9A-Fa-f]+))$";
-        private static readonly string RegexPatternHexadecimal_X = @"^0x(?<value>([0-9A-Fa-f]+))$";
-        private static readonly string RegexPatternHexadecimal_H = @"^(?<value>([0-9A-Fa-f]+))H$";
+        private static readonly string RegexPatternHexadecimal_HD = @"^\$(?<value>([0-9A-Fa-f]+))$";
+        private static readonly string RegexPatternHexadecimal_HX = @"^0x(?<value>([0-9A-Fa-f]+))$";
+        private static readonly string RegexPatternHexadecimal_TH = @"^(?<value>([0-9A-Fa-f]+))H$";
 
-        private static readonly string RegexPatternOctal_O = @"^(?<value>([0-7]+))O$";
-        private static readonly string RegexPatternBinaryNumber_B = @"^(?<value>([01_]+))B$";
-        private static readonly string RegexPatternBinaryNumber_P = @"^%(?<value>([01_]+))$";
+        private static readonly string RegexPatternOctal_HO = @"^0o(?<value>([0-7]+))$";
+        private static readonly string RegexPatternOctal_TO = @"^(?<value>([0-7]+))O$";
+        private static readonly string RegexPatternBinaryNumber_HB = @"^0b(?<value>([01_]+))$";
+        private static readonly string RegexPatternBinaryNumber_TB = @"^(?<value>([01_]+))B$";
+        private static readonly string RegexPatternBinaryNumber_HP = @"^%(?<value>([01_]+))$";
         private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
         private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
@@ -902,7 +905,34 @@ namespace AILZ80ASM.AILight
                                 entryLabels.Add(label);
                             }
 
-                            label.Calculation(entryLabels);
+                            try
+                            {
+                                label.Calculation(entryLabels);
+                            }
+                            catch (ErrorAssembleException)
+                            {
+                                if (label.LabelType == Label.LabelTypeEnum.Adr &&
+                                    label.ValueString == "$")
+                                {
+                                    if (asmLoad.Share.AsmSuperAssembleMode.IsE0011 &&
+                                        asmLoad.Share.AsmSuperAssembleMode.E0011_AddressDictionary.ContainsKey(label.LabelFullName))
+                                    {
+                                        label.PredictCalculation(asmLoad.Share.AsmSuperAssembleMode.E0011_AddressDictionary[label.LabelFullName]);
+                                    }
+                                    else
+                                    {
+                                        throw new UnresolvedProgramAddressException(label);
+                                    }
+                                }
+                                else
+                                {
+                                    throw;
+                                }
+                            }
+                            catch
+                            {
+                                throw;
+                            }
                         }
                     }
 
@@ -1645,9 +1675,9 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternHexadecimal_D, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternHexadecimal_X, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternHexadecimal_H, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = Regex.Match(value, RegexPatternHexadecimal_HD, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                (matched = Regex.Match(value, RegexPatternHexadecimal_HX, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                (matched = Regex.Match(value, RegexPatternHexadecimal_TH, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;
@@ -1667,8 +1697,9 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternBinaryNumber_B, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternBinaryNumber_P, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = Regex.Match(value, RegexPatternBinaryNumber_HB, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                (matched = Regex.Match(value, RegexPatternBinaryNumber_TB, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                (matched = Regex.Match(value, RegexPatternBinaryNumber_HP, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;
@@ -1689,7 +1720,8 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternOctal_O, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = Regex.Match(value, RegexPatternOctal_HO, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                (matched = Regex.Match(value, RegexPatternOctal_TO, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;

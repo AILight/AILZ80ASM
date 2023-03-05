@@ -17,18 +17,23 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIValue.IsNumber("123"));
             Assert.IsTrue(AIValue.IsNumber("FFFH"));
             Assert.IsTrue(AIValue.IsNumber("0FFFH"));
+            Assert.IsTrue(AIValue.IsNumber("0b0000_1111"));
             Assert.IsTrue(AIValue.IsNumber("%0000_1111"));
             Assert.IsTrue(AIValue.IsNumber("0000_1111b"));
             Assert.IsTrue(AIValue.IsNumber("$FFFF"));
             Assert.IsTrue(AIValue.IsNumber("0xFFFF"));
             Assert.IsTrue(AIValue.IsNumber("777o"));
+            Assert.IsTrue(AIValue.IsNumber("0o777"));
 
             Assert.IsFalse(AIValue.IsNumber("O123"));
             Assert.IsFalse(AIValue.IsNumber("FFF"));
+            Assert.IsFalse(AIValue.IsNumber("b0000_1111"));
             Assert.IsFalse(AIValue.IsNumber("0000_1111%"));
             Assert.IsFalse(AIValue.IsNumber("0000_1111"));
             Assert.IsFalse(AIValue.IsNumber("0FFF"));
             Assert.IsFalse(AIValue.IsNumber("0xXFFF"));
+            Assert.IsFalse(AIValue.IsNumber("0o888"));
+            Assert.IsFalse(AIValue.IsNumber("o888"));
             Assert.IsFalse(AIValue.IsNumber("888o"));
         }
 
@@ -159,17 +164,20 @@ namespace AILZ80ASM.Test
             {
                 var aiValueA = new AIValue("777o");
                 var aiValueB = new AIValue("111o");
+                var aiValueC = new AIValue("0o555");
 
                 aiValueA.SetValue(default(AsmLoad), default(AsmAddress));
                 aiValueB.SetValue(default(AsmLoad), default(AsmAddress));
+                aiValueC.SetValue(default(AsmLoad), default(AsmAddress));
 
                 Assert.AreEqual(aiValueA.ConvertTo<UInt16>(), 511);
                 Assert.AreEqual(aiValueB.ConvertTo<UInt16>(), 73);
+                Assert.AreEqual(aiValueC.ConvertTo<UInt16>(), 365);
 
-                var aiValueC = new AIValue("777777777777777o");
+                var aiValueD = new AIValue("777777777777777o");
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
-                    aiValueC.SetValue(default(AsmLoad), default(AsmAddress));
+                    aiValueD.SetValue(default(AsmLoad), default(AsmAddress));
                 });
             }
 
@@ -177,17 +185,20 @@ namespace AILZ80ASM.Test
             {
                 var aiValueA = new AIValue("1111_1111B");
                 var aiValueB = new AIValue("%1111_1111");
+                var aiValueC = new AIValue("0b1111_1111");
 
                 aiValueA.SetValue(default(AsmLoad), default(AsmAddress));
                 aiValueB.SetValue(default(AsmLoad), default(AsmAddress));
+                aiValueC.SetValue(default(AsmLoad), default(AsmAddress));
 
                 Assert.AreEqual(aiValueA.ConvertTo<UInt16>(), 0xFF);
                 Assert.AreEqual(aiValueB.ConvertTo<UInt16>(), 0xFF);
+                Assert.AreEqual(aiValueC.ConvertTo<UInt16>(), 0xFF);
 
-                var aiValueC = new AIValue("1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111B");
+                var aiValueD = new AIValue("1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111B");
                 Assert.ThrowsException<InvalidAIValueException>(() =>
                 {
-                    aiValueC.SetValue(default(AsmLoad), default(AsmAddress));
+                    aiValueD.SetValue(default(AsmLoad), default(AsmAddress));
                 });
             }
 

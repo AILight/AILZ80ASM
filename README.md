@@ -123,6 +123,7 @@ EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
 特定のエラーがアセンブル時に発生した場合、再アセンブルを行ってエラーを解決するためのモードです。このモードを適用する前に、アセンブル解析の結果を確認し、再アセンブルによってエラーが解決できる可能性がある場合に限り、このモードが実行されます。このモードは、以下のエラーに対して有効です。
 
 - E0010: 出力アドレスに影響する場所では$$は使えません。
+- E0010: 参照したラベルのプログラムアドレスが確定できませんでした。
 
 ※ スーパーアセンブルモードを無効にする場合には、コマンドラインオプションに '-nsa' を付けてください
 
@@ -218,13 +219,13 @@ addr:
 ```
 
 ## 即値
-- 2進数：先頭に%、もしくは末尾にbを付けます。また _ を含める事が出来ます。
-- 8進数：末尾にoを付けます。
+- 2進数：先頭に0b or %、もしくは末尾にbを付けます。また _ を含める事が出来ます。
+- 8進数：先頭に0o、もしくは末尾にoを付けます。
 - 10進数：数値だけを指定します。
-- 16進数：先頭に$ or 0x もしくは末尾にHを付けます。
+- 16進数：先頭に0x or $、もしくは末尾にHを付けます。
 - 文字列:先頭と末尾に **'** を付けます。値が要求される場所では、最大2バイトの数値として扱えます。
 - 文字列:先頭と末尾に **"** を付けます。値が要求される場所では、最大2バイトの数値として扱えます。
-- BOOL型:真:#TRUE, 偽:#FALSE
+- BOOL型:真:#TRUE、偽:#FALSE
 
 ## 文字と文字列について
 - 文字列を扱うときには、 **'** で囲んでください。
@@ -468,7 +469,9 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - MACROからENDMまでがマクロとして定義されます
 - 引数に付けた名前がマクロ内で利用できます
 - マクロ名に()を含める事が出来ます。ただし先頭に付ける事は出来ません
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroCompatible/Test.Z80)
+- [サンプル1](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroCompatible/Test.Z80)
+- [サンプル2](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80)
+- [サンプル3](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroRegister/Test.Z80)
 
 ```
 ARG1	equ 2
@@ -476,6 +479,7 @@ ARG1	equ 2
 	
 	ALLLD
 	TestArg ARG1, ARG1.Three
+	INITLD B	; レジスター名を指定
 
 ALLLD MACRO
 	ld a,1
@@ -490,6 +494,11 @@ ALLLD MACRO
 TestArg MACRO a1, a2
 	ld a, a1
 	ld b, a2
+	ENDM
+
+INITLD MACRO REG
+	LD A, REG
+	LD REG, 0
 	ENDM
 ```
 
@@ -572,7 +581,7 @@ TEST2	EQU 2
 LABEL	equ 00FFH
 ```
 
-ラベルの再定義エラーを回避する方法 (#pragma onceの仕様を推奨)
+ラベルの再定義エラーを回避する方法 (#pragma onceの利用を推奨)
 ```
 #if LABEL.@EXISTS
 LABEL	equ 00FFH

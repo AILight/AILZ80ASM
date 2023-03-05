@@ -1,4 +1,4 @@
-﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0
+﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.3.0
 Copyright (C) 2022 by M.Ishino (AILight)
 
 # Inputs
@@ -11,16 +11,8 @@ Copyright (C) 2022 by M.Ishino (AILight)
 - PreAssemble  (2/6)
 - AdjAssemble  (3/6)
 - MainAssemble (4/6)
-  - Super Assemble Mode (1)
-    - Expand       (1/4)
-    - PreAssemble  (2/4)
-    - AdjAssemble  (3/4)
-    - MainAssemble (4/4)
-  - Super Assemble Mode (2)
-    - Expand       (1/4)
-    - PreAssemble  (2/4)
-    - AdjAssemble  (3/4)
-    - MainAssemble (4/4)
+  - Super Assemble Mode (E0010:1) E->P->A->M
+  - Super Assemble Mode (E0010:2) E->P->A->M
 - Validate     (5/6)
 - Complete     (6/6)
 

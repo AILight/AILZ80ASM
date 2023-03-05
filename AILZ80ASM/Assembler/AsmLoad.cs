@@ -7,6 +7,7 @@ using AILZ80ASM.Exceptions;
 using AILZ80ASM.AILight;
 using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.LineDetailItems.ScopeItem;
+using System.Linq.Expressions;
 
 namespace AILZ80ASM.Assembler
 {
@@ -365,7 +366,7 @@ namespace AILZ80ASM.Assembler
                 }
             }
 
-            this.Scope.IsRegisterLabel = label.LabelValueType == Label.LabelValueTypeEnum.Register;
+            this.Scope.IsRegisterLabel |= (label.LabelValueType == Label.LabelValueTypeEnum.Register);
         }
 
         /// <summary>
@@ -469,40 +470,54 @@ namespace AILZ80ASM.Assembler
 
         public Label FindLabel(string target)
         {
-            var targetAsmLoad = this;
-
-            while (targetAsmLoad != default)
+            try
             {
-                var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
-                var label = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0).FirstOrDefault();
-                if (label != default)
+                var targetAsmLoad = this;
+
+                while (targetAsmLoad != default)
                 {
-                    return label;
+                    var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                    var label = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0).FirstOrDefault();
+                    if (label != default)
+                    {
+                        return label;
+                    }
+                    targetAsmLoad = targetAsmLoad.ParentAsmLoad;
                 }
-                targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+                return default;
             }
-            return default;
+            catch
+            {
+                return default;
+            }
         }
 
         public Label FindLabelForRegister(string target)
         {
-            while (true)
+            try
             {
-                var lable = FindLabel(target);
-                if (lable == default)
+                while (true)
                 {
-                    return default;
-                }
-                if (lable.LabelValueType == Label.LabelValueTypeEnum.Register)
-                {
-                    return lable;
-                }
-                if (target == lable.ValueString)
-                {
-                    return default;
-                }
+                    var lable = FindLabel(target);
+                    if (lable == default)
+                    {
+                        return default;
+                    }
+                    if (lable.LabelValueType == Label.LabelValueTypeEnum.Register)
+                    {
+                        return lable;
+                    }
+                    if (target == lable.ValueString)
+                    {
+                        return default;
+                    }
 
-                target = lable.ValueString;
+                    target = lable.ValueString;
+                }
+            }
+            catch
+            {
+                return default;
             }
         }
 
@@ -703,6 +718,17 @@ namespace AILZ80ASM.Assembler
             {
                 error.AssociateErrorLineItem();
             }
+        }
+
+        /// <summary>
+        /// 同じエラーを持っているか確認する
+        /// </summary>
+        public bool HasSameError(ErrorLineItem errorListItem)
+        {
+            return this.Share.Errors.Any(m => m.ErrorCode == errorListItem.ErrorCode &&
+                                              m.LineItem.LineString == errorListItem.LineItem.LineString &&
+                                              m.LineItem.LineIndex == errorListItem.LineItem.LineIndex &&
+                                             (m.LineItem?.FileInfo.FullName ?? "") == (errorListItem.LineItem?.FileInfo.FullName ?? ""));
         }
     }
 }
