@@ -12,6 +12,7 @@ namespace AILZ80ASM.AILight
     public static class AIMath
     {
         private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
+        private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
 
         public static bool TryParse(string value, out AIValue resultValue)
         {
@@ -259,6 +260,17 @@ namespace AILZ80ASM.AILight
                 else if (stringCheck.StartsWith('\''))
                 {
                     ParseString("'", checkStartIndex, ref tmpValue, out resultString);
+                    return true;
+                }
+            }
+            else
+            {
+                // ラベルを使ってのCharMap指定
+                var matchedLabel = Regex.Match(tmpValue, RegexPatternCharMapLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matchedLabel.Success)
+                {
+                    resultString = matchedLabel.Value;
+                    tmpValue = tmpValue.Substring(resultString.Length);
                     return true;
                 }
             }

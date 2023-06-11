@@ -1,0 +1,12 @@
+﻿	org $8000
+
+	charmap @PPP, "Test.json"
+	
+	CHAR_MAP_TEST MACRO ARG1
+
+	DB @PPP:ARG1
+
+	ENDM
+
+	DB @PPP:"国語算数理科社会"
+	CHAR_MAP_TEST "国語算数理科社会"
