@@ -1,0 +1,10 @@
+﻿    org 0x100
+    ;
+    CONDITION_1 equ #true   ;シンボル生成でエラーになります。
+    CONDITION_2 equ 1
+
+    #if CONDITION_1
+        db  1   
+    #else
+        db  2   
+    #endif
