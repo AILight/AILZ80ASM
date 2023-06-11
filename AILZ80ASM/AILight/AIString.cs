@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 
@@ -7,6 +9,8 @@ namespace AILZ80ASM.AILight
 {
     public static class AIString
     {
+        private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
+
         private static string[][] EscapeSequenceCharTables = new string[][]
         {
 
@@ -136,6 +140,23 @@ namespace AILZ80ASM.AILight
             {
                 return InternalTryParseCharMap(target, '\'', asmLoad, out charMap, out resultString, out validEscapeSequence);
             }
+            else
+            {
+                var matchedLabel = Regex.Match(target, RegexPatternCharMapLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matchedLabel.Success)
+                {
+                    var charMapName = matchedLabel.Groups["charMap"].Value;
+                    var labelName = matchedLabel.Groups["label"].Value;
+                    var label = asmLoad.FindLabel(labelName);
+                    if (label == default)
+                    {
+                        throw new InvalidAIValueException($"未定義:{labelName}");
+                    }
+                    
+                    return InternalTryParseCharMap($"{charMapName}{label.ValueString.Replace("\\\"", "\"")}", '\"', asmLoad, out charMap, out resultString, out validEscapeSequence);
+                }
+            }
+
             charMap = "";
             resultString = "";
             validEscapeSequence = true;
@@ -380,7 +401,7 @@ namespace AILZ80ASM.AILight
         /// <exception cref="NotImplementedException"></exception>
         private static byte[] InternalGetBytesByString(string target, char[] encloseChars, AsmLoad asmLoad)
         {
-            if (!encloseChars.Any(m => target.EndsWith(m)) ||
+            if ((!encloseChars.Any(m => target.EndsWith(m)) && !target.StartsWith("@")) ||
                 !TryParseCharMap(target, asmLoad, out var charMap, out var resultString, out var invalidEscapeSequence))
             {
                 throw new InvalidAIStringException("正しい文字列を指定してください");
