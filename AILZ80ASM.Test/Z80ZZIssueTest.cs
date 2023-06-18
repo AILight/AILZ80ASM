@@ -102,6 +102,17 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_205()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue205.bin", "-hex", "Issue205.hex", "-cd", "./Test/Issues/205");
+            Assert.AreEqual(0, result);
+
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/205/Issue205.hex"), File.OpenRead("./Test/Issues/205/Test.HEX"), Assembler.AsmEnum.FileTypeEnum.HEX);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/205/Issue205.bin"), File.OpenRead("./Test/Issues/205/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+
+        }
+
+        [TestMethod]
         public void Issue_207()
         {
             var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue207.bin", "-sym", "Issue207.sym", "-cd", "./Test/Issues/207");
