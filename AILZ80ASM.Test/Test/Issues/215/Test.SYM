@@ -1,0 +1,8 @@
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.4.0, SYM
+0100 .Beep
+0100 .Beep.@1
+0102 .Beep.@2
+010B .Play
+010B .Play.@1
+010D .Play.@2
+

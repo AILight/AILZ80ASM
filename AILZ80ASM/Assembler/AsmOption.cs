@@ -101,6 +101,7 @@ namespace AILZ80ASM.Assembler
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");
             NoSuperAsmAssemble = rootCommand.GetValue<bool>("noSuperAssemble");
+
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
             if (!CheckUnuseLabel)
