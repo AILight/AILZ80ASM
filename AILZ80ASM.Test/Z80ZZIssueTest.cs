@@ -110,5 +110,14 @@ namespace AILZ80ASM.Test
             Lib.AreSameLst(File.OpenRead("./Test/Issues/207/Issue207.sym"), File.OpenRead("./Test/Issues/207/Test.SYM"), Assembler.AsmEnum.FileTypeEnum.SYM);
             Lib.AreSameBin(File.OpenRead("./Test/Issues/207/Issue207.bin"), File.OpenRead("./Test/Issues/207/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
         }
+
+        [TestMethod]
+        public void Issue_215()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue215.bin", "-sym", "Issue215.sym", "-cd", "./Test/Issues/215");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/215/Issue215.bin"), File.OpenRead("./Test/Issues/215/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/215/Issue215.sym"), File.OpenRead("./Test/Issues/215/Test.SYM"), Assembler.AsmEnum.FileTypeEnum.BIN);
+        }
     }
 }

@@ -1,0 +1,29 @@
+﻿		org $8000
+		ld a, 0
+addr:
+		ld a, (addr)
+.@1						; addr..@1
+		ld hl, addr
+.test
+		ld a,(.@1)
+.@1						; addr.text.@1
+		ld hl, addr.test
+.@2						; addr.text.@2
+		ld hl, (addr.test)
+		; 参照
+		ld hl, (addr..@1) 	
+		ld hl, (.test.@1) 
+		ld hl, (.@1) 
+		ld hl, (.@2) 
+		; 特殊アクセス
+EQT:
+.@1		equ	%00001100	; 1
+.@2		equ	%00001101	; 2
+.@3		equ	%00001110	; 3
+		; 【マジック実装】 本来ならEQT.AL.@1 を参照するが、存在しないとき EQT..@1を参照する
+.AL		equ	(.@1 | .@2 | .@3)
+		ld a, .AL
+		; 
+		ld hl, (NAME_SPACE_DEFAULT.addr)
+		ld hl, (NAME_SPACE_DEFAULT.addr.@1)
+		ld hl, (NAME_SPACE_DEFAULT.addr.test.@1)

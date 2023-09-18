@@ -14,6 +14,9 @@ namespace AILZ80ASM.Assembler
         // 実行ラベル
         public string LabelName { get; set; }
 
+        // 実行ラベル
+        public string SubLabelName { get; set; }
+
         // アセンブル終了フラグ
         public bool AssembleEndFlg { get; set; } = false;
 
@@ -63,6 +66,7 @@ namespace AILZ80ASM.Assembler
         {
             this.GlobalLabelName = scope.GlobalLabelName;
             this.LabelName = scope.LabelName;
+            this.SubLabelName = scope.SubLabelName;
             this.AssembleEndFlg = scope.AssembleEndFlg;
             this.IsRegisterLabel = scope.IsRegisterLabel;
         }

@@ -226,6 +226,7 @@ namespace AILZ80ASM.Assembler
                 }
                 this.Scope.GlobalLabelName = label.GlobalLabelName;
                 this.Scope.LabelName = label.LabelName;
+                this.Scope.SubLabelName = label.SubLabelName;
             }
             else
             {
@@ -235,6 +236,7 @@ namespace AILZ80ASM.Assembler
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018, label.LabelName);
                 }
                 this.Scope.LabelName = label.LabelName;
+                this.Scope.SubLabelName= label.SubLabelName;
             }
         }
 
@@ -334,7 +336,15 @@ namespace AILZ80ASM.Assembler
             // 同一名のラベル
             if (this.Scope.Labels.Any(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0))
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014);
+                var isLocalLabel = label.LabelLevel == Label.LabelLevelEnum.SubLabel;
+
+                var message = "";
+                if (isLocalLabel)
+                {
+                    message += "上位ラベルの宣言を確認してください。" ;
+                }
+
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014, new[] { message });
             }
             if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
             {
@@ -363,6 +373,7 @@ namespace AILZ80ASM.Assembler
                 if (label.LabelType == Label.LabelTypeEnum.Equ || label.LabelType == Label.LabelTypeEnum.Adr)
                 {
                     this.Scope.LabelName = label.LabelName;
+                    this.Scope.SubLabelName = label.SubLabelName;
                 }
             }
 
@@ -472,18 +483,42 @@ namespace AILZ80ASM.Assembler
         {
             try
             {
-                var targetAsmLoad = this;
 
-                while (targetAsmLoad != default)
                 {
-                    var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
-                    var label = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0).FirstOrDefault();
-                    if (label != default)
+                    // 通常
+                    var targetAsmLoad = this;
+                    while (targetAsmLoad != default)
                     {
-                        return label;
+                        var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                        var labels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                        var label = labels.FirstOrDefault();
+                        if (label != default)
+                        {
+                            return label;
+                        }
+                        targetAsmLoad = targetAsmLoad.ParentAsmLoad;
                     }
-                    targetAsmLoad = targetAsmLoad.ParentAsmLoad;
                 }
+
+                if (target.StartsWith(".@"))
+                {
+                    // .@のみの指定の場合
+                    var targetAsmLoad = this;
+                    target = $"{targetAsmLoad.Scope.LabelName}.{target}";
+                    while (targetAsmLoad != default)
+                    {
+                        var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                        var labels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                        var label = labels.FirstOrDefault();
+                        if (label != default)
+                        {
+                            return label;
+                        }
+                        targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+                    }
+                }
+
+
                 return default;
             }
             catch
