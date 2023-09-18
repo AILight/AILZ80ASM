@@ -24,7 +24,7 @@ namespace AILZ80ASM.Assembler
             GlobalLabel,
             Label,
             SubLabel,
-            SubTmpLabel,
+            TmpLabel,
         }
 
         public enum LabelTypeEnum
@@ -50,14 +50,14 @@ namespace AILZ80ASM.Assembler
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
         public string SubLabelName { get; private set; }
-        public string SubTmpLabelName { get; private set; }
+        public string TmpLabelName { get; private set; }
         public string LabelFullName { get; private set; }
         public string LabelShortName => LabelLevel switch
         {
             LabelLevelEnum.GlobalLabel => GlobalLabelName,
             LabelLevelEnum.Label => LabelName,
             LabelLevelEnum.SubLabel => $"{LabelName}.{SubLabelName}",
-            LabelLevelEnum.SubTmpLabel => $"{LabelName}.{SubLabelName}.{SubTmpLabelName}",
+            LabelLevelEnum.TmpLabel => $"{LabelName}.{SubLabelName}.{TmpLabelName}",
             _ => throw new NotSupportedException()
         };
 
@@ -145,7 +145,7 @@ namespace AILZ80ASM.Assembler
                     GlobalLabelName = labelName.Substring(1, labelName.Length - 2);
                     LabelName = "";
                     SubLabelName = "";
-                    SubTmpLabelName = "";
+                    TmpLabelName = "";
                     LabelLevel = LabelLevelEnum.GlobalLabel;
                 }
                 else
@@ -172,13 +172,13 @@ namespace AILZ80ASM.Assembler
 
                             if (splits[1].StartsWith("@"))
                             {
-                                SubTmpLabelName = splits[1];
-                                LabelLevel = LabelLevelEnum.SubTmpLabel;
+                                TmpLabelName = splits[1];
+                                LabelLevel = LabelLevelEnum.TmpLabel;
                             }
                             else
                             {
                                 SubLabelName = splits[1];
-                                SubTmpLabelName = "";
+                                TmpLabelName = "";
                                 LabelLevel = LabelLevelEnum.SubLabel;
                             }
                             break;
@@ -207,7 +207,7 @@ namespace AILZ80ASM.Assembler
                     LabelLevelEnum.GlobalLabel => GlobalLabelName,
                     LabelLevelEnum.Label => $"{GlobalLabelName}.{LabelName}",
                     LabelLevelEnum.SubLabel => $"{GlobalLabelName}.{LabelName}.{SubLabelName}",
-                    LabelLevelEnum.SubTmpLabel => $"{GlobalLabelName}.{LabelName}.{SubLabelName}.{SubTmpLabelName}",
+                    LabelLevelEnum.TmpLabel => $"{GlobalLabelName}.{LabelName}.{SubLabelName}.{TmpLabelName}",
                     _ => throw new NotImplementedException()
                 };
                 
@@ -221,7 +221,7 @@ namespace AILZ80ASM.Assembler
             {
                 if (LabelLevel == LabelLevelEnum.Label ||
                     LabelLevel == LabelLevelEnum.SubLabel ||
-                     LabelLevel == LabelLevelEnum.SubTmpLabel)
+                     LabelLevel == LabelLevelEnum.TmpLabel)
                 {
                     ValueString = "$";
                 }
@@ -285,63 +285,94 @@ namespace AILZ80ASM.Assembler
             }
 
             var splits = labelName.Split('.');
-
-            switch (splits.Length)
+            if (splits.Length == 0)
             {
-                case 1:
-                    return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}";
-                case 2:
-                    if (string.IsNullOrEmpty(splits[0]))
+                throw new Exception($"ラベルの指定名が間違っています。{labelName}");
+            }
+
+            // .なし
+            if (splits.Length == 1)
+            {
+                return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}";
+            }
+
+            // テンポラリーラベルの存在を確認する
+            var isTempLabel = splits.Last().StartsWith("@");
+            var isLocalLabel = !isTempLabel && string.IsNullOrEmpty(splits[0]);
+            if (isLocalLabel)
+            {
+                // ローカルラベル指定
+                switch (splits.Length)
+                {
+                    case 2:
+                        return $"{asmLoad.Scope.GlobalLabelName}.{asmLoad.Scope.LabelName}.{splits[1]}";
+                    default:
+                        throw new Exception($"ラベルの指定名が間違っています。{labelName}");
+                }
+            } 
+            else if (isTempLabel)
+            {
+                // テンポラリーラベル指定
+                if (string.IsNullOrEmpty(splits[0]))
+                {
+                    // ローカルラベル指定の場合
+                    switch (splits.Length)
                     {
-                        if (splits[1].StartsWith("@"))
-                        {
+                        case 2:
                             return $"{asmLoad.Scope.GlobalLabelName}.{asmLoad.Scope.LabelName}.{asmLoad.Scope.SubLabelName}.{splits[1]}";
-                        }
-                        else
-                        {
-                            return $"{asmLoad.Scope.GlobalLabelName}.{asmLoad.Scope.LabelName}.{splits[1]}";
-                        }
+                        case 3:
+                            return $"{asmLoad.Scope.GlobalLabelName}.{asmLoad.Scope.LabelName}.{splits[1]}.{splits[2]}";
+                        default:
+                            throw new Exception($"ラベルの指定名が間違っています。{labelName}");
                     }
-                    else
+                }
+                else
+                {
+                    switch (splits.Length)
                     {
+                        case 2:
+                            return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}..{splits[1]}";
+                        case 3:
+                            if (!string.IsNullOrEmpty(asmLoad.FindGlobalLabelName(splits[0])))
+                            {
+                                return $"{splits[0]}.{splits[1]}..{splits[2]}";
+                            }
+                            else
+                            {
+                                return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}.{splits[1]}.{splits[2]}";
+                            }
+                        case 4:
+                            return labelName;
+                        default:
+                            throw new Exception($"ラベルの指定名が間違っています。{labelName}");
+                    }
+                }
+            }
+            else
+            {
+                // 通常ラベル指定
+                switch (splits.Length)
+                {
+                    case 1:
+                        return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}";
+                    case 2:
                         if (!string.IsNullOrEmpty(asmLoad.FindGlobalLabelName(splits[0])))
                         {
                             return $"{splits[0]}.{splits[1]}";
                         }
                         else
                         {
-                            if (splits[1].StartsWith("@"))
-                            {
-                                if (labelName.StartsWith("."))
-                                {
-                                    return $"{asmLoad.Scope.GlobalLabelName}.{asmLoad.Scope.SubLabelName}.{splits[0]}.{splits[1]}";
-                                }
-                                else
-                                {
-                                    return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}..{splits[1]}";
-                                }
-                            }
-                            else
-                            {
-                                return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}.{splits[1]}";
-                            }
+                            return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}.{splits[1]}";
                         }
-                    }
-                case 3:
-                    if (splits[2].StartsWith("@"))
-                    {
-                        return $"{asmLoad.Scope.GlobalLabelName}.{splits[0]}.{splits[1]}.{splits[2]}";
-                    }
-                    else
-                    {
+                    case 3:
                         if (splits.Any(m => string.IsNullOrEmpty(m)))
                         {
                             throw new Exception($"ラベルの指定名が間違っています。{labelName}");
                         }
-                    }
-                    return $"{labelName}";
-                default:
-                    throw new Exception($"ラベルの指定名が間違っています。{labelName}");
+                        return $"{labelName}";
+                    default:
+                        throw new Exception($"ラベルの指定名が間違っています。{labelName}");
+                }
             }
         }
 
