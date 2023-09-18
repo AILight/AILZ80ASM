@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace AILZ80ASM.Assembler
                 }
                 foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.GlobalLabelName == globalLabelName))
                 {
-                    streamWriter.WriteLine($"{label.Value.ConvertTo<int>():X4} {label.LabelShortName}");
+                    OutputLabelForShortName(label, streamWriter);
                 }
                 streamWriter.WriteLine();
             }
@@ -32,10 +33,33 @@ namespace AILZ80ASM.Assembler
             {
                 foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value))
                 {
-                    streamWriter.WriteLine($"{label.Value.ConvertTo<int>():X4} {label.LabelFullName}");
+                    OutputLabelForFullName(label, streamWriter);
                 }
             }
         }
 
+        private void OutputLabelForShortName(Label label, StreamWriter streamWriter)
+        {
+            if (label.Value.ValueType == AIValue.ValueTypeEnum.Bool)
+            {
+                streamWriter.WriteLine($"{label.Value.ConvertTo<bool>()} {label.LabelShortName}");
+            }
+            else
+            {
+                streamWriter.WriteLine($"{label.Value.ConvertTo<int>():X4} {label.LabelShortName}");
+            }
+        }
+
+        private void OutputLabelForFullName(Label label, StreamWriter streamWriter)
+        {
+            if (label.Value.ValueType == AIValue.ValueTypeEnum.Bool)
+            {
+                streamWriter.WriteLine($"{label.Value.ConvertTo<bool>()} {label.LabelFullName}");
+            }
+            else
+            {
+                streamWriter.WriteLine($"{label.Value.ConvertTo<int>():X4} {label.LabelFullName}");
+            }
+        }
     }
 }
