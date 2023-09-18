@@ -27,3 +27,11 @@ EQT:
 		ld hl, (NAME_SPACE_DEFAULT.addr)
 		ld hl, (NAME_SPACE_DEFAULT.addr.@1)
 		ld hl, (NAME_SPACE_DEFAULT.addr.test.@1)
+		; 後方参照
+TEST:
+		DB .@1 - TEST, .@2 - TEST, .@3 - TEST
+.length
+.@1		DB  1,  2,  3,  4,  5
+.@2		DB  6,  7,  8,  9, 10
+.@3		DB 11, 12, 13, 14, 15
+

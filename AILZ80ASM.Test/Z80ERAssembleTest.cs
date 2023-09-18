@@ -191,6 +191,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Label3()
+        {
+            var errors = Assemble("Label3.Z80");
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0008, 4, "Label3.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Macro1()
         {
             var errors = Assemble("Macro1.Z80");

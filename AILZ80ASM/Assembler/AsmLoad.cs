@@ -503,23 +503,54 @@ namespace AILZ80ASM.Assembler
                 if (target.StartsWith(".@"))
                 {
                     // .@のみの指定の場合
-                    var targetAsmLoad = this;
-                    target = $"{targetAsmLoad.Scope.LabelName}.{target}";
-                    while (targetAsmLoad != default)
                     {
-                        var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
-                        var labels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
-                        var label = labels.FirstOrDefault();
-                        if (label != default)
+                        var targetAsmLoad = this;
+                        target = $"{targetAsmLoad.Scope.LabelName}.{target}";
+                        while (targetAsmLoad != default)
                         {
-                            return label;
+                            var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                            var labels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                            var label = labels.FirstOrDefault();
+                            if (label != default)
+                            {
+                                return label;
+                            }
+                            targetAsmLoad = targetAsmLoad.ParentAsmLoad;
                         }
-                        targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+                    }
+
+                    // 曖昧検索 ローカルラベルを無視して検索をする
+                    {
+                        var targetAsmLoad = this;
+                        while (targetAsmLoad != default)
+                        {
+                            var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                            var labelNames = labelFullName.Split(".");
+                            var labels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.GlobalLabelName, labelNames[0], true) == 0 &&
+                                                                               string.Compare(m.LabelName, labelNames[1], true) == 0 &&
+                                                                               string.Compare(m.TmpLabelName, labelNames[3], true) == 0);
+                            // ローカルラベル内で重複がある場合にはエラーにする
+                            if (labels.Count() > 1)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, string.Join(", ", labels.Select(m => $"{m.LabelName}.{m.SubLabelName}.{m.TmpLabelName}")));
+                            }
+                            
+                            var label = labels.FirstOrDefault();
+                            if (label != default)
+                            {
+                                return label;
+                            }
+                            targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+                        }
                     }
                 }
 
 
                 return default;
+            }
+            catch (ErrorAssembleException)
+            {
+                throw;
             }
             catch
             {
