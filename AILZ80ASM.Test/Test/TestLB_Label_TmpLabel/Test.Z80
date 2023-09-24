@@ -35,3 +35,31 @@ TEST:
 .@2		DB  6,  7,  8,  9, 10
 .@3		DB 11, 12, 13, 14, 15
 
+LBTEST:
+		ld a, low .@0
+		ld a, .@0.@L
+		ld a, .@0.@LOW
+		ld a, high .@0
+		ld a, .@0.@H
+		ld a, .@0.@HIGH
+		ret
+
+.@0		db  1
+		db  2
+		db  3
+		db  4
+
+.LOCAL
+
+		ld a, low .@0
+		ld a, .@0.@L
+		ld a, .@0.@LOW
+		ld a, high .@0
+		ld a, .@0.@H
+		ld a, .@0.@HIGH
+		ret
+
+.@0		db  1
+		db  2
+		db  3
+		db  4
