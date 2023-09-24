@@ -14,6 +14,8 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
         private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
 
+        public static string[] LabelOperatorStrings => new[] { ".@H", ".@HIGH", ".@L", ".@LOW", ".@T", ".@TEXT", ".@E", ".@EXISTS" };
+
         public static bool TryParse(string value, out AIValue resultValue)
         {
             return InternalTryParse(value, default(AsmLoad), default(AsmAddress?), new List<Label>(), out resultValue);
@@ -77,55 +79,45 @@ namespace AILZ80ASM.AILight
             {
                 if (item.ValueType == AIValue.ValueTypeEnum.None)
                 {
-                    var positionIndex = 0;
-                    var startPositionIndex = item.OriginalValue.IndexOf(".@", positionIndex);
-                    if (startPositionIndex > 0)
+                    // ラベル演算子を処理する
+                    var operations = new List<AIValue>();
+                    var labelName = item.OriginalValue;
+                    while (AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        var localLabels = new List<AIValue>();
-                        var operations = new List<AIValue>();
-                        var optionIndex = startPositionIndex;
-                        while (optionIndex > 0)
+                        var atmarkIndex = labelName.LastIndexOf(".@");
+                        var operation = labelName.Substring(atmarkIndex);
+                        labelName = labelName.Substring(0, atmarkIndex);
+                        if (string.Compare(operation, ".@H", true) == 0 ||
+                            string.Compare(operation, ".@HIGH", true) == 0)
                         {
-                            var nextPositionIndex = item.OriginalValue.IndexOf(".@", optionIndex + 1);
-                            var length = nextPositionIndex == -1 ? item.OriginalValue.Length - optionIndex : nextPositionIndex - optionIndex;
-                            var option = item.OriginalValue.Substring(optionIndex, length);
-                            if (string.Compare(option, ".@H", true) == 0 ||
-                                string.Compare(option, ".@HIGH", true) == 0)
-                            {
-                                operations.Add(new AIValue("high", AIValue.ValueTypeEnum.Operation));
-                            }
-                            else if (string.Compare(option, ".@L", true) == 0 ||
-                                        string.Compare(option, ".@LOW", true) == 0)
-                            {
-                                operations.Add(new AIValue("low", AIValue.ValueTypeEnum.Operation));
-                            }
-                            else if (string.Compare(option, ".@T", true) == 0 ||
-                                        string.Compare(option, ".@TEXT", true) == 0)
-                            {
-                                operations.Add(new AIValue("text", AIValue.ValueTypeEnum.Operation));
-                            }
-                            else if (string.Compare(option, ".@E", true) == 0 ||
-                                        string.Compare(option, ".@EXISTS", true) == 0)
-                            {
-                                operations.Add(new AIValue("exists", AIValue.ValueTypeEnum.Operation));
-                            }
-                            else
-                            {
-                                // 該当外はローカルラベル
-                                localLabels.Add(new AIValue(item.OriginalValue.Substring(0, optionIndex) + option));
-                            }
-                            optionIndex = nextPositionIndex;
+                            operations.Add(new AIValue("high", AIValue.ValueTypeEnum.Operation));
                         }
-
-                        result.AddRange(operations.Reverse<AIValue>());
-                        if (localLabels.Count > 0)
+                        else if (string.Compare(operation, ".@L", true) == 0 ||
+                                 string.Compare(operation, ".@LOW", true) == 0)
                         {
-                            result.AddRange(localLabels);
+                            operations.Add(new AIValue("low", AIValue.ValueTypeEnum.Operation));
+                        }
+                        else if (string.Compare(operation, ".@T", true) == 0 ||
+                                 string.Compare(operation, ".@TEXT", true) == 0)
+                        {
+                            operations.Add(new AIValue("text", AIValue.ValueTypeEnum.Operation));
+                        }
+                        else if (string.Compare(operation, ".@E", true) == 0 ||
+                                 string.Compare(operation, ".@EXISTS", true) == 0)
+                        {
+                            operations.Add(new AIValue("exists", AIValue.ValueTypeEnum.Operation));
                         }
                         else
                         {
-                            result.Add(new AIValue(item.OriginalValue.Substring(0, startPositionIndex)));
+                            // ここに来ることはないが、来たら例外を発生させる
+                            throw new Exception();
                         }
+                    }
+
+                    if (operations.Count > 0)
+                    {
+                        result.AddRange(operations);
+                        result.Add(new AIValue(labelName));
                         continue;
                     }
                 }
