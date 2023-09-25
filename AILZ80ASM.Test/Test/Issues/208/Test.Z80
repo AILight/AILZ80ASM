@@ -1,0 +1,39 @@
+﻿    org 0x100
+    ;
+    CONDITION1  equ 5
+    CONDITION2  equ 0
+    
+    DUMMY   macro
+        #if #true
+            nop
+            nop ;このブロックを一時的に無効にしたい
+        #endif
+    endm
+    
+    #if #true
+        nop
+        #if #false
+            nop ;このブロックを一時的に無効にしたい
+        #endif
+    #endif
+    
+    #if #true
+             DUMMY
+         #if #true
+            nop
+            nop ;このブロックを一時的に無効にしたい
+         #endif
+    #endif
+    
+    ;RETP-ENDMで代用はできる
+    #if #true
+        nop
+        rept CONDITION1!=0 ? 1 : 0
+    
+        endm
+    #else
+        nop ;このブロックを一時的に無効にしたい
+        rept CONDITION2!=0 ? 1 : 0
+    
+        endm
+    #endif
