@@ -17,8 +17,19 @@ namespace AILZ80ASM.LineDetailItems
         private static readonly string RegexPatternRepeatElse = @"^#ELSE$";
         private static readonly string RegexPatternRepeatEnd = @"^#ENDIF$";
 
-        private readonly Dictionary<string, List<LineDetailItemConditional>> Conditions = new Dictionary<string, List<LineDetailItemConditional>>();
-        private string ConditionKey { get; set; }
+        public class ConditionalPack
+        {
+            public string Condition { get; set; }
+            public List<LineDetailItemConditional> LineDetailItemConditionaList = new List<LineDetailItemConditional>();
+        
+            public ConditionalPack(string condition)
+            {
+                Condition = condition;
+            }
+
+        }
+        public List<ConditionalPack> ConditionPacks { get; private set; } = new List<ConditionalPack>();
+
         private int ConditionalNestedCount { get; set; } = 0;
         private bool EnableAssemble { get; set; } = false;
 
@@ -84,34 +95,37 @@ namespace AILZ80ASM.LineDetailItems
                 if (ifMatched.Success)
                 {
                     asmLoad_LineDetailItemConditional.ConditionalNestedCount++;
+                    asmLoad_LineDetailItemConditional.ConditionPacks.Last().LineDetailItemConditionaList.Add(lineDetailItemConditional);
                 }
-                else if (elifMatched.Success)
+                else if (asmLoad_LineDetailItemConditional.ConditionalNestedCount == 1)
                 {
-                    if (asmLoad_LineDetailItemConditional.Conditions.ContainsKey(""))
+                    if (elifMatched.Success)
                     {
-                        // Elseが既にある場合
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E1023);
+                        if (asmLoad_LineDetailItemConditional.ConditionPacks.Any(m => string.IsNullOrEmpty(m.Condition)))
+                        {
+                            // Elseが既にある場合
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E1023);
+                        }
+                        var conditionalPack = new ConditionalPack(elifMatched.Groups["condition"].Value);
+                        asmLoad_LineDetailItemConditional.ConditionPacks.Add(conditionalPack);
                     }
-
-                    asmLoad_LineDetailItemConditional.ConditionKey = elifMatched.Groups["condition"].Value;
-                    asmLoad_LineDetailItemConditional.Conditions.Add(asmLoad_LineDetailItemConditional.ConditionKey, new List<LineDetailItemConditional>());
-                }
-                else if (elseMatched.Success)
-                {
-                    if (asmLoad_LineDetailItemConditional.Conditions.ContainsKey(""))
+                    else if (elseMatched.Success)
                     {
-                        // Elseが既にある場合
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E1023);
-                    }
+                        if (asmLoad_LineDetailItemConditional.ConditionPacks.Any(m => string.IsNullOrEmpty(m.Condition)))
+                        {
+                            // Elseが既にある場合
+                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E1023);
+                        }
 
-                    asmLoad_LineDetailItemConditional.ConditionKey = "";
-                    asmLoad_LineDetailItemConditional.Conditions.Add(asmLoad_LineDetailItemConditional.ConditionKey, new List<LineDetailItemConditional>());
+                        var conditionalPack = new ConditionalPack("");
+                        asmLoad_LineDetailItemConditional.ConditionPacks.Add(conditionalPack);
+                    }
+                    else
+                    {
+                        asmLoad_LineDetailItemConditional.ConditionPacks.Last().LineDetailItemConditionaList.Add(lineDetailItemConditional);
+                    }
                 }
-                else
-                {
-                    var lines = asmLoad_LineDetailItemConditional.Conditions[asmLoad_LineDetailItemConditional.ConditionKey];
-                    lines.Add(lineDetailItemConditional);
-                }
+
                 return lineDetailItemConditional;
             }
             else
@@ -127,11 +141,9 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     var lineDetailItemConditional = new LineDetailItemConditional(lineItem, asmLoad)
                     {
-                        ConditionKey = ifMatched.Groups["condition"].Value,
                         ConditionalNestedCount = 1
                     };
-                    lineDetailItemConditional.Conditions.Add(lineDetailItemConditional.ConditionKey, new List<LineDetailItemConditional>());
-
+                    lineDetailItemConditional.ConditionPacks.Add(new ConditionalPack(ifMatched.Groups["condition"].Value));
                     asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemConditional;
 
                     return lineDetailItemConditional;
@@ -152,11 +164,11 @@ namespace AILZ80ASM.LineDetailItems
                 // リピート数が設定されているものを処理する
                 try
                 {
-                    foreach (var condition in Conditions.Keys)
+                    foreach (var conditionPack in ConditionPacks)
                     {
-                        if (string.IsNullOrEmpty(condition) || AIMath.Calculation(condition, AsmLoad, asmAddress).ConvertTo<bool>())
+                        if (string.IsNullOrEmpty(conditionPack.Condition) || AIMath.Calculation(conditionPack.Condition, AsmLoad, asmAddress).ConvertTo<bool>())
                         {
-                            foreach (var item in Conditions[condition].ToArray())
+                            foreach (var item in conditionPack.LineDetailItemConditionaList)
                             {
                                 var lineItem = item.LineItem;
                                 try

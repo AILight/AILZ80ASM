@@ -100,6 +100,15 @@
     <None Update="Test\Issues\207\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\Issues\208\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\208\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\215\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\Issues\215\Test.SYM">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
