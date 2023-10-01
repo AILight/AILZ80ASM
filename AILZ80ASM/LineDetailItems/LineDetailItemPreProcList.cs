@@ -50,7 +50,7 @@ namespace AILZ80ASM.LineDetailItems
                 }
                 else
                 {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1051, "条件を設定してください。");
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E1051, "条件(bool型)を設定してください。");
                 }
             }
 
