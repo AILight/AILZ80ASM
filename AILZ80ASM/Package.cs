@@ -304,46 +304,6 @@ namespace AILZ80ASM
                     }
                 }
             }
-
-            // 出力アドレスを確定(ROM以外)
-            /*
-            var asmORGs = this.AssembleLoad.Share.AsmORGs.Where(m => !m.IsRomMode && !m.OutputAddress.HasValue).OrderBy(m => m.ProgramAddress).ToList();
-            var startORG = asmORGs.FirstOrDefault(m => m.HasBinResult);
-            var endORG = asmORGs.LastOrDefault(m => m.HasBinResult);
-
-            if (startORG != null && endORG != null)
-            {
-                var outputAddress = default(UInt32);
-                var startIndex = asmORGs.IndexOf(startORG);
-                var endIndex = asmORGs.IndexOf(endORG);
-                for (var index = startIndex; index <= endIndex; index++)
-                {
-                    try
-                    {
-                        asmORGs[index].AdjustAssemble(outputAddress, AssembleLoad);
-                        if (index < endIndex)
-                        {
-                            var offset = (UInt32)(asmORGs[index + 1].ProgramAddress - asmORGs[index].ProgramAddress);
-                            outputAddress += offset;
-                        }
-                    }
-                    catch (ErrorAssembleException ex)
-                    {
-                        AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, ex));
-                    }
-                    catch (ErrorLineItemException ex)
-                    {
-                        AssembleLoad.AddError(ex.ErrorLineItem);
-                    }
-                    catch (Exception ex)
-                    {
-                        AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
-                    }
-                }
-            }
-            */
-
-
         }
 
         /// <summary>
