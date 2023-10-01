@@ -138,44 +138,54 @@ namespace AILZ80ASM
             // OutputAddressを一時保存します
             this.AssembleLoad.Share.AsmORGs.ForEach(m => m.SaveOutputAddress());
 
-            // 出力アドレスを確定(ROM以外)
-            var asmORGs = this.AssembleLoad.Share.AsmORGs.Where(m => !m.IsRomMode && !m.OutputAddress.HasValue).OrderBy(m => m.ProgramAddress).ToList();
-            var startORG = asmORGs.FirstOrDefault(m => m.HasBinResult);
-            var endORG = asmORGs.LastOrDefault(m => m.HasBinResult);
-
-            if (startORG != null && endORG != null)
+            if (this.AssembleLoad.Share.AsmORGs.Any(m => m.IsRomMode))
             {
-                var outputAddress = default(UInt32);
-                var startIndex = asmORGs.IndexOf(startORG);
-                var endIndex = asmORGs.IndexOf(endORG);
-                for (var index = startIndex; index <= endIndex; index++)
+                // こちらの処理で、すべてのORGの再配置を処理できる
+                // ただし現状では、不具合の発生が怖いのでelse側の旧処理を通常は使うこととする
+                // 将来はifの条件をなくして、else側を削除して対応することにする
+                AdjustAssembleAddress();
+            }
+            else
+            {
+                // 出力アドレスを確定(ROM以外)
+                var asmORGs = this.AssembleLoad.Share.AsmORGs.Where(m => !m.IsRomMode && !m.OutputAddress.HasValue).OrderBy(m => m.ProgramAddress).ToList();
+                var startORG = asmORGs.FirstOrDefault(m => m.HasBinResult);
+                var endORG = asmORGs.LastOrDefault(m => m.HasBinResult);
+
+                if (startORG != null && endORG != null)
                 {
-                    try
+                    var outputAddress = default(UInt32);
+                    var startIndex = asmORGs.IndexOf(startORG);
+                    var endIndex = asmORGs.IndexOf(endORG);
+                    for (var index = startIndex; index <= endIndex; index++)
                     {
-                        asmORGs[index].AdjustAssemble(outputAddress, AssembleLoad);
-                        if (index < endIndex)
+                        try
                         {
-                            var offset = (UInt32)(asmORGs[index + 1].ProgramAddress - asmORGs[index].ProgramAddress);
-                            outputAddress += offset;
+                            asmORGs[index].AdjustAssemble(outputAddress, AssembleLoad);
+                            if (index < endIndex)
+                            {
+                                var offset = (UInt32)(asmORGs[index + 1].ProgramAddress - asmORGs[index].ProgramAddress);
+                                outputAddress += offset;
+                            }
+                        }
+                        catch (ErrorAssembleException ex)
+                        {
+                            AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, ex));
+                        }
+                        catch (ErrorLineItemException ex)
+                        {
+                            AssembleLoad.AddError(ex.ErrorLineItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
                         }
                     }
-                    catch (ErrorAssembleException ex)
-                    {
-                        AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, ex));
-                    }
-                    catch (ErrorLineItemException ex)
-                    {
-                        AssembleLoad.AddError(ex.ErrorLineItem);
-                    }
-                    catch (Exception ex)
-                    {
-                        AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
-                    }
                 }
-            }
 
-            // ROM出力調整
-            AdjustAssembleForROM();
+                // ROM出力調整
+                AdjustAssembleForROM();
+            }
 
             // FillByteLabelの確定
             var defaultFillByte = AssembleLoad.Share.GapByte;
@@ -211,6 +221,87 @@ namespace AILZ80ASM
                 catch (Exception ex)
                 {
                     AssembleLoad.AddError(new ErrorLineItem(asmORG.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
+                }
+            }
+        }
+
+        private void AdjustAssembleAddress()
+        {
+            var isRomMode = this.AssembleLoad.Share.AsmORGs.Any(m => m.IsRomMode);
+            var asmORGItems = this.AssembleLoad.Share.AsmORGs.Select((item, index) => new { Item = item, Index = index }).ToArray();
+            var asmORGItemsForRomMode = asmORGItems.Where(m => m.Item.IsRomMode);
+
+            // RomModeのアドレスを確定させる
+            foreach (var asmORGItem in asmORGItemsForRomMode)
+            {
+                try
+                {
+                    var resultAddress = default(AsmAddress);
+                    var outputAddress = default(UInt32);
+
+                    if (asmORGItem.Item.OutputAddress.HasValue)
+                    {
+                        outputAddress = asmORGItem.Item.OutputAddress.Value;
+                    }
+                    else if (AIMath.TryParse(asmORGItem.Item.OutputAddressLabel, this.AssembleLoad, resultAddress, out var outputAddressValue))
+                    {
+                        outputAddress = outputAddressValue.ConvertTo<UInt32>();
+                    }
+                    else
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORGItem.Item.OutputAddressLabel);
+                    }
+                    asmORGItem.Item.AdjustAssemble(outputAddress, AssembleLoad);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    AssembleLoad.AddError(new ErrorLineItem(asmORGItem.Item.LineItem, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    AssembleLoad.AddError(ex.ErrorLineItem);
+                }
+                catch (Exception ex)
+                {
+                    AssembleLoad.AddError(new ErrorLineItem(asmORGItem.Item.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
+                }
+            }
+
+            // 通常の出力アドレスを確定する
+            {
+                var asmORGs = (isRomMode ? asmORGItems.OrderBy(m => m.Index) : asmORGItems.OrderBy(m => m.Item.ProgramAddress)).Select(m => m.Item).ToList();
+                var startORG = asmORGs.FirstOrDefault(m => m.OutputAddress.HasValue || m.HasBinResult);
+                var endORG = asmORGs.LastOrDefault(m => m.OutputAddress.HasValue || m.HasBinResult);
+                if (startORG != null && endORG != null)
+                {
+                    var outputAddress = default(UInt32);
+                    var startIndex = asmORGs.IndexOf(startORG);
+                    var endIndex = asmORGs.IndexOf(endORG);
+                    for (var index = startIndex; index <= endIndex; index++)
+                    {
+                        try
+                        {
+                            outputAddress = asmORGs[index].OutputAddress ?? outputAddress;
+                            asmORGs[index].AdjustAssemble(outputAddress, AssembleLoad);
+                            if (index < endIndex)
+                            {
+                                var offset = (UInt32)(asmORGs[index + 1].ProgramAddress - asmORGs[index].ProgramAddress);
+                                outputAddress += offset;
+                            }
+                        }
+                        catch (ErrorAssembleException ex)
+                        {
+                            AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, ex));
+                        }
+                        catch (ErrorLineItemException ex)
+                        {
+                            AssembleLoad.AddError(ex.ErrorLineItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            AssembleLoad.AddError(new ErrorLineItem(asmORGs[index].LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
+                        }
+                    }
                 }
             }
         }

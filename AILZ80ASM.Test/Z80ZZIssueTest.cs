@@ -118,6 +118,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_214()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "214"));
+        }
+
+        [TestMethod]
         public void Issue_215()
         {
             var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue215.bin", "-sym", "Issue215.sym", "-cd", "./Test/Issues/215");
