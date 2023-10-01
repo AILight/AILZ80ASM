@@ -19,6 +19,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 var lists = new List<AsmList>();
                 foreach (var item in MacroLines)
                 {

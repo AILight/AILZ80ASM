@@ -13,6 +13,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 return new[] { Address.HasValue ? AsmList.CreateLineItemORG(Address.Value, new AsmLength(), LineItem) : AsmList.CreateLineItem(LineItem) };
             }
         }

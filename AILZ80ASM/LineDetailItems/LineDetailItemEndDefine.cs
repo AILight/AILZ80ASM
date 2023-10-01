@@ -18,6 +18,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 return new[]
                 {
                     AsmList.CreateLineItemEndDefine(EntryPoint, LineItem)

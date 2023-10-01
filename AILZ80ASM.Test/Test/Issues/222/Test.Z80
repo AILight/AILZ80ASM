@@ -1,0 +1,16 @@
+﻿    org 0x100
+
+on  equ #TRUE
+off equ #FALSE
+
+    ld  a, 0
+
+    #LIST off
+    include "Test.INC"
+    #LIST on
+
+    ld  b, ABC
+    ld  c, DEF
+    
+    ret
+

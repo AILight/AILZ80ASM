@@ -60,6 +60,9 @@ namespace AILZ80ASM.Assembler
             E1041,
             E1042,
 
+            E1051,
+            E1052,
+
             // Include
             //E2001,
             E2002,
@@ -194,6 +197,10 @@ namespace AILZ80ASM.Assembler
             // プリント
             [ErrorCodeEnum.E1041] = "引数の設定が間違っています。{0}",
             [ErrorCodeEnum.E1042] = "#PRINTにラベルは設定できません。",
+
+            // リスト
+            [ErrorCodeEnum.E1051] = "引数の設定が間違っています。{0}",
+            [ErrorCodeEnum.E1052] = "#LISTにラベルは設定できません。",
 
             // Include
             //[ErrorCodeEnum.E2001] = "",

@@ -15,6 +15,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 return new[]
                 {
                     AsmList.CreateLineItemEqual(EquLabel, this.LineItem)

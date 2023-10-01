@@ -30,6 +30,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 var asmList = new List<AsmList>();
                 // 宣言
                 foreach (var item in this.RepeatLines)

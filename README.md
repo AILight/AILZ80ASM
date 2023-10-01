@@ -643,6 +643,28 @@ LABEL	equ 00FFH
 #endif
 ```
 
+###### #LIST <引数1>
+LST形式のファイルの出力を停止します。
+
+- 引数1: bool型をしています。TRUE: 出力あり, FALSE: 出力なし
+
+```
+on  equ #TRUE
+off equ #FALSE
+
+    ld  a, 0
+
+    #LIST off
+
+    ld  b, 1
+
+    #LIST on
+
+    ld  c, 2
+    
+    ret
+```
+
 ## 表記の揺れ対応
 - (IX) → (IX+0)
 - (IY) → (IY+0)

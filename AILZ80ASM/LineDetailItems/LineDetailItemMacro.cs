@@ -15,6 +15,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 var lists = new List<AsmList>();
                 // 宣言行
                 lists.Add(AsmList.CreateLineItem(LineItem));
