@@ -16,7 +16,7 @@ namespace AILZ80ASM.LineDetailItems
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         //public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
         public virtual AsmResult[] BinResults => LineDetailScopeItems == default ? Array.Empty<AsmResult>() : LineDetailScopeItems.SelectMany(m => m.BinResults).ToArray();
-        public virtual AsmList[] Lists => LineDetailScopeItems == default ? new[] { AsmList.CreateLineItem(LineItem) } : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray();
+        public virtual AsmList[] Lists => AsmLoad.Share.IsOutputList ? (LineDetailScopeItems == default ? new[] { AsmList.CreateLineItem(LineItem) } : LineDetailScopeItems.SelectMany(m => m.Lists).ToArray()) : new AsmList[] { };
         public List<ErrorLineItem> Errors { get; private set; } = new List<ErrorLineItem>();
         public int NestCounter { get; set; } = 0;
 
@@ -47,8 +47,8 @@ namespace AILZ80ASM.LineDetailItems
                     case LineDetailItemRepeatCompatible:
                         lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                         break;
-                    case LineDetailItemConditional:
-                        lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                    case LineDetailItemPreProcConditional:
+                        lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -74,15 +74,16 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemRepeatModern.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemConditional.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressORG.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressALIGN.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressDS.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemPragma.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemPreproError.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemPreproPrint.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPreProcPragma.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPreProcError.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPreProcPrint.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemPreProcList.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemEndDefine.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // 全角文字が命令に含まれていた時ここにたどり着く

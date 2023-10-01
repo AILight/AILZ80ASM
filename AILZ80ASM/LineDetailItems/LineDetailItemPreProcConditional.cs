@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemConditional : LineDetailItem
+    public class LineDetailItemPreProcConditional : LineDetailItem
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternRepeatIf = @"^#IF\s+(?<condition>.+)$";
@@ -20,7 +20,7 @@ namespace AILZ80ASM.LineDetailItems
         public class ConditionalPack
         {
             public string Condition { get; set; }
-            public List<LineDetailItemConditional> LineDetailItemConditionaList = new List<LineDetailItemConditional>();
+            public List<LineDetailItemPreProcConditional> LineDetailItemConditionaList = new List<LineDetailItemPreProcConditional>();
         
             public ConditionalPack(string condition)
             {
@@ -33,17 +33,17 @@ namespace AILZ80ASM.LineDetailItems
         private int ConditionalNestedCount { get; set; } = 0;
         private bool EnableAssemble { get; set; } = false;
 
-        private LineDetailItemConditional(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemPreProcConditional(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        public static LineDetailItemConditional Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemPreProcConditional Create(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!lineItem.IsCollectOperationString)
             {
-                return default(LineDetailItemConditional);
+                return default(LineDetailItemPreProcConditional);
             }
 
             var ifMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatIf, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -58,7 +58,7 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     if (endMatched.Success)
                     {
-                        if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemConditional errorAsmLoad_LineDetailItemConditional)
+                        if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemPreProcConditional errorAsmLoad_LineDetailItemConditional)
                         {
                             errorAsmLoad_LineDetailItemConditional.ConditionalNestedCount--;
 
@@ -74,7 +74,7 @@ namespace AILZ80ASM.LineDetailItems
             }
 
             // 条件処理処理中
-            if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemConditional asmLoad_LineDetailItemConditional)
+            if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemPreProcConditional asmLoad_LineDetailItemConditional)
             {
                 // 終了条件チェック
                 if (endMatched.Success)
@@ -85,12 +85,12 @@ namespace AILZ80ASM.LineDetailItems
                     if (asmLoad_LineDetailItemConditional.ConditionalNestedCount == 0)
                     {
                         asmLoad.Share.LineDetailItemForExpandItem = default;
-                        return new LineDetailItemConditional(lineItem, asmLoad);
+                        return new LineDetailItemPreProcConditional(lineItem, asmLoad);
                     }
 
                 }
 
-                var lineDetailItemConditional = new LineDetailItemConditional(lineItem, asmLoad);
+                var lineDetailItemConditional = new LineDetailItemPreProcConditional(lineItem, asmLoad);
                 // 開始条件
                 if (ifMatched.Success)
                 {
@@ -139,7 +139,7 @@ namespace AILZ80ASM.LineDetailItems
                 // 開始条件チェック
                 if (ifMatched.Success)
                 {
-                    var lineDetailItemConditional = new LineDetailItemConditional(lineItem, asmLoad)
+                    var lineDetailItemConditional = new LineDetailItemPreProcConditional(lineItem, asmLoad)
                     {
                         ConditionalNestedCount = 1
                     };
@@ -208,6 +208,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 if (LineDetailScopeItems == default)
                 {
                     return new[]

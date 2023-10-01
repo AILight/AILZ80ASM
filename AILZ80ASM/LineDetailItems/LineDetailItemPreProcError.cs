@@ -4,23 +4,23 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemPreproError : LineDetailItem
+    public class LineDetailItemPreProcError : LineDetailItem
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternError = @"^#ERROR\s+""(?<message>.+)""$";
         public string Message { get; set; }
 
-        private LineDetailItemPreproError(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemPreProcError(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        public static LineDetailItemPreproError Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemPreProcError Create(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!lineItem.IsCollectOperationString)
             {
-                return default(LineDetailItemPreproError);
+                return default(LineDetailItemPreProcError);
             }
 
             var matched = Regex.Match(lineItem.OperationString, RegexPatternError, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -34,7 +34,7 @@ namespace AILZ80ASM.LineDetailItems
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1032);
                 }
 
-                var lineDetailItemError = new LineDetailItemPreproError(lineItem, asmLoad)
+                var lineDetailItemError = new LineDetailItemPreProcError(lineItem, asmLoad)
                 {
                     Message = matched.Groups["message"].Value
                 };

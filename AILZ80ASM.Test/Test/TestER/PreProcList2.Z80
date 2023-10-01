@@ -1,0 +1,6 @@
+﻿
+TEST	EQU 1
+
+		#LIST 1
+		#LIST TEST
+		#LIST #TRUE #FALSE

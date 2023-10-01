@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemPragma : LineDetailItem
+    public class LineDetailItemPreProcPragma : LineDetailItem
     {
         private static readonly string RegexPatternPragma = @"^\s*#PRAGMA\s+(?<name>[0-9a-zA-Z]+)\s*(?<argument>.*)$";
 
@@ -13,6 +13,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 return new[]
                 {
                     AsmList.CreateLineItem(LineItem)
@@ -20,17 +25,17 @@ namespace AILZ80ASM.LineDetailItems
             }
         }
 
-        private LineDetailItemPragma(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemPreProcPragma(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        public static LineDetailItemPragma Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemPreProcPragma Create(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!lineItem.IsCollectOperationString)
             {
-                return default(LineDetailItemPragma);
+                return default(LineDetailItemPreProcPragma);
             }
 
             var matched = Regex.Match(lineItem.OperationString, RegexPatternPragma, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -59,10 +64,10 @@ namespace AILZ80ASM.LineDetailItems
                         return default;
                 }
 
-                return new LineDetailItemPragma(lineItem, asmLoad);
+                return new LineDetailItemPreProcPragma(lineItem, asmLoad);
             }
 
-            return default(LineDetailItemPragma);
+            return default(LineDetailItemPreProcPragma);
         }
 
         public override void Assemble()

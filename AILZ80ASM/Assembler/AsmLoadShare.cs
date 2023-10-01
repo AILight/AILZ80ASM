@@ -59,5 +59,8 @@ namespace AILZ80ASM.Assembler
 
         // スーパーアセンブル用
         public AsmSuperAssemble AsmSuperAssembleMode { get; set; } = default;
+
+        // List出力フラグ
+        public bool IsOutputList { get; set; } = true;
     }
 }
