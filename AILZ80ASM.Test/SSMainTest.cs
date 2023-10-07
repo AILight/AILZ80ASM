@@ -329,7 +329,7 @@ namespace AILZ80ASM.Test
         {
             var result = Program.Main(@"Success_SA.Z80", "-f", "-lst", "-err", "-bin", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(0, result);
-            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.bin"), File.OpenRead("./Test/TestSS_Main/Success_SA.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.bin"), File.OpenRead("./Test/TestSS_Main/Success_SA.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.lst"), File.OpenRead("./Test/TestSS_Main/Success_SA.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.err"), File.OpenRead("./Test/TestSS_Main/Success_SA.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
         }
