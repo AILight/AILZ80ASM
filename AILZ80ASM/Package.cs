@@ -125,9 +125,9 @@ namespace AILZ80ASM
             // エントリポイントを確定させる
             if (!this.AssembleLoad.Share.EntryPoint.HasValue)
             {
-                if (this.AssembleLoad.Share.AsmORGs.Count >= 2)
+                if (this.AssembleLoad.Share.AsmORGs.Any(m => m.HasBinResult))
                 {
-                    this.AssembleLoad.Share.EntryPoint = this.AssembleLoad.Share.AsmORGs[1].ProgramAddress;
+                    this.AssembleLoad.Share.EntryPoint = this.AssembleLoad.Share.AsmORGs.First(m => m.HasBinResult).ProgramAddress;
                 }
             }
             if (this.AssembleOption.EntryPoint.HasValue)
