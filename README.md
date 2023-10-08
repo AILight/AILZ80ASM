@@ -52,12 +52,14 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -om, --output-mode <mode>      | 出力ファイルのモードを選択します。 [bin, hex, t88, cmt, sym, equ, lst, err, tag] デフォルト値:bin
 | -oe, --output-encode <mode>    | 出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
 | -lm, --list-mode <mode>        | リストの出力形式を選択します。 [simple, middle, full] デフォルト値:full
+| -lob, --list-omit-binary       | リストの出力でバイナリーインクルードを省略出力をします。
 | -ep, --entry-point <address>   | エントリーポイントを指定します。
 | -ts, --tab-size <size>         | TABのサイズを指定します。 デフォルト値:4
 | -dw, --disable-warning <codes> | Warning、Informationをオフにするコードをスペース区切りで指定します。
 | -ul, --unused-label            | 未使用ラベルを確認します。
 | -cd, --change-dir <directory>  | アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
 | -gap, --gap-default <gapByte>  | アセンブラのギャップのデフォルト値を指定します。 デフォルト値:$FF
+| -df, --list-file               | アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 | -df, --diff-file               | アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 | -nsa, --no-super-asm           | スーパーアセンブルモードを無効にします。
 | -f, --force                    | 出力ファイルを上書きします。

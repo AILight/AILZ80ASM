@@ -244,6 +244,14 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<bool>()
+            {
+                Name = "listOmitBinaryFile",
+                Aliases = new[] { "-lob", "--list-omit-binary-file" },
+                Description = "リストの出力でバイナリーファイルを省略出力をします。",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<ushort?>()
             {
                 Name = "entryPoint",

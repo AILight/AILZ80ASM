@@ -31,6 +31,7 @@ namespace AILZ80ASM.Assembler
         public ListStatusEnum ListStatus { get; set; }
         public Error.ErrorCodeEnum? ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
+        public bool IsBinaryFile { get; set; }
 
         private AsmList()
         {
@@ -56,17 +57,17 @@ namespace AILZ80ASM.Assembler
 
         public static AsmList CreateSourceOnly(string target)
         {
-            return Create(default(UInt32?), default(UInt32?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.SourceOnly);
+            return Create(default(UInt32?), default(UInt32?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, false, ListStatusEnum.SourceOnly);
         }
 
         public static AsmList CreateSource(string target)
         {
-            return Create(default(UInt32?), default(UInt32?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, ListStatusEnum.Normal);
+            return Create(default(UInt32?), default(UInt32?), default(Error.ErrorCodeEnum?), "", default(byte[]), "", target, false, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateSource(string target, Error.ErrorCodeEnum? errorCode, string errorMessage)
         {
-            return Create(default(UInt32?), default(UInt32?), errorCode, errorMessage, default(byte[]), "", target, ListStatusEnum.Normal);
+            return Create(default(UInt32?), default(UInt32?), errorCode, errorMessage, default(byte[]), "", target, false, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateLineItem(LineItem lineItem)
@@ -76,7 +77,7 @@ namespace AILZ80ASM.Assembler
 
         public static AsmList CreateLineItem(LineItem lineItem, AsmAddress asmAddress)
         {
-            return Create(default(UInt32?), asmAddress.Program, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, default(byte[]), "", lineItem.LineString, ListStatusEnum.Normal);
+            return Create(default(UInt32?), asmAddress.Program, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, default(byte[]), "", lineItem.LineString, false, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateLineItemCommentOut(LineItem lineItem)
@@ -111,9 +112,14 @@ namespace AILZ80ASM.Assembler
             return CreateLineItem(new AsmAddress(address, length), default(byte[]), "", lineItem);
         }
 
+        public static AsmList CreateLineItemBinaryFile(AsmAddress asmAdddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin)
+        {
+            return Create(asmAdddress.Output, asmAdddress.Program, errorCode, errorMessage, bin, "", "", true, ListStatusEnum.Normal);
+        }
+
         public static AsmList CreateLineItem(AsmAddress asmAdddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin)
         {
-            return Create(asmAdddress.Output, asmAdddress.Program, errorCode, errorMessage, bin, "", "", ListStatusEnum.Normal);
+            return Create(asmAdddress.Output, asmAdddress.Program, errorCode, errorMessage, bin, "", "", false, ListStatusEnum.Normal);
         }
 
         public static AsmList CreateLineItem(AsmAddress asmAdddress, byte[] bin, string status, LineItem lineItem)
@@ -123,10 +129,10 @@ namespace AILZ80ASM.Assembler
 
         public static AsmList CreateLineItem(UInt32? outputAddress, UInt32? programAddress, byte[] bin, string status, LineItem lineItem)
         {
-            return Create(outputAddress, programAddress, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, bin, status, lineItem.LineString, ListStatusEnum.Normal);
+            return Create(outputAddress, programAddress, lineItem?.ErrorLineItem?.ErrorCode, lineItem?.ErrorLineItem?.ErrorMessage, bin, status, lineItem.LineString, false, ListStatusEnum.Normal);
         }
 
-        public static AsmList Create(UInt32? outputAddress, UInt32? programAddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin, string status, string source, ListStatusEnum listStatus)
+        public static AsmList Create(UInt32? outputAddress, UInt32? programAddress, Error.ErrorCodeEnum? errorCode, string errorMessage, byte[] bin, string status, string source, bool binaryFile, ListStatusEnum listStatus)
         {
             return new AsmList
             {
@@ -139,15 +145,16 @@ namespace AILZ80ASM.Assembler
                 Source = source,
                 ListStatus = listStatus,
                 OutputLineIndex = 0,
+                IsBinaryFile = binaryFile
             };
         }
 
         public override string ToString()
         {
-            return ToString(AsmEnum.ListFormatEnum.Full, 4);
+            return ToString(AsmEnum.ListFormatEnum.Full, 4, false);
         }
 
-        public string ToString(AsmEnum.ListFormatEnum listFormat, int tabSize)
+        public string ToString(AsmEnum.ListFormatEnum listFormat, int tabSize, bool listOmitBinaryFile)
         {
             var address1 = OutputAddress.HasValue ? $"{OutputAddress:X6}" : "";
             var address2 = "";
@@ -172,17 +179,37 @@ namespace AILZ80ASM.Assembler
             var codeType = "";
             var status = this.Status;
             var source = GetReplaseTab(this.Source, tabSize);
+            var binaryLength = listFormat switch
+            {
+                AsmEnum.ListFormatEnum.Simple => 14,
+                _ => 16,
+            };
 
             if (ErrorCode.HasValue && Error.GetErrorType(ErrorCode.Value) == Error.ErrorTypeEnum.Error)
             {
                 binary = $"**** {ErrorCode} ****";
             }
-            else if (this.Bin != default && this.Bin.Length > 16)
+            else if (this.Bin != default && this.Bin.Length > binaryLength)
             {
                 var startBin = this.Bin[0];
                 if (this.Bin.Count(m => m == startBin) == this.Bin.Length)
                 {
+                    // 同一の値を出力するときに、省略表示する
                     binary = $"{startBin:X2} LEN:{this.Bin.Length}";
+                }
+                else if (listOmitBinaryFile && binary.Length > binaryLength)
+                {
+                    var lenString = $"LEN:{this.Bin.Length}";
+                    var lenSpace = lenString.Length % 2 == 0 ? "" : " ";
+                    lenString = $"..{lenSpace}{lenString}";
+                    if (lenString.Length <= binaryLength)
+                    {
+                        binary = binary.Substring(0, binaryLength - lenString.Length) + lenString;
+                    }
+                    else
+                    {
+                        binary = binary.Substring(0, binaryLength - 2) + $"..LEN:{this.Bin.Length}";
+                    }
                 }
             }
             if (NestedCodeTypes != default && NestedCodeTypes.Count > 0)
@@ -195,12 +222,6 @@ namespace AILZ80ASM.Assembler
             switch (this.ListStatus)
             {
                 case ListStatusEnum.Normal:
-                    var binaryLength = listFormat switch
-                    {
-                        AsmEnum.ListFormatEnum.Simple => 14,
-                        _ => 16,
-                    };
-
                     foreach (var item in Regex.Split(binary, @"(?<=\G.{" + binaryLength.ToString() + "})(?!$)"))
                     {
                         address1 = address1.PadLeft(6);

@@ -1,0 +1,6 @@
+﻿	org $c000
+
+LB1:	include "Char1.bin", B
+LB2:	include "Char2.bin", B
+
+	end
