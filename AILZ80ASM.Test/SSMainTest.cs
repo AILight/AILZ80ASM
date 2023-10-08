@@ -202,6 +202,22 @@ namespace AILZ80ASM.Test
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_simple_ORG.lst"), File.OpenRead("./Test/TestSS_Main/List_simple.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
         }
 
+        [TestMethod]
+        public void TestListOmitBinary()
+        {
+            var result_simple = Program.Main(@"Success.Z80", "-f", "-lst", "List_simple_lob.lst", "-lm", "simple", "-lob", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result_simple);
+
+            var result_middle = Program.Main(@"Success.Z80", "-f", "-lst", "List_middle_lob.lst", "-lm", "middle", "-lob", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result_middle);
+
+            var result_full = Program.Main(@"Success.Z80", "-f", "-lst", "List_full_lob.lst", "-lm", "full", "-lob", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result_full);
+
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_full_ORG_LOB.lst"), File.OpenRead("./Test/TestSS_Main/List_full_lob.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_middle_ORG_LOB.lst"), File.OpenRead("./Test/TestSS_Main/List_middle_lob.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_simple_ORG_LOB.lst"), File.OpenRead("./Test/TestSS_Main/List_simple_lob.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
 
         [TestMethod]
         public void TestSymbol()
