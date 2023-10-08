@@ -52,12 +52,14 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -om, --output-mode <mode>      | 出力ファイルのモードを選択します。 [bin, hex, t88, cmt, sym, equ, lst, err, tag] デフォルト値:bin
 | -oe, --output-encode <mode>    | 出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
 | -lm, --list-mode <mode>        | リストの出力形式を選択します。 [simple, middle, full] デフォルト値:full
+| -lob, --list-omit-binary       | リストの出力でバイナリーインクルードを省略出力をします。
 | -ep, --entry-point <address>   | エントリーポイントを指定します。
 | -ts, --tab-size <size>         | TABのサイズを指定します。 デフォルト値:4
 | -dw, --disable-warning <codes> | Warning、Informationをオフにするコードをスペース区切りで指定します。
 | -ul, --unused-label            | 未使用ラベルを確認します。
 | -cd, --change-dir <directory>  | アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
 | -gap, --gap-default <gapByte>  | アセンブラのギャップのデフォルト値を指定します。 デフォルト値:$FF
+| -df, --list-file               | アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 | -df, --diff-file               | アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 | -nsa, --no-super-asm           | スーパーアセンブルモードを無効にします。
 | -f, --force                    | 出力ファイルを上書きします。
@@ -131,7 +133,7 @@ EXEと同じフォルダに以下の形式で「AILZ80ASM.json」を保存
 CMT形式の読み込みアドレスに利用されるエントリーポイントは、以下の優先順位で利用されます。
  1. コマンドラインオプション (-ep) で指定した値
  1. END で指定した値
- 1. 最初のORGで指定したプログラムアドレス
+ 1. アセンブル結果が出力される最初のプログラムアドレス
 
 ## 新バージョン導入の手順
  1. 新バージョンを入手
@@ -641,6 +643,28 @@ LABEL	equ 00FFH
 #if exists LABEL
 LABEL	equ 00FFH
 #endif
+```
+
+###### #LIST <引数1>
+LST形式のファイルの出力を停止します。
+
+- 引数1: bool型をしています。TRUE: 出力あり, FALSE: 出力なし
+
+```
+on  equ #TRUE
+off equ #FALSE
+
+    ld  a, 0
+
+    #LIST off
+
+    ld  b, 1
+
+    #LIST on
+
+    ld  c, 2
+    
+    ret
 ```
 
 ## 表記の揺れ対応

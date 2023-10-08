@@ -30,6 +30,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 var asmList = new List<AsmList>();
                 // 宣言
                 foreach (var item in this.RepeatLines)
@@ -174,9 +179,13 @@ namespace AILZ80ASM.LineDetailItems
                         if (repeatCounter == count)
                         {
                             var take = repeatLines.Where(m => !string.IsNullOrEmpty(m.OperationString)).Count() + last;
-                            if (take <= 0 || last > 0)
+                            if (last > 0)
                             {
                                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E1013, last);
+                            }
+                            if (take < 0)
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E1016, last);
                             }
 
                             //最終ページ処理（命令部だけを削除する）

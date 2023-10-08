@@ -1,0 +1,55 @@
+﻿                         ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.2.0, LST:Middle:4
+                                 include "Success.INC"
+                             ;Include Test
+0014                     CHAR01  EQU     20
+0028                     CHAR02  EQU     40
+003C                     CHAR03  EQU     60
+[EOF:Success.INC:UTF_8]
+                         
+1234                             ORG $1234
+                         [GB1]
+0001                     ABC     equ 1
+0002                     .DEF    equ 2
+1234 3E00             7          ld a, 0
+1236                     GHI:
+1236 3E01             7          ld a, 1
+1238                     .JKL
+1238 3E02             7          ld a, 2
+0003                     .MNO    equ 3
+                         
+                                 REPT 5
+                                 NOP
+                                 ENDM
+                        + #0001
+123A 00               4 +        NOP
+                        + #0002
+123B 00               4 +        NOP
+                        + #0003
+123C 00               4 +        NOP
+                        + #0004
+123D 00               4 +        NOP
+                        + #0005
+123E 00               4 +        NOP
+                         
+                         [GB2]
+0001                     ABC     equ 1
+0002                     .DEF    equ 2
+123F 3E00             7          ld a, 0
+1241                     GHI:
+1241 3E01             7          ld a, 1
+1243                     .JKL
+1243 3E02             7          ld a, 2
+                                 MACROTEST
+1245 3E00             7 +        LD A,0
+1247 0600             7 +        LD B,0
+                         
+0003                     .MNO    equ 3
+                         
+                         MACROTEST   MACRO
+                                 LD A,0
+                                 LD B,0
+                                 ENDM
+                         
+1249 C9              10          RET
+124A 00010203..LEN:32    include "Include.bin", B
+[EOF:Success.Z80:UTF_8]

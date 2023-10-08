@@ -202,6 +202,22 @@ namespace AILZ80ASM.Test
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_simple_ORG.lst"), File.OpenRead("./Test/TestSS_Main/List_simple.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
         }
 
+        [TestMethod]
+        public void TestListOmitBinary()
+        {
+            var result_simple = Program.Main(@"Success.Z80", "-f", "-lst", "List_simple_lob.lst", "-lm", "simple", "-lob", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result_simple);
+
+            var result_middle = Program.Main(@"Success.Z80", "-f", "-lst", "List_middle_lob.lst", "-lm", "middle", "-lob", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result_middle);
+
+            var result_full = Program.Main(@"Success.Z80", "-f", "-lst", "List_full_lob.lst", "-lm", "full", "-lob", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result_full);
+
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_full_ORG_LOB.lst"), File.OpenRead("./Test/TestSS_Main/List_full_lob.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_middle_ORG_LOB.lst"), File.OpenRead("./Test/TestSS_Main/List_middle_lob.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/List_simple_ORG_LOB.lst"), File.OpenRead("./Test/TestSS_Main/List_simple_lob.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
 
         [TestMethod]
         public void TestSymbol()
@@ -329,7 +345,7 @@ namespace AILZ80ASM.Test
         {
             var result = Program.Main(@"Success_SA.Z80", "-f", "-lst", "-err", "-bin", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(0, result);
-            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.bin"), File.OpenRead("./Test/TestSS_Main/Success_SA.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.bin"), File.OpenRead("./Test/TestSS_Main/Success_SA.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.lst"), File.OpenRead("./Test/TestSS_Main/Success_SA.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_SA_ORG.err"), File.OpenRead("./Test/TestSS_Main/Success_SA.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
         }

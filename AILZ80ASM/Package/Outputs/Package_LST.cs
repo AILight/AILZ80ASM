@@ -27,7 +27,7 @@ namespace AILZ80ASM
             AssembleLoad.ListedFileClear();
             var lineIndex = 2;
             var title = $";{ProductInfo.ProductLongName}, LST:{AssembleLoad.AssembleOption.ListMode}:{AssembleLoad.AssembleOption.TabSize}";
-            streamWriter.WriteLine(AsmList.CreateSource(title).ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
+            streamWriter.WriteLine(AsmList.CreateSource(title).ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize, AssembleLoad.AssembleOption.ListOmitBinaryFile));
 
             AssembleLoad.AssociateError();
 

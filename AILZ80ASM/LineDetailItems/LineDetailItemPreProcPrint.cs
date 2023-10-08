@@ -7,24 +7,23 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemPreproPrint : LineDetailItem
+    public class LineDetailItemPreProcPrint : LineDetailItem
     {
-        // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternPrint = @"^#PRINT";
         private static readonly string RegexPatternPrintWithArgument = @"^#PRINT\s+(?<message>.+)$";
         public string Message { get; set; }
 
-        private LineDetailItemPreproPrint(LineItem lineItem, AsmLoad asmLoad)
+        private LineDetailItemPreProcPrint(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        public static LineDetailItemPreproPrint Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemPreProcPrint Create(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!lineItem.IsCollectOperationString)
             {
-                return default(LineDetailItemPreproPrint);
+                return default(LineDetailItemPreProcPrint);
             }
 
             var matched = Regex.Match(lineItem.OperationString, RegexPatternPrint, RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -40,11 +39,11 @@ namespace AILZ80ASM.LineDetailItems
                 var matchedWithArgument = Regex.Match(lineItem.OperationString, RegexPatternPrintWithArgument, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 if (matchedWithArgument.Success)
                 {
-                    var lineDetailItemPreproPrint = new LineDetailItemPreproPrint(lineItem, asmLoad)
+                    var lineDetailItemPreProcPrint = new LineDetailItemPreProcPrint(lineItem, asmLoad)
                     {
                         Message = matchedWithArgument.Groups["message"].Value
                     };
-                    return lineDetailItemPreproPrint;
+                    return lineDetailItemPreProcPrint;
                 }
                 else
                 {

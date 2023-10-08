@@ -302,7 +302,7 @@ namespace AILZ80ASM.Assembler
                 this.AddError(new ErrorLineItem(this.Share.LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1011));
             }
 
-            if (this.Share.LineDetailItemForExpandItem is LineDetailItemConditional)
+            if (this.Share.LineDetailItemForExpandItem is LineDetailItemPreProcConditional)
             {
                 this.AddError(new ErrorLineItem(this.Share.LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1021));
             }

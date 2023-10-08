@@ -235,7 +235,7 @@ namespace AILZ80ASM
                 }
                 else
                 {
-                    streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize));
+                    streamWriter.WriteLine(list.ToString(AssembleLoad.AssembleOption.ListMode, AssembleLoad.AssembleOption.TabSize, AssembleLoad.AssembleOption.ListOmitBinaryFile));
                     list.OutputLineIndex = lineIndex;
                     AssembleLoad.Share.AsmLists.Add(list);
                 }

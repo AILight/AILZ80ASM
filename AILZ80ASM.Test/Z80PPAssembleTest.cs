@@ -31,6 +31,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestPP_List()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestPP_MacroAndFunction()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
@@ -79,7 +85,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestPP_PreproPrint()
+        public void TestPP_Print()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

@@ -112,12 +112,33 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_208()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "208"));
+        }
+
+        [TestMethod]
+        public void Issue_214()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "214"));
+        }
+
+        [TestMethod]
         public void Issue_215()
         {
             var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue215.bin", "-sym", "Issue215.sym", "-cd", "./Test/Issues/215");
             Assert.AreEqual(0, result);
             Lib.AreSameBin(File.OpenRead("./Test/Issues/215/Issue215.bin"), File.OpenRead("./Test/Issues/215/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
-            Lib.AreSameLst(File.OpenRead("./Test/Issues/215/Issue215.sym"), File.OpenRead("./Test/Issues/215/Test.SYM"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/215/Issue215.sym"), File.OpenRead("./Test/Issues/215/Test.SYM"), Assembler.AsmEnum.FileTypeEnum.SYM);
+        }
+
+        [TestMethod]
+        public void Issue_222()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue222.bin", "-lst", "Issue222.lst", "-cd", "./Test/Issues/222");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/222/Issue222.bin"), File.OpenRead("./Test/Issues/222/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/222/Issue222.lst"), File.OpenRead("./Test/Issues/222/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
         }
 
         [TestMethod]
@@ -126,5 +147,22 @@ namespace AILZ80ASM.Test
             Lib.Assemble_AreSame(Path.Combine("Issues", "223"));
         }
 
+        [TestMethod]
+        public void Issue_230()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue230.bin", "-lst", "Issue230.lst", "-lob", "-cd", "./Test/Issues/230");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/230/Issue230.bin"), File.OpenRead("./Test/Issues/230/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/230/Issue230.lst"), File.OpenRead("./Test/Issues/230/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
+
+        [TestMethod]
+        public void Issue_232()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue232.bin", "-cmt", "Issue232.cmt", "-cd", "./Test/Issues/232");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/232/Issue232.bin"), File.OpenRead("./Test/Issues/232/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/232/Issue232.cmt"), File.OpenRead("./Test/Issues/232/Test.CMT"), Assembler.AsmEnum.FileTypeEnum.CMT);
+        }
     }
 }

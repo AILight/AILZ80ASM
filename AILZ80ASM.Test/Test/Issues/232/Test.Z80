@@ -1,0 +1,11 @@
+﻿    org $fc00
+
+    ds  256
+
+    org $c000
+
+    ld a, 0
+
+    ret
+
+    end

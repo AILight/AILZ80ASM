@@ -47,6 +47,7 @@ namespace AILZ80ASM.Assembler
             E1013,
             E1014,
             E1015,
+            E1016,
 
             E1021,
             E1022,
@@ -58,6 +59,9 @@ namespace AILZ80ASM.Assembler
 
             E1041,
             E1042,
+
+            E1051,
+            E1052,
 
             // Include
             //E2001,
@@ -175,9 +179,10 @@ namespace AILZ80ASM.Assembler
             // リピート
             [ErrorCodeEnum.E1011] = "REPEAT (REPT) に対応するEND REPEAT (ENDM) が見つかりませんでした。",
             [ErrorCodeEnum.E1012] = "END REPEAT (ENDM) が先に見つかりました。",
-            [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。負の値を指定してください。[{0}]",
+            [ErrorCodeEnum.E1013] = "REPEAT (REPT) LASTに指定した値が不正です。負の値を指定してください。[{0}]",
             [ErrorCodeEnum.E1014] = "REPEAT (REPT) では、ローカルラベルしか使えません。",
             [ErrorCodeEnum.E1015] = "REPEAT (REPT) に指定した値が不正です。[{0}]",
+            [ErrorCodeEnum.E1016] = "REPEAT (REPT) LASTに指定した値が不正です。削除できる命令数を超えています。",
 
             // コンディショナル
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
@@ -192,6 +197,10 @@ namespace AILZ80ASM.Assembler
             // プリント
             [ErrorCodeEnum.E1041] = "引数の設定が間違っています。{0}",
             [ErrorCodeEnum.E1042] = "#PRINTにラベルは設定できません。",
+
+            // リスト
+            [ErrorCodeEnum.E1051] = "引数の設定が間違っています。{0}",
+            [ErrorCodeEnum.E1052] = "#LISTにラベルは設定できません。",
 
             // Include
             //[ErrorCodeEnum.E2001] = "",
