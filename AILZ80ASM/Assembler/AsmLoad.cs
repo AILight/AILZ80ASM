@@ -85,6 +85,7 @@ namespace AILZ80ASM.Assembler
             Share.GapByte = assembleOption.GapByte;
             Share.EntryPoint = null;
             Share.AsmSuperAssembleMode = new AsmSuperAssemble();
+            Share.AlignBlocks = new List<LineDetailItemAddressAlignBlock>();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -114,6 +115,7 @@ namespace AILZ80ASM.Assembler
             Share.GapByte = AssembleOption.GapByte;
             Share.EntryPoint = null;
             Share.AsmSuperAssembleMode = asmSuperAssembleMode;
+            Share.AlignBlocks = new List<LineDetailItemAddressAlignBlock>();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -795,6 +797,15 @@ namespace AILZ80ASM.Assembler
                                               m.LineItem.LineString == errorListItem.LineItem.LineString &&
                                               m.LineItem.LineIndex == errorListItem.LineItem.LineIndex &&
                                              (m.LineItem?.FileInfo.FullName ?? "") == (errorListItem.LineItem?.FileInfo.FullName ?? ""));
+        }
+
+        /// <summary>
+        /// Align ブロックの追加
+        /// </summary>
+        /// <param name="alignBlock"></param>
+        public void AddAlignBlock(LineDetailItemAddressAlignBlock alignBlock)
+        {
+            Share.AlignBlocks.Add(alignBlock);
         }
     }
 }

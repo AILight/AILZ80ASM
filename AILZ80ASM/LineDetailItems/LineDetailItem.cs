@@ -47,6 +47,9 @@ namespace AILZ80ASM.LineDetailItems
                     case LineDetailItemRepeatCompatible:
                         lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                         break;
+                    case LineDetailItemAddressAlignBlock:
+                        lineDetailItem ??= LineDetailItemAddressAlignBlock.Create(lineItem, asmLoad);
+                        break;
                     case LineDetailItemPreProcConditional:
                         lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
                         break;
@@ -76,7 +79,8 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressORG.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemAddressALIGN.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemAddressAlign.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemAddressAlignBlock.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressDS.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);

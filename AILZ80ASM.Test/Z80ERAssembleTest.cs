@@ -48,6 +48,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_AlignBlock()
+        {
+            var errors = Assemble("AlignBlock.Z80");
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E5002, 3, "AlignBlock.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_CharMap1()
         {
             var errors = Assemble("CharMap1.Z80");

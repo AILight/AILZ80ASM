@@ -62,5 +62,8 @@ namespace AILZ80ASM.Assembler
 
         // List出力フラグ
         public bool IsOutputList { get; set; } = true;
+
+        // 出力サイズを計測する
+        public List<LineDetailItemAddressAlignBlock> AlignBlocks { get; set; } = default;
     }
 }
