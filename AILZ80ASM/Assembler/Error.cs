@@ -103,6 +103,10 @@ namespace AILZ80ASM.Assembler
             E4004,
             E4005,
 
+            // ALIGN ブロック
+            E5001,
+            E5002,
+
             W0001,
             W0002,
             W0003,
@@ -241,6 +245,10 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E4003] = "Functionの再起呼び出しの回数が閾値を超えました。",
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。[{0}]",
+
+            // ALIGN ブロック
+            [ErrorCodeEnum.E5001] = "ALIGN BLOCK に対応するENDM が見つかりませんでした。",
+            [ErrorCodeEnum.E5002] = "ALIGN BLOCK ブロック内のアセンブル結果がALIGN値を超えました。{0}",
 
             // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",

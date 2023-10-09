@@ -3,40 +3,60 @@ using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using System;
 using System.IO;
+using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemAddressALIGN : LineDetailItemAddress
+    public class LineDetailItemAddressAlign : LineDetailItemAddress
     {
-        private static readonly string RegexPatternALIGN = @"^(?<op1>(ALIGN))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
+        private static readonly string RegexPatternALIGN_Arg1 = @"^(?<op1>(ALIGN))\s+(?<arg1>[^,\s]+)$";
+        private static readonly string RegexPatternALIGN_Arg1_2 = @"^(?<op1>(ALIGN))\s+(?<arg1>[^,\s]+)\s*,\s*(?<arg2>[^,\s]*)$";
 
         public string AlignLabel { get; set; }
         public string FillByteLabel { get; set; }
+        public UInt16 AlignValue { get; set; } = 0;
 
-        private LineDetailItemAddressALIGN(LineItem lineItem, string alignLabel, string fillByteLabel, AsmLoad asmLoad)
+        protected LineDetailItemAddressAlign(LineItem lineItem, AsmLoad asmLoad)
+            : base(lineItem, asmLoad)
+        {
+
+        }
+
+        protected LineDetailItemAddressAlign(LineItem lineItem, string alignLabel, string fillByteLabel, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
             AlignLabel = alignLabel;
             FillByteLabel = fillByteLabel;
         }
 
-        public static LineDetailItemAddressALIGN Create(LineItem lineItem, AsmLoad asmLoad)
+        public static LineDetailItemAddressAlign Create(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!lineItem.IsCollectOperationString)
             {
-                return default(LineDetailItemAddressALIGN);
+                return default(LineDetailItemAddressAlign);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternALIGN, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            if (matched.Success)
             {
-                var arg1 = matched.Groups["arg1"].Value;
-                var arg2 = matched.Groups["arg2"].Value;
-                return new LineDetailItemAddressALIGN(lineItem, arg1, arg2, asmLoad);
+                var matched = Regex.Match(lineItem.OperationString, RegexPatternALIGN_Arg1, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matched.Success)
+                {
+                    var arg1 = matched.Groups["arg1"].Value;
+                    return new LineDetailItemAddressAlign(lineItem, arg1, "", asmLoad);
+                }
+            }
+            {
+                var matched = Regex.Match(lineItem.OperationString, RegexPatternALIGN_Arg1_2, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                if (matched.Success)
+                {
+                    var arg1 = matched.Groups["arg1"].Value;
+                    var arg2 = matched.Groups["arg2"].Value;
+                    return new LineDetailItemAddressAlign(lineItem, arg1, arg2, asmLoad);
+                }
             }
 
-            return default(LineDetailItemAddressALIGN);
+            return default(LineDetailItemAddressAlign);
         }
 
         public override void Assemble()
@@ -52,17 +72,17 @@ namespace AILZ80ASM.LineDetailItems
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, AlignLabel);
             }
-            var align = aiValue.ConvertTo<UInt16>();
+            AlignValue = aiValue.ConvertTo<UInt16>();
 
-            if (align <= 0 || (align & (align - 1)) != 0)
+            if (AlignValue <= 0 || (AlignValue & (AlignValue - 1)) != 0)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
             }
 
-            var remainder = (asmAddress.Program % align);
+            var remainder = (asmAddress.Program % AlignValue);
             if (remainder != 0)
             {
-                var offset = align - remainder;
+                var offset = AlignValue - remainder;
                 if (offset > 0)
                 {
                     var asmORG_ALIGN = new AsmORG(asmAddress.Program, "", FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ALIGN);

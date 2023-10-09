@@ -439,6 +439,11 @@ LB2000:
 - ALIGN以降のプログラム等の出力情報が無い場合には、出力結果は切り詰められます。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
+#### ALIGN <式>, [<式2>] BLOCK ～ ENDM
+- ALIGNと同様の機能です。
+- BLOCKからENDMで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラーになります。
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN_BLOCK/Test.Z80)
+
 #### DS <式>, [<式2>]
 - ロケーションカウンタの値を、<式>で設定した値を加算した場所に移動します。
 - <式>のバイト数、<ギャップ値>で埋めます。<式2>を設定するとその値で埋めます
