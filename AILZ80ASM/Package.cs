@@ -1,13 +1,16 @@
 ﻿using AILZ80ASM.AILight;
 using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
+using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.SuperAssembles;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using static AILZ80ASM.Assembler.Error;
 
 namespace AILZ80ASM
 {
@@ -81,6 +84,9 @@ namespace AILZ80ASM
             // 出力アドレスの重複チェック
             ValidateOutputAddress();
 
+            // 出力範囲チェック
+            ValidateAlignBlock();
+
             // 完了
             Complete();
             Trace.WriteLine($"- Complete".PadRight(AssembleStatusLength) + "(6/6)");
@@ -93,7 +99,6 @@ namespace AILZ80ASM
         private void PreAssemble()
         {
             this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.PreAssemble;
-
             var address = default(AsmAddress);
 
             foreach (var fileItem in FileItems)
@@ -511,6 +516,14 @@ namespace AILZ80ASM
             }
         }
 
+        private void ValidateAlignBlock()
+        {
+            foreach (var alignBlock in this.AssembleLoad.Share.AlignBlocks)
+            {
+                alignBlock.ValidateAlignBlock();
+            }
+        }
+
         private void Complete()
         {
             this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.Complete;
@@ -533,7 +546,7 @@ namespace AILZ80ASM
 
                     fileStream.Close();
 
-                    status = "Successful.";
+                    status = "Successful";
                 }
                 catch (Exception ex)
                 {
