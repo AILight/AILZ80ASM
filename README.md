@@ -680,9 +680,12 @@ off equ #FALSE
 - .local: → .local
 
 ## エラー
- - レベル分けされており、E:Error,W:Warning,I:Information があります。
- - Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
- - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Assembler/Error.cs#L142)
+- レベル分けされており、E:Error,W:Warning,I:Information があります。
+- Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
+- [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Assembler/Error.cs#L142)
+
+## 仕様の裏話
+- AILZ80ASMでのENDMは、「END Macro」ではなく「End of Multi-Purpose Block」と言い張っていますので、色々な命令で使われています。
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)

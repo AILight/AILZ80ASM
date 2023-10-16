@@ -107,6 +107,10 @@ namespace AILZ80ASM.Assembler
             E5001,
             E5002,
 
+            // CHECK
+            E6001,
+            E6002,
+
             W0001,
             W0002,
             W0003,
@@ -249,6 +253,11 @@ namespace AILZ80ASM.Assembler
             // ALIGN ブロック
             [ErrorCodeEnum.E5001] = "ALIGN BLOCK に対応するENDM が見つかりませんでした。",
             [ErrorCodeEnum.E5002] = "ALIGN BLOCK ブロック内のアセンブル結果がALIGN値を超えました。{0}",
+
+            // CHECK
+            [ErrorCodeEnum.E6001] = "CHECK ALIGN に対応するENDM が見つかりませんでした。",
+            [ErrorCodeEnum.E6002] = "CHECK ALIGN メモリ境界を超えました。開始アドレス:0x{0:X} 終了アドレス:0x{1:X}",
+
 
             // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",

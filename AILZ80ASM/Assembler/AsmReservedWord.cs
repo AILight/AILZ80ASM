@@ -17,6 +17,7 @@ namespace AILZ80ASM.Assembler
             {
                 new AsmReservedWord { Name = "ORG", IsArgumentPath = false},
                 new AsmReservedWord { Name = "ALIGN", IsArgumentPath = false},
+                new AsmReservedWord { Name = "CHECK", IsArgumentPath = false},
                 new AsmReservedWord { Name = "DS", IsArgumentPath = false},
                 new AsmReservedWord { Name = "DEFS", IsArgumentPath = false},
                 new AsmReservedWord { Name = "EQU", IsArgumentPath = false},

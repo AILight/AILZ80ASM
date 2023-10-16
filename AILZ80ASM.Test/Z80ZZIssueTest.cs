@@ -157,6 +157,14 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_231()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue231.bin", "-lst", "Issue231.lst", "-cd", "./Test/Issues/231");
+            Assert.AreEqual(1, result);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/231/Issue231.lst"), File.OpenRead("./Test/Issues/231/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
+
+        [TestMethod]
         public void Issue_232()
         {
             var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue232.bin", "-cmt", "Issue232.cmt", "-cd", "./Test/Issues/232");
