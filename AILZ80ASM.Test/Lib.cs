@@ -132,6 +132,15 @@ namespace AILZ80ASM.Test
             return package.Errors.Union(package.Warnings).Union(package.Information).ToArray();
         }
 
+        public static ErrorLineItem[] Assemble(string direcotryName, string fileName)
+        {
+            var targetDirectoryName = Path.Combine(".", "Test", direcotryName);
+            var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
+            var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmEnum.FileTypeEnum, FileInfo>>();
+
+            return Lib.Assemble(inputFiles, outputFiles, true);
+        }
+
         public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)
         {
             var memoryStreamFiles = new Dictionary<MemoryStream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo>>();

@@ -10,7 +10,7 @@ using static AILZ80ASM.Assembler.Error;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemCheckAlign : LineDetailItemCheck
+    public class LineDetailItemCheckAlign : LineDetailItem
     {
         private static readonly string RegexPatternStart = @"^(?<op1>(CHECK\s+ALIGN))\s+(?<arg1>[^,\s]+)$";
         private static readonly string RegexPatternEnd = @"^\s*ENDM\s*$";
@@ -19,7 +19,12 @@ namespace AILZ80ASM.LineDetailItems
 
         public string AlignLabel { get; set; }
         public UInt16 AlignValue { get; set; } = 0;
-        public bool EnableAssemble { get; set; } = false;
+        //public bool EnableAssemble { get; set; } = false;
+
+        private List<LineItem> LineItems { get; set; } = new List<LineItem>();
+
+        public override AsmResult[] BinResults => LineItems.SelectMany(m => m.BinResults).ToArray();
+        public override AsmList[] Lists => LineItems.SelectMany(m => m.Lists).ToArray();
 
         private LineDetailItemCheckAlign(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -65,7 +70,7 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     asmLoad_LineDetailItemCheckAlign.NestedCount++;
                 }
-                asmLoad_LineDetailItemCheckAlign.LineDetailItemDic.Add(lineDetailItemCheckAlign, LineDetailItem.CreateLineDetailItem(lineItem, asmLoad));
+                asmLoad_LineDetailItemCheckAlign.LineItems.Add(new LineItem(lineItem));
 
                 return lineDetailItemCheckAlign;
             }
@@ -82,97 +87,82 @@ namespace AILZ80ASM.LineDetailItems
                 if (startMatched.Success)
                 {
                     var arg1 = startMatched.Groups["arg1"].Value;
-                    var lineDetailItemAddressAlignBlock = new LineDetailItemCheckAlign(lineItem, arg1, asmLoad)
+                    var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, arg1, asmLoad)
                     {
                         NestedCount = 1
                     };
-                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemAddressAlignBlock;
+                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemCheckAlign;
+                    asmLoad.AddValidateAssembles(lineDetailItemCheckAlign);
 
-                    return lineDetailItemAddressAlignBlock;
+                    return lineDetailItemCheckAlign;
                 }
             }
 
             return default(LineDetailItemCheckAlign);
         }
 
-        public override void Assemble()
+        public override void ExpansionItem()
         {
-            if (this.EnableAssemble)
-            {
-                this.LineItem.Assemble();
-            }
-        }
-
-        public override void PreAssemble(ref AsmAddress asmAddress)
-        {
+            //base.ExpansionItem();
             if (AsmLoad.Share.LineDetailItemForExpandItem == this)
             {
                 AsmLoad.AddError(new ErrorLineItem(LineItem, ErrorCodeEnum.E6001));
                 return;
             }
 
-            if (this.EnableAssemble)
+            foreach (var lineItem in LineItems)
             {
-                this.LineItem.PreAssemble(ref asmAddress);
-            }
-            else if (AlignLines.Any())
-            {
-                // 境界オーバーしているか確認をする処理へ追加
-                AsmLoad.AddValidateAssembles(this);
-
-                if (string.IsNullOrEmpty(AlignLabel) || !AIMath.TryParse(AlignLabel, this.AsmLoad, out var aiValue))
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, AlignLabel);
-                }
-                AlignValue = aiValue.ConvertTo<UInt16>();
-
-                if (AlignValue <= 0 || (AlignValue & (AlignValue - 1)) != 0)
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0015);
-                }
-
-                // 積まれているものを処理する
                 try
                 {
-                    foreach (var item in AlignLines)
-                    {
-                        var lineItem = item.LineItem;
-                        try
-                        {
-                            lineItem.CreateLineDetailItem(AsmLoad);
-                        }
-                        catch (ErrorAssembleException ex)
-                        {
-                            this.AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
-                        }
-                        catch (ErrorLineItemException ex)
-                        {
-                            this.AsmLoad.AddError(ex.ErrorLineItem);
-                        }
-                        catch (Exception ex)
-                        {
-                            this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
-                        }
-                        item.EnableAssemble = true;
-                    }
+                    lineItem.CreateLineDetailItem(AsmLoad);
+                    lineItem.ExpansionItem();
                 }
-                catch
+                catch (ErrorAssembleException ex)
                 {
-                    // 解析でエラーが出た場合ORGに積む
-                    AsmLoad.AddErrorLineDetailItem(this);
-                    throw;
+                    this.AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    this.AsmLoad.AddError(ex.ErrorLineItem);
+                }
+                catch (Exception ex)
+                {
+                    this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                 }
             }
         }
 
+        public override void PreAssemble(ref AsmAddress asmAddress)
+        {
+            //base.PreAssemble(ref asmAddress);
+            foreach (var lineItem in LineItems)
+            {
+                lineItem.PreAssemble(ref asmAddress);
+            }
+        }
+
+        public override void Assemble()
+        {
+            //base.Assemble();
+            foreach (var lineItem in LineItems)
+            {
+                lineItem.Assemble();
+            }
+        }
+
+        public override void AdjustAssemble(ref uint outputAddress)
+        {
+            base.AdjustAssemble(ref outputAddress);
+        }
+
         public override void ValidateAssemble()
         {
-            base.ValidateAssemble();
+            //base.ValidateAssemble();
+            AlignValue = AIMath.Calculation(AlignLabel).ConvertTo<UInt16>();
 
             // アドレスチェック
-            //var alignLines = AlignLines.Where(m => m.LineItem.BinResults.Select);
-            var startAddress = AlignLines.Min(m => m.LineItem.BinResults.Min(n => n.Address.Program));
-            var endAddress = AlignLines.Max(m => m.LineItem.BinResults.Max(n => n.Address.Program + n.Data.Length + (n.Data.Length > 0 ? -1 : 0)));
+            var startAddress = LineItems.Min(m => m.BinResults.Min(n => n.Address.Program));
+            var endAddress = LineItems.Max(m => m.BinResults.Max(n => n.Address.Program + n.Data.Length + (n.Data.Length > 0 ? -1 : 0)));
 
             var maskAddress = ~(AlignValue - 1);
 

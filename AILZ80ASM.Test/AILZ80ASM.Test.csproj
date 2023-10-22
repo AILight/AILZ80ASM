@@ -1042,9 +1042,6 @@
     <None Update="Test\TestPP_MacroModern\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_CheckAlign\Test.BIN">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Test\TestPP_CheckAlign\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
