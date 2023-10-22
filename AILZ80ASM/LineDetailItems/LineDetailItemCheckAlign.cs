@@ -10,12 +10,11 @@ using static AILZ80ASM.Assembler.Error;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public class LineDetailItemCheckAlign : LineDetailItem
+    public class LineDetailItemCheckAlign : LineDetailItemCheck
     {
         private static readonly string RegexPatternStart = @"^(?<op1>(CHECK\s+ALIGN))\s+(?<arg1>[^,\s]+)$";
         private static readonly string RegexPatternEnd = @"^\s*ENDM\s*$";
 
-        private readonly List<LineDetailItemCheckAlign> AlignLines = new List<LineDetailItemCheckAlign>();
         private int NestedCount { get; set; } = 0;
 
         public string AlignLabel { get; set; }
@@ -66,7 +65,7 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     asmLoad_LineDetailItemCheckAlign.NestedCount++;
                 }
-                asmLoad_LineDetailItemCheckAlign.AlignLines.Add(lineDetailItemCheckAlign);
+                asmLoad_LineDetailItemCheckAlign.LineDetailItemDic.Add(lineDetailItemCheckAlign, LineDetailItem.CreateLineDetailItem(lineItem, asmLoad));
 
                 return lineDetailItemCheckAlign;
             }
