@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using static AILZ80ASM.Assembler.Error;
 
@@ -12,43 +13,81 @@ namespace AILZ80ASM.LineDetailItems
 {
     public abstract class LineDetailItemCheck : LineDetailItem
     {
-        protected readonly Dictionary<LineDetailItemCheck, LineDetailItem> LineDetailItemDic = new ();
+        //public override AsmResult[] BinResults => FilteredLineItems.SelectMany(m => m.BinResults)?.ToArray() ?? new AsmResult[] { };
+        //public override AsmList[] Lists => LineItemDic.SelectMany(m => { if (m.Value == default) { return m.Key.Lists; } else { return m.Value.Lists; } })?.ToArray() ?? new AsmList[] { };
+
+        //protected Dictionary<LineDetailItemCheck, LineItem> LineItemDic { get; set; } = new();
+
+        protected LineDetailItemCheck[] FilteredDetailItemChecks => LineDetailItemCheckList.Where(m => m.EnableAssemble).ToArray();
+        protected Dictionary<LineItem> LineItems = new();
+        private bool EnableAssemble { get; set; } = false;
+        private LineDetailItem BaseLineDetailItem { get; set; } = default;
 
         protected LineDetailItemCheck(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
-
+            BlockStartLineDetailItemCheck = this;
         }
 
-        public override void Assemble()
+
+        protected LineDetailItemCheck(LineItem lineItem, AsmLoad asmLoad, bool enableAssemble, LineDetailItemCheck blockStartLineDetailItemCheck)
+            : base(lineItem, asmLoad)
         {
-            if (LineDetailItemDic.ContainsKey(this))
-            {
-                LineDetailItemDic[this].Assemble();
-            }
+            BlockStartLineDetailItemCheck = blockStartLineDetailItemCheck;
+            BlockStartLineDetailItemCheck.LineDetailItemCheckList.Add(this);
+            this.EnableAssemble = enableAssemble;
         }
 
         public override void ExpansionItem()
         {
-            if (LineDetailItemDic.ContainsKey(this))
+            if (this.EnableAssemble)
             {
-                LineDetailItemDic[this].ExpansionItem();
+                try
+                {
+                    BaseLineDetailItem = LineDetailItem.CreateLineDetailItem(this.LineItem, AsmLoad);
+                }
+                catch (ErrorAssembleException ex)
+                {
+                    this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, ex));
+                }
+                catch (ErrorLineItemException ex)
+                {
+                    this.AsmLoad.AddError(ex.ErrorLineItem);
+                }
+                catch (Exception ex)
+                {
+                    this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                }
             }
+            else
+            {
+                BaseLineDetailItem = this;
+            }
+            BaseLineDetailItem.ExpansionItem();
+
         }
 
         public override void AdjustAssemble(ref uint outputAddress)
         {
-            if (LineDetailItemDic.ContainsKey(this))
+            if (this.EnableAssemble)
             {
-                LineDetailItemDic[this].AdjustAssemble(ref outputAddress);
+                BaseLineDetailItem.AdjustAssemble(ref outputAddress);
             }
         }
 
         public override void PreAssemble(ref AsmAddress asmAddress)
         {
-            if (LineDetailItemDic.ContainsKey(this))
+            if (this.EnableAssemble)
             {
-                LineDetailItemDic[this].PreAssemble(ref asmAddress);
+                BaseLineDetailItem.PreAssemble(ref asmAddress);
+            }
+        }
+
+        public override void Assemble()
+        {
+            if (this.EnableAssemble)
+            {
+                BaseLineDetailItem.Assemble();
             }
         }
     }
