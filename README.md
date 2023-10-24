@@ -594,6 +594,24 @@ Function ABS(value) => value < 0 ? value * -1 : value
 アセンブルの実行を中断します。これ以降のソースコードはアセンブルされません。アセンブル結果は出力されます。
 -  式1に設定した値は、エントリーポイントに使われます。利用個所: CMT出力
 
+## コード・チェック
+#### CHECK ALIGN <式1>[, <式2>]　～　ENDM
+CHECKからENDMで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラー(E6002)になります。
+- 式2に設定した値は、アライメント境界のオフセット値になります。2バイトデータの先頭だけアライメント境界内に入っている事を保証したいときに、2と設定します。
+```
+	org 0x100
+                                
+	CHECK ALIGN 256
+	DB 0, 1, 2, 3 ,4
+	ENDM
+                            
+	org 0x1FF
+                               
+    CHECK ALIGN 256 ; **** E6002 ****
+	DB 0, 1, 2, 3 ,4
+    ENDM
+```
+
 ## プリプロセッサ
 #### 条件付きアセンブル
 条件付きアセンブルを制御します
@@ -680,9 +698,12 @@ off equ #FALSE
 - .local: → .local
 
 ## エラー
- - レベル分けされており、E:Error,W:Warning,I:Information があります。
- - Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
- - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Assembler/Error.cs#L142)
+- レベル分けされており、E:Error,W:Warning,I:Information があります。
+- Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
+- [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Assembler/Error.cs#L142)
+
+## 仕様の裏話
+- AILZ80ASMでのENDMは、「END Macro」ではなく「End of Multi-Purpose Block」と言い張っていますので、色々な命令で使われています。
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)

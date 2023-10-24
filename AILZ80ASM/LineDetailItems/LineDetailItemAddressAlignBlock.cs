@@ -129,7 +129,7 @@ namespace AILZ80ASM.LineDetailItems
                 if (AlignLines.Any())
                 {
                     // 境界オーバーしているか確認をする処理へ追加
-                    AsmLoad.AddAlignBlock(this);
+                    AsmLoad.AddValidateAssembles(this);
 
                     // プレアセンブルを実行する (ALIGN計算)
                     base.PreAssemble(ref asmAddress);
@@ -169,8 +169,10 @@ namespace AILZ80ASM.LineDetailItems
             }
         }
 
-        public void ValidateAlignBlock()
+        public override void ValidateAssemble()
         {
+            base.ValidateAssemble();
+            
             var totalByte = AlignLines.Sum(m => m.LineItem.BinResults.Sum(n => n.Data.Length));
             if (totalByte > AlignValue)
             {

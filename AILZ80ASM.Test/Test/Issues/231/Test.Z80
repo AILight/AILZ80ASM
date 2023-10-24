@@ -1,0 +1,11 @@
+﻿    org 0x100
+
+    CHECK ALIGN 256
+    DB 0, 1, 2, 3 ,4
+    ENDM
+
+    org 0x1FF
+
+    CHECK ALIGN 256
+    DB 0, 1, 2, 3 ,4
+    ENDM

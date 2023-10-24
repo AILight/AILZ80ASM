@@ -74,9 +74,9 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
-                var result = base.Lists;
                 this.AsmLoad.Share.IsOutputList = IsOutputList;
-                return IsOutputList ? base.Lists : result;  
+                // #LISTは、出力しない
+                return new AsmList[] { };
             }
         }
     }

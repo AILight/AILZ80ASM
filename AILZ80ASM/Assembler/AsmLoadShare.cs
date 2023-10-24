@@ -64,6 +64,6 @@ namespace AILZ80ASM.Assembler
         public bool IsOutputList { get; set; } = true;
 
         // 出力サイズを計測する
-        public List<LineDetailItemAddressAlignBlock> AlignBlocks { get; set; } = default;
+        public List<LineDetailItem> ValidateAssembles { get; set; } = default;
     }
 }

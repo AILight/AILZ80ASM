@@ -13,15 +13,6 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class Z80ZZIssuesTest
     {
-        private ErrorLineItem[] Assemble(string direcotryName, string fileName)
-        {
-            var targetDirectoryName = Path.Combine(".", "Test", direcotryName);
-            var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
-            var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmEnum.FileTypeEnum, FileInfo>>();
-
-            return Lib.Assemble(inputFiles, outputFiles, true);
-        }
-
         [TestMethod]
         public void Issue_141()
         {
@@ -31,7 +22,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Issue_142_1()
         {
-            var errors = Assemble(Path.Combine("Issues", "142_1"), "Test.Z80");
+            var errors = Lib.Assemble(Path.Combine("Issues", "142_1"), "Test.Z80");
 
             Assert.AreEqual(1, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 10, "Test.Z80", errors);
@@ -46,7 +37,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Issue_145()
         {
-            var errors = Assemble(Path.Combine("Issues", "145"), "Test.Z80");
+            var errors = Lib.Assemble(Path.Combine("Issues", "145"), "Test.Z80");
 
             Assert.AreEqual(1, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0009, 108, "Test.Z80", errors);
@@ -65,7 +56,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Issue_172()
         {
-            var errors = Assemble(Path.Combine("Issues", "172"), "Test.Z80");
+            var errors = Lib.Assemble(Path.Combine("Issues", "172"), "Test.Z80");
 
             Assert.AreEqual(2, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 4, "Test.Z80", errors);
@@ -81,7 +72,7 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void Issue_181()
         {
-            var errors = Assemble(Path.Combine("Issues", "181"), "Test.Z80");
+            var errors = Lib.Assemble(Path.Combine("Issues", "181"), "Test.Z80");
 
             Assert.AreEqual(3, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0007, 3, "Test.Z80", errors);
@@ -154,6 +145,14 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(0, result);
             Lib.AreSameBin(File.OpenRead("./Test/Issues/230/Issue230.bin"), File.OpenRead("./Test/Issues/230/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
             Lib.AreSameLst(File.OpenRead("./Test/Issues/230/Issue230.lst"), File.OpenRead("./Test/Issues/230/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
+
+        [TestMethod]
+        public void Issue_231()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue231.bin", "-lst", "Issue231.lst", "-cd", "./Test/Issues/231");
+            Assert.AreEqual(1, result);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/231/Issue231.lst"), File.OpenRead("./Test/Issues/231/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
         }
 
         [TestMethod]
