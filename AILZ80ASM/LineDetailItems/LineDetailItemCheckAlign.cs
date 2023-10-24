@@ -44,8 +44,6 @@ namespace AILZ80ASM.LineDetailItems
             // 条件処理処理中
             if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemCheckAlign asmLoad_LineDetailItemCheckAlign)
             {
-                asmLoad_LineDetailItemCheckAlign.LineItems.Add(new LineItem(lineItem));
-
                 var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, asmLoad);
                 // 終了条件チェック
                 if (endMatched.Success)
@@ -56,6 +54,8 @@ namespace AILZ80ASM.LineDetailItems
                     if (asmLoad_LineDetailItemCheckAlign.NestedCount == 0)
                     {
                         asmLoad.Share.LineDetailItemForExpandItem = default;
+                        asmLoad_LineDetailItemCheckAlign.LineDetailItems.Add(new Detail { EnableAssemble = false, TargetLineDetailItem = lineDetailItemCheckAlign });
+
                         return lineDetailItemCheckAlign;
                     }
                 }
@@ -65,6 +65,7 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     asmLoad_LineDetailItemCheckAlign.NestedCount++;
                 }
+                asmLoad_LineDetailItemCheckAlign.LineDetailItems.Add(new Detail { EnableAssemble = true, TargetLineDetailItem = lineDetailItemCheckAlign });
 
                 return lineDetailItemCheckAlign;
             }
@@ -87,7 +88,7 @@ namespace AILZ80ASM.LineDetailItems
                     };
                     asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemCheckAlign;
                     asmLoad.AddValidateAssembles(lineDetailItemCheckAlign);
-                    lineDetailItemCheckAlign.LineItems.Add(new LineItem(lineItem));
+                    lineDetailItemCheckAlign.LineDetailItems.Add(new Detail { EnableAssemble = false });
 
                     return lineDetailItemCheckAlign;
                 }
