@@ -11,7 +11,7 @@ namespace AILZ80ASM.LineDetailItems
     {
         public LineItem LineItem { get; private set; }
         protected AsmLoad AsmLoad { get; set; }
-        
+
         public AsmAddress? Address { get; protected set; }
         public LineDetailScopeItem[] LineDetailScopeItems { get; set; }
         //public virtual byte[] Bin => LineDetailScopeItems == default ? Array.Empty<byte>() : LineDetailScopeItems.SelectMany(m => m.Bin).ToArray();
@@ -50,6 +50,9 @@ namespace AILZ80ASM.LineDetailItems
                     case LineDetailItemAddressAlignBlock:
                         lineDetailItem ??= LineDetailItemAddressAlignBlock.Create(lineItem, asmLoad);
                         break;
+                    case LineDetailItemCheckAlign:
+                        lineDetailItem ??= LineDetailItemCheckAlign.Create(lineItem, asmLoad);
+                        break;
                     case LineDetailItemPreProcConditional:
                         lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
                         break;
@@ -82,6 +85,7 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemAddressAlign.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressAlignBlock.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressDS.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemCheckAlign.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPreProcPragma.Create(lineItem, asmLoad);
@@ -142,6 +146,11 @@ namespace AILZ80ASM.LineDetailItems
             {
                 item.Assemble();
             }
+        }
+
+        public virtual void ValidateAssemble()
+        {
+
         }
     }
 }

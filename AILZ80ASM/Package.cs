@@ -85,7 +85,7 @@ namespace AILZ80ASM
             ValidateOutputAddress();
 
             // 出力範囲チェック
-            ValidateAlignBlock();
+            ValidateAssemble();
 
             // 完了
             Complete();
@@ -516,11 +516,11 @@ namespace AILZ80ASM
             }
         }
 
-        private void ValidateAlignBlock()
+        private void ValidateAssemble()
         {
-            foreach (var alignBlock in this.AssembleLoad.Share.AlignBlocks)
+            foreach (var alignBlock in this.AssembleLoad.Share.ValidateAssembles)
             {
-                alignBlock.ValidateAlignBlock();
+                alignBlock.ValidateAssemble();
             }
         }
 

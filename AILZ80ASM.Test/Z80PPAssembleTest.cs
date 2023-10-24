@@ -1,4 +1,6 @@
+using AILZ80ASM.Assembler;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 using System.Reflection;
 
 namespace AILZ80ASM.Test
@@ -6,6 +8,24 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class Z80PPAssembleTest
     {
+        [TestMethod]
+        public void TestPP_CheckAlign()
+        {
+            {
+                var errors = Lib.Assemble("TestPP_CheckAlign", "Test1.Z80");
+
+                Assert.AreEqual(1, errors.Length);
+                Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6002, 9, "Test1.Z80", errors);
+            }
+
+            {
+                var errors = Lib.Assemble("TestPP_CheckAlign", "Test2.Z80");
+
+                Assert.AreEqual(1, errors.Length);
+                Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6002, 9, "Test2.Z80", errors);
+            }
+        }
+
         [TestMethod]
         public void TestPP_Conditional()
         {

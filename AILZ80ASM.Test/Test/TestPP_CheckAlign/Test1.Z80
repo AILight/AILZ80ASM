@@ -1,0 +1,11 @@
+﻿	ORG	$9000
+
+	CHECK ALIGN 256
+	include "CHAR.BIN", b
+	ENDM
+
+	ORG	$91F0
+
+	CHECK ALIGN 256
+	include "CHAR.BIN", b
+	ENDM
