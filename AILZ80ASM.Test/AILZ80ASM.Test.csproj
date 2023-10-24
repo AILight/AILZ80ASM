@@ -958,6 +958,9 @@
     <None Update="Test\TestPP_CheckAlign\CHAR.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\TestPP_CheckAlign\Test2.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestPP_ConditionalEnhanced\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1042,7 +1045,7 @@
     <None Update="Test\TestPP_MacroModern\Test.LST">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_CheckAlign\Test.Z80">
+    <None Update="Test\TestPP_CheckAlign\Test1.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_MacroRegister\Test.BIN">
