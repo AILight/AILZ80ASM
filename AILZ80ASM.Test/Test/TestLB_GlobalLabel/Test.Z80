@@ -1,5 +1,8 @@
 ﻿
 	org $8000
+
+	include "Test.INC"
+
 	LD HL,NS1.LB
 	LD DE,NS2.LB
 [NS1]
@@ -10,6 +13,8 @@ LB	equ $5678
 [ABC]
 	ORG $9000
 
+TS1	equ $ABCD
+
 EEE:
 .FFF:
 	LD HL, EEE.FFF.@H
@@ -19,3 +24,19 @@ EEE:
 [DEF]
 	;LD HL, EEE.FFF
 	LD HL, ABC.EEE.FFF
+
+[ABC]
+TS2	equ $DCBA
+
+	LD	HL, ABC.EEE.FFF
+	LD	HL, EEE.FFF
+GGG:
+.FFF:
+	LD	HL, ABC.GGG.FFF
+	LD	HL, EEE.FFF
+	LD	HL, GGG.FFF
+
+	LD	HL, TS1
+	LD	HL, TS2
+
+	LD	HL, ABC.TS3
