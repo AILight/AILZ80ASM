@@ -31,6 +31,7 @@ namespace AILZ80ASM.Assembler
                 new AsmReservedWord { Name = "DWFIL", IsArgumentPath = false},
                 new AsmReservedWord { Name = "MACRO", IsArgumentPath = false},
                 new AsmReservedWord { Name = "ENDM", IsArgumentPath = false},
+                new AsmReservedWord { Name = "ENDC", IsArgumentPath = false},
                 new AsmReservedWord { Name = "REPT", IsArgumentPath = false},
                 new AsmReservedWord { Name = "REPEAT", IsArgumentPath = false},
                 new AsmReservedWord { Name = "FUNCTION", IsArgumentPath = false},

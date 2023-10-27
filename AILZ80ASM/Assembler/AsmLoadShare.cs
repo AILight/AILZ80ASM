@@ -65,5 +65,8 @@ namespace AILZ80ASM.Assembler
 
         // 出力サイズを計測する
         public List<LineDetailItem> ValidateAssembles { get; set; } = default;
+
+        // チェックブロック用
+        public Stack<LineDetailItemCheck> CheckLineDetailItemStack { get; set; } = default;
     }
 }

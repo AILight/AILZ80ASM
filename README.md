@@ -439,11 +439,6 @@ LB2000:
 - ALIGN以降のプログラム等の出力情報が無い場合には、出力結果は切り詰められます。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
-#### ALIGN <式>, [<式2>] BLOCK ～ ENDM
-- ALIGNと同様の機能です。
-- BLOCKからENDMで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラーになります。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN_BLOCK/Test.Z80)
-
 #### DS <式>, [<式2>]
 - ロケーションカウンタの値を、<式>で設定した値を加算した場所に移動します。
 - <式>のバイト数、<ギャップ値>で埋めます。<式2>を設定するとその値で埋めます
@@ -595,21 +590,21 @@ Function ABS(value) => value < 0 ? value * -1 : value
 -  式1に設定した値は、エントリーポイントに使われます。利用個所: CMT出力
 
 ## コード・チェック
-#### CHECK ALIGN <式1>[, <式2>]　～　ENDM
-CHECKからENDMで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラー(E6002)になります。
+#### CHECK ALIGN <式1>[, <式2>]　～　ENDC
+CHECKからENDCで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラー(E6002)になります。
 - 式2に設定した値は、アライメント境界のオフセット値になります。2バイトデータの先頭だけアライメント境界内に入っている事を保証したいときに、2と設定します。
 ```
 	org 0x100
                                 
 	CHECK ALIGN 256
 	DB 0, 1, 2, 3 ,4
-	ENDM
+	ENDC
                             
 	org 0x1FF
                                
     CHECK ALIGN 256 ; **** E6002 ****
 	DB 0, 1, 2, 3 ,4
-    ENDM
+    ENDC
 ```
 
 ## プリプロセッサ

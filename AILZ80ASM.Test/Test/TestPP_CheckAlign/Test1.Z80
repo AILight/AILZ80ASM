@@ -2,10 +2,10 @@
 
 	CHECK ALIGN 256
 	include "CHAR.BIN", b
-	ENDM
+	ENDC
 
 	ORG	$91F0
 
 	CHECK ALIGN 256
 	include "CHAR.BIN", b
-	ENDM
+	ENDC

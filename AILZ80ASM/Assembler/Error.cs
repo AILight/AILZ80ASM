@@ -103,13 +103,15 @@ namespace AILZ80ASM.Assembler
             E4004,
             E4005,
 
-            // ALIGN ブロック
-            E5001,
-            E5002,
+            // ALIGN ブロック (廃止)
+            // E5001,
+            // E5002,
 
             // CHECK
             E6001,
-            E6002,
+            // CHECK ALIGN
+            E6011,
+            E6012,
 
             W0001,
             W0002,
@@ -250,14 +252,10 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。[{0}]",
 
-            // ALIGN ブロック
-            [ErrorCodeEnum.E5001] = "ALIGN BLOCK に対応するENDM が見つかりませんでした。",
-            [ErrorCodeEnum.E5002] = "ALIGN BLOCK ブロック内のアセンブル結果がALIGN値を超えました。{0}",
-
             // CHECK
-            [ErrorCodeEnum.E6001] = "CHECK ALIGN に対応するENDM が見つかりませんでした。",
-            [ErrorCodeEnum.E6002] = "CHECK ALIGN メモリ境界を超えました。開始アドレス:0x{0:X} 終了アドレス:0x{1:X}",
-
+            [ErrorCodeEnum.E6001] = "ENDC が先に見つかりました。",
+            [ErrorCodeEnum.E6011] = "CHECK ALIGN に対応する ENDC が見つかりませんでした。",
+            [ErrorCodeEnum.E6012] = "CHECK ALIGN メモリ境界を超えました。開始アドレス:0x{0:X} 終了アドレス:0x{1:X}",
 
             // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",

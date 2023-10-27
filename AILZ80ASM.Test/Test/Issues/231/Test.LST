@@ -3,11 +3,11 @@
                                 
                                     CHECK ALIGN 256
 000000 0100 0001020304              DB 0, 1, 2, 3 ,4
-                                    ENDM
+                                    ENDC
                                 
 0000FF 01FF                         org 0x1FF
                                 
-            **** E6002 ****         CHECK ALIGN 256
+            **** E6012 ****         CHECK ALIGN 256
 0000FF 01FF 0001020304              DB 0, 1, 2, 3 ,4
-                                    ENDM
+                                    ENDC
 [EOF:Test.Z80:UTF_8]
