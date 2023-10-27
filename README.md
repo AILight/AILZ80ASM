@@ -572,6 +572,17 @@ INITLD MACRO REG
         add     hl, de
 	ENDM
 ```
+※ LAST -1で消える行にラベルが設定されている場合にはエラーになります。2行に分ける等の工夫をしてください。
+```
+	REPT 8 LAST -1
+        ld      (hl), a
+        set     5, h
+        or		a
+		jr		z, .@1
+        add     hl, de
+.@1		add     hl, de
+	ENDM
+```
 
 ## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
 式をまとめる事が出来ます
