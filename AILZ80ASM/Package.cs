@@ -54,6 +54,7 @@ namespace AILZ80ASM
             }
 
             this.AssembleLoad.LoadCloseValidate();
+            this.AssembleLoad.CheckCloseValidate();
         }
 
         public void Assemble()

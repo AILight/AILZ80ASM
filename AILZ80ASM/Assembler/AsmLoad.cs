@@ -8,6 +8,7 @@ using AILZ80ASM.AILight;
 using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.LineDetailItems.ScopeItem;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 
 namespace AILZ80ASM.Assembler
 {
@@ -86,6 +87,7 @@ namespace AILZ80ASM.Assembler
             Share.EntryPoint = null;
             Share.AsmSuperAssembleMode = new AsmSuperAssemble();
             Share.ValidateAssembles = new List<LineDetailItem>();
+            Share.CheckLineDetailItemStack = new Stack<LineDetailItemCheck>();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -116,6 +118,7 @@ namespace AILZ80ASM.Assembler
             Share.EntryPoint = null;
             Share.AsmSuperAssembleMode = asmSuperAssembleMode;
             Share.ValidateAssembles = new List<LineDetailItem>();
+            Share.CheckLineDetailItemStack = new Stack<LineDetailItemCheck>();
 
             Scope = new AsmLoadScope();
             Scope.Labels = new List<Label>();
@@ -307,6 +310,20 @@ namespace AILZ80ASM.Assembler
             if (this.Share.LineDetailItemForExpandItem is LineDetailItemPreProcConditional)
             {
                 this.AddError(new ErrorLineItem(this.Share.LineDetailItemForExpandItem.LineItem, Error.ErrorCodeEnum.E1021));
+            }
+        }
+
+        /// <summary>
+        /// チェック関連が閉じられているかを確認する
+        /// </summary>
+        public void CheckCloseValidate()
+        {
+            foreach (var checkLineDetailItem in this.Share.CheckLineDetailItemStack)
+            {
+                if (checkLineDetailItem is LineDetailItemCheckAlign)
+                {
+                    this.AddError(new ErrorLineItem(checkLineDetailItem.LineItem, Error.ErrorCodeEnum.E6011));
+                }
             }
         }
 

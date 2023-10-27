@@ -15,9 +15,7 @@ namespace AILZ80ASM.LineDetailItems
         private static readonly string RegexPatternStart_Arg1   = @"^(?<op1>(CHECK\s+ALIGN))\s+(?<arg1>[^,\s]+)$";
         private static readonly string RegexPatternStart_Arg1_2 = @"^(?<op1>(CHECK\s+ALIGN))\s+(?<arg1>[^,\s]+)\s*,\s*(?<arg2>[^,\s]*)$";
 
-        private static readonly string RegexPatternEnd = @"^\s*ENDM\s*$";
-
-        private int NestedCount { get; set; } = 0;
+        private static readonly string RegexPatternEnd = @"^\s*ENDC\s*$";
 
         public string AlignLabel { get; set; }
         public string DataLengthLabel { get; set; }
@@ -52,54 +50,32 @@ namespace AILZ80ASM.LineDetailItems
             var startMatched_1_2 = Regex.Match(lineItem.OperationString, RegexPatternStart_Arg1_2, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
-            // 条件処理処理中
-            if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemCheckAlign asmLoad_LineDetailItemCheckAlign)
+            if (endMatched.Success)
             {
-                var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, asmLoad);
                 // 終了条件チェック
-                if (endMatched.Success)
+                if (asmLoad.Share.CheckLineDetailItemStack.Count == 0)
                 {
-                    asmLoad_LineDetailItemCheckAlign.NestedCount--;
-
-                    // 条件処理が終了
-                    if (asmLoad_LineDetailItemCheckAlign.NestedCount == 0)
-                    {
-                        asmLoad.Share.LineDetailItemForExpandItem = default;
-                        asmLoad_LineDetailItemCheckAlign.LineDetailItems.Add(new Detail { EnableAssemble = false, TargetLineDetailItem = lineDetailItemCheckAlign });
-
-                        return lineDetailItemCheckAlign;
-                    }
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E6001);
                 }
 
-                // 開始条件
-                if (startMatched_1.Success || startMatched_1_2.Success)
-                {
-                    asmLoad_LineDetailItemCheckAlign.NestedCount++;
-                }
-                asmLoad_LineDetailItemCheckAlign.LineDetailItems.Add(new Detail { EnableAssemble = true, TargetLineDetailItem = lineDetailItemCheckAlign });
+                // 最終値を教える
+                var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, asmLoad);
+                var lineDetailItem = asmLoad.Share.CheckLineDetailItemStack.Pop();
 
+                lineDetailItem.SetENDC(lineDetailItemCheckAlign);
+                
                 return lineDetailItemCheckAlign;
             }
             else
             {
-                // 終了条件チェック
-                if (endMatched.Success)
-                {
-                    // 基本的にはこの処理は動かない
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E5001);
-                }
-
                 // 開始条件チェック
                 if (startMatched_1.Success)
                 {
                     var arg1 = startMatched_1.Groups["arg1"].Value;
-                    var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, arg1, asmLoad)
-                    {
-                        NestedCount = 1
-                    };
-                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemCheckAlign;
+                    var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, arg1, asmLoad);
+
                     asmLoad.AddValidateAssembles(lineDetailItemCheckAlign);
-                    lineDetailItemCheckAlign.LineDetailItems.Add(new Detail { EnableAssemble = false });
+                    asmLoad.Share.CheckLineDetailItemStack.Push(lineDetailItemCheckAlign);
 
                     return lineDetailItemCheckAlign;
                 }
@@ -108,30 +84,16 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     var arg1 = startMatched_1_2.Groups["arg1"].Value;
                     var arg2 = startMatched_1_2.Groups["arg2"].Value;
-                    var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, arg1, arg2, asmLoad)
-                    {
-                        NestedCount = 1
-                    };
-                    asmLoad.Share.LineDetailItemForExpandItem = lineDetailItemCheckAlign;
+                    var lineDetailItemCheckAlign = new LineDetailItemCheckAlign(lineItem, arg1, arg2, asmLoad);
+
                     asmLoad.AddValidateAssembles(lineDetailItemCheckAlign);
-                    lineDetailItemCheckAlign.LineDetailItems.Add(new Detail { EnableAssemble = false });
+                    asmLoad.Share.CheckLineDetailItemStack.Push(lineDetailItemCheckAlign);
 
                     return lineDetailItemCheckAlign;
                 }
             }
 
             return default(LineDetailItemCheckAlign);
-        }
-
-        public override void ExpansionItem()
-        {
-            if (AsmLoad.Share.LineDetailItemForExpandItem == this)
-            {
-                AsmLoad.AddError(new ErrorLineItem(LineItem, ErrorCodeEnum.E6001));
-                return;
-            }
-
-            base.ExpansionItem();
         }
 
         public override void ValidateAssemble()
@@ -141,8 +103,8 @@ namespace AILZ80ASM.LineDetailItems
             var dataLength = AIMath.Calculation(DataLengthLabel).ConvertTo<UInt16>();
 
             // アドレスチェック
-            var startAddress = BinResults.Min(n => n.Address.Program);
-            var endAddress = BinResults.Max(n => n.Address.Program + n.Data.Length + (n.Data.Length > 0 ? (dataLength * -1) : 0));
+            var startAddress = this.Address.Value.Program;
+            var endAddress = this.LineDetailItemCheck_ENDC.Address.Value.Program - dataLength;
 
             var maskAddress = ~(alignValue - 1);
 
@@ -151,7 +113,7 @@ namespace AILZ80ASM.LineDetailItems
 
             if (maskedStartAddress != maskedEndAddress)
             {
-                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E6002, startAddress, endAddress)));
+                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E6012, startAddress, endAddress)));
             }
         }
     }

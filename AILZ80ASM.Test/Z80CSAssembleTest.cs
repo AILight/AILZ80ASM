@@ -13,12 +13,6 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestCS_ALIGN_BLOCK()
-        {
-            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
-        }
-
-        [TestMethod]
         public void TestCS_END()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

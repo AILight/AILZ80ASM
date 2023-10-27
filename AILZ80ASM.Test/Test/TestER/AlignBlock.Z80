@@ -1,5 +1,0 @@
-﻿	org $8000
-	LD	A, 0
-	ALIGN 256 BLOCK
-		DB [D=0..256:D]
-	ENDM
