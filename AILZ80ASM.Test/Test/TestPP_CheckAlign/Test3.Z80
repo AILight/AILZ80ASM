@@ -1,0 +1,33 @@
+﻿		ORG $9000
+
+Dir:
+.R		equ 0
+.D		equ 2
+.L		equ 4
+.U		equ 6
+
+		CHECK ALIGN 256
+.tbl
+		db -1
+		db Dir.R
+		db Dir.D
+		db Dir.L 
+		db Dir.U
+main:
+		ld hl, .@1
+		in a, ($20)
+		rra
+		jp (hl)
+		ORG Main + 8
+		db	Dir.D
+		db -1
+		db Dir.R
+		db Dir.D
+		db Dir.L 
+
+		ENDC
+
+.@1		in a, ($21)
+		rra
+
+		ret

@@ -47,14 +47,11 @@ namespace AILZ80ASM.LineDetailItems
                     case LineDetailItemRepeatCompatible:
                         lineDetailItem ??= LineDetailItemRepeatCompatible.Create(lineItem, asmLoad);
                         break;
-                    case LineDetailItemAddressAlignBlock:
-                        lineDetailItem ??= LineDetailItemAddressAlignBlock.Create(lineItem, asmLoad);
-                        break;
-                    case LineDetailItemCheckAlign:
-                        lineDetailItem ??= LineDetailItemCheckAlign.Create(lineItem, asmLoad);
-                        break;
                     case LineDetailItemPreProcConditional:
                         lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
+                        break;
+                    case LineDetailItemEnum:
+                        lineDetailItem ??= LineDetailItemEnum.Create(lineItem, asmLoad);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -83,9 +80,7 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressORG.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressAlign.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemAddressAlignBlock.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemAddressDS.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemCheckAlign.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInclude.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemCharMap.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPreProcPragma.Create(lineItem, asmLoad);
@@ -93,6 +88,8 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemPreProcPrint.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPreProcList.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemEndDefine.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemCheckAlign.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemEnum.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // 全角文字が命令に含まれていた時ここにたどり着く
 

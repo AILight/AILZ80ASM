@@ -439,11 +439,6 @@ LB2000:
 - ALIGN以降のプログラム等の出力情報が無い場合には、出力結果は切り詰められます。
 - [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN/Test.Z80)
 
-#### ALIGN <式>, [<式2>] BLOCK ～ ENDM
-- ALIGNと同様の機能です。
-- BLOCKからENDMで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラーになります。
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestCS_ALIGN_BLOCK/Test.Z80)
-
 #### DS <式>, [<式2>]
 - ロケーションカウンタの値を、<式>で設定した値を加算した場所に移動します。
 - <式>のバイト数、<ギャップ値>で埋めます。<式2>を設定するとその値で埋めます
@@ -577,6 +572,44 @@ INITLD MACRO REG
         add     hl, de
 	ENDM
 ```
+※ LAST -1で消える行にラベルが設定されている場合にはエラーになります。2行に分ける等の工夫をしてください。
+```
+	REPT 8 LAST -1
+        ld      (hl), a
+        set     5, h
+        or		a
+		jr		z, .@1
+        add     hl, de
+.@1		add     hl, de
+	ENDM
+```
+
+#### <名前> ENUM ～ <ラベル名> : <長さ> = <値> ～ ENDM
+- ENUMは、名前とラベル名で組み合わされたEQUが定義されます。
+- <ラベル名>は、<名前>.<ラベル名> 形式でアクセスが可能です。
+- <長さ>は、次の要素の値を決める時の加算値になります。（デフォルトは1）
+- <値>は、はその要素に設定される値を表します。（デフォルトは、前の要素の<値>+<長さ>）
+
+```
+Color ENUM
+    RED = 5          ; 5
+    GREEN            ; 6
+    BLUE :2          ; 7, サイズ2バイト
+    YELLOW           ; 9
+    ORANGE :2 = 12   ; 12, サイズ2バイト
+    CYAN             ; 14
+    PURPLE = RED-1   ; 4
+ENDM
+
+INIT:
+    LD  A, Color.RED	; 5
+    LD  B, Color.GREEN	; 6
+    LD  C, Color.BLUE	; 7
+    LD  D, Color.YELLOW	; 9
+    LD  E, Color.ORANGE	; 12
+    LD  H, Color.CYAN	; 14
+    LD  L, Color.PURPLE	; 4
+```
 
 ## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
 式をまとめる事が出来ます
@@ -595,21 +628,21 @@ Function ABS(value) => value < 0 ? value * -1 : value
 -  式1に設定した値は、エントリーポイントに使われます。利用個所: CMT出力
 
 ## コード・チェック
-#### CHECK ALIGN <式1>[, <式2>]　～　ENDM
-CHECKからENDMで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラー(E6002)になります。
+#### CHECK ALIGN <式1>[, <式2>]　～　ENDC
+CHECKからENDCで囲まれた範囲のアセンブル結果がアライメント境界を超えるとアセンブルエラー(E6002)になります。
 - 式2に設定した値は、アライメント境界のオフセット値になります。2バイトデータの先頭だけアライメント境界内に入っている事を保証したいときに、2と設定します。
 ```
 	org 0x100
                                 
 	CHECK ALIGN 256
 	DB 0, 1, 2, 3 ,4
-	ENDM
+	ENDC
                             
 	org 0x1FF
                                
     CHECK ALIGN 256 ; **** E6002 ****
 	DB 0, 1, 2, 3 ,4
-    ENDM
+    ENDC
 ```
 
 ## プリプロセッサ

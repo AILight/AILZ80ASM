@@ -15,14 +15,20 @@ namespace AILZ80ASM.Test
                 var errors = Lib.Assemble("TestPP_CheckAlign", "Test1.Z80");
 
                 Assert.AreEqual(1, errors.Length);
-                Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6002, 9, "Test1.Z80", errors);
+                Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6012, 9, "Test1.Z80", errors);
             }
 
             {
                 var errors = Lib.Assemble("TestPP_CheckAlign", "Test2.Z80");
 
                 Assert.AreEqual(1, errors.Length);
-                Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6002, 9, "Test2.Z80", errors);
+                Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6012, 9, "Test2.Z80", errors);
+            }
+
+            {
+                var errors = Lib.Assemble("TestPP_CheckAlign", "Test3.Z80");
+
+                Assert.AreEqual(0, errors.Length);
             }
         }
 
@@ -34,6 +40,12 @@ namespace AILZ80ASM.Test
 
         [TestMethod]
         public void TestPP_ConditionalEnhanced()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestPP_Enum()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

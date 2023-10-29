@@ -2,10 +2,10 @@
 
 	CHECK ALIGN 256, 2
 	include "CHAR.BIN", b
-	ENDM
+	ENDC
 
 	ORG	$A0E1
 
 	CHECK ALIGN 256, 1
 	include "CHAR.BIN", b
-	ENDM
+	ENDC
