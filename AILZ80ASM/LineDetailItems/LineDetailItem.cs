@@ -50,6 +50,9 @@ namespace AILZ80ASM.LineDetailItems
                     case LineDetailItemPreProcConditional:
                         lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
                         break;
+                    case LineDetailItemEnum:
+                        lineDetailItem ??= LineDetailItemEnum.Create(lineItem, asmLoad);
+                        break;
                     default:
                         throw new NotImplementedException();
                 }
@@ -86,6 +89,7 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemPreProcList.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemEndDefine.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemCheckAlign.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemEnum.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemMacro.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemInvalid.Create(lineItem, asmLoad); // 全角文字が命令に含まれていた時ここにたどり着く
 

@@ -1,0 +1,28 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.9.0, LST:Full:4
+                                
+000000 9000                         ORG $9000
+                                
+       0001                     FLG EQU 1
+                                
+                                Color ENUM
+       0005                         RED = 5                         ; 5
+       0006                         GREEN                           ; 6
+       0007                         BLUE :FLG == 1 ? 2 : 1          ; 7, サイズ2バイト
+       0001                         YELLOW                          ; 9
+       000C                         ORANGE :FLG == 1 ? 2 : 1 = 12   ; 12, サイズ2バイト
+       0001                         CYAN                            ; 14
+       0004                         PURPLE = RED-1                  ; 4
+                                ENDM
+                                
+       9000                     INIT:
+000000 9000 3E05             7      LD  A, Color.RED
+000002 9002 0606             7      LD  B, Color.GREEN
+000004 9004 0E07             7      LD  C, Color.BLUE
+000006 9006 1601             7      LD  D, Color.YELLOW
+000008 9008 1E0C             7      LD  E, Color.ORANGE
+00000A 900A 2601             7      LD  H, Color.CYAN
+00000C 900C 2E04             7      LD  L, Color.PURPLE
+                                
+00000E 900E C9              10      RET
+                                    
+[EOF:Test.z80:UTF_8]
