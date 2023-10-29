@@ -53,27 +53,11 @@ namespace AILZ80ASM.LineDetailItems
                     {
                         return base.Lists;
                     }
-
-                    /*
-                    if (AIMath.TryParse(EnumValue, AsmLoad, out var resultValue))
-                    {
-                        return new[]
-                        {
-                            AsmList.CreateLineItemEnum(resultValue.ConvertTo<UInt16>(), this.LineItem)
-                        };
-                    }
-                    else
-                    {
-                        return base.Lists;
-                    }
-                    */
-
                 }
                 else
                 {
                     return base.Lists;
                 }
-
             }
         }
 
@@ -165,7 +149,7 @@ namespace AILZ80ASM.LineDetailItems
                             LineDetailEnumItem = lineDetailItemEnum
                         };
                         asmLoad_LineDetailItemEnum.EnumItems.Add(enumItem);
-                        asmLoad_LineDetailItemEnum.EnumValue = $"{enumItem.Value} + {enumItem.Length}";
+                        asmLoad_LineDetailItemEnum.EnumValue = $"({enumItem.Value}) + ({enumItem.Length})";
 
 
                         return lineDetailItemEnum;
