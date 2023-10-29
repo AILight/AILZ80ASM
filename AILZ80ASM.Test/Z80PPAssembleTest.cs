@@ -45,6 +45,12 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestPP_Enum()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestPP_Function()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

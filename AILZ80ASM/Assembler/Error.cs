@@ -112,6 +112,10 @@ namespace AILZ80ASM.Assembler
             // CHECK ALIGN
             E6011,
             E6012,
+            // ENUM
+            E6101,
+            E6102,
+            E6103,
 
             W0001,
             W0002,
@@ -252,10 +256,16 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。[{0}]",
 
+
             // CHECK
             [ErrorCodeEnum.E6001] = "ENDC が先に見つかりました。",
             [ErrorCodeEnum.E6011] = "CHECK ALIGN に対応する ENDC が見つかりませんでした。",
             [ErrorCodeEnum.E6012] = "CHECK ALIGN メモリ境界を超えました。開始アドレス:0x{0:X} 終了アドレス:0x{1:X}",
+
+            // ENUM
+            [ErrorCodeEnum.E6101] = "ENDM が先に見つかりました。",
+            [ErrorCodeEnum.E6102] = "ENUM に使えない構文です。",
+            [ErrorCodeEnum.E6103] = "ENUM に使えないラベル名です。同名のラベルが既に定義されているか、ラベルに使えない記号が使われています。",
 
             // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",

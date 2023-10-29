@@ -584,6 +584,33 @@ INITLD MACRO REG
 	ENDM
 ```
 
+#### <名前> ENUM ～ <ラベル名> : <長さ> = <値> ～ ENDM
+- ENUMは、名前とラベル名で組み合わされたEQUが定義されます。
+- <ラベル名>は、<名前>.<ラベル名> 形式でアクセスが可能です。
+- <長さ>は、次の要素の値を決める時の加算値になります。（デフォルトは1）
+- <値>は、はその要素に設定される値を表します。（デフォルトは、前の要素の<値>+<長さ>）
+
+```
+Color ENUM
+    RED = 5          ; 5
+    GREEN            ; 6
+    BLUE :2          ; 7, サイズ2バイト
+    YELLOW           ; 9
+    ORANGE :2 = 12   ; 12, サイズ2バイト
+    CYAN             ; 14
+    PURPLE = RED-1   ; 4
+ENDM
+
+INIT:
+    LD  A, Color.RED	; 5
+    LD  B, Color.GREEN	; 6
+    LD  C, Color.BLUE	; 7
+    LD  D, Color.YELLOW	; 9
+    LD  E, Color.ORANGE	; 12
+    LD  H, Color.CYAN	; 14
+    LD  L, Color.PURPLE	; 4
+```
+
 ## FUNCTION <名前>([<引数1>, <引数2>]) => <式>
 式をまとめる事が出来ます
 - 複数行にまたがる事は出来ません。

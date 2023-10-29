@@ -1,0 +1,26 @@
+﻿
+    ORG $9000
+
+FLG EQU 1
+
+Color ENUM
+    RED = 5                         ; 5
+    GREEN                           ; 6
+    BLUE :FLG == 1 ? 2 : 1          ; 7, サイズ2バイト
+    YELLOW                          ; 9
+    ORANGE :FLG == 1 ? 2 : 1 = 12   ; 12, サイズ2バイト
+    CYAN                            ; 14
+    PURPLE = RED-1                  ; 4
+ENDM
+
+INIT:
+    LD  A, Color.RED
+    LD  B, Color.GREEN
+    LD  C, Color.BLUE
+    LD  D, Color.YELLOW
+    LD  E, Color.ORANGE
+    LD  H, Color.CYAN
+    LD  L, Color.PURPLE
+
+    RET
+    
