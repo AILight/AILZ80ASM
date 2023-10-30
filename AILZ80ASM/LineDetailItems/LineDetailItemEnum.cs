@@ -136,7 +136,7 @@ namespace AILZ80ASM.LineDetailItems
                         // valueの中に、Itemの要素があった場合に、.を付けてローカルラベルにする。
                         foreach (var item in asmLoad_LineDetailItemEnum.EnumItems)
                         {
-                            value = Regex.Replace(value, @$"([^a-zA-Z0-9_]+|^)({item.Name})([^a-zA-Z0-9_]+|$)", "$1.$2$3");
+                            value = Regex.Replace(value, @$"(?<![a-zA-Z0-9_.])({item.Name})(?![a-zA-Z0-9_])", ".$1", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                         }
 
                         var lineDetailItemEnum = new LineDetailItemEnum(lineItem, itemName, value, asmLoad);
