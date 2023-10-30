@@ -1,0 +1,19 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.10.0, LST:Full:4
+                                
+000000 9000                         ORG $9000
+                                
+                                TYP     ENUM
+       0080                             EXIST = %10000000
+       0100                             SL = EXIST + EXIST
+       0101                             SL_R
+       0102                             SL_B
+       0103                             WP
+       0104                             KB
+                                        ENDM
+                                
+       9000                     INIT:
+000000 9000 3E80             7          LD A, TYP.EXIST
+000002 9002 0601             7          LD B, TYP.SL_R
+000004 9004 0E02             7          LD C, TYP.SL_B
+000006 9006 C9              10          RET
+[EOF:Test.Z80:UTF_8]
