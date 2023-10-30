@@ -24,9 +24,16 @@ namespace AILZ80ASM.LineDetailItems
             public string Length { get; set; } = "1";
         }
 
-        public bool ItemMode { get; set; } = false;
+        public enum ItemModeEnum
+        {
+            None,
+            Item
+        }
+
+        public ItemModeEnum ItemMode { get; set; } = ItemModeEnum.None;
         public string EnumName { get; set; }
         public string EnumValue { get; set; } = "0";
+
         public LineDetailItem LineDetailItemEqualItem { get; set; }
         public List<EnumItem> EnumItems { get; private set; } = new List<EnumItem>();
 
@@ -39,7 +46,7 @@ namespace AILZ80ASM.LineDetailItems
                     return new AsmList[] { };
                 }
 
-                if (ItemMode)
+                if (ItemMode == ItemModeEnum.Item)
                 {
                     if (LineDetailItemEqualItem is LineDetailItemEqual lineDetailItemEqual &&
                         lineDetailItemEqual.EquLabel.Value.TryParse<UInt16>(out var resultValue))
@@ -78,7 +85,7 @@ namespace AILZ80ASM.LineDetailItems
         {
             EnumName = enumName;
             EnumValue = enumValue;
-            ItemMode = true;
+            ItemMode = ItemModeEnum.Item;
         }
 
         public static LineDetailItemEnum Create(LineItem lineItem, AsmLoad asmLoad)
@@ -151,13 +158,17 @@ namespace AILZ80ASM.LineDetailItems
                         asmLoad_LineDetailItemEnum.EnumItems.Add(enumItem);
                         asmLoad_LineDetailItemEnum.EnumValue = $"({enumItem.Value}) + ({enumItem.Length})";
 
-
                         return lineDetailItemEnum;
                     }
                     catch
                     {
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E6102);
                     }
+                }
+                else if (string.IsNullOrEmpty(lineItem.OperationString))
+                {
+                    var lineDetailItemEnum = new LineDetailItemEnum(lineItem, asmLoad);
+                    return lineDetailItemEnum;
                 }
                 else
                 {
