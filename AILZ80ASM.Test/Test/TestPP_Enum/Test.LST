@@ -1,4 +1,4 @@
-﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.9.0, LST:Full:4
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.10.0, LST:Full:4
                                 
 000000 9000                         ORG $9000
                                 
@@ -9,6 +9,7 @@
        0006                         GREEN                           ; 6
        0007                         BLUE :FLG == 1 ? 2 : 1          ; 7, サイズ2バイト
        0009                         YELLOW                          ; 9
+                                    
        000C                         ORANGE :FLG == 1 ? 2 : 1 = 12   ; 12, サイズ2バイト
        000E                         CYAN                            ; 14
        0004                         PURPLE = RED-1                  ; 4
