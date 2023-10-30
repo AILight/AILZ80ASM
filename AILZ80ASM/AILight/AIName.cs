@@ -251,9 +251,11 @@ namespace AILZ80ASM.AILight
                             // 次のカンマとカッコの開始を調べる
                             commaIndex = AIString.IndexOfSkipString(target, ',', searchIndex);
                             kakkoIndex = AIString.IndexOfSkipString(target, '(', searchIndex);
-                            if (commaIndex != -1 && kakkoIndex == -1)
+                            if ((commaIndex != -1 && kakkoIndex == -1) ||
+                                (commaIndex != -1 && kakkoIndex != -1 && commaIndex < kakkoIndex))
                             {
-                                // カンマはあるけど、カッコが無い場合は、カンマの前まで
+                                // カンマはあるけど、カッコが無い場合は、カンマの前まで と
+                                // カンマもカッコもあるけど、カンマの前まで
                                 searchIndex = commaIndex;
                             }
                             else if (kakkoIndex != -1 && 

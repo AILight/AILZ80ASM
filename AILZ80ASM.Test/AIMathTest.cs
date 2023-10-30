@@ -232,6 +232,19 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIMath.Calculation("EXISTS LB01", asmLoad).ConvertTo<bool>());
             Assert.IsFalse(AIMath.Calculation("EXISTS LB02", asmLoad).ConvertTo<bool>());
         }
+        
+        [TestMethod]
+        public void Calc_13()
+        {
+            Assert.AreEqual((2 - 1) + 4, AIMath.Calculation("(2 - 1) + 4").ConvertTo<UInt16>());
+            Assert.AreEqual(2 - 1 + 1, AIMath.Calculation("2 - 1 + 1").ConvertTo<UInt16>());
+            Assert.AreEqual((1) * 3, AIMath.Calculation("(1) * 3").ConvertTo<UInt16>());
+            Assert.AreEqual((1) / 4, AIMath.Calculation("(1) / 4").ConvertTo<UInt16>());
+
+            Assert.AreEqual((1) + 3, AIMath.Calculation("(1) + 3").ConvertTo<UInt16>());
+            Assert.AreEqual((2 - 1) + 4, AIMath.Calculation("(2 - 1) + 4").ConvertTo<UInt16>());
+            Assert.AreEqual((1) - 5, AIMath.Calculation("(1) - 5").ConvertTo<int>());
+        }
 
         [TestMethod]
         public void Calc_UInt32()

@@ -8,6 +8,7 @@ Color ENUM
     GREEN                           ; 6
     BLUE :FLG == 1 ? 2 : 1          ; 7, サイズ2バイト
     YELLOW                          ; 9
+    
     ORANGE :FLG == 1 ? 2 : 1 = 12   ; 12, サイズ2バイト
     CYAN                            ; 14
     PURPLE = RED-1                  ; 4
