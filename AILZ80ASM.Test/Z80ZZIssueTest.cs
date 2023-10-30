@@ -163,5 +163,11 @@ namespace AILZ80ASM.Test
             Lib.AreSameBin(File.OpenRead("./Test/Issues/232/Issue232.bin"), File.OpenRead("./Test/Issues/232/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
             Lib.AreSameBin(File.OpenRead("./Test/Issues/232/Issue232.cmt"), File.OpenRead("./Test/Issues/232/Test.CMT"), Assembler.AsmEnum.FileTypeEnum.CMT);
         }
+
+        [TestMethod]
+        public void Issue_257()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "257"));
+        }
     }
 }
