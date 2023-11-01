@@ -71,7 +71,7 @@ namespace AILZ80ASM.Assembler
             ErrorLineDetailItems.Add(lineDetailItem);
         }
 
-        public void AdjustAssemble(UInt32 outputAddress, AsmLoad asmLoad)
+        public UInt32 AdjustAssemble(UInt32 outputAddress, AsmLoad asmLoad)
         {
             OutputAddress = outputAddress;
 
@@ -90,6 +90,8 @@ namespace AILZ80ASM.Assembler
                     asmLoad.AddError(ex.ErrorLineItem);
                 }
             }
+
+            return outputAddress;
         }
 
         /// <summary>

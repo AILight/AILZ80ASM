@@ -233,11 +233,63 @@ namespace AILZ80ASM
 
         private void AdjustAssembleAddress()
         {
-            var isRomMode = this.AssembleLoad.Share.AsmORGs.Any(m => m.IsRomMode);
+            var isRomMode = false; // this.AssembleLoad.Share.AsmORGs.Any(m => m.IsRomMode);
             var asmORGItems = this.AssembleLoad.Share.AsmORGs.Select((item, index) => new { Item = item, Index = index }).ToArray();
             var asmORGItemsForRomMode = asmORGItems.Where(m => m.Item.IsRomMode);
 
             // RomModeのアドレスを確定させる
+            {
+                var resultAddress = default(AsmAddress);
+                var outputAddress = default(UInt32);
+
+                for (int index = 0; index < asmORGItems.Length; index++)
+                {
+                    var asmORGItem = asmORGItems[index];
+                    if (asmORGItem.Item.IsRomMode || isRomMode)
+                    {
+                        try
+                        {
+                            if (asmORGItem.Item.OutputAddress.HasValue)
+                            {
+                                outputAddress = asmORGItem.Item.OutputAddress.Value;
+                            }
+                            else if (AIMath.TryParse(asmORGItem.Item.OutputAddressLabel, this.AssembleLoad, resultAddress, out var outputAddressValue))
+                            {
+                                outputAddress = outputAddressValue.ConvertTo<UInt32>();
+                            }
+                            else if (asmORGItem.Item.ORGType == AsmORG.ORGTypeEnum.ALIGN &&
+                                     asmORGItem.Index < asmORGItems.Length - 1)
+                            {
+                                outputAddress += (UInt16)(asmORGItems[asmORGItem.Index + 1].Item.ProgramAddress - asmORGItem.Item.ProgramAddress);
+                            }
+                            else if (!asmORGItem.Item.IsRomMode)
+                            {
+                                // romモードじゃない場合は、ここで処理する
+                            }
+                            else
+                            {
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORGItem.Item.OutputAddressLabel);
+                            }
+                            outputAddress = asmORGItem.Item.AdjustAssemble(outputAddress, AssembleLoad);
+                            isRomMode = true;
+                        }
+                        catch (ErrorAssembleException ex)
+                        {
+                            AssembleLoad.AddError(new ErrorLineItem(asmORGItem.Item.LineItem, ex));
+                        }
+                        catch (ErrorLineItemException ex)
+                        {
+                            AssembleLoad.AddError(ex.ErrorLineItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            AssembleLoad.AddError(new ErrorLineItem(asmORGItem.Item.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
+                        }
+                    }
+                }
+            }
+
+            /*
             foreach (var asmORGItem in asmORGItemsForRomMode)
             {
                 try
@@ -272,6 +324,7 @@ namespace AILZ80ASM
                     AssembleLoad.AddError(new ErrorLineItem(asmORGItem.Item.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
                 }
             }
+            */
 
             // 通常の出力アドレスを確定する
             {
