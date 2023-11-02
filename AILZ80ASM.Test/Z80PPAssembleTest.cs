@@ -81,19 +81,13 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestPP_MacroCompatible()
+        public void TestPP_Macro()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
 
         [TestMethod]
         public void TestPP_MacroEx()
-        {
-            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
-        }
-
-        [TestMethod]
-        public void TestPP_MacroModern()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }
@@ -129,13 +123,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestPP_RepeatCompatible()
-        {
-            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
-        }
-
-        [TestMethod]
-        public void TestPP_RepeatModern()
+        public void TestPP_Repeat()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

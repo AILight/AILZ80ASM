@@ -9,7 +9,7 @@ VRAM_ADDRESS	equ $8001
 	ALLLD ALLLDArg
 	;ALLLD 3
 
-MACRO ALLLD mode
+ALLLD MACRO mode
 
 #if mode == 1
 	ld a,1
@@ -24,7 +24,7 @@ MACRO ALLLD mode
 	#error "modeの値が範囲外です。"
 #endif
 
-END MACRO
+ENDM
 
 include "Test.INC"
 

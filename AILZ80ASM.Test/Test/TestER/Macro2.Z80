@@ -5,15 +5,15 @@
 		TestArg1 1, 2, 3	; 引数不一致
 		ABC
 
-MACRO ABC
+ABC MACRO
 		ld a,1
-END MACRO
+ENDM
 
-;MACRO ABC
+;ABC MACRO
 ;		ld b,1
-;END MACRO
+;ENDM
 
-MACRO ALLLD
+ALLLD MACRO
 ;[DEF]						; ローカルラベル以外不許可
 		ld a,1
 		ld b,2
@@ -22,44 +22,44 @@ MACRO ALLLD
 		ld e,5
 .LP		ld h,6
 		ld l,7
-END MACRO
+ENDM
 
-macro TestArg1 a1, a2
+TestArg1 macro a1, a2
 	ld a, a1
 	ld b, a2
-end macro
+endm
 
 
-;macro TestArg a1,			; 引数が不完全
+;TestArg macro a1,			; 引数が不完全
 ;	ld a, a1
 ;	ld b, a2
-;end macro
+;endm
 
-;macro LD a1, a2		; 使えない名前
+;LD macro a1, a2		; 使えない名前
 ;	ld a, a1
 ;	ld b, a2
-;end macro
+;endm
 
 ; 先頭が(は使えない
-;MACRO (DEF
+;(DEF MACRO
 ;		ld a,1
-;END MACRO
+;ENDM
 
 ; 先頭が)は使えない
-;MACRO )DEF
+;)DEF MACRO
 ;		ld a,1
-;END MACRO
+;ENDM
 
 ; 16進数は使えない
-;MACRO FFFFH
+;FFFFH MACRO
 ;		ld a,1
-;END MACRO
+;ENDM
 
 ; 数値スタートは使えない
-;MACRO 0START
+;0START MACRO
 ;		ld a,1
-;END MACRO
+;ENDM
 
-;macro NoEnd a1, a2
+;NoEnd macro a1, a2
 ;	ld a, a1
 ;	ld b, a2
