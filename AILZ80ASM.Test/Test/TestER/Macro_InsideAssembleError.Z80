@@ -1,9 +1,9 @@
 ﻿	ERROR_TEST
 
-MACRO ERROR_TEST
+ERROR_TEST MACRO
 	ld b, 5
 	xor	a
 .lp
 	add a, b
 	djnz .lp1
-END MACRO
+ENDM

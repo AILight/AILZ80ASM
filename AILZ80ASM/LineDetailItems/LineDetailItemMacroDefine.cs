@@ -9,11 +9,14 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public abstract class LineDetailItemMacroDefine : LineDetailItem
+    public class LineDetailItemMacroDefine : LineDetailItem
     {
         private string MacroName { get; set; } = "";
         private string[] MacroArgs { get; set; }
         private readonly List<LineItem> MacroLines = new List<LineItem>();
+
+        private static readonly string RegexPatternMacroStart = @"^(?<macro_name>[a-zA-Z0-9_\(\)]+)\s+Macro($|\s+(?<args>.+)$)";
+        private static readonly string RegexPatternMacroEnd = @"^\s*Endm\s*$";
 
         public override AsmList[] Lists
         {
@@ -34,22 +37,24 @@ namespace AILZ80ASM.LineDetailItems
             }
         }
 
-        protected LineDetailItemMacroDefine(LineItem lineItem, AsmLoad asmLoad)
+        public LineDetailItemMacroDefine(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
         {
 
         }
 
-        protected static LineDetailItemMacroDefine Create(LineDetailItemMacroDefine lineDetailItemMacroDefine, string regexPatternMacroStart, string regexPatternMacroEnd, AsmLoad asmLoad)
+        public static LineDetailItemMacroDefine Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var lineItem = lineDetailItemMacroDefine.LineItem;
-            var startMatched = Regex.Match(lineItem.OperationString, regexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, regexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
-            if (asmLoad.Share.LineDetailItemForExpandItem != default &&
-                asmLoad.Share.LineDetailItemForExpandItem.GetType() == lineDetailItemMacroDefine.GetType())
+            if (!lineItem.IsCollectOperationString)
             {
-                var asmLoad_LineDetailItemMacro = asmLoad.Share.LineDetailItemForExpandItem as LineDetailItemMacroDefine;
+                return default(LineDetailItemMacroDefine);
+            }
+
+            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefine asmLoad_LineDetailItemMacro)
+            {
                 if (startMatched.Success)
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E3001);
@@ -105,7 +110,7 @@ namespace AILZ80ASM.LineDetailItems
                     }
                 }
 
-                return lineDetailItemMacroDefine;
+                return new LineDetailItemMacroDefine(lineItem, asmLoad);
             }
             else
             {
@@ -119,7 +124,7 @@ namespace AILZ80ASM.LineDetailItems
                         args.AddRange(argsText.Split(',').Select(m => m.Trim()));
                     }
 
-                    var lineDetailItemMacro = lineDetailItemMacroDefine;
+                    var lineDetailItemMacro = new LineDetailItemMacroDefine(lineItem, asmLoad);
                     lineDetailItemMacro.MacroName = startMatched.Groups["macro_name"].Value;
                     lineDetailItemMacro.MacroArgs = args.ToArray();
                     lineDetailItemMacro.MacroLines.Add(lineItem);

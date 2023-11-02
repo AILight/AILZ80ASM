@@ -238,9 +238,9 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E2108] = "CharMap 既に設定済みです。[{0}]",
 
             // マクロ
-            [ErrorCodeEnum.E3001] = "MACROに対応するEND MACRO (ENDM) が見つかりませんでした。",
-            [ErrorCodeEnum.E3002] = "END MACRO (ENDM) が先に見つかりました。",
-            //[ErrorCodeEnum.E3003] = ",
+            [ErrorCodeEnum.E3001] = "MACROに対応するENDM が見つかりませんでした。",
+            [ErrorCodeEnum.E3002] = "ENDM(MACRO) が先に見つかりました。",
+            //[ErrorCodeEnum.E3003] = "",
             [ErrorCodeEnum.E3004] = "MACROの引数の数が一致していません。",
             [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。記号や予約語は使えません。[{0}]",
             [ErrorCodeEnum.E3006] = "MACROでは、ローカルラベル以外は使えません。",

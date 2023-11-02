@@ -87,10 +87,8 @@ namespace AILZ80ASM.LineDetailItems
             var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // リピート処理中
-            if (asmLoad.Share.LineDetailItemForExpandItem != default)
+            if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemRepeat asmLoad_LineDetailItemRepeat)
             {
-                var asmLoad_LineDetailItemRepeat = asmLoad.Share.LineDetailItemForExpandItem as LineDetailItemRepeat;
-
                 // 終了条件チェック
                 if (endMatched.Success)
                 {

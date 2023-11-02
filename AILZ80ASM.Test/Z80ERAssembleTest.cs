@@ -212,7 +212,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 38, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 44, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 49, "Macro1.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 54, "Macro1.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 54, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 59, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 63, "Macro1.Z80", errors);
         }

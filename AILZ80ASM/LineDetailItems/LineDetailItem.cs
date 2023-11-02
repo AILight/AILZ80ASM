@@ -35,11 +35,8 @@ namespace AILZ80ASM.LineDetailItems
             {
                 switch (asmLoad.Share.LineDetailItemForExpandItem)
                 {
-                    case LineDetailItemMacroDefineModern:
-                        lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
-                        break;
-                    case LineDetailItemMacroDefineCompatible:
-                        lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
+                    case LineDetailItemMacroDefine:
+                        lineDetailItem ??= LineDetailItemMacroDefine.Create(lineItem, asmLoad);
                         break;
                     case LineDetailItemRepeat:
                         lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
@@ -69,8 +66,7 @@ namespace AILZ80ASM.LineDetailItems
                     lineDetailItem ??= LineDetailItemEnd.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemOperation.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemEqual.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemMacroDefineModern.Create(lineItem, asmLoad);
-                    lineDetailItem ??= LineDetailItemMacroDefineCompatible.Create(lineItem, asmLoad);
+                    lineDetailItem ??= LineDetailItemMacroDefine.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemFunctionDefine.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemRepeat.Create(lineItem, asmLoad);
                     lineDetailItem ??= LineDetailItemPreProcConditional.Create(lineItem, asmLoad);
