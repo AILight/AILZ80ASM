@@ -9,7 +9,7 @@ using AILZ80ASM.LineDetailItems.ScopeItem;
 
 namespace AILZ80ASM.LineDetailItems
 {
-    public abstract class LineDetailItemRepeat : LineDetailItem
+    public class LineDetailItemRepeat : LineDetailItem
     {
         private class RepeatItem
         {
@@ -18,7 +18,12 @@ namespace AILZ80ASM.LineDetailItems
             public LineItem[] LineItems { get; set; }
 
         }
+
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
+        private static readonly string RegexPatternRepeatFullStart = @"^\s*REPT\s+(?<count>.+)\s+LAST\s+(?<last_arg>.+)$";
+        private static readonly string RegexPatternRepeatSimpleStart = @"^\s*REPT\s+(?<count>.+)$";
+        private static readonly string RegexPatternRepeatEnd = @"^\s*ENDM\s*$";
+
         private string RepeatCountLabel { get; set; }
         private string RepeatLastLabel { get; set; }
 
@@ -70,16 +75,19 @@ namespace AILZ80ASM.LineDetailItems
 
         }
 
-        protected static LineDetailItemRepeat Create(LineDetailItemRepeat lineDetailItemRepeat, string regexPatternRepeatFullStart, string regexPatternRepeatSimpleStart, string regexPatternRepeatEnd, AsmLoad asmLoad)
+        public static LineDetailItemRepeat Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var lineItem = lineDetailItemRepeat.LineItem;
-            var startMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var startSimpleMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (!lineItem.IsCollectOperationString)
+            {
+                return default(LineDetailItemRepeat);
+            }
+
+            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startSimpleMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             // リピート処理中
-            if (asmLoad.Share.LineDetailItemForExpandItem != default &&
-                asmLoad.Share.LineDetailItemForExpandItem.GetType() == lineDetailItemRepeat.GetType())
+            if (asmLoad.Share.LineDetailItemForExpandItem != default)
             {
                 var asmLoad_LineDetailItemRepeat = asmLoad.Share.LineDetailItemForExpandItem as LineDetailItemRepeat;
 
@@ -94,7 +102,7 @@ namespace AILZ80ASM.LineDetailItems
                         asmLoad_LineDetailItemRepeat.RepeatLines.Add(lineItem);
 
                         asmLoad.Share.LineDetailItemForExpandItem = default;
-                        return lineDetailItemRepeat;
+                        return new LineDetailItemRepeat(lineItem, asmLoad);
                     }
                 }
 
@@ -113,7 +121,7 @@ namespace AILZ80ASM.LineDetailItems
                 }
 
                 repeatLines.Add(lineItem);
-                return lineDetailItemRepeat;
+                return new LineDetailItemRepeat(lineItem, asmLoad);
             }
             else
             {
@@ -126,6 +134,8 @@ namespace AILZ80ASM.LineDetailItems
                 // 開始条件チェック
                 if (startMatched.Success)
                 {
+                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad);
+
                     lineDetailItemRepeat.RepeatCountLabel = startMatched.Groups["count"].Value;
                     lineDetailItemRepeat.RepeatLastLabel = startMatched.Groups["last_arg"].Value;
                     lineDetailItemRepeat.RepeatNestedCount = 1;
@@ -136,6 +146,8 @@ namespace AILZ80ASM.LineDetailItems
                 }
                 else if (startSimpleMatched.Success)
                 {
+                    var lineDetailItemRepeat = new LineDetailItemRepeat(lineItem, asmLoad);
+
                     lineDetailItemRepeat.RepeatCountLabel = startSimpleMatched.Groups["count"].Value;
                     lineDetailItemRepeat.RepeatNestedCount = 1;
                     lineDetailItemRepeat.RepeatLines.Add(lineItem);
@@ -277,17 +289,17 @@ namespace AILZ80ASM.LineDetailItems
             Address = new AsmAddress(Address.Value.Program, outputAddress);
         }
 
-        public static bool IsMatchStart(LineItem lineItem, string regexPatternRepeatFullStart, string regexPatternRepeatSimpleStart)
+        public static bool IsMatchStart(LineItem lineItem)
         {
-            var startMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var startSimpleMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startSimpleMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             return startMatched.Success || startSimpleMatched.Success;
         }
 
-        public static bool IsMatchEnd(LineItem lineItem, string regexPatternRepeatEnd)
+        public static bool IsMatchEnd(LineItem lineItem)
         {
-            var endMatched = Regex.Match(lineItem.OperationString, regexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
             return endMatched.Success;
 

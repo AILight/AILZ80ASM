@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
 {
+    /*
     public class LineDetailItemRepeatModern : LineDetailItemRepeat
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
@@ -39,4 +40,5 @@ namespace AILZ80ASM.LineDetailItems
             return LineDetailItemRepeat.IsMatchEnd(lineItem, RegexPatternRepeatEnd);
         }
     }
+    */
 }

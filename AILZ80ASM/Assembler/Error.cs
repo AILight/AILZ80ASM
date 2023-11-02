@@ -191,12 +191,12 @@ namespace AILZ80ASM.Assembler
             //[ErrorCodeEnum.E9999] = $"オフセット値の範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
 
             // リピート
-            [ErrorCodeEnum.E1011] = "REPEAT (REPT) に対応するEND REPEAT (ENDM) が見つかりませんでした。",
-            [ErrorCodeEnum.E1012] = "END REPEAT (ENDM) が先に見つかりました。",
-            [ErrorCodeEnum.E1013] = "REPEAT (REPT) LASTに指定した値が不正です。負の値を指定してください。[{0}]",
-            [ErrorCodeEnum.E1014] = "REPEAT (REPT) では、ローカルラベルしか使えません。",
-            [ErrorCodeEnum.E1015] = "REPEAT (REPT) に指定した値が不正です。[{0}]",
-            [ErrorCodeEnum.E1016] = "REPEAT (REPT) LASTに指定した値が不正です。削除できる命令数を超えています。",
+            [ErrorCodeEnum.E1011] = "REPT に対応するENDM が見つかりませんでした。",
+            [ErrorCodeEnum.E1012] = "ENDM (REPT) が先に見つかりました。",
+            [ErrorCodeEnum.E1013] = "REPT LASTに指定した値が不正です。負の値を指定してください。[{0}]",
+            [ErrorCodeEnum.E1014] = "REPT では、ローカルラベルしか使えません。",
+            [ErrorCodeEnum.E1015] = "REPT に指定した値が不正です。[{0}]",
+            [ErrorCodeEnum.E1016] = "REPT LASTに指定した値が不正です。削除できる命令数を超えています。",
 
             // コンディショナル
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",

@@ -343,7 +343,7 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(4, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1014, 7, "Repeat.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1015, 14, "Repeat.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1012, 16, "Repeat.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3002, 16, "Repeat.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1011, 18, "Repeat.Z80", errors);
         }
 

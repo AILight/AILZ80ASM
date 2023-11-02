@@ -67,8 +67,7 @@ namespace AILZ80ASM.LineDetailItems
                 }
 
                 // リピート開始
-                if (LineDetailItemRepeatCompatible.IsMatchStart(lineItem) ||
-                    LineDetailItemRepeatModern.IsMatchStart(lineItem))
+                if (LineDetailItemRepeat.IsMatchStart(lineItem))
                 {
                     asmLoad.Share.LineDetailItemForExpandItem.NestCounter++;
                 }
@@ -76,8 +75,7 @@ namespace AILZ80ASM.LineDetailItems
                 // リピート終了
                 if (asmLoad.Share.LineDetailItemForExpandItem.NestCounter > 0)
                 {
-                    if (LineDetailItemRepeatCompatible.IsMatchEnd(lineItem) ||
-                        LineDetailItemRepeatModern.IsMatchEnd(lineItem))
+                    if (LineDetailItemRepeat.IsMatchEnd(lineItem))
                     {
                         asmLoad.Share.LineDetailItemForExpandItem.NestCounter--;
                     }

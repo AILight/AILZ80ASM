@@ -129,13 +129,7 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestPP_RepeatCompatible()
-        {
-            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
-        }
-
-        [TestMethod]
-        public void TestPP_RepeatModern()
+        public void TestPP_Repeat()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
         }

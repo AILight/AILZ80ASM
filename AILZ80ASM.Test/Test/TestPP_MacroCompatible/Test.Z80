@@ -41,14 +41,14 @@ VRAMSET macro VRAM_ADDRESS
 
 REPEAT_TEST macro
 
-REPEAT 2
+REPT 2
         xor     a	
-END REPEAT
+ENDM
 
-REPEAT 3 LAST - 1
+REPT 3 LAST - 1
 	ld a,1
 	ld b,2
-END REPEAT
+ENDM
 
 	endm
 
@@ -73,9 +73,9 @@ REPEAT_JR macro TEST
 	
 	MAIN.READ_LABEL
 
-REPEAT 2
+REPT 2
         xor     a	
-END REPEAT
+ENDM
 
 	ld a, 0
 
