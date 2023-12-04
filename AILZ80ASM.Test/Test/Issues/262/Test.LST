@@ -1,20 +1,20 @@
-﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.11.0, LST:Full:4
-       0100                     START   EQU 00100H
-000000 0100                         ORG START
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.12.0, LST:Full:8
+       0100                     START   EQU     00100H
+000000 0100                                     ORG     START
                                 
-000000 0100 210E01          10      LD  HL,SRC
-000003 0103 1100C0          10      LD  DE,DEST
-000006 0106 010600          10      LD  BC,SRC_END-SRC
-000009 0109 EDB0                    LDIR
-00000B 010B C300C0          10      JP  DEST
+000000 0100 210E01          10                  LD      HL,SRC
+000003 0103 1100C0          10                  LD      DE,DEST
+000006 0106 010600          10                  LD      BC,SRC_END-SRC
+000009 0109 EDB0                                LDIR
+00000B 010B C300C0          10                  JP      DEST
        010E                     SRC:
-00000E C000                         ORG 0C000H,SRC-START    ;$PHASE 0C000H
+00000E C000                                     ORG     0C000H,SRC-START        ;$PHASE 0C000H
        C000                     DEST:
-00000E C000 2A00C0          16      LD  HL,(DEST)
-000011 C003 C31401          10      JP  NEXT
+00000E C000 2A00C0          16                  LD      HL,(DEST)
+000011 C003 C31401          10                  JP      NEXT
                                 
-000014 0114                         ORG $$+START    ;$DEPHASE
+000014 0114                                     ORG     $$+START        ;$DEPHASE
        0114                     SRC_END:
        0114                     NEXT:
-000014 0114 C30000          10      JP  0
+000014 0114 C30000          10                  JP      0
 [EOF:Test.z80:UTF_8]
