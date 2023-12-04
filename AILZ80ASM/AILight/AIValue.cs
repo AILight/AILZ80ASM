@@ -227,6 +227,7 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
         private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
+        private static readonly string RegexPatternFunctionWithNamespace = @"^(?<function>[0-9a-zA-Z_]+\.[0-9a-zA-Z_]+\s*\()";
 
         private string Value { get; set; } = "";
         private int ValueInt32 { get; set; } = default(int);
@@ -371,12 +372,24 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIMathException"></exception>
         public static bool TryParseFunction(ref string target, out string resultFunction)
         {
+            var functionName = default(string);
+
             var matched = Regex.Match(target, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
+                functionName = matched.Groups["function"].Value;
+            }
+            var matchedWithNamespace = Regex.Match(target, RegexPatternFunctionWithNamespace, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedWithNamespace.Success)
+            {
+                functionName = matchedWithNamespace.Groups["function"].Value;
+            }
+
+            if (!string.IsNullOrEmpty(functionName))
+            {
                 var localTarget = target;
 
-                var function = matched.Groups["function"].Value;
+                var function = functionName;
                 var targetIndex = function.Length;
                 var startIndex = AIString.IndexOfAnySkipString(localTarget, '(', targetIndex);
                 var endIndex = AIString.IndexOfAnySkipString(localTarget, ')', targetIndex);

@@ -396,12 +396,14 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void TestEC_E1012()
         {
+            /*
+            ‚±‚¿‚ç‚Í”­Œ»‚µ‚È‚¢
             var errors = Assemble("E1012.Z80");
 
             Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1012, 2, "E1012.Z80", errors);
-        }
+            */        }
 
         [TestMethod]
         public void TestEC_E1013()

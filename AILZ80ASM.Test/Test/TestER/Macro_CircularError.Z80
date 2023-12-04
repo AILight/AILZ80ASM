@@ -2,7 +2,7 @@
 [main]
 		ALLLD
 
-MACRO ALLLD
+ALLLD MACRO
 		ld a,1
 		ld b,2
 		ld c,3
@@ -11,5 +11,5 @@ MACRO ALLLD
 		ld h,6
 		ld l,7
 		main.ALLLD			; 循環呼び出し
-END MACRO
+ENDM
 

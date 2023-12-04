@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "Test.z80 -bin -lst -sym -equ -err -f"
+      "commandLineArgs": "Test.z80"
     }
   }
 }

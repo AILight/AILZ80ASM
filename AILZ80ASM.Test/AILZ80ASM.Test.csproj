@@ -178,6 +178,12 @@
     <None Update="Test\Issues\215\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\Issues\273\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\273\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\Issues\262\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -197,6 +203,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\Issues\257\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\276\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\276\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestCS_ALIGN\Test.BIN">
@@ -1060,13 +1072,10 @@
     <None Update="Test\TestPP_MacroArgumentRegister\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_MacroCompatible\Test.BIN">
+    <None Update="Test\TestPP_Macro\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_MacroCompatible\Test.Z80">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test\TestPP_MacroModern\Test.LST">
+    <None Update="Test\TestPP_Macro\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestPP_CheckAlign\Test1.Z80">
@@ -1123,19 +1132,7 @@
     <None Update="Test\TestPP_Pragma_Once\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_RepeatModern\Test.BIN">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test\TestPP_RepeatModern\Test.INC">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test\TestPP_RepeatModern\Test.LST">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test\TestPP_RepeatModern\Test.Z80">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test\TestPP_RepeatCompatible\Test.INC">
+    <None Update="Test\TestPP_Repeat\Test.INC">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestRD_ALL\Test.BIN">
@@ -1684,16 +1681,10 @@
     <None Update="Test\TestPP_Conditional\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_RepeatCompatible\Test.BIN">
+    <None Update="Test\TestPP_Repeat\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Test\TestPP_RepeatCompatible\Test.Z80">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test\TestPP_MacroModern\Test.BIN">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test\TestPP_MacroModern\Test.Z80">
+    <None Update="Test\TestPP_Repeat\Test.Z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Test\TestUD_AO\Test.BIN">
