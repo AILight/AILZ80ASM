@@ -49,6 +49,7 @@ namespace AILZ80ASM.LineDetailItems
                 if (ItemMode == ItemModeEnum.Item)
                 {
                     if (LineDetailItemEqualItem is LineDetailItemEqual lineDetailItemEqual &&
+                        lineDetailItemEqual.EquLabel.Value != default &&
                         lineDetailItemEqual.EquLabel.Value.TryParse<UInt16>(out var resultValue))
                     {
                         return new[]
@@ -241,6 +242,12 @@ namespace AILZ80ASM.LineDetailItems
                 var lineItem = new LineItem($"{EnumName}.{item.Name} EQU {item.Value}", item.LineItem.LineIndex, item.LineItem.FileInfo);
                 item.LineDetailEnumItem.LineDetailItemEqualItem = LineDetailItem.CreateLineDetailItem(lineItem, AsmLoad);
             }
+        }
+
+        public override void PreAssemble(ref AsmAddress asmAddress)
+        {
+            LineDetailItemEqualItem?.PreAssemble(ref asmAddress);
+            base.PreAssemble(ref asmAddress);
         }
     }
 }
