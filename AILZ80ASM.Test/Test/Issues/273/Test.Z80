@@ -1,0 +1,16 @@
+﻿
+		ORG $C000
+
+		LD A, 0
+		LD HL, TEST_ADDR
+		LD DE, Test.ADDR
+		ret
+
+TEST_ADDR EQU $
+
+Test	ENUM
+		ADDR = $
+		R1 = 1
+		B1 = 2
+		C1 = 3
+ENDM
