@@ -1,0 +1,9 @@
+﻿
+[MSG]
+
+CRLF		equ %10000010
+END			equ $00
+
+[MAIN]
+
+DB			"ABC", MSG.CRLF, MSG.END
