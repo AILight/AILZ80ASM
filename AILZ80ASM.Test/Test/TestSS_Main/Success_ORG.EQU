@@ -13,8 +13,8 @@ CHAR03      equ 60
 
 ABC         equ 1
 ABC.DEF     equ 2
-GHI:        equ $1236
-GHI.JKL:    equ $1238
+GHI         equ $1236
+GHI.JKL     equ $1238
 GHI.MNO     equ 3
 
 
@@ -22,7 +22,7 @@ GHI.MNO     equ 3
 
 ABC         equ 1
 ABC.DEF     equ 2
-GHI:        equ $1241
-GHI.JKL:    equ $1243
+GHI         equ $1241
+GHI.JKL     equ $1243
 GHI.MNO     equ 3
 
