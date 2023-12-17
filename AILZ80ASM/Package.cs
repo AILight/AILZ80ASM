@@ -257,14 +257,16 @@ namespace AILZ80ASM
                             {
                                 outputAddress = outputAddressValue.ConvertTo<UInt32>();
                             }
-                            else if (asmORGItem.Item.ORGType == AsmORG.ORGTypeEnum.ALIGN &&
-                                     asmORGItem.Index < asmORGItems.Length - 1)
+                            else if (asmORGItem.Item.ORGType == AsmORG.ORGTypeEnum.NextORG &&
+                                    ((new[] { AsmORG.ORGTypeEnum .ALIGN, AsmORG.ORGTypeEnum.DS}).Any(m => m == asmORGItems[asmORGItem.Index - 1].Item.ORGType)))
                             {
-                                outputAddress += (UInt16)(asmORGItems[asmORGItem.Index + 1].Item.ProgramAddress - asmORGItem.Item.ProgramAddress);
+                                outputAddress += (UInt16)(asmORGItem.Item.ProgramAddress - asmORGItems[asmORGItem.Index - 1].Item.ProgramAddress);
                             }
                             else if (!asmORGItem.Item.IsRomMode)
                             {
-                                // romモードじゃない場合は、ここで処理する
+                                // 上記以外の条件では、outputAddressは移動させない
+                                // 出力アドレスを指定しない場合は、outputAddressは移送しない
+
                             }
                             else
                             {
@@ -288,43 +290,6 @@ namespace AILZ80ASM
                     }
                 }
             }
-
-            /*
-            foreach (var asmORGItem in asmORGItemsForRomMode)
-            {
-                try
-                {
-                    var resultAddress = default(AsmAddress);
-                    var outputAddress = default(UInt32);
-
-                    if (asmORGItem.Item.OutputAddress.HasValue)
-                    {
-                        outputAddress = asmORGItem.Item.OutputAddress.Value;
-                    }
-                    else if (AIMath.TryParse(asmORGItem.Item.OutputAddressLabel, this.AssembleLoad, resultAddress, out var outputAddressValue))
-                    {
-                        outputAddress = outputAddressValue.ConvertTo<UInt32>();
-                    }
-                    else
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, asmORGItem.Item.OutputAddressLabel);
-                    }
-                    asmORGItem.Item.AdjustAssemble(outputAddress, AssembleLoad);
-                }
-                catch (ErrorAssembleException ex)
-                {
-                    AssembleLoad.AddError(new ErrorLineItem(asmORGItem.Item.LineItem, ex));
-                }
-                catch (ErrorLineItemException ex)
-                {
-                    AssembleLoad.AddError(ex.ErrorLineItem);
-                }
-                catch (Exception ex)
-                {
-                    AssembleLoad.AddError(new ErrorLineItem(asmORGItem.Item.LineItem, Error.ErrorCodeEnum.E0000, ex.Message));
-                }
-            }
-            */
 
             // 通常の出力アドレスを確定する
             {

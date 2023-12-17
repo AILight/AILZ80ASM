@@ -1,0 +1,26 @@
+﻿
+		ORG $C000
+
+DS_TEST	EQU $C300
+
+		LD A, 123
+		RET
+
+		ORG $C100, $100
+
+		LD	HL, $
+		RET
+
+		ORG $C200, $200
+
+		LD	HL, $
+		RET
+
+TABLE:
+		DS DS_TEST - TABLE
+
+TEST_ABC:
+		DW	123
+TEST_DEF:
+		DW  456
+		
