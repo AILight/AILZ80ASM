@@ -53,11 +53,11 @@ namespace AILZ80ASM.LineDetailItems
             var asmORG_DS = default(AsmORG);
             if (asmAddress.Output.HasValue)
             {
-                asmORG_DS = new AsmORG(asmAddress.Program, asmAddress.Output.Value, FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+                asmORG_DS = new AsmORG(asmAddress.Program, asmAddress.Output.Value, FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.DS);
             }
             else
             {
-                asmORG_DS = new AsmORG(asmAddress.Program, "", FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.ORG);
+                asmORG_DS = new AsmORG(asmAddress.Program, "", FillByteLabel, this.LineItem, AsmORG.ORGTypeEnum.DS);
             }
 
             this.AsmLoad.AddORG(asmORG_DS);
