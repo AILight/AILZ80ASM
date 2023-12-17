@@ -1,0 +1,10 @@
+﻿[NS1]
+
+	DB "ABC", NS2.TEST(1), "DEF", $00
+
+[NS2]
+FUNCTION TEST(arg) => (NS3.Label1.POS | (arg << 2))
+
+[NS3]
+Label1:
+.POS	EQU 1
