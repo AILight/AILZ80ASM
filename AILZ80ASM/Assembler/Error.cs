@@ -260,7 +260,7 @@ namespace AILZ80ASM.Assembler
             // CHECK
             [ErrorCodeEnum.E6001] = "ENDC が先に見つかりました。",
             [ErrorCodeEnum.E6011] = "CHECK ALIGN に対応する ENDC が見つかりませんでした。",
-            [ErrorCodeEnum.E6012] = "CHECK ALIGN メモリ境界を超えました。開始アドレス:0x{0:X} 終了アドレス:0x{1:X}",
+            [ErrorCodeEnum.E6012] = "CHECK ALIGN メモリ境界を超えました。アライメント境界:0x{0:X} ~ 0x{1:X} 出力アドレス:0x{2:X} ~ 0x{3:X}",
 
             // ENUM
             [ErrorCodeEnum.E6101] = "ENDM が先に見つかりました。",

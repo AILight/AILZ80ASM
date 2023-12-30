@@ -113,7 +113,11 @@ namespace AILZ80ASM.LineDetailItems
 
             if (maskedStartAddress != maskedEndAddress)
             {
-                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E6012, startAddress, endAddress)));
+                // アライメント境界のアドレスを計算
+                var alignStartAddress = ((int)(startAddress / alignValue)) * alignValue;
+                var alignEndAddress = alignStartAddress + alignValue - 1;
+
+                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E6012, alignStartAddress, alignEndAddress, startAddress, endAddress)));
             }
         }
     }
