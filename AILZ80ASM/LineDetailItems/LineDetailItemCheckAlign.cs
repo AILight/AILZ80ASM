@@ -102,6 +102,12 @@ namespace AILZ80ASM.LineDetailItems
             var alignValue = AIMath.Calculation(AlignLabel).ConvertTo<UInt16>();
             var dataLength = AIMath.Calculation(DataLengthLabel).ConvertTo<UInt16>();
 
+            if (alignValue <= 0 || (alignValue & (alignValue - 1)) != 0)
+            {
+                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E6013)));
+                return;
+            }
+
             // アドレスチェック
             var startAddress = this.Address.Value.Program;
             var endAddress = this.LineDetailItemCheck_ENDC.Address.Value.Program - dataLength;
@@ -113,7 +119,11 @@ namespace AILZ80ASM.LineDetailItems
 
             if (maskedStartAddress != maskedEndAddress)
             {
-                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E6012, startAddress, endAddress)));
+                // アライメント境界のアドレスを計算
+                var alignStartAddress = ((int)(startAddress / alignValue)) * alignValue;
+                var alignEndAddress = alignStartAddress + alignValue - 1;
+
+                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E6012, alignStartAddress, alignEndAddress, startAddress, endAddress)));
             }
         }
     }
