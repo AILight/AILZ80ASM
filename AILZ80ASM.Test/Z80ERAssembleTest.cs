@@ -76,6 +76,25 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_CheckAlign1()
+        {
+            var errors = Assemble("CheckAlign1.Z80");
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6012, 8, "CheckAlign1.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_CheckAlign2()
+        {
+            var errors = Assemble("CheckAlign2.Z80");
+
+            Assert.AreEqual(2, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6013, 3, "CheckAlign2.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6013, 8, "CheckAlign2.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Conditional()
         {
             var errors = Assemble("Conditional.Z80");

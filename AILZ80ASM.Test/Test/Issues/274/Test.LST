@@ -1,0 +1,28 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.12.0, LST:Full:4
+                                
+000000 C000                             ORG $C000
+                                
+       C300                     DS_TEST EQU $C300
+                                
+000000 C000 3E7B             7          LD A, 123
+000002 C002 C9              10          RET
+                                
+000100 C100                             ORG $C100, $100
+                                
+000100 C100 2100C1          10          LD  HL, $
+000103 C103 C9              10          RET
+                                
+000200 C200                             ORG $C200, $200
+                                
+000200 C200 2100C2          10          LD  HL, $
+000203 C203 C9              10          RET
+                                
+       C204                     TABLE:
+000204 C204                             DS DS_TEST - TABLE
+                                
+       C300                     TEST_ABC:
+000300 C300 7B00                        DW  123
+       C302                     TEST_DEF:
+000302 C302 C801                        DW  456
+                                        
+[EOF:Test.Z80:UTF_8]
