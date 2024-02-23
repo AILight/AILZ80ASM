@@ -211,5 +211,14 @@ namespace AILZ80ASM.Test
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "281"));
         }
+
+        [TestMethod]
+        public void Issue_291()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue291.bin", "-lst", "Issue291.LST", "-err", "Issue291.ERR", "-cd", "./Test/Issues/291");
+            Assert.AreEqual(1, result);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/291/Issue291.LST"), File.OpenRead("./Test/Issues/291/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/291/Issue291.ERR"), File.OpenRead("./Test/Issues/291/Test.ERR"), Assembler.AsmEnum.FileTypeEnum.ERR);
+        }
     }
 }
