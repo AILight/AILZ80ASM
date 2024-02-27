@@ -16,8 +16,12 @@ namespace AILZ80ASM.AILight
             None,
             High,
             Low,
-            Text,
             Exists,
+            Text,
+            Forward,
+            Backward,
+            Near,
+            Far,
         }
 
         [Flags]
@@ -31,6 +35,7 @@ namespace AILZ80ASM.AILight
             Bytes = 16,
             Operation = 32,
             Function = 64,
+            Labels = 128,
         }
 
         public enum OperationTypeEnum
@@ -46,6 +51,10 @@ namespace AILZ80ASM.AILight
             High,               // high
             Exists,             // exists
             Text,               // text
+            Forward,            // Forward
+            Backward,           // Backward
+            Near,               // Near
+            Far,                // Far
             Multiplication,     // *
             Division,           // /
             Remainder,          // %
@@ -76,34 +85,38 @@ namespace AILZ80ASM.AILight
 
         private static readonly Dictionary<string, OperationTypeEnum> OperationTypeTable = new()
         {
-            ["("] =      OperationTypeEnum.LeftParenthesis,
-            [")"] =      OperationTypeEnum.RightParenthesis,
-            ["!"] =      OperationTypeEnum.Negation,
-            ["~"] =      OperationTypeEnum.BitwiseComplement,
-            ["low"] =    OperationTypeEnum.Low,
-            ["high"] =   OperationTypeEnum.High,
-            ["exists"] = OperationTypeEnum.Exists,
-            ["text"] =   OperationTypeEnum.Text,
-            ["*"] =      OperationTypeEnum.Multiplication,
-            ["/"] =      OperationTypeEnum.Division,
-            ["%"] =      OperationTypeEnum.Remainder,
-            ["+"] =      OperationTypeEnum.Plus,
-            ["-"] =      OperationTypeEnum.Minus,
-            ["<<"] =     OperationTypeEnum.LeftShift,
-            [">>"] =     OperationTypeEnum.RightShift,
-            ["<"] =      OperationTypeEnum.Less,
-            [">"] =      OperationTypeEnum.Greater,
-            ["<="] =     OperationTypeEnum.LessEqual,
-            [">="] =     OperationTypeEnum.GreaterEqual,
-            ["=="] =     OperationTypeEnum.Equal,
-            ["!="] =     OperationTypeEnum.NotEqual,
-            ["&"] =      OperationTypeEnum.And,
-            ["^"] =      OperationTypeEnum.Xor,
-            ["|"] =      OperationTypeEnum.Or,
-            ["&&"] =     OperationTypeEnum.ConditionalAnd,
-            ["||"] =     OperationTypeEnum.ConditionalOr,
-            ["?"] =      OperationTypeEnum.Ternary_Question,
-            [":"] =      OperationTypeEnum.Ternary_Colon,
+            ["("] =        OperationTypeEnum.LeftParenthesis,
+            [")"] =        OperationTypeEnum.RightParenthesis,
+            ["!"] =        OperationTypeEnum.Negation,
+            ["~"] =        OperationTypeEnum.BitwiseComplement,
+            ["low"] =      OperationTypeEnum.Low,
+            ["high"] =     OperationTypeEnum.High,
+            ["exists"] =   OperationTypeEnum.Exists,
+            ["text"] =     OperationTypeEnum.Text,
+            ["forward"] =  OperationTypeEnum.Forward,
+            ["backward"] = OperationTypeEnum.Backward,
+            ["near"] =     OperationTypeEnum.Near,
+            ["far"] =      OperationTypeEnum.Far,
+            ["*"] =        OperationTypeEnum.Multiplication,
+            ["/"] =        OperationTypeEnum.Division,
+            ["%"] =        OperationTypeEnum.Remainder,
+            ["+"] =        OperationTypeEnum.Plus,
+            ["-"] =        OperationTypeEnum.Minus,
+            ["<<"] =       OperationTypeEnum.LeftShift,
+            [">>"] =       OperationTypeEnum.RightShift,
+            ["<"] =        OperationTypeEnum.Less,
+            [">"] =        OperationTypeEnum.Greater,
+            ["<="] =       OperationTypeEnum.LessEqual,
+            [">="] =       OperationTypeEnum.GreaterEqual,
+            ["=="] =       OperationTypeEnum.Equal,
+            ["!="] =       OperationTypeEnum.NotEqual,
+            ["&"] =        OperationTypeEnum.And,
+            ["^"] =        OperationTypeEnum.Xor,
+            ["|"] =        OperationTypeEnum.Or,
+            ["&&"] =       OperationTypeEnum.ConditionalAnd,
+            ["||"] =       OperationTypeEnum.ConditionalOr,
+            ["?"] =        OperationTypeEnum.Ternary_Question,
+            [":"] =        OperationTypeEnum.Ternary_Colon,
         };
 
         private static readonly Dictionary<OperationTypeEnum, int> FormulaPriority = new()
@@ -115,6 +128,10 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.High] = 2,               // high
             [OperationTypeEnum.Exists] = 2,             // exists
             [OperationTypeEnum.Text] = 2,               // text
+            [OperationTypeEnum.Forward] = 2,            // forward
+            [OperationTypeEnum.Backward] = 2,           // backward
+            [OperationTypeEnum.Near] = 2,               // near
+            [OperationTypeEnum.Far] = 2,                // far
             [OperationTypeEnum.Multiplication] = 4,     // *
             [OperationTypeEnum.Division] = 4,           // /
             [OperationTypeEnum.Remainder] = 4,          // %
@@ -147,6 +164,10 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.High] = ArgumentTypeEnum.SingleArgument,                 // high
             [OperationTypeEnum.Exists] = ArgumentTypeEnum.SingleArgument,               // exists
             [OperationTypeEnum.Text] = ArgumentTypeEnum.SingleArgument,                 // text
+            [OperationTypeEnum.Forward] = ArgumentTypeEnum.SingleArgument,              // forward
+            [OperationTypeEnum.Backward] = ArgumentTypeEnum.SingleArgument,             // backward
+            [OperationTypeEnum.Near] = ArgumentTypeEnum.SingleArgument,                 // near
+            [OperationTypeEnum.Far] = ArgumentTypeEnum.SingleArgument,                  // far
             [OperationTypeEnum.Multiplication] = ArgumentTypeEnum.DoubleArgument,       // *
             [OperationTypeEnum.Division] = ArgumentTypeEnum.DoubleArgument,             // /
             [OperationTypeEnum.Remainder] = ArgumentTypeEnum.DoubleArgument,            // %
@@ -1062,6 +1083,14 @@ namespace AILZ80ASM.AILight
                     return AIValue.Exists(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Text:
                     return AIValue.Text(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Forward:
+                    return AIValue.Forward(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Backward:
+                    return AIValue.Backward(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Near:
+                    return AIValue.Near(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Far:
+                    return AIValue.Far(firstValue, asmLoad, asmAddress, entryLabels);
                 default:
                     throw new InvalidOperationException();
             }
@@ -1280,6 +1309,22 @@ namespace AILZ80ASM.AILight
         {
             var label = asmLoad.FindLabel(firstValue.OriginalValue);
             if (label == default)
+            {
+                throw new InvalidAIValueException($"未定義:{firstValue.OriginalValue}");
+            }
+            return new AIValue(label.ValueString, ValueTypeEnum.String);
+
+        }
+
+        /// <summary>
+        /// forward:前方ラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Forward(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            var labels = asmLoad.FindLabels(firstValue.OriginalValue);
+            if (labels == default)
             {
                 throw new InvalidAIValueException($"未定義:{firstValue.OriginalValue}");
             }
