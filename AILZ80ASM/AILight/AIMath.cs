@@ -41,7 +41,6 @@ namespace AILZ80ASM.AILight
             return Calculation(value, asmLoad, default(AsmAddress?), new List<Label>());
         }
 
-
         public static AIValue Calculation(string target, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
             return Calculation(target, asmLoad, asmAddress, new List<Label>());

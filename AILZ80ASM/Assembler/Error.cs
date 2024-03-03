@@ -41,6 +41,7 @@ namespace AILZ80ASM.Assembler
             E0023,
             E0024,
             E0025,
+            E0026,
 
             E1011,
             E1012,
@@ -171,10 +172,11 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0005] = "エスケープシーケンスの表記が間違っています。[{0}]",
             [ErrorCodeEnum.E0006] = "0 で除算しようとしました。 [{0}]",
             [ErrorCodeEnum.E0007] = "ラベルが循環参照されました。自分自身が参照されていないか確認してください。[{0}]",
-            [ErrorCodeEnum.E0008] = "ラベルの参照が曖昧です。次の指定方法を検討してください。[{0}]",
+            [ErrorCodeEnum.E0008] = "ラベルの参照が曖昧です。ラベル指定演算子を使うか、次の指定方法を検討してください。[{0}]",
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
             [ErrorCodeEnum.E0010] = "出力アドレスに影響する場所では$$は使えません。",
             [ErrorCodeEnum.E0011] = "参照したラベルのプログラムアドレスが確定できませんでした。{0}",
+            //[ErrorCodeEnum.E0012] = "",
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。記号や予約語や数値に変換できる文字列は使えません。",
             [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。{0}",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
@@ -188,6 +190,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。[{0}]",
             [ErrorCodeEnum.E0024] = "DBFILへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0025] = "DWFILへの変換に失敗しました。[{0}]",
+            [ErrorCodeEnum.E0026] = "ラベル指定演算子 ({0})により、選択できるラベルが見つかりませんでした。",
 
             //[ErrorCodeEnum.E9999] = $"オフセット値の範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
 

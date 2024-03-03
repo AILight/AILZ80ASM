@@ -35,7 +35,6 @@ namespace AILZ80ASM.AILight
             Bytes = 16,
             Operation = 32,
             Function = 64,
-            Labels = 128,
         }
 
         public enum OperationTypeEnum
@@ -910,7 +909,12 @@ namespace AILZ80ASM.AILight
                 // Label
                 var macroValue = MacroValueEnum.None;
                 var tmpLabel = Value;
-                var label = asmLoad.FindLabel(tmpLabel);
+                var labels = asmLoad.FindLabels(tmpLabel);
+                if (labels.Length > 1)
+                {
+                    throw new InvalidAIValueLabelAmbiguousException(string.Join(", ", labels.Select(m => m.LabelShortName)));
+                }
+                var label = labels.FirstOrDefault();
 
                 if (macroValue == MacroValueEnum.Exists)
                 {
@@ -1323,13 +1327,98 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         private static AIValue Forward(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
         {
-            var labels = asmLoad.FindLabels(firstValue.OriginalValue);
-            if (labels == default)
-            {
-                throw new InvalidAIValueException($"未定義:{firstValue.OriginalValue}");
-            }
-            return new AIValue(label.ValueString, ValueTypeEnum.String);
+            return InternalLabel(MacroValueEnum.Forward, firstValue, asmLoad, asmAddress, entryLabels);
+        }
 
+        /// <summary>
+        /// backward:前方ラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Backward(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            return InternalLabel(MacroValueEnum.Backward, firstValue, asmLoad, asmAddress, entryLabels);
+        }
+
+        /// <summary>
+        /// Far:遠いラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Far(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            return InternalLabel(MacroValueEnum.Far, firstValue, asmLoad, asmAddress, entryLabels);
+        }
+
+        /// <summary>
+        /// near:近くのラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Near(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            return InternalLabel(MacroValueEnum.Near, firstValue, asmLoad, asmAddress, entryLabels);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="valueEnum"></param>
+        /// <param name="firstValue"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <param name="entryLabels"></param>
+        /// <returns></returns>
+        private static AIValue InternalLabel(MacroValueEnum valueEnum, AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            var labels = asmLoad.FindLabels(firstValue.OriginalValue);
+            switch (valueEnum)
+            {
+                case MacroValueEnum.Forward:
+                case MacroValueEnum.Backward:
+                case MacroValueEnum.Near:
+                case MacroValueEnum.Far:
+                    if (labels.Length == 0)
+                    {
+                        throw new InvalidAIValueException($"未定義:{firstValue.OriginalValue}");
+                    }
+                    else if (labels.Length == 1)
+                    {
+                        return firstValue;
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+            var values = labels.Select(m => new AIValue(m.LabelFullName, ValueTypeEnum.None)).ToArray();
+            foreach (var item in values)
+            {
+                item.SetValue(asmLoad, asmAddress);
+            }
+
+            var orderedAIValues = default(IOrderedEnumerable<AIValue>);
+            switch (valueEnum)
+            {
+                case MacroValueEnum.Forward:
+                    orderedAIValues = values.Where(m => m.ValueInt32 >= asmAddress.Value.Program).OrderBy(m => m.ValueInt32);
+                    break;
+                case MacroValueEnum.Backward:
+                    orderedAIValues = values.Where(m => m.ValueInt32 <= asmAddress.Value.Program).OrderByDescending(m => m.ValueInt32);
+                    break;
+                case MacroValueEnum.Near:
+                    orderedAIValues = values.OrderBy(m => Math.Abs(m.ValueInt32 - asmAddress.Value.Program)).ThenByDescending(m => m.ValueInt32);
+                    break;
+                case MacroValueEnum.Far:
+                    orderedAIValues = values.OrderByDescending(m => Math.Abs(m.ValueInt32 - asmAddress.Value.Program)).ThenByDescending(m => m.ValueInt32);
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+            if (orderedAIValues.Count() == 0)
+            {
+                throw new InvalidAIValueLabelOperatorException(valueEnum.ToString());
+            }
+            return orderedAIValues.First();
         }
 
         /// <summary>
