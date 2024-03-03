@@ -498,11 +498,82 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
+        public Label[] FindLabels(string target)
+        {
+            try
+            {
+                var labels = new List<Label>();
+                // 完全一致を取得
+                { 
+                    var targetAsmLoad = this;
+                    while (targetAsmLoad != default)
+                    {
+                        var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                        var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                        var label = scopelabels.FirstOrDefault();
+                        if (label != default)
+                        {
+                            return new[] { label };
+                        }
+                        targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+                    }
+                }
+                // テンポラリーラベルを処理
+                if (target.StartsWith(".@"))
+                {
+                    // .@のみの指定の場合
+                    {
+                        var targetAsmLoad = this;
+                        target = $"{targetAsmLoad.Scope.LabelName}.{target}";
+                        while (targetAsmLoad != default)
+                        {
+                            var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                            var label = labels.FirstOrDefault();
+                            if (label != default)
+                            {
+                                return new[] { label };
+                            }
+                            targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+                        }
+                    }
+
+                    // 曖昧ラベルの場合
+                    {
+                        var targetAsmLoad = this;
+                        while (targetAsmLoad != default)
+                        {
+                            var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
+                            var labelNames = labelFullName.Split(".");
+                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.GlobalLabelName, labelNames[0], true) == 0 &&
+                                                                               string.Compare(m.LabelName, labelNames[1], true) == 0 &&
+                                                                               string.Compare(m.TmpLabelName, labelNames[3], true) == 0);
+
+                            if (scopelabels.Count() > 0)
+                            {
+                                return scopelabels.ToArray();
+                            }
+                            targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+                        }
+                    }
+                }
+
+                return new Label[] { };
+            }
+            catch (ErrorAssembleException)
+            {
+                throw;
+            }
+            catch
+            {
+                return new Label[] { };
+            }
+        }
+
         public Label FindLabel(string target)
         {
             try
             {
-
                 {
                     // 通常
                     var targetAsmLoad = this;
@@ -551,7 +622,7 @@ namespace AILZ80ASM.Assembler
                             // ローカルラベル内で重複がある場合にはエラーにする
                             if (labels.Count() > 1)
                             {
-                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, string.Join(", ", labels.Select(m => $"{m.LabelName}.{m.SubLabelName}.{m.TmpLabelName}")));
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, string.Join(", ", labels.Select(m => m.LabelShortName)));
                             }
                             
                             var label = labels.FirstOrDefault();

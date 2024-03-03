@@ -31,6 +31,14 @@ namespace AILZ80ASM.Assembler
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0004, ex.Message);
             }
+            catch (InvalidAIValueLabelOperatorException ex)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0026, ex.Message);
+            }
+            catch (InvalidAIValueLabelAmbiguousException ex)
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, ex.Message);
+            }
             catch (CharMapNotFoundException ex)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, ex.Message);
@@ -61,7 +69,7 @@ namespace AILZ80ASM.Assembler
             }
             catch (Exception)
             {
-                throw new ErrorAssembleException(errorCode, $"演算対象：{target}");
+                throw new ErrorAssembleException(errorCode, $"演算対象:{target}");
             }
         }
     }
