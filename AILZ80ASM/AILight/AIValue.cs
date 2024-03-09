@@ -912,7 +912,14 @@ namespace AILZ80ASM.AILight
                 var labels = asmLoad.FindLabels(tmpLabel);
                 if (labels.Length > 1)
                 {
-                    throw new InvalidAIValueLabelAmbiguousException(string.Join(", ", labels.Select(m => m.LabelShortName)));
+                    if (labels.Any(m => m.LabelLevel == Label.LabelLevelEnum.AnonLabel))
+                    {
+                        throw new InvalidAIValueLabelAmbiguousException(InvalidAIValueLabelAmbiguousException.LabelType.Anonymous, "");
+                    }
+                    else
+                    {
+                        throw new InvalidAIValueLabelAmbiguousException(InvalidAIValueLabelAmbiguousException.LabelType.Normal, string.Join(", ", labels.Select(m => m.LabelShortName)));
+                    }
                 }
                 var label = labels.FirstOrDefault();
 

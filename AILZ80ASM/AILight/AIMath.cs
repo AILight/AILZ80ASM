@@ -14,7 +14,18 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
         private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
 
-        public static string[] LabelOperatorStrings => new[] { ".@H", ".@HIGH", ".@L", ".@LOW", ".@T", ".@TEXT", ".@E", ".@EXISTS" };
+        public static string[] LabelOperatorStrings => LabelOperatorDic.SelectMany(m => m.Value).ToArray();
+        public static Dictionary<string, string[]> LabelOperatorDic => new Dictionary<string, string[]>
+        {
+            ["high"] = new[] { ".@H", ".@HIGH" },
+            ["low"] = new[] { ".@L", ".@LOW" },
+            ["text"] = new[] { ".@T", ".@TEXT" },
+            ["exists"] = new[] { ".@E", ".@EXISTS" },
+            ["backward"] = new[] { ".@B", ".@BACKWARD" },
+            ["forward"] = new[] { ".@F", ".@FORWARD" },
+            ["near"] = new[] { ".@NEAR" },
+            ["far"] = new[] { ".@FAR" },
+        };
 
         public static bool TryParse(string value, out AIValue resultValue)
         {
@@ -86,27 +97,26 @@ namespace AILZ80ASM.AILight
                         var atmarkIndex = labelName.LastIndexOf(".@");
                         var operation = labelName.Substring(atmarkIndex);
                         labelName = labelName.Substring(0, atmarkIndex);
-                        if (string.Compare(operation, ".@H", true) == 0 ||
-                            string.Compare(operation, ".@HIGH", true) == 0)
+                        var notFound = true;
+
+                        foreach (var labelOperation in LabelOperatorDic)
                         {
-                            operations.Add(new AIValue("high", AIValue.ValueTypeEnum.Operation));
+                            foreach (var shortHand in labelOperation.Value)
+                            {
+                                if (string.Compare(operation, shortHand, true) == 0)
+                                {
+                                    operations.Add(new AIValue(labelOperation.Key, AIValue.ValueTypeEnum.Operation));
+                                    notFound = false;
+                                    break;
+                                }
+                            }
+                            if (!notFound)
+                            {
+                                break;
+                            }
                         }
-                        else if (string.Compare(operation, ".@L", true) == 0 ||
-                                 string.Compare(operation, ".@LOW", true) == 0)
-                        {
-                            operations.Add(new AIValue("low", AIValue.ValueTypeEnum.Operation));
-                        }
-                        else if (string.Compare(operation, ".@T", true) == 0 ||
-                                 string.Compare(operation, ".@TEXT", true) == 0)
-                        {
-                            operations.Add(new AIValue("text", AIValue.ValueTypeEnum.Operation));
-                        }
-                        else if (string.Compare(operation, ".@E", true) == 0 ||
-                                 string.Compare(operation, ".@EXISTS", true) == 0)
-                        {
-                            operations.Add(new AIValue("exists", AIValue.ValueTypeEnum.Operation));
-                        }
-                        else
+
+                        if (notFound)
                         {
                             // ここに来ることはないが、来たら例外を発生させる
                             throw new Exception();
