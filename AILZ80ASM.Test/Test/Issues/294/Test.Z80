@@ -1,0 +1,9 @@
+﻿
+[ABC]
+		TestArg 1, 2
+
+[DEF]
+TestArg macro a1, a2
+	ld a, a1
+	ld b, a2
+endm

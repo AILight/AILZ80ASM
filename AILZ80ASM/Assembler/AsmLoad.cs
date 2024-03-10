@@ -647,6 +647,24 @@ namespace AILZ80ASM.Assembler
             return default;
         }
 
+        public Macro[] FindMacros(string target)
+        {
+            var targetAsmLoad = this;
+            var macroIndex = target.IndexOf('.');
+            var shortMacroName = macroIndex == -1 ? target : target.Substring(0, macroIndex);
+
+            while (targetAsmLoad != default)
+            {
+                var macros = targetAsmLoad.Scope.Macros.Where(m => string.Compare(m.Name, shortMacroName, true) == 0).ToArray();
+                if (macros != default)
+                {
+                    return macros;
+                }
+                targetAsmLoad = targetAsmLoad.ParentAsmLoad;
+            }
+            return default;
+        }
+
         public Macro FindMacro(string target)
         {
             var targetAsmLoad = this;
