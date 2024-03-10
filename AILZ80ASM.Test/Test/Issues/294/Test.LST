@@ -1,0 +1,11 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.15.0, LST:Full:4
+                                
+                                [ABC]
+            **** E0001 ****             TestArg 1, 2
+                                
+                                [DEF]
+                                TestArg macro a1, a2
+                                    ld a, a1
+                                    ld b, a2
+                                endm
+[EOF:Test.Z80:UTF_8]

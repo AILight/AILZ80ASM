@@ -89,6 +89,15 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     errorMessage = "ラベルとして指定する場合には、末尾に:が必要です。";
                 }
+                else
+                {
+                    // 同名のラベルがあるか調査する
+                    var macros = Macro.FindsWithoutNamespace(LineItem, AsmLoad);
+                    if (macros != null && macros.Length > 0) 
+                    {
+                        errorMessage = $"マクロが見つからない場合には、ネームスペース付きを検討してください。[{string.Join(", ", macros.Select(m => m.FullName))}]";
+                    }
+                }
 
                 // マクロが見つからないケースは、エラーとする
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, errorMessage);
