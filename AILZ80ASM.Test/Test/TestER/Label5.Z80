@@ -1,0 +1,8 @@
+﻿		org $8000
+.@@
+		JP .@@
+		JP .@@
+Lable:
+		JP forward .@@
+.@@
+		JP backward .@@

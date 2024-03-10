@@ -1,0 +1,31 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.15.0
+Copyright (C) 2023 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [Test.Z80]
+
+# Assemble Status
+
+- Expand       (1/6)
+- PreAssemble  (2/6)
+- AdjAssemble  (3/6)
+- MainAssemble (4/6)
+- Validate     (5/6)
+- Complete     (6/6)
+
+# Outputs
+
+- LST filename [Issue291.LST]: Successful
+- BIN filename [Issue291.bin]: Failed
+
+# Error
+
+Test.Z80:9  E6012: CHECK ALIGN メモリ境界を超えました。アライメント境界:0x100 - 0x1FF 出力アドレス:0x1FF - 0x203
+
+# List
+
+Issue291.LST:10  E6012: CHECK ALIGN メモリ境界を超えました。アライメント境界:0x100 - 0x1FF 出力アドレス:0x1FF - 0x203
+
+1 error(s), 0 warning(s), 0 information
+

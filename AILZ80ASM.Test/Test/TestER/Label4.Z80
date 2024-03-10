@@ -1,0 +1,9 @@
+﻿			ORG $1000
+
+TEST:		LD A, 0
+			LD HL, backward .@1
+			RET
+.Length1	DB 01
+.@1			DB 02
+.Length2	DB 01
+.@1			DB 03
