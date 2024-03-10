@@ -37,7 +37,14 @@ namespace AILZ80ASM.Assembler
             }
             catch (InvalidAIValueLabelAmbiguousException ex)
             {
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, ex.Message);
+                if (ex.LabelTypeEnum == InvalidAIValueLabelAmbiguousException.LabelType.Normal)
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0008, ex.Message);
+                }
+                else
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E0012);
+                }
             }
             catch (CharMapNotFoundException ex)
             {

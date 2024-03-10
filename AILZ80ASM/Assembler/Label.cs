@@ -25,6 +25,7 @@ namespace AILZ80ASM.Assembler
             Label,
             SubLabel,
             TmpLabel,
+            AnonLabel,
         }
 
         public enum LabelTypeEnum
@@ -52,6 +53,7 @@ namespace AILZ80ASM.Assembler
         public string LabelName { get; private set; }
         public string SubLabelName { get; private set; }
         public string TmpLabelName { get; private set; }
+        public string AnonLabelName { get; private set; }
         public string LabelFullName { get; private set; }
         public string LabelShortName => LabelLevel switch
         {
@@ -59,6 +61,7 @@ namespace AILZ80ASM.Assembler
             LabelLevelEnum.Label => LabelName,
             LabelLevelEnum.SubLabel => $"{LabelName}.{SubLabelName}",
             LabelLevelEnum.TmpLabel => $"{LabelName}.{SubLabelName}.{TmpLabelName}",
+            LabelLevelEnum.AnonLabel => $"{LabelName}.{SubLabelName}.{AnonLabelName}",
             _ => throw new NotSupportedException()
         };
 
@@ -171,7 +174,14 @@ namespace AILZ80ASM.Assembler
                                 SubLabelName = asmLoad.Scope.SubLabelName;
                             }
 
-                            if (splits[1].StartsWith("@"))
+                            if (splits[1].StartsWith("@@"))
+                            {
+                                var anonGuid = Guid.NewGuid();
+                                var sum = anonGuid.ToByteArray().Select(m => (int)m).Sum() % 10;
+                                AnonLabelName = $"@@{sum}{anonGuid:N}";
+                                LabelLevel = LabelLevelEnum.AnonLabel;
+                            }
+                            else if (splits[1].StartsWith("@"))
                             {
                                 TmpLabelName = splits[1];
                                 LabelLevel = LabelLevelEnum.TmpLabel;
@@ -209,6 +219,7 @@ namespace AILZ80ASM.Assembler
                     LabelLevelEnum.Label => $"{GlobalLabelName}.{LabelName}",
                     LabelLevelEnum.SubLabel => $"{GlobalLabelName}.{LabelName}.{SubLabelName}",
                     LabelLevelEnum.TmpLabel => $"{GlobalLabelName}.{LabelName}.{SubLabelName}.{TmpLabelName}",
+                    LabelLevelEnum.AnonLabel => $"{GlobalLabelName}.{LabelName}.{SubLabelName}.{AnonLabelName}",
                     _ => throw new NotImplementedException()
                 };
                 
@@ -222,7 +233,8 @@ namespace AILZ80ASM.Assembler
             {
                 if (LabelLevel == LabelLevelEnum.Label ||
                     LabelLevel == LabelLevelEnum.SubLabel ||
-                     LabelLevel == LabelLevelEnum.TmpLabel)
+                    LabelLevel == LabelLevelEnum.TmpLabel ||
+                    LabelLevel == LabelLevelEnum.AnonLabel)
                 {
                     ValueString = "$";
                 }

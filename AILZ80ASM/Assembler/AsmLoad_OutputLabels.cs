@@ -22,7 +22,9 @@ namespace AILZ80ASM.Assembler
                 {
                     streamWriter.WriteLine($"[{globalLabelName}]");
                 }
-                foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.GlobalLabelName == globalLabelName))
+                foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && 
+                                                                   m.GlobalLabelName == globalLabelName && 
+                                                                   m.LabelLevel != Label.LabelLevelEnum.AnonLabel))
                 {
                     OutputLabelForShortName(label, streamWriter);
                 }
@@ -31,7 +33,7 @@ namespace AILZ80ASM.Assembler
 
             if (globalLabelMode)
             {
-                foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value))
+                foreach (var label in this.Scope.Labels.Where(m => m.DataType == Label.DataTypeEnum.Value && m.LabelLevel != Label.LabelLevelEnum.AnonLabel))
                 {
                     OutputLabelForFullName(label, streamWriter);
                 }

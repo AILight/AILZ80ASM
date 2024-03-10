@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -912,7 +913,14 @@ namespace AILZ80ASM.AILight
                 var labels = asmLoad.FindLabels(tmpLabel);
                 if (labels.Length > 1)
                 {
-                    throw new InvalidAIValueLabelAmbiguousException(string.Join(", ", labels.Select(m => m.LabelShortName)));
+                    if (labels.Any(m => m.LabelLevel == Label.LabelLevelEnum.AnonLabel))
+                    {
+                        throw new InvalidAIValueLabelAmbiguousException(InvalidAIValueLabelAmbiguousException.LabelType.Anonymous, "");
+                    }
+                    else
+                    {
+                        throw new InvalidAIValueLabelAmbiguousException(InvalidAIValueLabelAmbiguousException.LabelType.Normal, string.Join(", ", labels.Select(m => m.LabelShortName)));
+                    }
                 }
                 var label = labels.FirstOrDefault();
 
@@ -1390,7 +1398,12 @@ namespace AILZ80ASM.AILight
                 default:
                     throw new InvalidOperationException();
             }
-            var values = labels.Select(m => new AIValue(m.LabelFullName, ValueTypeEnum.None)).ToArray();
+            var startOututAddress = asmLoad.Share.AsmORGs.Where(m => m.OutputAddress <= asmAddress.Value.Output).OrderByDescending(m => m.OutputAddress).FirstOrDefault()?.OutputAddress ?? 0;
+            var endOututAddress = asmLoad.Share.AsmORGs.Where(m => m.OutputAddress > asmAddress.Value.Output).OrderByDescending(m => m.OutputAddress).FirstOrDefault()?.OutputAddress ?? uint.MaxValue;
+
+            var values = labels.Where(m => m.LineItem.LineDetailItem.Address.Value.Output >= startOututAddress &&
+                                           m.LineItem.LineDetailItem.Address.Value.Output <  endOututAddress)
+                               .Select(m => new AIValue(m.LabelFullName, ValueTypeEnum.None)).ToArray();
             foreach (var item in values)
             {
                 item.SetValue(asmLoad, asmAddress);
@@ -1414,6 +1427,7 @@ namespace AILZ80ASM.AILight
                 default:
                     throw new InvalidOperationException();
             }
+
             if (orderedAIValues.Count() == 0)
             {
                 throw new InvalidAIValueLabelOperatorException(valueEnum.ToString());

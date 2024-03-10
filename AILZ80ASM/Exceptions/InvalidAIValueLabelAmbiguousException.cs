@@ -8,10 +8,18 @@ namespace AILZ80ASM.Exceptions
 {
     public class InvalidAIValueLabelAmbiguousException : Exception
     {
-        public InvalidAIValueLabelAmbiguousException(string message)
+        public enum LabelType
+        {
+            Normal,
+            Anonymous,
+        }
+
+        public LabelType LabelTypeEnum { get; private set; }
+
+        public InvalidAIValueLabelAmbiguousException(LabelType labelType, string message)
             : base(message)
         {
-
+            LabelTypeEnum = labelType;
         }
     }
 }

@@ -1,0 +1,13 @@
+﻿		org $8000
+
+.@@		DB 0, 1, 2, 3
+Start:
+		ld a, 0
+		TestArg backward .@@, .@@.@F
+		ret
+.@@		DB 4, 5, 6, 7
+
+TestArg MACRO a1, a2
+		ld hl, a1
+		ld bc, a2
+ENDM
