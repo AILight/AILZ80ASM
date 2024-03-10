@@ -250,6 +250,10 @@ LABLE:			; ラベル指定
 - [@Tサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80#L10)
 - [@Eサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Include/Test.INC#L1)
 
+#### ラベルの機能 (糖衣構文)
+- .@@B は、.@@.@Bの代わりに使うことが出来ます
+- .@@F は、.@@.@Fの代わりに使うことができます
+ 
 #### ラベル指定サンプル
 ```
 	org $8000

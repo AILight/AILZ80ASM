@@ -1,0 +1,21 @@
+﻿	ORG $8000
+
+LB1:
+	LD A, 0
+.@@
+	INC A
+	JP Z, .@@B
+	JP C, .@@F
+	LD HL, .@@.@B + 1
+	LD HL, .@@B + 1
+	LD DE, .@@.@F - 1
+	LD DE, .@@F - 1
+	RET
+
+LB2:
+	LD A, 0
+.@@
+	INC A
+	DJNZ .@@B
+
+	RET
