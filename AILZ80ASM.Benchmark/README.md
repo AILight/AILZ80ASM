@@ -14,6 +14,36 @@
   - [Benchmark1](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark/TestSource/Benchmark1) をアセンブルした処理時間
 
 ## ベンチマーク結果
+#### v1.0.17.0(開発中): 2024/03/10
+- .NET 8
+```
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22621.3235/22H2/2022Update/SunValley2)
+13th Gen Intel Core i7-13700K, 1 CPU, 24 logical and 16 physical cores
+.NET SDK 8.0.101
+  [Host]     : .NET 8.0.1 (8.0.123.58001), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.1 (8.0.123.58001), X64 RyuJIT AVX2
+
+
+| Method     | Mean    | Error    | StdDev   |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 2.815 s | 0.0102 s | 0.0095 s |
+```
+
+#### v1.0.16.0: 2024/03/10
+- 匿名ラベルの機能を追加
+```
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22621.3235/22H2/2022Update/SunValley2)
+13th Gen Intel Core i7-13700K, 1 CPU, 24 logical and 16 physical cores
+.NET SDK 8.0.101
+  [Host]     : .NET 6.0.27 (6.0.2724.6912), X64 RyuJIT AVX2
+  DefaultJob : .NET 6.0.27 (6.0.2724.6912), X64 RyuJIT AVX2
+
+
+| Method     | Mean    | Error    | StdDev   |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 2.832 s | 0.0238 s | 0.0211 s |
+```
+
 #### v0.9.9.25: 2022/07/09
 - 演算処理のパフォーマンスチューニング
 ```
