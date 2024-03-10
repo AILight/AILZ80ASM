@@ -1,0 +1,19 @@
+﻿		org $0000, $0000
+
+MyCHAR:
+		DB 0, 1, 2, 3
+
+		org $C000, $1000
+.@@
+		NOP
+		LD HL, backward .@@
+.@@
+		DB 0, 1, 2, 3
+
+		org $C000, $2000
+		NOP
+.@@
+		LD HL, backward .@@
+.@@
+		DB 0, 1, 2, 3
+

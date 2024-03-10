@@ -507,7 +507,7 @@ namespace AILZ80ASM.Assembler
                     var targetAsmLoad = this;
                     while (targetAsmLoad != default)
                     {
-                        var labels = targetAsmLoad.Scope.Labels.Where(m => m.LabelLevel == Label.LabelLevelEnum.AnonLabel);
+                        var labels = targetAsmLoad.Scope.Labels.Where(m => m.GlobalLabelName == targetAsmLoad.Scope.GlobalLabelName && m.LabelLevel == Label.LabelLevelEnum.AnonLabel);
                         if (labels.Count() > 0)
                         {
                             return labels.ToArray();

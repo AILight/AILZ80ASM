@@ -1,0 +1,19 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.15.0, LST:Full:4
+000000 8000                             org $8000
+                                
+000000 8000 00010203            .@@     DB 0, 1, 2, 3
+       8004                     Start:
+000004 8004 3E00             7          ld a, 0
+                                        TestArg backward .@@, .@@.@F
+                               +; a1 = 0x8000:32768
+                               +; a2 = 0x800d:32781
+000006 8006 210080          10 +        ld hl, a1
+000009 8009 010D80          10 +        ld bc, a2
+00000C 800C C9              10          ret
+00000D 800D 04050607            .@@     DB 4, 5, 6, 7
+                                
+                                TestArg MACRO a1, a2
+                                        ld hl, a1
+                                        ld bc, a2
+                                ENDM
+[EOF:Test.Z80:UTF_8]

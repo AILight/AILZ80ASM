@@ -10,7 +10,7 @@
 000000 9000 00               4 +    NOP
                                +#ENDIF
                                     REGTEST ADDR
-                               +; target = 36864
+                               +; target = 0x9000:36864
                                +#IF target.@Text != "HL"
 000001 9001 210090          10 +    ld hl, target
                                +#ELSE

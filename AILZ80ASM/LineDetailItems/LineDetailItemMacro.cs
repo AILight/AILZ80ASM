@@ -30,7 +30,15 @@ namespace AILZ80ASM.LineDetailItems
                     {
                         Label.DataTypeEnum.Invalid => "Invalid",
                         Label.DataTypeEnum.None => label.ValueString,
-                        _ => label.Value.ConvertTo<object>().ToString()
+                        _ => label.Value.ValueType.HasFlag(AILight.AIValue.ValueTypeEnum.Int32) ?
+                             $"0x{label.Value.ConvertTo<int>():x4}:{label.Value.ConvertTo<int>()}" :
+                             label.Value.ConvertTo<object>().ToString()
+                             ,
+                        /*
+                        {
+                            return label.Value.ConvertTo<object>().ToString();
+                        };
+                        */
                     };
 
                     lists.Add(AsmList.CreateSource($"; {label.LabelShortName} = {value}"));

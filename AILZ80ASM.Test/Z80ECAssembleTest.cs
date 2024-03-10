@@ -123,7 +123,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 49, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 50, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 59, "E0004.Z80", errors);
-            // ”’l‚ÌƒoƒŠƒf[ƒVƒ‡ƒ“ƒ`ƒFƒbƒN
+            // ï¿½ï¿½ï¿½lï¿½Ìƒoï¿½ï¿½ï¿½fï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 67, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 68, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 69, "E0004.Z80", errors);
@@ -397,7 +397,7 @@ namespace AILZ80ASM.Test
         public void TestEC_E1012()
         {
             /*
-            ‚±‚¿‚ç‚Í”­Œ»‚µ‚È‚¢
+            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í”ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½
             var errors = Assemble("E1012.Z80");
 
             Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
