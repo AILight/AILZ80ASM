@@ -81,7 +81,7 @@ Next_PROC:
                 ld      hl, (100 - 5) * 2 ; 1プレーン　- 1ライン（戻す量）
                 ex      de, hl
                 ; 1プレーン
-        REPEAT 8 LAST -1
+        REPT 8 LAST -1
                 pop     bc
                 ld      (hl), c
                 ld      (hl), c
@@ -96,13 +96,13 @@ Next_PROC:
                 set     5, h
                 ld      (hl), b
                 add     hl, de
-        END REPEAT
+        ENDM
                 ld      sp, iy
                 ei
                 exx
                 jp      ABCDRAM
                 
-        MACRO   CALC_VRAM VRAM_ADDR
+CALC_VRAM MACRO VRAM_ADDR
                 ex      af, af'
                 ld      d, VRAM_ADDR.@H
                 ld      a, b
@@ -134,4 +134,4 @@ Next_PROC:
                 ld      a, (de)
                 ld      ixh, a
                 ex      af, af'
-        END MACRO
+ENDM
