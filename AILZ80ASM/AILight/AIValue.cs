@@ -249,6 +249,7 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
         private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
         private static readonly string RegexPatternFunctionWithNamespace = @"^(?<function>[0-9a-zA-Z_]+\.[0-9a-zA-Z_]+\s*\()";
+        private static readonly string RegexPatternSyntaxSuger_AL = @"^\.@@(?<direction>(B|F))";
 
         private string Value { get; set; } = "";
         private int ValueInt32 { get; set; } = default(int);
@@ -449,6 +450,37 @@ namespace AILZ80ASM.AILight
             }
 
             resultFunction = "";
+            return false;
+        }
+
+        /// <summary>
+        /// 値を抜き出す
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="resultValue"></param>
+        /// <returns></returns>
+        public static bool TryParseSyntaxSuger(ref string target, out string[] resultValues)
+        {
+            var matched = Regex.Match(target, RegexPatternSyntaxSuger_AL, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matched.Success)
+            {
+                var direction = matched.Groups["direction"].Value;
+                switch (direction)
+                {
+                    case "B":
+                        target = target.Substring(4).TrimStart();
+                        resultValues = new[] { ".@@.@B" };
+                        return true;
+                    case "F":
+                        target = target.Substring(4).TrimStart();
+                        resultValues = new[] { ".@@.@F" };
+                        return true;
+                    default:
+                        resultValues = default(string[]);
+                        return false;
+                }
+            }
+            resultValues = default(string[]);
             return false;
         }
 

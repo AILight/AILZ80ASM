@@ -161,6 +161,13 @@ namespace AILZ80ASM.AILight
                 {
                     terms.Add(new AIValue(resultFunction, AIValue.ValueTypeEnum.Function));
                 }
+                else if (AIValue.TryParseSyntaxSuger(ref tmpValue, out var resultValues))
+                {
+                    foreach (var resultValue in resultValues)
+                    {
+                        terms.Add(new AIValue(resultValue));
+                    }
+                }    
                 else if (AIValue.TryParseValue(ref tmpValue, out var resultValue))
                 {
                     terms.Add(new AIValue(resultValue));
