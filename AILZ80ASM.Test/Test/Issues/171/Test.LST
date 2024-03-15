@@ -13,13 +13,13 @@
 000000 0000 0000                    dw  label1
                                 ;MACRO
                                     TEST    label1
-                               +; __LABEL__ = 0
+                               +; __LABEL__ = 0x0000:0
 000002 0002 0000               +    dw  __LABEL__
                                 ;DIRECT
 000004 0004 0800                    dw  label2
                                 ;MACRO
                                     TEST    label2
-                               +; __LABEL__ = 8
+                               +; __LABEL__ = 0x0008:8
 000006 0006 0800               +    dw  __LABEL__
                                 ;
        0008                     label2:

@@ -7,18 +7,18 @@ ADDR:
 	TEST_MACRO
 
 ; レジスター指定テスト
-MACRO REGTEST target
+REGTEST MACRO target
 #IF target.@Text != "HL"
     ld hl, target
 #ELSE
 	NOP
 #ENDIF
-END MACRO
+ENDM
 
 ; カッコつきマクロテスト
-MACRO ABC(DEF)
+ABC(DEF) MACRO
 	XOR A
-END MACRO
+ENDM
 
 ; マクロ内リピート
 TEST_MACRO MACRO

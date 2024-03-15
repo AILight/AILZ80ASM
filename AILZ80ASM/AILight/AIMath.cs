@@ -14,6 +14,19 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
         private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
 
+        public static string[] LabelOperatorStrings => LabelOperatorDic.SelectMany(m => m.Value).ToArray();
+        public static Dictionary<string, string[]> LabelOperatorDic => new Dictionary<string, string[]>
+        {
+            ["high"] = new[] { ".@H", ".@HIGH" },
+            ["low"] = new[] { ".@L", ".@LOW" },
+            ["text"] = new[] { ".@T", ".@TEXT" },
+            ["exists"] = new[] { ".@E", ".@EXISTS" },
+            ["backward"] = new[] { ".@B", ".@BACKWARD" },
+            ["forward"] = new[] { ".@F", ".@FORWARD" },
+            ["near"] = new[] { ".@NEAR" },
+            ["far"] = new[] { ".@FAR" },
+        };
+
         public static bool TryParse(string value, out AIValue resultValue)
         {
             return InternalTryParse(value, default(AsmLoad), default(AsmAddress?), new List<Label>(), out resultValue);
@@ -38,7 +51,6 @@ namespace AILZ80ASM.AILight
         {
             return Calculation(value, asmLoad, default(AsmAddress?), new List<Label>());
         }
-
 
         public static AIValue Calculation(string target, AsmLoad asmLoad, AsmAddress? asmAddress)
         {
@@ -77,55 +89,44 @@ namespace AILZ80ASM.AILight
             {
                 if (item.ValueType == AIValue.ValueTypeEnum.None)
                 {
-                    var positionIndex = 0;
-                    var startPositionIndex = item.OriginalValue.IndexOf(".@", positionIndex);
-                    if (startPositionIndex > 0)
+                    // ラベル演算子を処理する
+                    var operations = new List<AIValue>();
+                    var labelName = item.OriginalValue;
+                    while (AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        var localLabels = new List<AIValue>();
-                        var operations = new List<AIValue>();
-                        var optionIndex = startPositionIndex;
-                        while (optionIndex > 0)
+                        var atmarkIndex = labelName.LastIndexOf(".@");
+                        var operation = labelName.Substring(atmarkIndex);
+                        labelName = labelName.Substring(0, atmarkIndex);
+                        var notFound = true;
+
+                        foreach (var labelOperation in LabelOperatorDic)
                         {
-                            var nextPositionIndex = item.OriginalValue.IndexOf(".@", optionIndex + 1);
-                            var length = nextPositionIndex == -1 ? item.OriginalValue.Length - optionIndex : nextPositionIndex - optionIndex;
-                            var option = item.OriginalValue.Substring(optionIndex, length);
-                            if (string.Compare(option, ".@H", true) == 0 ||
-                                string.Compare(option, ".@HIGH", true) == 0)
+                            foreach (var shortHand in labelOperation.Value)
                             {
-                                operations.Add(new AIValue("high", AIValue.ValueTypeEnum.Operation));
+                                if (string.Compare(operation, shortHand, true) == 0)
+                                {
+                                    operations.Add(new AIValue(labelOperation.Key, AIValue.ValueTypeEnum.Operation));
+                                    notFound = false;
+                                    break;
+                                }
                             }
-                            else if (string.Compare(option, ".@L", true) == 0 ||
-                                        string.Compare(option, ".@LOW", true) == 0)
+                            if (!notFound)
                             {
-                                operations.Add(new AIValue("low", AIValue.ValueTypeEnum.Operation));
+                                break;
                             }
-                            else if (string.Compare(option, ".@T", true) == 0 ||
-                                        string.Compare(option, ".@TEXT", true) == 0)
-                            {
-                                operations.Add(new AIValue("text", AIValue.ValueTypeEnum.Operation));
-                            }
-                            else if (string.Compare(option, ".@E", true) == 0 ||
-                                        string.Compare(option, ".@EXISTS", true) == 0)
-                            {
-                                operations.Add(new AIValue("exists", AIValue.ValueTypeEnum.Operation));
-                            }
-                            else
-                            {
-                                // 該当外はローカルラベル
-                                localLabels.Add(new AIValue(item.OriginalValue.Substring(0, optionIndex) + option));
-                            }
-                            optionIndex = nextPositionIndex;
                         }
 
-                        result.AddRange(operations.Reverse<AIValue>());
-                        if (localLabels.Count > 0)
+                        if (notFound)
                         {
-                            result.AddRange(localLabels);
+                            // ここに来ることはないが、来たら例外を発生させる
+                            throw new Exception();
                         }
-                        else
-                        {
-                            result.Add(new AIValue(item.OriginalValue.Substring(0, startPositionIndex)));
-                        }
+                    }
+
+                    if (operations.Count > 0)
+                    {
+                        result.AddRange(operations);
+                        result.Add(new AIValue(labelName));
                         continue;
                     }
                 }
@@ -160,6 +161,13 @@ namespace AILZ80ASM.AILight
                 {
                     terms.Add(new AIValue(resultFunction, AIValue.ValueTypeEnum.Function));
                 }
+                else if (AIValue.TryParseSyntaxSuger(ref tmpValue, out var resultValues))
+                {
+                    foreach (var resultValue in resultValues)
+                    {
+                        terms.Add(new AIValue(resultValue));
+                    }
+                }    
                 else if (AIValue.TryParseValue(ref tmpValue, out var resultValue))
                 {
                     terms.Add(new AIValue(resultValue));

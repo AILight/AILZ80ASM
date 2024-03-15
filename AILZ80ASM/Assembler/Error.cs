@@ -23,11 +23,11 @@ namespace AILZ80ASM.Assembler
             E0005,
             E0006,
             E0007,
-            //E0008,
+            E0008,
             E0009,
             E0010,
             E0011,
-            //E0012,
+            E0012,
             E0013,
             E0014,
             E0015,
@@ -41,12 +41,14 @@ namespace AILZ80ASM.Assembler
             E0023,
             E0024,
             E0025,
+            E0026,
 
             E1011,
             E1012,
             E1013,
             E1014,
             E1015,
+            E1016,
 
             E1021,
             E1022,
@@ -58,6 +60,9 @@ namespace AILZ80ASM.Assembler
 
             E1041,
             E1042,
+
+            E1051,
+            E1052,
 
             // Include
             //E2001,
@@ -98,6 +103,21 @@ namespace AILZ80ASM.Assembler
             E4003,
             E4004,
             E4005,
+
+            // ALIGN ブロック (廃止)
+            // E5001,
+            // E5002,
+
+            // CHECK
+            E6001,
+            // CHECK ALIGN
+            E6011,
+            E6012,
+            E6013,
+            // ENUM
+            E6101,
+            E6102,
+            E6103,
 
             W0001,
             W0002,
@@ -152,12 +172,13 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0005] = "エスケープシーケンスの表記が間違っています。[{0}]",
             [ErrorCodeEnum.E0006] = "0 で除算しようとしました。 [{0}]",
             [ErrorCodeEnum.E0007] = "ラベルが循環参照されました。自分自身が参照されていないか確認してください。[{0}]",
-            //[ErrorCodeEnum.E0008] = "",
+            [ErrorCodeEnum.E0008] = "ラベルの参照が曖昧です。ラベル指定演算子を使うか、次の指定方法を検討してください。[{0}]",
             [ErrorCodeEnum.E0009] = "ORGに指定した出力アドレス上に既にアセンブリ結果があります。",
             [ErrorCodeEnum.E0010] = "出力アドレスに影響する場所では$$は使えません。",
             [ErrorCodeEnum.E0011] = "参照したラベルのプログラムアドレスが確定できませんでした。{0}",
+            [ErrorCodeEnum.E0012] = "匿名ラベルの参照が曖昧です。ラベル指定演算子を使ってください。",
             [ErrorCodeEnum.E0013] = "ラベルの指定が間違っています。記号や予約語や数値に変換できる文字列は使えません。",
-            [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。ローカルラベルの場合は、上位ラベルの宣言を確認してください。",
+            [ErrorCodeEnum.E0014] = "同名のラベルが既に定義されています。{0}",
             [ErrorCodeEnum.E0015] = "ALIGNに指定したアドレスは、2のべき乗である必要があります。",
             [ErrorCodeEnum.E0016] = "指定できる値は、0～7です。[{0}]",
             [ErrorCodeEnum.E0017] = "ラベル名と同じネームスペース名は付ける事が出来ません。[{0}]",
@@ -169,15 +190,17 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0023] = "式の解析に失敗しました。式を確認してください。[{0}]",
             [ErrorCodeEnum.E0024] = "DBFILへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0025] = "DWFILへの変換に失敗しました。[{0}]",
+            [ErrorCodeEnum.E0026] = "ラベル指定演算子 ({0})により、選択できるラベルが見つかりませんでした。",
 
             //[ErrorCodeEnum.E9999] = $"オフセット値の範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
 
             // リピート
-            [ErrorCodeEnum.E1011] = "REPEAT (REPT) に対応するEND REPEAT (ENDM) が見つかりませんでした。",
-            [ErrorCodeEnum.E1012] = "END REPEAT (ENDM) が先に見つかりました。",
-            [ErrorCodeEnum.E1013] = "LASTに指定した値が不正です。負の値を指定してください。[{0}]",
-            [ErrorCodeEnum.E1014] = "REPEAT (REPT) では、ローカルラベルしか使えません。",
-            [ErrorCodeEnum.E1015] = "REPEAT (REPT) に指定した値が不正です。[{0}]",
+            [ErrorCodeEnum.E1011] = "REPT に対応するENDM が見つかりませんでした。",
+            [ErrorCodeEnum.E1012] = "ENDM (REPT) が先に見つかりました。",
+            [ErrorCodeEnum.E1013] = "REPT LASTに指定した値が不正です。負の値を指定してください。[{0}]",
+            [ErrorCodeEnum.E1014] = "REPT では、ローカルラベルしか使えません。",
+            [ErrorCodeEnum.E1015] = "REPT に指定した値が不正です。[{0}]",
+            [ErrorCodeEnum.E1016] = "REPT LASTに指定した値が不正です。削除できる命令数を超えています。",
 
             // コンディショナル
             [ErrorCodeEnum.E1021] = "#IFに対応する#ENDIFが見つかりませんでした。",
@@ -192,6 +215,10 @@ namespace AILZ80ASM.Assembler
             // プリント
             [ErrorCodeEnum.E1041] = "引数の設定が間違っています。{0}",
             [ErrorCodeEnum.E1042] = "#PRINTにラベルは設定できません。",
+
+            // リスト
+            [ErrorCodeEnum.E1051] = "引数の設定が間違っています。{0}",
+            [ErrorCodeEnum.E1052] = "#LISTにラベルは設定できません。",
 
             // Include
             //[ErrorCodeEnum.E2001] = "",
@@ -215,9 +242,9 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E2108] = "CharMap 既に設定済みです。[{0}]",
 
             // マクロ
-            [ErrorCodeEnum.E3001] = "MACROに対応するEND MACRO (ENDM) が見つかりませんでした。",
-            [ErrorCodeEnum.E3002] = "END MACRO (ENDM) が先に見つかりました。",
-            //[ErrorCodeEnum.E3003] = ",
+            [ErrorCodeEnum.E3001] = "MACROに対応するENDM が見つかりませんでした。",
+            [ErrorCodeEnum.E3002] = "ENDM(MACRO) が先に見つかりました。",
+            //[ErrorCodeEnum.E3003] = "",
             [ErrorCodeEnum.E3004] = "MACROの引数の数が一致していません。",
             [ErrorCodeEnum.E3005] = "MACROの引数名が有効ではありません。記号や予約語は使えません。[{0}]",
             [ErrorCodeEnum.E3006] = "MACROでは、ローカルラベル以外は使えません。",
@@ -232,6 +259,18 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E4003] = "Functionの再起呼び出しの回数が閾値を超えました。",
             [ErrorCodeEnum.E4004] = "Functionの引数の数が一致していません。",
             [ErrorCodeEnum.E4005] = "Functionの引数名が有効ではありません。[{0}]",
+
+
+            // CHECK
+            [ErrorCodeEnum.E6001] = "ENDC が先に見つかりました。",
+            [ErrorCodeEnum.E6011] = "CHECK ALIGN に対応する ENDC が見つかりませんでした。",
+            [ErrorCodeEnum.E6012] = "CHECK ALIGN メモリ境界を超えました。アライメント境界:0x{0:X} - 0x{1:X} 出力アドレス:0x{2:X} - 0x{3:X}",
+            [ErrorCodeEnum.E6013] = "CHECK ALIGNに指定したアドレスは、2のべき乗である必要があります。",
+
+            // ENUM
+            [ErrorCodeEnum.E6101] = "ENDM が先に見つかりました。",
+            [ErrorCodeEnum.E6102] = "ENUM に使えない構文です。",
+            [ErrorCodeEnum.E6103] = "ENUM に使えないラベル名です。同名のラベルが既に定義されているか、ラベルに使えない記号が使われています。",
 
             // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",

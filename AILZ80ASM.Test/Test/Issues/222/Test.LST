@@ -1,0 +1,15 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.6.0, LST:Full:4
+000000 0100                         org 0x100
+                                
+                                on  equ #TRUE
+                                off equ #FALSE
+                                
+000000 0100 3E00             7      ld  a, 0
+                                
+                                
+000002 0102 0601             7      ld  b, ABC
+000004 0104 0E02             7      ld  c, DEF
+                                    
+000006 0106 C9              10      ret
+                                
+[EOF:Test.Z80:UTF_8]

@@ -59,5 +59,14 @@ namespace AILZ80ASM.Assembler
 
         // スーパーアセンブル用
         public AsmSuperAssemble AsmSuperAssembleMode { get; set; } = default;
+
+        // List出力フラグ
+        public bool IsOutputList { get; set; } = true;
+
+        // 出力サイズを計測する
+        public List<LineDetailItem> ValidateAssembles { get; set; } = default;
+
+        // チェックブロック用
+        public Stack<LineDetailItemCheck> CheckLineDetailItemStack { get; set; } = default;
     }
 }

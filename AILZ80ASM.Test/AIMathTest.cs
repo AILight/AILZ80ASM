@@ -232,6 +232,19 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIMath.Calculation("EXISTS LB01", asmLoad).ConvertTo<bool>());
             Assert.IsFalse(AIMath.Calculation("EXISTS LB02", asmLoad).ConvertTo<bool>());
         }
+        
+        [TestMethod]
+        public void Calc_13()
+        {
+            Assert.AreEqual((2 - 1) + 4, AIMath.Calculation("(2 - 1) + 4").ConvertTo<UInt16>());
+            Assert.AreEqual(2 - 1 + 1, AIMath.Calculation("2 - 1 + 1").ConvertTo<UInt16>());
+            Assert.AreEqual((1) * 3, AIMath.Calculation("(1) * 3").ConvertTo<UInt16>());
+            Assert.AreEqual((1) / 4, AIMath.Calculation("(1) / 4").ConvertTo<UInt16>());
+
+            Assert.AreEqual((1) + 3, AIMath.Calculation("(1) + 3").ConvertTo<UInt16>());
+            Assert.AreEqual((2 - 1) + 4, AIMath.Calculation("(2 - 1) + 4").ConvertTo<UInt16>());
+            Assert.AreEqual((1) - 5, AIMath.Calculation("(1) - 5").ConvertTo<int>());
+        }
 
         [TestMethod]
         public void Calc_UInt32()
@@ -265,25 +278,63 @@ namespace AILZ80ASM.Test
                 asmLoad.AddLabel(label);
             }
             {
+                var label = new LabelAdr(".LLB", "0xBB03", asmLoad);
+                asmLoad.AddLabel(label);
+            }
+            {
+                var label = new LabelAdr(".@0", "0xCC04", asmLoad);
+                asmLoad.AddLabel(label);
+            }
+
+            {
                 var label = new LabelAdr("LB2", "LABEL", asmLoad);
                 asmLoad.AddLabel(label);
             }
             Assert.AreEqual(0xFF, AIMath.Calculation("-1", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(1, AIMath.Calculation("-1 * -1", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x55FE, AIMath.Calculation("-LB", asmLoad).ConvertTo<UInt16>());
+
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@H", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@HIGH", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x00, AIMath.Calculation("LB.@H.@H", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@L", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@LOW", asmLoad).ConvertTo<byte>());
-
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@L.@L", asmLoad).ConvertTo<byte>());
+
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@h", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0xAA, AIMath.Calculation("LB.@high", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x00, AIMath.Calculation("LB.@h.@h", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@l", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@low", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(0x02, AIMath.Calculation("LB.@l.@l", asmLoad).ConvertTo<byte>());
+
+            Assert.AreEqual(0xBB, AIMath.Calculation("LB.LLB.@H", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0xBB, AIMath.Calculation("LB.LLB.@HIGH", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("LB.LLB.@H.@H", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x03, AIMath.Calculation("LB.LLB.@L", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x03, AIMath.Calculation("LB.LLB.@LOW", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x03, AIMath.Calculation("LB.LLB.@L.@L", asmLoad).ConvertTo<byte>());
+
+            Assert.AreEqual(0xBB, AIMath.Calculation("LB.LLB.@h", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0xBB, AIMath.Calculation("LB.LLB.@high", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("LB.LLB.@h.@h", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x03, AIMath.Calculation("LB.LLB.@l", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x03, AIMath.Calculation("LB.LLB.@low", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x03, AIMath.Calculation("LB.LLB.@l.@l", asmLoad).ConvertTo<byte>());
+
+            Assert.AreEqual(0xCC, AIMath.Calculation("LB.LLB.@0.@H", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0xCC, AIMath.Calculation("LB.LLB.@0.@HIGH", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("LB.LLB.@0.@H.@H", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x04, AIMath.Calculation("LB.LLB.@0.@L", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x04, AIMath.Calculation("LB.LLB.@0.@LOW", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x04, AIMath.Calculation("LB.LLB.@0.@L.@L", asmLoad).ConvertTo<byte>());
+
+            Assert.AreEqual(0xCC, AIMath.Calculation("LB.LLB.@0.@h", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0xCC, AIMath.Calculation("LB.LLB.@0.@high", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x00, AIMath.Calculation("LB.LLB.@0.@h.@h", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x04, AIMath.Calculation("LB.LLB.@0.@l", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x04, AIMath.Calculation("LB.LLB.@0.@low", asmLoad).ConvertTo<byte>());
+            Assert.AreEqual(0x04, AIMath.Calculation("LB.LLB.@0.@l.@l", asmLoad).ConvertTo<byte>());
 
             Assert.IsTrue(AIMath.Calculation("LB.@T == \"0xAA02\"", asmLoad).ConvertTo<bool>());
             Assert.IsTrue(AIMath.Calculation("LB.@TEXT == \"0xAA02\"", asmLoad).ConvertTo<bool>());

@@ -1,0 +1,8 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.6.0, LST:Full:4
+000000 C000                         org $c000
+                                
+000000 C000 000102.. LEN:512    LB1:    include "Char1.bin", B
+000200 C200 000102..LEN:4096    LB2:    include "Char2.bin", B
+                                
+                                    end
+[EOF:Test.Z80:UTF_8]

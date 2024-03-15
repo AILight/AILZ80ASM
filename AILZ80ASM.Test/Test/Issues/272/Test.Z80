@@ -1,0 +1,9 @@
+﻿
+		ORG $8000
+
+		LD HL, Test
+
+		RET
+
+
+Test:	DB 1, 2, 3, 4, 5

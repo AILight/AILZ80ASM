@@ -1,0 +1,41 @@
+﻿LB1:
+	LD A, 0
+.sub1
+.@1
+	LD B, 0
+.sub2
+.@1
+	LD C, 0
+.sub3
+	JP backward .@1
+	JP forward .@1
+	jp near .@1
+	jp far .@1
+.sub4
+.@1
+	LD D, 0
+.sub5
+.@1
+	LD E, 0
+
+LB2:
+	LD A, 0
+.sub1
+.@1
+	LD B, 0
+.sub2
+.@1
+	LD C, 0
+.sub3
+	JP backward .@1
+	JP forward .@1
+	jp near .@1
+	jp far .@1
+.sub4
+.@1
+	LD D, 0
+.sub5
+.@1
+	LD E, 0
+
+		RET

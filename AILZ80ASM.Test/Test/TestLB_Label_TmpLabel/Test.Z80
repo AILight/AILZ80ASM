@@ -1,0 +1,65 @@
+﻿		org $8000
+		ld a, 0
+addr:
+		ld a, (addr)
+.@1						; addr..@1
+		ld hl, addr
+.test
+		ld a,(.@1)
+.@1						; addr.text.@1
+		ld hl, addr.test
+.@2						; addr.text.@2
+		ld hl, (addr.test)
+		; 参照
+		ld hl, (addr..@1) 	
+		ld hl, (.test.@1) 
+		ld hl, (.@1) 
+		ld hl, (.@2) 
+		; 特殊アクセス
+EQT:
+.@1		equ	%00001100	; 1
+.@2		equ	%00001101	; 2
+.@3		equ	%00001110	; 3
+		; 【マジック実装】 本来ならEQT.AL.@1 を参照するが、存在しないとき EQT..@1を参照する
+.AL		equ	(.@1 | .@2 | .@3)
+		ld a, .AL
+		; 
+		ld hl, (NAME_SPACE_DEFAULT.addr)
+		ld hl, (NAME_SPACE_DEFAULT.addr.@1)
+		ld hl, (NAME_SPACE_DEFAULT.addr.test.@1)
+		; 後方参照
+TEST:
+		DB .@1 - TEST, .@2 - TEST, .@3 - TEST
+.length
+.@1		DB  1,  2,  3,  4,  5
+.@2		DB  6,  7,  8,  9, 10
+.@3		DB 11, 12, 13, 14, 15
+
+LBTEST:
+		ld a, low .@0
+		ld a, .@0.@L
+		ld a, .@0.@LOW
+		ld a, high .@0
+		ld a, .@0.@H
+		ld a, .@0.@HIGH
+		ret
+
+.@0		db  1
+		db  2
+		db  3
+		db  4
+
+.LOCAL
+
+		ld a, low .@0
+		ld a, .@0.@L
+		ld a, .@0.@LOW
+		ld a, high .@0
+		ld a, .@0.@H
+		ld a, .@0.@HIGH
+		ret
+
+.@0		db  1
+		db  2
+		db  3
+		db  4

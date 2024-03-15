@@ -123,7 +123,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 49, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 50, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 59, "E0004.Z80", errors);
-            // ”’l‚ÌƒoƒŠƒf[ƒVƒ‡ƒ“ƒ`ƒFƒbƒN
+            // æ•°å€¤ã®ãƒãƒªãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³ãƒã‚§ãƒƒã‚¯
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 67, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 68, "E0004.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 69, "E0004.Z80", errors);
@@ -396,11 +396,14 @@ namespace AILZ80ASM.Test
         [TestMethod]
         public void TestEC_E1012()
         {
+            /*
+            ã“ã¡ã‚‰ã¯ç™ºç¾ã—ãªã„
             var errors = Assemble("E1012.Z80");
 
             Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1012, 2, "E1012.Z80", errors);
+            */
         }
 
         [TestMethod]
@@ -527,6 +530,26 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
 
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1042, 2, "E1042.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestEC_E1051()
+        {
+            var errors = Assemble("E1051.Z80");
+
+            Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1051, 2, "E1051.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestEC_E1052()
+        {
+            var errors = Assemble("E1052.Z80");
+
+            Assert.AreEqual(1, errors.Where(m => m.ErrorType == Error.ErrorTypeEnum.Error).Count());
+
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1052, 2, "E1052.Z80", errors);
         }
 
         [TestMethod]

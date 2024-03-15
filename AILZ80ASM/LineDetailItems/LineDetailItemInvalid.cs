@@ -4,7 +4,7 @@ namespace AILZ80ASM.LineDetailItems
 {
     public class LineDetailItemInvalid : LineDetailItem
     {
-        public override AsmList[] Lists => new[] { AsmList.CreateLineItem(LineItem) };
+        public override AsmList[] Lists => AsmLoad.Share.IsOutputList ? new[] { AsmList.CreateLineItem(LineItem) } : new AsmList[] { };
 
         private LineDetailItemInvalid(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)

@@ -15,6 +15,11 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
+                if (!AsmLoad.Share.IsOutputList)
+                {
+                    return new AsmList[] { };
+                }
+
                 var lists = new List<AsmList>();
                 // 宣言行
                 lists.Add(AsmList.CreateLineItem(LineItem));
@@ -25,7 +30,9 @@ namespace AILZ80ASM.LineDetailItems
                     {
                         Label.DataTypeEnum.Invalid => "Invalid",
                         Label.DataTypeEnum.None => label.ValueString,
-                        _ => label.Value.ConvertTo<object>().ToString()
+                        _ => label.Value.ValueType.HasFlag(AILight.AIValue.ValueTypeEnum.Int32) ?
+                             $"0x{label.Value.ConvertTo<int>():x4}:{label.Value.ConvertTo<int>()}" :
+                             label.Value.ConvertTo<object>().ToString(),
                     };
 
                     lists.Add(AsmList.CreateSource($"; {label.LabelShortName} = {value}"));
@@ -81,6 +88,15 @@ namespace AILZ80ASM.LineDetailItems
                 if (LineItem.LineString.Length > 0 && string.IsNullOrEmpty(LineItem.LabelString) && !char.IsWhiteSpace(LineItem.LineString[0]) && char.IsAscii(LineItem.LineString[0]))
                 {
                     errorMessage = "ラベルとして指定する場合には、末尾に:が必要です。";
+                }
+                else
+                {
+                    // 同名のラベルがあるか調査する
+                    var macros = Macro.FindsWithoutNamespace(LineItem, AsmLoad);
+                    if (macros != null && macros.Length > 0) 
+                    {
+                        errorMessage = $"マクロが見つからない場合には、ネームスペース付きを検討してください。[{string.Join(", ", macros.Select(m => m.FullName))}]";
+                    }
                 }
 
                 // マクロが見つからないケースは、エラーとする

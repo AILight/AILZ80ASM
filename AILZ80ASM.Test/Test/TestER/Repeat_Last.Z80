@@ -37,3 +37,16 @@ REPT 8 LAST -1
     jr nz, .break
 .break djnz .lp
 	ENDM
+
+REPT 8 LAST 1
+    nop
+    ENDM
+REPT 8 LAST 0
+    nop
+    ENDM
+REPT 8 LAST -1
+    nop
+    ENDM
+REPT 8 LAST -2
+    nop
+    ENDM

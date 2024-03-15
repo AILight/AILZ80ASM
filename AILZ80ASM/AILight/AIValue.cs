@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -16,8 +17,12 @@ namespace AILZ80ASM.AILight
             None,
             High,
             Low,
-            Text,
             Exists,
+            Text,
+            Forward,
+            Backward,
+            Near,
+            Far,
         }
 
         [Flags]
@@ -46,6 +51,10 @@ namespace AILZ80ASM.AILight
             High,               // high
             Exists,             // exists
             Text,               // text
+            Forward,            // Forward
+            Backward,           // Backward
+            Near,               // Near
+            Far,                // Far
             Multiplication,     // *
             Division,           // /
             Remainder,          // %
@@ -76,34 +85,38 @@ namespace AILZ80ASM.AILight
 
         private static readonly Dictionary<string, OperationTypeEnum> OperationTypeTable = new()
         {
-            ["("] =      OperationTypeEnum.LeftParenthesis,
-            [")"] =      OperationTypeEnum.RightParenthesis,
-            ["!"] =      OperationTypeEnum.Negation,
-            ["~"] =      OperationTypeEnum.BitwiseComplement,
-            ["low"] =    OperationTypeEnum.Low,
-            ["high"] =   OperationTypeEnum.High,
-            ["exists"] = OperationTypeEnum.Exists,
-            ["text"] =   OperationTypeEnum.Text,
-            ["*"] =      OperationTypeEnum.Multiplication,
-            ["/"] =      OperationTypeEnum.Division,
-            ["%"] =      OperationTypeEnum.Remainder,
-            ["+"] =      OperationTypeEnum.Plus,
-            ["-"] =      OperationTypeEnum.Minus,
-            ["<<"] =     OperationTypeEnum.LeftShift,
-            [">>"] =     OperationTypeEnum.RightShift,
-            ["<"] =      OperationTypeEnum.Less,
-            [">"] =      OperationTypeEnum.Greater,
-            ["<="] =     OperationTypeEnum.LessEqual,
-            [">="] =     OperationTypeEnum.GreaterEqual,
-            ["=="] =     OperationTypeEnum.Equal,
-            ["!="] =     OperationTypeEnum.NotEqual,
-            ["&"] =      OperationTypeEnum.And,
-            ["^"] =      OperationTypeEnum.Xor,
-            ["|"] =      OperationTypeEnum.Or,
-            ["&&"] =     OperationTypeEnum.ConditionalAnd,
-            ["||"] =     OperationTypeEnum.ConditionalOr,
-            ["?"] =      OperationTypeEnum.Ternary_Question,
-            [":"] =      OperationTypeEnum.Ternary_Colon,
+            ["("] =        OperationTypeEnum.LeftParenthesis,
+            [")"] =        OperationTypeEnum.RightParenthesis,
+            ["!"] =        OperationTypeEnum.Negation,
+            ["~"] =        OperationTypeEnum.BitwiseComplement,
+            ["low"] =      OperationTypeEnum.Low,
+            ["high"] =     OperationTypeEnum.High,
+            ["exists"] =   OperationTypeEnum.Exists,
+            ["text"] =     OperationTypeEnum.Text,
+            ["forward"] =  OperationTypeEnum.Forward,
+            ["backward"] = OperationTypeEnum.Backward,
+            ["near"] =     OperationTypeEnum.Near,
+            ["far"] =      OperationTypeEnum.Far,
+            ["*"] =        OperationTypeEnum.Multiplication,
+            ["/"] =        OperationTypeEnum.Division,
+            ["%"] =        OperationTypeEnum.Remainder,
+            ["+"] =        OperationTypeEnum.Plus,
+            ["-"] =        OperationTypeEnum.Minus,
+            ["<<"] =       OperationTypeEnum.LeftShift,
+            [">>"] =       OperationTypeEnum.RightShift,
+            ["<"] =        OperationTypeEnum.Less,
+            [">"] =        OperationTypeEnum.Greater,
+            ["<="] =       OperationTypeEnum.LessEqual,
+            [">="] =       OperationTypeEnum.GreaterEqual,
+            ["=="] =       OperationTypeEnum.Equal,
+            ["!="] =       OperationTypeEnum.NotEqual,
+            ["&"] =        OperationTypeEnum.And,
+            ["^"] =        OperationTypeEnum.Xor,
+            ["|"] =        OperationTypeEnum.Or,
+            ["&&"] =       OperationTypeEnum.ConditionalAnd,
+            ["||"] =       OperationTypeEnum.ConditionalOr,
+            ["?"] =        OperationTypeEnum.Ternary_Question,
+            [":"] =        OperationTypeEnum.Ternary_Colon,
         };
 
         private static readonly Dictionary<OperationTypeEnum, int> FormulaPriority = new()
@@ -115,6 +128,10 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.High] = 2,               // high
             [OperationTypeEnum.Exists] = 2,             // exists
             [OperationTypeEnum.Text] = 2,               // text
+            [OperationTypeEnum.Forward] = 2,            // forward
+            [OperationTypeEnum.Backward] = 2,           // backward
+            [OperationTypeEnum.Near] = 2,               // near
+            [OperationTypeEnum.Far] = 2,                // far
             [OperationTypeEnum.Multiplication] = 4,     // *
             [OperationTypeEnum.Division] = 4,           // /
             [OperationTypeEnum.Remainder] = 4,          // %
@@ -147,6 +164,10 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.High] = ArgumentTypeEnum.SingleArgument,                 // high
             [OperationTypeEnum.Exists] = ArgumentTypeEnum.SingleArgument,               // exists
             [OperationTypeEnum.Text] = ArgumentTypeEnum.SingleArgument,                 // text
+            [OperationTypeEnum.Forward] = ArgumentTypeEnum.SingleArgument,              // forward
+            [OperationTypeEnum.Backward] = ArgumentTypeEnum.SingleArgument,             // backward
+            [OperationTypeEnum.Near] = ArgumentTypeEnum.SingleArgument,                 // near
+            [OperationTypeEnum.Far] = ArgumentTypeEnum.SingleArgument,                  // far
             [OperationTypeEnum.Multiplication] = ArgumentTypeEnum.DoubleArgument,       // *
             [OperationTypeEnum.Division] = ArgumentTypeEnum.DoubleArgument,             // /
             [OperationTypeEnum.Remainder] = ArgumentTypeEnum.DoubleArgument,            // %
@@ -227,6 +248,8 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
         private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
+        private static readonly string RegexPatternFunctionWithNamespace = @"^(?<function>[0-9a-zA-Z_]+\.[0-9a-zA-Z_]+\s*\()";
+        private static readonly string RegexPatternSyntaxSuger_AL = @"^\.@@(?<direction>(B|F))";
 
         private string Value { get; set; } = "";
         private int ValueInt32 { get; set; } = default(int);
@@ -371,12 +394,24 @@ namespace AILZ80ASM.AILight
         /// <exception cref="InvalidAIMathException"></exception>
         public static bool TryParseFunction(ref string target, out string resultFunction)
         {
+            var functionName = default(string);
+
             var matched = Regex.Match(target, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (matched.Success)
             {
+                functionName = matched.Groups["function"].Value;
+            }
+            var matchedWithNamespace = Regex.Match(target, RegexPatternFunctionWithNamespace, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matchedWithNamespace.Success)
+            {
+                functionName = matchedWithNamespace.Groups["function"].Value;
+            }
+
+            if (!string.IsNullOrEmpty(functionName))
+            {
                 var localTarget = target;
 
-                var function = matched.Groups["function"].Value;
+                var function = functionName;
                 var targetIndex = function.Length;
                 var startIndex = AIString.IndexOfAnySkipString(localTarget, '(', targetIndex);
                 var endIndex = AIString.IndexOfAnySkipString(localTarget, ')', targetIndex);
@@ -415,6 +450,37 @@ namespace AILZ80ASM.AILight
             }
 
             resultFunction = "";
+            return false;
+        }
+
+        /// <summary>
+        /// 値を抜き出す
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="resultValue"></param>
+        /// <returns></returns>
+        public static bool TryParseSyntaxSuger(ref string target, out string[] resultValues)
+        {
+            var matched = Regex.Match(target, RegexPatternSyntaxSuger_AL, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (matched.Success)
+            {
+                var direction = matched.Groups["direction"].Value;
+                switch (direction)
+                {
+                    case "B":
+                        target = target.Substring(4).TrimStart();
+                        resultValues = new[] { ".@@.@B" };
+                        return true;
+                    case "F":
+                        target = target.Substring(4).TrimStart();
+                        resultValues = new[] { ".@@.@F" };
+                        return true;
+                    default:
+                        resultValues = default(string[]);
+                        return false;
+                }
+            }
+            resultValues = default(string[]);
             return false;
         }
 
@@ -876,7 +942,19 @@ namespace AILZ80ASM.AILight
                 // Label
                 var macroValue = MacroValueEnum.None;
                 var tmpLabel = Value;
-                var label = asmLoad.FindLabel(tmpLabel);
+                var labels = asmLoad.FindLabels(tmpLabel);
+                if (labels.Length > 1)
+                {
+                    if (labels.Any(m => m.LabelLevel == Label.LabelLevelEnum.AnonLabel))
+                    {
+                        throw new InvalidAIValueLabelAmbiguousException(InvalidAIValueLabelAmbiguousException.LabelType.Anonymous, "");
+                    }
+                    else
+                    {
+                        throw new InvalidAIValueLabelAmbiguousException(InvalidAIValueLabelAmbiguousException.LabelType.Normal, string.Join(", ", labels.Select(m => m.LabelShortName)));
+                    }
+                }
+                var label = labels.FirstOrDefault();
 
                 if (macroValue == MacroValueEnum.Exists)
                 {
@@ -1049,6 +1127,14 @@ namespace AILZ80ASM.AILight
                     return AIValue.Exists(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Text:
                     return AIValue.Text(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Forward:
+                    return AIValue.Forward(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Backward:
+                    return AIValue.Backward(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Near:
+                    return AIValue.Near(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.Far:
+                    return AIValue.Far(firstValue, asmLoad, asmAddress, entryLabels);
                 default:
                     throw new InvalidOperationException();
             }
@@ -1272,6 +1358,113 @@ namespace AILZ80ASM.AILight
             }
             return new AIValue(label.ValueString, ValueTypeEnum.String);
 
+        }
+
+        /// <summary>
+        /// forward:前方ラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Forward(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            return InternalLabel(MacroValueEnum.Forward, firstValue, asmLoad, asmAddress, entryLabels);
+        }
+
+        /// <summary>
+        /// backward:前方ラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Backward(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            return InternalLabel(MacroValueEnum.Backward, firstValue, asmLoad, asmAddress, entryLabels);
+        }
+
+        /// <summary>
+        /// Far:遠いラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Far(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            return InternalLabel(MacroValueEnum.Far, firstValue, asmLoad, asmAddress, entryLabels);
+        }
+
+        /// <summary>
+        /// near:近くのラベルを取得します
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue Near(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            return InternalLabel(MacroValueEnum.Near, firstValue, asmLoad, asmAddress, entryLabels);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="valueEnum"></param>
+        /// <param name="firstValue"></param>
+        /// <param name="asmLoad"></param>
+        /// <param name="asmAddress"></param>
+        /// <param name="entryLabels"></param>
+        /// <returns></returns>
+        private static AIValue InternalLabel(MacroValueEnum valueEnum, AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            var labels = asmLoad.FindLabels(firstValue.OriginalValue);
+            switch (valueEnum)
+            {
+                case MacroValueEnum.Forward:
+                case MacroValueEnum.Backward:
+                case MacroValueEnum.Near:
+                case MacroValueEnum.Far:
+                    if (labels.Length == 0)
+                    {
+                        throw new InvalidAIValueException($"未定義:{firstValue.OriginalValue}");
+                    }
+                    else if (labels.Length == 1)
+                    {
+                        return firstValue;
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+            var startOututAddress = asmLoad.Share.AsmORGs.Where(m => m.OutputAddress <= asmAddress.Value.Output).OrderByDescending(m => m.OutputAddress).FirstOrDefault()?.OutputAddress ?? 0;
+            var endOututAddress = asmLoad.Share.AsmORGs.Where(m => m.OutputAddress > asmAddress.Value.Output).OrderByDescending(m => m.OutputAddress).FirstOrDefault()?.OutputAddress ?? uint.MaxValue;
+
+            var values = labels.Where(m => m.LineItem.LineDetailItem.Address.Value.Output >= startOututAddress &&
+                                           m.LineItem.LineDetailItem.Address.Value.Output <  endOututAddress)
+                               .Select(m => new AIValue(m.LabelFullName, ValueTypeEnum.None)).ToArray();
+            foreach (var item in values)
+            {
+                item.SetValue(asmLoad, asmAddress);
+            }
+
+            var orderedAIValues = default(IOrderedEnumerable<AIValue>);
+            switch (valueEnum)
+            {
+                case MacroValueEnum.Forward:
+                    orderedAIValues = values.Where(m => m.ValueInt32 >= asmAddress.Value.Program).OrderBy(m => m.ValueInt32);
+                    break;
+                case MacroValueEnum.Backward:
+                    orderedAIValues = values.Where(m => m.ValueInt32 <= asmAddress.Value.Program).OrderByDescending(m => m.ValueInt32);
+                    break;
+                case MacroValueEnum.Near:
+                    orderedAIValues = values.OrderBy(m => Math.Abs(m.ValueInt32 - asmAddress.Value.Program)).ThenByDescending(m => m.ValueInt32);
+                    break;
+                case MacroValueEnum.Far:
+                    orderedAIValues = values.OrderByDescending(m => Math.Abs(m.ValueInt32 - asmAddress.Value.Program)).ThenByDescending(m => m.ValueInt32);
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+
+            if (orderedAIValues.Count() == 0)
+            {
+                throw new InvalidAIValueLabelOperatorException(valueEnum.ToString());
+            }
+            return orderedAIValues.First();
         }
 
         /// <summary>

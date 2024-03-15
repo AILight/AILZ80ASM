@@ -1,0 +1,5 @@
+﻿
+TEST	EQU 1
+
+		#LIST
+ABC:	#LIST #TRUE

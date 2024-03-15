@@ -29,6 +29,24 @@ namespace AILZ80ASM.Assembler
             LineItems = lineItems;
         }
 
+        public static Macro[] FindsWithoutNamespace(LineItem lineItem, AsmLoad asmLoad)
+        {
+            var operationMatched = Regex.Match(lineItem.OperationString, RegexPatternMacro, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (operationMatched.Success)
+            {
+                var macroName = operationMatched.Groups["macro"].Value;
+                var macros = asmLoad.FindMacros(macroName);
+
+                if (macros == default)
+                {
+                    return default;
+                }
+                return macros;
+            }
+            return default;
+
+        }
+
         public static (Macro Macro, string[] Arguments) Find(LineItem lineItem, AsmLoad asmLoad)
         {
             var operationMatched = Regex.Match(lineItem.OperationString, RegexPatternMacro, RegexOptions.Singleline | RegexOptions.IgnoreCase);

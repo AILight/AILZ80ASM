@@ -151,20 +151,40 @@ namespace AILZ80ASM.LineDetailItems
         {
             get
             {
-                var lists = new List<AsmList>();
-                lists.Add(AsmList.CreateLineItem(LineItem));
-
-                switch (FileType)
+                if (!AsmLoad.Share.IsOutputList)
                 {
-                    case FileTypeEnum.Text:
-                        lists.AddRange(FileItem.Lists);
-                        break;
-                    case FileTypeEnum.Binary:
-                        lists.Add(LineDetailExpansionItem.List);
-                        lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.BinResults.Sum(m => m.Data?.Length ?? 0)));
-                        break;
-                    default:
-                        throw new NotImplementedException();
+                    return new AsmList[] { };
+                }
+
+                var lists = new List<AsmList>();
+                if (this.AsmLoad.AssembleOption.ListOmitBinaryFile && FileType == FileTypeEnum.Binary)
+                {
+                    // バイナリー出力を省略して出力する場合
+                    lists.Add(AsmList.CreateLineItem(LineDetailExpansionItem.Address, LineDetailExpansionItem.BinResults.SelectMany(m => m.Data ?? new byte[] { }).ToArray(), "", LineItem));
+                }
+                else
+                {
+                    lists.Add(AsmList.CreateLineItem(LineItem));
+
+                    switch (FileType)
+                    {
+                        case FileTypeEnum.Text:
+                            lists.AddRange(FileItem.Lists);
+                            break;
+                        case FileTypeEnum.Binary:
+                            if (this.AsmLoad.AssembleOption.ListOmitBinaryFile)
+                            {
+                                lists.Add(LineDetailExpansionItem.List);
+                            }
+                            else
+                            {
+                                lists.Add(LineDetailExpansionItem.List);
+                                lists.Add(AsmList.CreateFileInfoEOF(FileInfo, LineDetailExpansionItem.BinResults.Sum(m => m.Data?.Length ?? 0)));
+                            }
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
                 }
 
                 return lists.ToArray();

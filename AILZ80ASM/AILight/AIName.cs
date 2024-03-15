@@ -12,6 +12,7 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternMacroValidate = @"^[a-zA-Z0-9_()]+$";
         private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+$";
         private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+$";
+        private static readonly string RegexPatternLocalLabelANValidate = @"^@@(?<labelValue>([0-9]*))$";
         private static readonly string RegexPatternLabelInvalid = @"^[0-9]";
         private static readonly string RegexPatternCharMapInvalid = @"^@[a-zA-Z0-9_]+$";
 
@@ -251,9 +252,11 @@ namespace AILZ80ASM.AILight
                             // 次のカンマとカッコの開始を調べる
                             commaIndex = AIString.IndexOfSkipString(target, ',', searchIndex);
                             kakkoIndex = AIString.IndexOfSkipString(target, '(', searchIndex);
-                            if (commaIndex != -1 && kakkoIndex == -1)
+                            if ((commaIndex != -1 && kakkoIndex == -1) ||
+                                (commaIndex != -1 && kakkoIndex != -1 && commaIndex < kakkoIndex))
                             {
-                                // カンマはあるけど、カッコが無い場合は、カンマの前まで
+                                // カンマはあるけど、カッコが無い場合は、カンマの前まで と
+                                // カンマもカッコもあるけど、カンマの前まで
                                 searchIndex = commaIndex;
                             }
                             else if (kakkoIndex != -1 && 
@@ -378,7 +381,7 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            return Regex.Match(target, RegexPatternMacroValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
+            return  Regex.Match(target, RegexPatternMacroValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
                    !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
         }
 
@@ -393,6 +396,23 @@ namespace AILZ80ASM.AILight
             if (target.ToArray().Any(m => ":. ".Contains(m)))
             {
                 return false;
+            }
+
+            var regex = Regex.Match(target, RegexPatternLocalLabelANValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (regex.Success)
+            {
+                var valueString= regex.Groups["labelValue"].Value;
+                if (valueString.Length > 0)
+                {
+                    var sum = Convert.ToInt32(valueString[0]);
+                    if (Guid.TryParse(valueString.Substring(1), out var anonGuid))
+                    {
+                        var checkSum = anonGuid.ToByteArray().Select(m => (int)m).Sum() % 10;
+                        return (sum == checkSum);
+                    }
+                    return false;
+                }
+                return true;
             }
 
             // @と通常ラベルの処理

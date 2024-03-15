@@ -51,6 +51,17 @@ namespace AILZ80ASM.Test
 
         public static void AreSameLst(Stream expectedStream, Stream actualStream, AsmEnum.FileTypeEnum fileType)
         {
+            switch (fileType)
+            {
+                case AsmEnum.FileTypeEnum.BIN:
+                case AsmEnum.FileTypeEnum.T88:
+                case AsmEnum.FileTypeEnum.CMT:
+                    Assert.Fail("テキストファイルではありません");
+                    break;
+                default:
+                    break;
+            }
+
             if (fileType == AsmEnum.FileTypeEnum.HEX)
             {
                 var expectedReadByte = expectedStream.ReadByte();
@@ -119,6 +130,15 @@ namespace AILZ80ASM.Test
             }
 
             return package.Errors.Union(package.Warnings).Union(package.Information).ToArray();
+        }
+
+        public static ErrorLineItem[] Assemble(string direcotryName, string fileName)
+        {
+            var targetDirectoryName = Path.Combine(".", "Test", direcotryName);
+            var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
+            var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmEnum.FileTypeEnum, FileInfo>>();
+
+            return Lib.Assemble(inputFiles, outputFiles, true);
         }
 
         public static ErrorLineItem[] Assemble_AreSame(FileInfo[] inputFiles, Dictionary<AsmEnum.FileTypeEnum, FileInfo> outputFiles)

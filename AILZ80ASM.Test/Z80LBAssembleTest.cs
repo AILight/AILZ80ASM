@@ -85,6 +85,36 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestLB_Label_AnonLabel_Macro()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestLB_Label_AnonLabel_Namespace()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestLB_Label_AnonLabel_ROMMode()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestLB_Label_Operation()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
+        public void TestLB_Label_TmpLabel()
+        {
+            Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);
+        }
+
+        [TestMethod]
         public void TestLB_LD_Address()
         {
             Lib.Assemble_AreSame(MethodBase.GetCurrentMethod().Name);

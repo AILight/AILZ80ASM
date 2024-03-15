@@ -1,0 +1,31 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.15.0
+Copyright (C) 2023 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [Test.Z80]
+
+# Assemble Status
+
+- Expand       (1/6)
+- PreAssemble  (2/6)
+- AdjAssemble  (3/6)
+- MainAssemble (4/6)
+- Validate     (5/6)
+- Complete     (6/6)
+
+# Outputs
+
+- LST filename [Issue294.LST]: Successful
+- BIN filename [Issue294.bin]: Failed
+
+# Error
+
+Test.Z80:3  E0001: 無効な命令が指定されました。マクロが見つからない場合には、ネームスペース付きを検討してください。[DEF.TestArg]
+
+# List
+
+Issue294.LST:4  E0001: 無効な命令が指定されました。マクロが見つからない場合には、ネームスペース付きを検討してください。[DEF.TestArg]
+
+1 error(s), 0 warning(s), 0 information
+

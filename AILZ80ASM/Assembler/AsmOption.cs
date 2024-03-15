@@ -49,6 +49,9 @@ namespace AILZ80ASM.Assembler
         // 出力Encode
         public AsmEnum.EncodeModeEnum OutputEncodeMode { get; set; } = AsmEnum.EncodeModeEnum.UTF_8;
 
+        // バイナリーファイルの省略出力
+        public bool ListOmitBinaryFile { get; set; }
+
         /// <summary>
         /// 出力用の確定したエンコードを返す
         /// </summary>
@@ -101,6 +104,7 @@ namespace AILZ80ASM.Assembler
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");
             NoSuperAsmAssemble = rootCommand.GetValue<bool>("noSuperAssemble");
+
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
             if (!CheckUnuseLabel)
@@ -112,6 +116,7 @@ namespace AILZ80ASM.Assembler
                 DisableWarningCodes = DisableWarningCodes.Where(m => m != Error.ErrorCodeEnum.I0002).ToArray();
             }
             GapByte = rootCommand.GetValue<byte>("gapByte");
+            ListOmitBinaryFile = rootCommand.GetValue<bool>("listOmitBinaryFile");
         }
 
         /// <summary>

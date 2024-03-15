@@ -18,8 +18,8 @@ Copyright (C) 2022 by M.Ishino (AILight)
 
 # Outputs
 
-- BIN filename [Success_SA.BIN]: Successful.
-- LST filename [Success_SA.LST]: Successful.
+- BIN filename [Success_SA.BIN]: Successful
+- LST filename [Success_SA.LST]: Successful
 
 0 error(s), 0 warning(s), 0 information
 

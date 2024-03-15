@@ -22,7 +22,7 @@ namespace AILZ80ASM.Assembler
         public UInt32? SavedOutputAddress { get; private set; }
         public string OutputAddressLabel { get; private set; }
         public string FillByteLabel { get; private set; }
-        public bool IsRomMode => !string.IsNullOrEmpty(OutputAddressLabel);
+        public bool IsRomMode { get; private set; }
         public List<LineDetailItem> LineDetailItems { get; private set; }
         public List<LineDetailItem> ErrorLineDetailItems { get; private set; }
         public LineItem LineItem { get; private set; } = default;
@@ -52,6 +52,7 @@ namespace AILZ80ASM.Assembler
             ProgramAddress = programAddress;
             OutputAddress = outputAddress;
             OutputAddressLabel = outputAddressLabel;
+            IsRomMode = outputAddress.HasValue || !string.IsNullOrEmpty(outputAddressLabel);
 
             FillByteLabel = fillByteLabel;
             LineDetailItems = new List<LineDetailItem>();
@@ -70,7 +71,7 @@ namespace AILZ80ASM.Assembler
             ErrorLineDetailItems.Add(lineDetailItem);
         }
 
-        public void AdjustAssemble(UInt32 outputAddress, AsmLoad asmLoad)
+        public UInt32 AdjustAssemble(UInt32 outputAddress, AsmLoad asmLoad)
         {
             OutputAddress = outputAddress;
 
@@ -89,6 +90,8 @@ namespace AILZ80ASM.Assembler
                     asmLoad.AddError(ex.ErrorLineItem);
                 }
             }
+
+            return outputAddress;
         }
 
         /// <summary>

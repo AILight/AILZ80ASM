@@ -1,0 +1,17 @@
+﻿
+    ORG $9000
+
+TYP     ENUM
+        EXIST = %10000000
+        SL = EXIST + EXIST
+        SL_R
+        SL_B
+        WP
+        KB
+        ENDM
+
+INIT:
+        LD A, TYP.EXIST
+        LD B, TYP.SL_R
+        LD C, TYP.SL_B
+        RET

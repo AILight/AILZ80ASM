@@ -76,6 +76,25 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_CheckAlign1()
+        {
+            var errors = Assemble("CheckAlign1.Z80");
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6012, 8, "CheckAlign1.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_CheckAlign2()
+        {
+            var errors = Assemble("CheckAlign2.Z80");
+
+            Assert.AreEqual(2, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6013, 3, "CheckAlign2.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6013, 8, "CheckAlign2.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Conditional()
         {
             var errors = Assemble("Conditional.Z80");
@@ -191,6 +210,34 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestER_Label3()
+        {
+            var errors = Assemble("Label3.Z80");
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0008, 4, "Label3.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_Label4()
+        {
+            var errors = Assemble("Label4.Z80");
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0026, 4, "Label4.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_Label5()
+        {
+            var errors = Assemble("Label5.Z80");
+
+            Assert.AreEqual(2, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 3, "Label5.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0012, 4, "Label5.Z80", errors);
+        }
+
+        [TestMethod]
         public void TestER_Macro1()
         {
             var errors = Assemble("Macro1.Z80");
@@ -203,7 +250,7 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 38, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 44, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 49, "Macro1.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 54, "Macro1.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 54, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3007, 59, "Macro1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3001, 63, "Macro1.Z80", errors);
         }
@@ -296,12 +343,33 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestER_Print()
+        public void TestER_PreProcList1()
         {
-            var errors = Assemble("Print.Z80");
+            var errors = Assemble("PreProcList1.Z80");
+
+            Assert.AreEqual(2, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1051, 4, "PreProcList1.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1052, 5, "PreProcList1.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_PreProcList2()
+        {
+            var errors = Assemble("PreProcList2.Z80");
+
+            Assert.AreEqual(3, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 4, "PreProcList2.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 5, "PreProcList2.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1051, 6, "PreProcList2.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_PreProcPrint()
+        {
+            var errors = Assemble("PreProcPrint.Z80");
 
             Assert.AreEqual(1, errors.Length);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.I0001, 4, "Print.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.I0001, 4, "PreProcPrint.Z80", errors);
             Assert.AreEqual("#PRINT: ABC:1", errors[0].ErrorMessage);
         }
 
@@ -313,7 +381,7 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(4, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1014, 7, "Repeat.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1015, 14, "Repeat.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1012, 16, "Repeat.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E3002, 16, "Repeat.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1011, 18, "Repeat.Z80", errors);
         }
 
@@ -322,8 +390,10 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Repeat_Last.Z80");
 
-            Assert.AreEqual(1, errors.Length);
+            Assert.AreEqual(3, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0004, 37, "Repeat_Last.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1013, 41, "Repeat_Last.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E1016, 50, "Repeat_Last.Z80", errors);
         }
 
         [TestMethod]
