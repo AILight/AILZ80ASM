@@ -331,6 +331,15 @@ namespace AILZ80ASM.Assembler
                 IsSimple = true,
             });
 
+            rootCommand.AddOption(new Option<ushort?>()
+            {
+                Name = "startAddress",
+                ArgumentName = "address",
+                Aliases = new[] { "-sa", "--start-address" },
+                Description = "スタートアドレス(出力)を指定します。",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "version",

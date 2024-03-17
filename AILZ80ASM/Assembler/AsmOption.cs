@@ -51,6 +51,9 @@ namespace AILZ80ASM.Assembler
 
         // バイナリーファイルの省略出力
         public bool ListOmitBinaryFile { get; set; }
+        
+        // 出力開始アドレスを指定
+        public UInt16? StartAddress { get; set; } = default;
 
         /// <summary>
         /// 出力用の確定したエンコードを返す
@@ -104,6 +107,7 @@ namespace AILZ80ASM.Assembler
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");
             NoSuperAsmAssemble = rootCommand.GetValue<bool>("noSuperAssemble");
+            StartAddress = rootCommand.GetValue<ushort?>("startAddress");
 
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない

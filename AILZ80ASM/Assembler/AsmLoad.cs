@@ -9,6 +9,7 @@ using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.LineDetailItems.ScopeItem;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
+using System.Reflection;
 
 namespace AILZ80ASM.Assembler
 {

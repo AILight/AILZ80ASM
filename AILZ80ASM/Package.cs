@@ -293,7 +293,13 @@ namespace AILZ80ASM
 
             // 通常の出力アドレスを確定する
             {
-                var asmORGs = (isRomMode ? asmORGItems.OrderBy(m => m.Index) : asmORGItems.OrderBy(m => m.Item.ProgramAddress)).Select(m => m.Item).ToList();
+                var romIndex = asmORGItems.FirstOrDefault(m => m.Item.IsRomMode)?.Index ?? 0;
+                var asmORGs = (isRomMode ? 
+                                  asmORGItems.Where(m => m.Index < romIndex).OrderBy(m => m.Item.ProgramAddress).Union(
+                                    asmORGItems.Where(m => m.Index >= romIndex).OrderBy(m => m.Index)
+                                  )
+                                  : 
+                                  asmORGItems.OrderBy(m => m.Item.ProgramAddress)).Select(m => m.Item).ToList();
                 var startORG = asmORGs.FirstOrDefault(m => m.OutputAddress.HasValue || m.HasBinResult);
                 var endORG = asmORGs.LastOrDefault(m => m.OutputAddress.HasValue || m.HasBinResult);
                 if (startORG != null && endORG != null)
