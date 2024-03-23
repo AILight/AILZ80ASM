@@ -1,0 +1,14 @@
+﻿    org 0x100
+
+    ld hl, .label1
+    ld hl, .label2
+
+    ret
+
+.label1 equ $ + 1
+    db 0
+.label2 equ $
+    db 1, 2, 3, 4
+
+.label3 equ $0001
+.label4 equ 1

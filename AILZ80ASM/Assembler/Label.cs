@@ -425,7 +425,7 @@ namespace AILZ80ASM.Assembler
 
         public virtual void PredictCalculation(UInt16 address)
         {
-            Value = new AIValue(address);
+            Value = new AIValue(address, AIValue.ValueInt32TypeEnum.Hex);
             DataType = DataTypeEnum.Value;
         }
 

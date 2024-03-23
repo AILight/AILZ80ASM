@@ -196,6 +196,17 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_237()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue237.bin", "-lst", "Issue237.lst", "-sym", "Issue237.sym", "-equ", "Issue237.equ", "-cd", "./Test/Issues/237");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/237/Issue237.bin"), File.OpenRead("./Test/Issues/237/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/237/Issue237.lst"), File.OpenRead("./Test/Issues/237/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/237/Issue237.sym"), File.OpenRead("./Test/Issues/237/Test.SYM"), Assembler.AsmEnum.FileTypeEnum.SYM);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/237/Issue237.equ"), File.OpenRead("./Test/Issues/237/Test.EQU"), Assembler.AsmEnum.FileTypeEnum.EQU);
+        }
+
+        [TestMethod]
         public void Issue_257()
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "257"));

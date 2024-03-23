@@ -1,0 +1,8 @@
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.18.0, EQU
+#pragma once
+
+.label1     equ $0108
+.label2     equ $0108
+.label3     equ $0001
+.label4     equ 1
+
