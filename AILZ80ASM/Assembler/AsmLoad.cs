@@ -181,7 +181,7 @@ namespace AILZ80ASM.Assembler
             {
                 action.Invoke(localAsmLoad);
 
-                return new AIValue(0);
+                return new AIValue(0, AIValue.ValueInt32TypeEnum.Dec);
             });
         }
 
