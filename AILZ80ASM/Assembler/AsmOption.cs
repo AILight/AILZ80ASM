@@ -55,6 +55,9 @@ namespace AILZ80ASM.Assembler
         // 出力開始アドレスを指定
         public UInt16? StartAddress { get; set; } = default;
 
+        // ラベル定義を設定
+        public string[] DefineLabels { get; set; } = default;
+
         /// <summary>
         /// 出力用の確定したエンコードを返す
         /// </summary>
@@ -121,6 +124,7 @@ namespace AILZ80ASM.Assembler
             }
             GapByte = rootCommand.GetValue<byte>("gapByte");
             ListOmitBinaryFile = rootCommand.GetValue<bool>("listOmitBinaryFile");
+            DefineLabels = rootCommand.GetValue<string[]>("defineLabel");
         }
 
         /// <summary>

@@ -59,8 +59,8 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -ul, --unused-label            | 未使用ラベルを確認します。
 | -cd, --change-dir <directory>  | アセンブル実行時のカレントディレクトリを変更します。終了時に元に戻ります。
 | -gap, --gap-default <gapByte>  | アセンブラのギャップのデフォルト値を指定します。 デフォルト値:$FF
-| -df, --list-file               | アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
 | -df, --diff-file               | アセンブル出力結果のDIFFを取ります。アセンブル結果は出力されません。
+| -dl, --define-label <labels>   | ラベルをスペース区切りで指定します。値を設定するときは=で代入します。
 | -nsa, --no-super-asm           | スーパーアセンブルモードを無効にします。
 | -sa, --start-address <address> | スタートアドレス(出力)を指定します。ORGで指定したアドレスまで -gap で埋めます
 | -f, --force                    | 出力ファイルを上書きします。
@@ -96,9 +96,24 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ■ sample.z80をアセンブル、出力はBIN形式、指定（W0001,W9001,W9002）のワーニング表示をOFFにする
 > AILZ80ASM sample.z80 -bin output.bin -dw W0001 W9001 W9002
 
+■ sample.z80をアセンブル、ラベルを指定する
+> AILZ80ASM sample.z80 -bin -ld TEST1=10 TEST2=20 TEST3
+
 ■ -omオプションのヘルプを表示
 > AILZ80ASM -h -om
 ```
+
+#### コマンドライン: ラベル指定
+コマンドラインからラベルを指定することができます。代入式で指定すると値を設定できます。ラベル単体で記述した場合は#TRUEが設定されます。
+```
+> AILZ80ASM sample.z80 -bin -equ -ld TEST1=10 TEST2=20 TEST3
+
+file: sample.equ
+TEST1           equ 10
+TEST2           equ 20
+TEST3           equ #TRUE
+```
+
 
 ## コマンドライン 戻り値
 - 0: アセンブルが正常に終了

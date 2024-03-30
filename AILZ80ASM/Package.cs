@@ -46,7 +46,8 @@ namespace AILZ80ASM
             FileItems = new List<FileItem>();
 
             var label = new LabelAdr("[NAME_SPACE_DEFAULT]", AssembleLoad);
-            AssembleLoad.AddLabel(label);
+            this.AssembleLoad.AddLabel(label);
+            this.AssembleLoad.SettingComandlineOptionDefineLabels();
 
             foreach (var fileInfo in AssembleOption.InputFiles[AsmEnum.FileTypeEnum.Z80])
             {
