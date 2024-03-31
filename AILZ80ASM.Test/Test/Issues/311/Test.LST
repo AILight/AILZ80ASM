@@ -1,0 +1,8 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.18.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+000000 8000 3E01             7      LD A, 1
+000002 8002 0601             7      LD B, 1D
+000004 8004 0E01             7      LD C, 1H
+000006 8006 161D             7      LD D, 1DH
+[EOF:Test.Z80:UTF_8]

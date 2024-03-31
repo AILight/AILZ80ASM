@@ -288,5 +288,11 @@ namespace AILZ80ASM.Test
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "305"));
         }
+
+        [TestMethod]
+        public void Issue_311()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "311"));
+        }
     }
 }
