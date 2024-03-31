@@ -314,6 +314,15 @@ namespace AILZ80ASM.Assembler
                 Required = false,
             });
 
+            rootCommand.AddOption(new Option<string[]>()
+            {
+                Name = "defineLabel",
+                ArgumentName = "labels",
+                Aliases = new[] { "-dl", "--define-label" },
+                Description = "ラベルをスペース区切りで指定します。値を設定するときは = で代入します。",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "noSuperAssemble",
@@ -329,6 +338,15 @@ namespace AILZ80ASM.Assembler
                 Description = "出力ファイルを上書きします。",
                 Required = false,
                 IsSimple = true,
+            });
+
+            rootCommand.AddOption(new Option<ushort?>()
+            {
+                Name = "startAddress",
+                ArgumentName = "address",
+                Aliases = new[] { "-sa", "--start-address" },
+                Description = "スタートアドレス(出力)を指定します。",
+                Required = false
             });
 
             rootCommand.AddOption(new Option<bool>()

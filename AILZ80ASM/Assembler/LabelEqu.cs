@@ -13,5 +13,10 @@ namespace AILZ80ASM.Assembler
             : base(lineDetailItemEqual, asmLoad, LabelTypeEnum.Equ)
         {
         }
+
+        public LabelEqu(string labelName, string valueString, AsmLoad asmLoad)
+            : base(labelName, valueString, asmLoad, LabelTypeEnum.Equ)
+        {
+        }
     }
 }

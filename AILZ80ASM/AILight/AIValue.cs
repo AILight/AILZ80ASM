@@ -38,6 +38,15 @@ namespace AILZ80ASM.AILight
             Function = 64,
         }
 
+        public enum ValueInt32TypeEnum
+        {
+            None,
+            Hex,
+            Oct,
+            Dec,
+            Bin,
+        }
+
         public enum OperationTypeEnum
         {
             None,
@@ -245,7 +254,8 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternBinaryNumber_HB = @"^0b(?<value>([01_]+))$";
         private static readonly string RegexPatternBinaryNumber_TB = @"^(?<value>([01_]+))B$";
         private static readonly string RegexPatternBinaryNumber_HP = @"^%(?<value>([01_]+))$";
-        private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
+        private static readonly string RegexPatternDigit_N = @"^(?<value>(\+|\-|)(\d+))$";
+        private static readonly string RegexPatternDigit_D = @"^(?<value>(\+|\-|)(\d+))D$";
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
         private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
         private static readonly string RegexPatternFunctionWithNamespace = @"^(?<function>[0-9a-zA-Z_]+\.[0-9a-zA-Z_]+\s*\()";
@@ -265,6 +275,7 @@ namespace AILZ80ASM.AILight
         public int OperationPriority => FormulaPriority[ValueOperation];
         public ArgumentTypeEnum ArgumentType => OperationArgumentType[ValueOperation];
         public ValueTypeEnum ValueType { get; set; } = ValueTypeEnum.None;
+        public ValueInt32TypeEnum ValueInt32Type { get; set; } = ValueInt32TypeEnum.None;
 
         public AIValue(string value)
             : this(value, ValueTypeEnum.None)
@@ -520,9 +531,22 @@ namespace AILZ80ASM.AILight
         /// </summary>
         /// <param name="value"></param>
         public AIValue(int value)
+            : this(value, ValueInt32TypeEnum.Dec)
+        {
+        }
+
+        public AIValue(int value, ValueInt32TypeEnum valueInt32Type)
         {
             ValueType = ValueTypeEnum.Int32;
-            Value = value.ToString();
+            ValueInt32Type = valueInt32Type;
+            Value = valueInt32Type switch
+            {
+                ValueInt32TypeEnum.Dec => value.ToString(),
+                ValueInt32TypeEnum.Hex => $"${value:X4}",
+                ValueInt32TypeEnum.Oct => $"{Convert.ToString(value, 8)}o",
+                ValueInt32TypeEnum.Bin => $"%{Convert.ToString(value, 2)}",
+                _ => value.ToString(),
+            }; ;
             ValueInt32 = value;
         }
 
@@ -813,6 +837,7 @@ namespace AILZ80ASM.AILight
                 try
                 {
                     ValueType = ValueTypeEnum.Int32;
+                    ValueInt32Type = ValueInt32TypeEnum.Hex;
                     ValueInt32 = Convert.ToInt32(result16, 16);
                 }
                 catch
@@ -826,6 +851,7 @@ namespace AILZ80ASM.AILight
                 try
                 {
                     ValueType = ValueTypeEnum.Int32;
+                    ValueInt32Type = ValueInt32TypeEnum.Bin;
                     ValueInt32 = Convert.ToInt32(result2, 2);
                 }
                 catch
@@ -839,6 +865,7 @@ namespace AILZ80ASM.AILight
                 try
                 {
                     ValueType = ValueTypeEnum.Int32;
+                    ValueInt32Type = ValueInt32TypeEnum.Oct;
                     ValueInt32 = Convert.ToInt32(result8, 8);
                 }
                 catch
@@ -852,6 +879,7 @@ namespace AILZ80ASM.AILight
                 try
                 {
                     ValueType = ValueTypeEnum.Int32;
+                    ValueInt32Type = ValueInt32TypeEnum.Dec;
                     ValueInt32 = Convert.ToInt32(result10, 10);
                 }
                 catch
@@ -883,6 +911,7 @@ namespace AILZ80ASM.AILight
                 if (ValueBytes.Length > 0 && ValueBytes.Length <= 2)
                 {
                     ValueType |= ValueTypeEnum.Int32;
+                    ValueInt32Type = ValueInt32TypeEnum.Hex;
                     if (ValueBytes.Length == 2)
                     {
                         ValueInt32 = ValueBytes[0] * 256 + ValueBytes[1];
@@ -901,6 +930,7 @@ namespace AILZ80ASM.AILight
                 }
                 // プログラム・ロケーションカウンター
                 ValueType = ValueTypeEnum.Int32;
+                ValueInt32Type = ValueInt32TypeEnum.Hex;
                 ValueInt32 = (int)asmAddress.Value.Program;
             }
             else if (Value == "$$")
@@ -920,6 +950,7 @@ namespace AILZ80ASM.AILight
 
                 // アウトプット・ロケーションカウンター
                 ValueType = ValueTypeEnum.Int32;
+                ValueInt32Type = ValueInt32TypeEnum.Hex;
                 ValueInt32 = (int)asmAddress.Value.Output;
             }
             else if (string.Compare(Value, "#TRUE", true) == 0)
@@ -1017,6 +1048,7 @@ namespace AILZ80ASM.AILight
                     var value = label.Value;
                     ValueType = value.ValueType;
                     ValueInt32 = value.ValueInt32;
+                    ValueInt32Type = value.ValueInt32Type;
                     ValueBool = value.ValueBool;
                     ValueString = value.ValueString;
                     ValueBytes = value.ValueBytes;
@@ -1048,6 +1080,7 @@ namespace AILZ80ASM.AILight
 
             ValueType = calcValue.ValueType;
             ValueInt32 = calcValue.ValueInt32;
+            ValueInt32Type = calcValue.ValueInt32Type;
             ValueBool = calcValue.ValueBool;
             ValueString = calcValue.ValueString;
             ValueOperation = calcValue.ValueOperation;
@@ -1264,7 +1297,7 @@ namespace AILZ80ASM.AILight
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(~firstValue.ValueInt32);
+                return new AIValue(~firstValue.ValueInt32, firstValue.ValueInt32Type);
             }
             else if (firstValue.ValueType.HasFlag(ValueTypeEnum.Bool))
             {
@@ -1287,7 +1320,7 @@ namespace AILZ80ASM.AILight
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(~firstValue.ValueInt32);
+                return new AIValue(~firstValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
@@ -1304,7 +1337,7 @@ namespace AILZ80ASM.AILight
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 & 0xFF);
+                return new AIValue(firstValue.ValueInt32 & 0xFF, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
@@ -1321,7 +1354,7 @@ namespace AILZ80ASM.AILight
 
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue((firstValue.ValueInt32 & 0xFF00) / 256);
+                return new AIValue((firstValue.ValueInt32 & 0xFF00) / 256, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
@@ -1486,7 +1519,7 @@ namespace AILZ80ASM.AILight
             else if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                      secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 + secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 + secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型もしくは文字列型です。{firstValue.Value},{secondValue.Value}");
@@ -1506,7 +1539,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 - secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 - secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1526,7 +1559,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 * secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 * secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1546,7 +1579,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 / secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 / secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1566,7 +1599,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 % secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 % secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1587,7 +1620,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 << secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 << secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1607,7 +1640,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 >> secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 >> secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1772,7 +1805,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 & secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 & secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1792,7 +1825,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 ^ secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 ^ secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1812,7 +1845,7 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32) &&
                 secondValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
-                return new AIValue(firstValue.ValueInt32 | secondValue.ValueInt32);
+                return new AIValue(firstValue.ValueInt32 | secondValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、同じ型で数値型です。{firstValue.Value},{secondValue.Value}");
@@ -1935,7 +1968,8 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = Regex.Match(value, RegexPatternDigit_N, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                (matched = Regex.Match(value, RegexPatternDigit_D, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;

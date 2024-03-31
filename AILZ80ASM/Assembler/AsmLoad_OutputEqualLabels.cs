@@ -38,18 +38,25 @@ namespace AILZ80ASM.Assembler
                 }
                 catch { }
 
-
                 // EQU
                 foreach (var label in equLabels)
                 {
                     var labelName = $"{label.LabelShortName}";
-                    var equValue = $"${label.Value.ConvertTo<int>():X4}";
-                    if (AIMath.TryParse(label.Value.OriginalValue, out var tmpAIValue) &&
-                        label.Value.Equals(tmpAIValue))
+                    if (label.Value.TryParse<int>(out var result))
                     {
-                        equValue = label.Value.OriginalValue;
+                        var equValue = $"${result:X4}";
+                        if (AIMath.TryParse(label.Value.OriginalValue, out var tmpAIValue) &&
+                            label.Value.Equals(tmpAIValue))
+                        {
+                            equValue = label.Value.OriginalValue;
+                        }
+                        streamWriter.WriteLine($"{labelName.PadRight(labelMaxLength)}equ {equValue}");
+
                     }
-                    streamWriter.WriteLine($"{labelName.PadRight(labelMaxLength)}equ {equValue}");
+                    else
+                    {
+                        streamWriter.WriteLine($"{labelName.PadRight(labelMaxLength)}equ {label.Value.OriginalValue}");
+                    }
                 }
                 if (globalLabels.Any())
                 {

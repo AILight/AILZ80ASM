@@ -9,6 +9,7 @@ using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.LineDetailItems.ScopeItem;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
+using System.Reflection;
 
 namespace AILZ80ASM.Assembler
 {
@@ -180,7 +181,7 @@ namespace AILZ80ASM.Assembler
             {
                 action.Invoke(localAsmLoad);
 
-                return new AIValue(0);
+                return new AIValue(0, AIValue.ValueInt32TypeEnum.Dec);
             });
         }
 
