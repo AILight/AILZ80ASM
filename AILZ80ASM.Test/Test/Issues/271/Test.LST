@@ -1,0 +1,23 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.18.0, LST:Full:4
+000000 0100                         org 0x100
+                                
+000000 0100 210F01          10      ld hl, .label1
+000003 0103 210F01          10      ld hl, .label2
+000006 0106 3E0A             7      ld a, Test1
+000008 0108 0614             7      ld b, Test2
+                                
+                                #IF TEST3
+00000A 010A 00               4      NOP
+                                #ENDIF
+00000B 010B 0E01             7      ld c, BASE.TEST.OFFSET
+                                
+00000D 010D C9              10      ret
+                                
+       010F                     .label1 equ $ + 1
+00000E 010E 00                      db 0
+       010F                     .label2 equ $
+00000F 010F 01020304                db 1, 2, 3, 4
+                                
+       0001                     .label3 equ $0001
+       0001                     .label4 equ 1
+[EOF:Test.Z80:UTF_8]

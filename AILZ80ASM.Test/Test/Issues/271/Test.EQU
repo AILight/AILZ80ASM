@@ -1,0 +1,19 @@
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.18.0, EQU
+#pragma once
+
+
+[BASE]
+
+TEST.OFFSET     equ 1
+
+
+[NAME_SPACE_DEFAULT]
+
+TEST1           equ 10
+TEST2           equ 20
+TEST3           equ #TRUE
+TEST3.label1    equ $010F
+TEST3.label2    equ $010F
+TEST3.label3    equ $0001
+TEST3.label4    equ 1
+

@@ -81,6 +81,16 @@ namespace AILZ80ASM.CommandLine
                 }
                 HasValue = true;
             }
+            else if (typeof(T) == typeof(string[]))
+            {
+                if (values.Length == 0)
+                {
+                    throw new Exception($"{Name}に、ラベルを指定する必要があります。（複数ラベル指定可能）");
+                }
+
+                Value = (T)(dynamic)values;
+                HasValue = true;
+            }
             else if (typeof(T) == typeof(FileInfo))
             {
                 if (values.Length != 1)

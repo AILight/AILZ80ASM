@@ -314,6 +314,15 @@ namespace AILZ80ASM.Assembler
                 Required = false,
             });
 
+            rootCommand.AddOption(new Option<string[]>()
+            {
+                Name = "defineLabel",
+                ArgumentName = "labels",
+                Aliases = new[] { "-dl", "--define-label" },
+                Description = "ラベルをスペース区切りで指定します。値を設定するときは = で代入します。",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "noSuperAssemble",
