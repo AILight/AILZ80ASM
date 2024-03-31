@@ -1,0 +1,6 @@
+﻿	ORG $8000
+
+	LD A, 1
+	LD B, 1D
+	LD C, 1H
+	LD D, 1DH

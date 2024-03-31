@@ -254,7 +254,8 @@ namespace AILZ80ASM.AILight
         private static readonly string RegexPatternBinaryNumber_HB = @"^0b(?<value>([01_]+))$";
         private static readonly string RegexPatternBinaryNumber_TB = @"^(?<value>([01_]+))B$";
         private static readonly string RegexPatternBinaryNumber_HP = @"^%(?<value>([01_]+))$";
-        private static readonly string RegexPatternDigit = @"^(?<value>(\+|\-|)(\d+))$";
+        private static readonly string RegexPatternDigit_N = @"^(?<value>(\+|\-|)(\d+))$";
+        private static readonly string RegexPatternDigit_D = @"^(?<value>(\+|\-|)(\d+))D$";
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
         private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
         private static readonly string RegexPatternFunctionWithNamespace = @"^(?<function>[0-9a-zA-Z_]+\.[0-9a-zA-Z_]+\s*\()";
@@ -1967,7 +1968,8 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternDigit, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = Regex.Match(value, RegexPatternDigit_N, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
+                (matched = Regex.Match(value, RegexPatternDigit_D, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;
