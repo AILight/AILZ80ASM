@@ -368,7 +368,7 @@
 0001F6 01F6 DDB61A          19      OR (IX+26)
 0001F9 01F9 DDBC            10      CP IXh
 0001FB 01FB DDBD            10      CP IXl
-0001FD 01FD DDBE1B           7      CP (IX+27)
+0001FD 01FD DDBE1B          19      CP (IX+27)
                                     ;DD CB系
 000200 0200 DDE1            14      POP IX
 000202 0202 DDE3            23      EX (SP),IX
@@ -456,7 +456,7 @@
 0002B8 02B8 FDB61A          19      OR (IY+26)
 0002BB 02BB FDBC            10      CP IYh
 0002BD 02BD FDBD            10      CP IYl
-0002BF 02BF FDBE1B           7      CP (IY+27)
+0002BF 02BF FDBE1B          19      CP (IY+27)
                                     ;FD CB系
 0002C2 02C2 FDE1            14      POP IY
 0002C4 02C4 FDE3            23      EX (SP),IY
@@ -527,22 +527,22 @@
 000350 0350 EDBB                    OTDR
                                 
                                     ; ビット操作系(CB)
-000352 0352 CB00             4      RLC B
-000354 0354 CB01             4      RLC C
-000356 0356 CB02             4      RLC D
-000358 0358 CB03             4      RLC E
-00035A 035A CB04             4      RLC H
-00035C 035C CB05             4      RLC L
+000352 0352 CB00             8      RLC B
+000354 0354 CB01             8      RLC C
+000356 0356 CB02             8      RLC D
+000358 0358 CB03             8      RLC E
+00035A 035A CB04             8      RLC H
+00035C 035C CB05             8      RLC L
 00035E 035E CB06            15      RLC (HL)
-000360 0360 CB07             4      RLC A
-000362 0362 CB08             4      RRC B
-000364 0364 CB09             4      RRC C
-000366 0366 CB0A             4      RRC D
-000368 0368 CB0B             4      RRC E
-00036A 036A CB0C             4      RRC H
-00036C 036C CB0D             4      RRC L
+000360 0360 CB07             8      RLC A
+000362 0362 CB08             8      RRC B
+000364 0364 CB09             8      RRC C
+000366 0366 CB0A             8      RRC D
+000368 0368 CB0B             8      RRC E
+00036A 036A CB0C             8      RRC H
+00036C 036C CB0D             8      RRC L
 00036E 036E CB0E            15      RRC (HL)
-000370 0370 CB0F             4      RRC A
+000370 0370 CB0F             8      RRC A
 000372 0372 CB10             8      RL B
 000374 0374 CB11             8      RL C
 000376 0376 CB12             8      RL D
