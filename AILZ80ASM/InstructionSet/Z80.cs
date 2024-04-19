@@ -290,7 +290,7 @@ namespace AILZ80ASM.InstructionSet
                 // 左ローテート
                 new InstructionItem { Mnemonics = new[] { "RLCA" }, OPCode = new[] { "00000111" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "RLA" }, OPCode = new[] { "00010111" }, M = 1, T = 4 },
-                new InstructionItem { Mnemonics = new[] { "RLC r1" }, OPCode = new[] { "11001011", "00000DDD" }, M = 1, T = 4 },
+                new InstructionItem { Mnemonics = new[] { "RLC r1" }, OPCode = new[] { "11001011", "00000DDD" }, M = 2, T = 8 },
                 new InstructionItem { Mnemonics = new[] { "RLC (HL)" }, OPCode = new[] { "11001011", "00000110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RLC (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RLC (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00000110" }, M = 6, T = 23 },
@@ -314,7 +314,7 @@ namespace AILZ80ASM.InstructionSet
                 // 右ローテート
                 new InstructionItem { Mnemonics = new[] { "RRCA" }, OPCode = new[] { "00001111" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "RRA" }, OPCode = new[] { "00011111" }, M = 1, T = 4 },
-                new InstructionItem { Mnemonics = new[] { "RRC r1" }, OPCode = new[] { "11001011", "00001DDD" }, M = 1, T = 4 },
+                new InstructionItem { Mnemonics = new[] { "RRC r1" }, OPCode = new[] { "11001011", "00001DDD" }, M = 2, T = 8 },
                 new InstructionItem { Mnemonics = new[] { "RRC (HL)" }, OPCode = new[] { "11001011", "00001110" }, M = 4, T = 15 },
                 new InstructionItem { Mnemonics = new[] { "RRC (IX+d)" }, OPCode = new[] { "11011101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
                 new InstructionItem { Mnemonics = new[] { "RRC (IY+d)" }, OPCode = new[] { "11111101", "11001011", "IIIIIIII", "00001110" }, M = 6, T = 23 },
@@ -527,10 +527,10 @@ namespace AILZ80ASM.InstructionSet
                 new InstructionItem { Mnemonics = new[] { "CP r2" }, OPCode = new[] { "10111SSS" }, M = 1, T = 4 },
                 new InstructionItem { Mnemonics = new[] { "CP n" }, OPCode = new[] { "11111110", "NNNNNNNN" }, M = 2, T = 7 },
                 new InstructionItem { Mnemonics = new[] { "CP (HL)" }, OPCode = new[] { "10111110" }, M = 2, T = 7 },
-                new InstructionItem { Mnemonics = new[] { "CP (IX+d)" }, OPCode = new[] { "11011101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
-                new InstructionItem { Mnemonics = new[] { "CP (IY+d)" }, OPCode = new[] { "11111101", "10111110", "IIIIIIII" }, M = 2, T = 7 },
-                new InstructionItem { Mnemonics = new[] { "CP (IX)" }, OPCode = new[] { "11011101", "10111110", "00000000" }, M = 2, T = 7, ErrorCode = Error.ErrorCodeEnum.W9001 },
-                new InstructionItem { Mnemonics = new[] { "CP (IY)" }, OPCode = new[] { "11111101", "10111110", "00000000" }, M = 2, T = 7, ErrorCode = Error.ErrorCodeEnum.W9002 },
+                new InstructionItem { Mnemonics = new[] { "CP (IX+d)" }, OPCode = new[] { "11011101", "10111110", "IIIIIIII" }, M = 5, T = 19 },
+                new InstructionItem { Mnemonics = new[] { "CP (IY+d)" }, OPCode = new[] { "11111101", "10111110", "IIIIIIII" }, M = 5, T = 19 },
+                new InstructionItem { Mnemonics = new[] { "CP (IX)" }, OPCode = new[] { "11011101", "10111110", "00000000" }, M = 5, T = 19, ErrorCode = Error.ErrorCodeEnum.W9001 },
+                new InstructionItem { Mnemonics = new[] { "CP (IY)" }, OPCode = new[] { "11111101", "10111110", "00000000" }, M = 5, T = 19, ErrorCode = Error.ErrorCodeEnum.W9002 },
                 new InstructionItem { Mnemonics = new[] { "CP ixr2" }, OPCode = new[] { "11011101", "10111SSS" }, M = 2, T = 10, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "CP iyr2" }, OPCode = new[] { "11111101", "10111SSS" }, M = 2, T = 10, UnDocumented = true },
                 // ジャンプ
