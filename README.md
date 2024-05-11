@@ -97,7 +97,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 > AILZ80ASM sample.z80 -bin output.bin -dw W0001 W9001 W9002
 
 ■ sample.z80をアセンブル、ラベルを指定する
-> AILZ80ASM sample.z80 -bin -ld TEST1=10 TEST2=20 TEST3
+> AILZ80ASM sample.z80 -bin -dl TEST1=10 TEST2=20 TEST3
 
 ■ -omオプションのヘルプを表示
 > AILZ80ASM -h -om
@@ -106,7 +106,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 #### コマンドライン: ラベル指定
 コマンドラインからラベルを指定することができます。代入式で指定すると値を設定できます。ラベル単体で記述した場合は#TRUEが設定されます。
 ```
-> AILZ80ASM sample.z80 -bin -equ -ld TEST1=10 TEST2=20 TEST3
+> AILZ80ASM sample.z80 -bin -equ -dl TEST1=10 TEST2=20 TEST3
 
 file: sample.equ
 TEST1           equ 10
