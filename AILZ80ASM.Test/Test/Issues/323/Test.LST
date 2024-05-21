@@ -1,0 +1,93 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.19.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+       0000                     Image1  equ 0
+                                
+                                    ; Image1.bin
+                                    #IF exists Image1
+                                        include "Image1.bin", B
+000000 8000 01020304            
+[EOF:Image1.bin:4]
+                                    #ELSE
+                                        include "Image2.bin", B
+                                    #ENDIF
+                                
+                                    ; Image2.bin
+                                    #IF !exists Image1
+                                        include "Image1.bin", B
+                                    #ELSE
+                                        include "Image2.bin", B
+000004 8004 02030405            
+[EOF:Image2.bin:4]
+                                    #ENDIF
+                                
+                                    REPT 2
+                                        include "Image1.bin", B
+                                    ENDM
+                               + #0001
+                               +        include "Image1.bin", B
+000008 8008 01020304           +
+[EOF:Image1.bin:4]
+                               + #0002
+                               +        include "Image1.bin", B
+00000C 800C 01020304           +
+[EOF:Image1.bin:4]
+                                
+                                    LDIMAGE "Image1"
+                               +; arg1 = "Image1"
+                               +    #IF arg1 == "Image1"
+                               +        include "Image1.bin", B
+000010 8010 01020304           +
+[EOF:Image1.bin:4]
+                               +    #ELSE
+                               +        include "Image2.bin", B
+                               +    #ENDIF
+                               +
+                               +    REPT 2
+                               +        include "Image3.bin", B
+                               +    ENDM
+                               + #0001
+                               +        include "Image3.bin", B
+000014 8014 03040506           +
+[EOF:Image3.bin:4]
+                               + #0002
+                               +        include "Image3.bin", B
+000018 8018 03040506           +
+[EOF:Image3.bin:4]
+                               +
+                                    LDIMAGE "Image2"
+                               +; arg1 = "Image2"
+                               +    #IF arg1 == "Image1"
+                               +        include "Image1.bin", B
+                               +    #ELSE
+                               +        include "Image2.bin", B
+00001C 801C 02030405           +
+[EOF:Image2.bin:4]
+                               +    #ENDIF
+                               +
+                               +    REPT 2
+                               +        include "Image3.bin", B
+                               +    ENDM
+                               + #0001
+                               +        include "Image3.bin", B
+000020 8020 03040506           +
+[EOF:Image3.bin:4]
+                               + #0002
+                               +        include "Image3.bin", B
+000024 8024 03040506           +
+[EOF:Image3.bin:4]
+                               +
+                                
+                                LDIMAGE MACRO arg1
+                                    #IF arg1 == "Image1"
+                                        include "Image1.bin", B
+                                    #ELSE
+                                        include "Image2.bin", B
+                                    #ENDIF
+                                
+                                    REPT 2
+                                        include "Image3.bin", B
+                                    ENDM
+                                
+                                    ENDM
+[EOF:Test.Z80:UTF_8]
