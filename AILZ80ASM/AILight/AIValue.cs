@@ -718,7 +718,7 @@ namespace AILZ80ASM.AILight
                     }
                     else if (ValueType.HasFlag(ValueTypeEnum.Bytes))
                     {
-                        return (T)(dynamic)string.Join(',', ValueBytes.Select(m => $"{m:2X}"));
+                        return (T)(dynamic)string.Join(',', ValueBytes.Select(m => $"{m:X2}"));
                     }
                     else if (ValueType.HasFlag(ValueTypeEnum.String))
                     {
