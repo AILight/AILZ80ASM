@@ -168,6 +168,7 @@ namespace AILZ80ASM.LineDetailItems
                     {
                         if (string.IsNullOrEmpty(conditionPack.Condition) || AIMath.Calculation(conditionPack.Condition, AsmLoad, asmAddress).ConvertTo<bool>())
                         {
+                            // CreateLineDetailItem
                             foreach (var item in conditionPack.LineDetailItemConditionaList)
                             {
                                 var lineItem = item.LineItem;
@@ -188,6 +189,27 @@ namespace AILZ80ASM.LineDetailItems
                                     this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
                                 }
                                 item.EnableAssemble = true;
+                            }
+                            // Expand
+                            foreach (var item in conditionPack.LineDetailItemConditionaList)
+                            {
+                                var lineItem = item.LineItem;
+                                try
+                                {
+                                    lineItem.ExpansionItem();
+                                }
+                                catch (ErrorAssembleException ex)
+                                {
+                                    this.AsmLoad.AddError(new ErrorLineItem(lineItem, ex));
+                                }
+                                catch (ErrorLineItemException ex)
+                                {
+                                    this.AsmLoad.AddError(ex.ErrorLineItem);
+                                }
+                                catch (Exception ex)
+                                {
+                                    this.AsmLoad.AddError(new ErrorLineItem(lineItem, new ErrorAssembleException(Error.ErrorCodeEnum.E0000, ex.Message)));
+                                }
                             }
                             break;
                         }

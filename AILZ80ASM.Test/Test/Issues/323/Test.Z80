@@ -1,0 +1,37 @@
+﻿	ORG $8000
+
+Image1	equ 0
+
+	; Image1.bin
+	#IF exists Image1
+		include "Image1.bin", B
+	#ELSE
+		include "Image2.bin", B
+	#ENDIF
+
+	; Image2.bin
+	#IF !exists Image1
+		include "Image1.bin", B
+	#ELSE
+		include "Image2.bin", B
+	#ENDIF
+
+	REPT 2
+		include "Image1.bin", B
+	ENDM
+
+	LDIMAGE "Image1"
+	LDIMAGE "Image2"
+
+LDIMAGE MACRO arg1
+	#IF arg1 == "Image1"
+		include "Image1.bin", B
+	#ELSE
+		include "Image2.bin", B
+	#ENDIF
+
+	REPT 2
+		include "Image3.bin", B
+	ENDM
+
+	ENDM
