@@ -465,7 +465,7 @@ namespace AILZ80ASM.Assembler
                 Calculation();
                 if (LineItem != default && AsmLoad != default)
                 {
-                    var labelName = AsmLoad.IsNamespaceUsed && GlobalLabelName != Package.NAME_SPACE_DEFAULT_NAME ? $"{GlobalLabelName}.{LabelShortName}" : $"{LabelShortName}";
+                    var labelName = GlobalLabelName == Package.NAME_SPACE_DEFAULT_NAME ? $"{LabelShortName}" : $"{GlobalLabelName}.{LabelShortName}";
                     AsmLoad.AddError(new ErrorLineItem(LineItem, Error.ErrorCodeEnum.I0002, $"{labelName}"));
                 }
 
