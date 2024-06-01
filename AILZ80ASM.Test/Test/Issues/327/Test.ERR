@@ -1,0 +1,35 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.20.0
+Copyright (C) 2024 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [Test.Z80]
+
+# Assemble Status
+
+- Expand       (1/6)
+- PreAssemble  (2/6)
+- AdjAssemble  (3/6)
+- MainAssemble (4/6)
+- Validate     (5/6)
+- Complete     (6/6)
+
+# Outputs
+
+- BIN filename [Issue327.BIN]: Successful
+- LST filename [Issue327.LST]: Successful
+
+# Information
+
+Test.Z80:5  I0002: 未使用ラベル: LB1.TP1
+Test.Z80:9  I0002: 未使用ラベル: LB2.TP1
+Test.Z80:11  I0002: 未使用ラベル: LB3
+Test.Z80:15  I0002: 未使用ラベル: NLB1
+Test.Z80:17  I0002: 未使用ラベル: NLB1.TP1
+Test.Z80:19  I0002: 未使用ラベル: NLB2
+Test.Z80:21  I0002: 未使用ラベル: NLB2.TP1
+Test.Z80:51  I0002: 未使用ラベル: NS.NLB1
+Test.Z80:53  I0002: 未使用ラベル: NS.NLB1.TP1
+
+0 error(s), 0 warning(s), 9 information
+

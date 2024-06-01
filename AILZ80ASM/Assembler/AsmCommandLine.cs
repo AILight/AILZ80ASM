@@ -286,7 +286,7 @@ namespace AILZ80ASM.Assembler
                 Aliases = new[] { "-ul", "--unused-label" },
                 Description = "未使用ラベルを確認します。",
                 Required = false,
-            });
+            }); ;
 
             rootCommand.AddOption(new Option<DirectoryInfo>()
             {

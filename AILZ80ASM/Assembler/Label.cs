@@ -463,10 +463,12 @@ namespace AILZ80ASM.Assembler
             try
             {
                 Calculation();
-                if (LineDetailExpansionItem != default && AsmLoad != default)
+                if (LineItem != default && AsmLoad != default)
                 {
-                    AsmLoad.AddError(new ErrorLineItem(LineDetailExpansionItem.LineItem, Error.ErrorCodeEnum.I0002, $"{LabelShortName}"));
+                    var labelName = GlobalLabelName == Package.NAME_SPACE_DEFAULT_NAME ? $"{LabelShortName}" : $"{GlobalLabelName}.{LabelShortName}";
+                    AsmLoad.AddError(new ErrorLineItem(LineItem, Error.ErrorCodeEnum.I0002, $"{labelName}"));
                 }
+
             }
             catch (Exception ex)
             {

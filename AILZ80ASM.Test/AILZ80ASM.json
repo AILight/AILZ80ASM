@@ -1,6 +1,5 @@
 {
   "default-options": [
-    "-ul"
   ],
   "disable-warnings": [
     "W9001",
