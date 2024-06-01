@@ -1,0 +1,58 @@
+﻿	ORG $8000
+
+LB1:
+	NOP
+.TP1
+	NOP
+LB2:
+	NOP
+.TP1
+	NOP
+LB3:
+	NOP
+.TP1
+	NOP
+NLB1:
+	NOP
+.TP1
+	NOP
+NLB2:
+	NOP
+.TP1
+	NOP
+	LD A, 1
+	LD B, 1d
+	LD C, 1H
+	LD D, 1DH
+	ALLLD
+	RET
+	CALL  LB1
+	CALL  LB2 - LB1
+	CALL  LB3.TP1
+	LD	  HL, NS.LB1
+	LD	  HL, NS.LB1.TP1
+	RET
+
+
+ALLLD MACRO
+		ld a,1
+		ld b,2
+		ld d,4
+		ld e,5
+.LP		ld h,6
+		ld l,7
+ENDM
+
+[NS]
+LB1:
+	NOP
+.TP1
+	NOP
+NLB1:
+	NOP
+.TP1
+	NOP
+	RET
+
+
+

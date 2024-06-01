@@ -28,6 +28,5 @@ namespace AILZ80ASM.Assembler
                 streamWriter.WriteLine($"{lineItem.FileInfo.Name}({lineItem.LineIndex}) : {item.LabelShortName}");
             }
         }
-
     }
 }

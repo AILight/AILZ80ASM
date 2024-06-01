@@ -19,7 +19,7 @@ namespace AILZ80ASM.Assembler
         public AsmOption AssembleOption { get; private set; }
 
         // 命令セット
-        public ISA ISA { get; private set; } 
+        public ISA ISA { get; private set; }
 
         // 共有データ
         public AsmLoadShare Share { get; private set; }
@@ -29,6 +29,24 @@ namespace AILZ80ASM.Assembler
 
         // スコープの親
         private AsmLoad ParentAsmLoad { get; set; } = default;
+
+
+        public bool IsNamespaceUsed {
+            get
+            {
+                var globalLabelnames = new List<string>();
+                var asmLoad = this;
+
+                while (asmLoad != default)
+                {
+                    globalLabelnames.AddRange(Scope.Labels.GroupBy(m => m.GlobalLabelName).Select(m => m.Key));
+                    asmLoad = ParentAsmLoad;
+                }
+
+                return globalLabelnames.Count > 1;
+            }
+        }
+
 
         /// <summary>
         /// アセンブルエラー

@@ -111,6 +111,10 @@ namespace AILZ80ASM.Test
             {
                 [AsmEnum.FileTypeEnum.Z80] = files,
             };
+            asmOption.DisableWarningCodes = new[]
+            {
+                Error.ErrorCodeEnum.I0002
+            };
             asmOption.InputEncodeMode = AsmEnum.EncodeModeEnum.UTF_8;
             asmOption.ListMode = AsmEnum.ListFormatEnum.Full;
 
