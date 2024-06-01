@@ -25,6 +25,7 @@ namespace AILZ80ASM
         public ErrorLineItem[] Errors => AssembleLoad.AssembleErrors;
         public ErrorLineItem[] Warnings => AssembleLoad.AssembleWarnings;
         public ErrorLineItem[] Information => AssembleLoad.AssembleInformation;
+        public const string NAME_SPACE_DEFAULT_NAME = "NAME_SPACE_DEFAULT";
 
         public Package(AsmOption asmOption, AsmISA asmISA)
         {
@@ -45,7 +46,7 @@ namespace AILZ80ASM
         {
             FileItems = new List<FileItem>();
 
-            var label = new LabelAdr("[NAME_SPACE_DEFAULT]", AssembleLoad);
+            var label = new LabelAdr($"[{NAME_SPACE_DEFAULT_NAME}]", AssembleLoad);
             this.AssembleLoad.AddLabel(label);
             this.AssembleLoad.SettingComandlineOptionDefineLabels();
 
