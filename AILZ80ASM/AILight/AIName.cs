@@ -9,12 +9,33 @@ namespace AILZ80ASM.AILight
     public static class AIName
     {
         private static readonly string RegexPatternLabelValidate = @"^[a-zA-Z0-9_]+$";
+        private static readonly Regex CompiledRegexPatternLabelValidate = new Regex(
+            RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternMacroValidate = @"^[a-zA-Z0-9_()]+$";
+        private static readonly Regex CompiledRegexPatternMacroValidate = new Regex(
+            RegexPatternMacroValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+$";
+        private static readonly Regex CompiledRegexPatternLocalLabelNOValidate = new Regex(
+            RegexPatternLocalLabelNOValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+$";
+        private static readonly Regex CompiledRegexPatternLocalLabelATValidate = new Regex(
+            RegexPatternLocalLabelATValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternLocalLabelANValidate = @"^@@(?<labelValue>([0-9]*))$";
+        private static readonly Regex CompiledRegexPatternLocalLabelANValidate = new Regex(
+            RegexPatternLocalLabelANValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternLabelInvalid = @"^[0-9]";
+        private static readonly Regex CompiledRegexPatternLabelInvalid = new Regex(
+            RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternCharMapInvalid = @"^@[a-zA-Z0-9_]+$";
+        private static readonly Regex CompiledRegexPatternCharMapInvalid = new Regex(
+            RegexPatternCharMapInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
         {
@@ -296,7 +317,7 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            return Regex.Match(target, RegexPatternCharMapInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+            return CompiledRegexPatternCharMapInvalid.Match(target).Success;
         }
 
         /// <summary>
@@ -343,8 +364,8 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            return  Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                   !Regex.Match(target, RegexPatternLabelInvalid,  RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+            return CompiledRegexPatternLabelValidate.Match(target).Success &&
+                   !CompiledRegexPatternLabelInvalid.Match(target).Success;
         }
 
         /// <summary>
@@ -381,8 +402,8 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            return  Regex.Match(target, RegexPatternMacroValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                   !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+            return CompiledRegexPatternMacroValidate.Match(target).Success &&
+                   !CompiledRegexPatternLabelInvalid.Match(target).Success;
         }
 
         private static bool ValidateNameForLocalLabel(string target, AsmLoad asmLoad)
@@ -398,7 +419,7 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            var regex = Regex.Match(target, RegexPatternLocalLabelANValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var regex = CompiledRegexPatternLocalLabelANValidate.Match(target);
             if (regex.Success)
             {
                 var valueString= regex.Groups["labelValue"].Value;
@@ -416,8 +437,8 @@ namespace AILZ80ASM.AILight
             }
 
             // @と通常ラベルの処理
-            return Regex.Match(target, RegexPatternLocalLabelATValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success ||
-                   Regex.Match(target, RegexPatternLocalLabelNOValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+            return CompiledRegexPatternLocalLabelATValidate.Match(target).Success ||
+                   CompiledRegexPatternLocalLabelNOValidate.Match(target).Success;
         }
 
         /// <summary>
@@ -444,8 +465,8 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                   !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+            return CompiledRegexPatternLabelValidate.Match(target).Success &&
+                   !CompiledRegexPatternLabelInvalid.Match(target).Success;
         }
 
         /// <summary>
@@ -472,8 +493,8 @@ namespace AILZ80ASM.AILight
                 return false;
             }
 
-            return Regex.Match(target, RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success &&
-                   !Regex.Match(target, RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase).Success;
+            return CompiledRegexPatternLabelValidate.Match(target).Success &&
+                   !CompiledRegexPatternLabelInvalid.Match(target).Success;
         }
 
     }
