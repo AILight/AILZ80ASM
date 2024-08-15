@@ -36,9 +36,6 @@ namespace AILZ80ASM.OperationItems
         private static readonly Regex CompiledRegexPatternDataFunction = new Regex(
             RegexPatternDataFunction, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
-        private static readonly Regex RegexPatternDataFunction2 = new Regex(
-            RegexPatternDataFunction, RegexOptions.Compiled
-        );
 
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
         private static readonly Regex CompiledRegexPatternDataOP = new Regex(
@@ -109,7 +106,7 @@ namespace AILZ80ASM.OperationItems
                     }
 
                 }
-                else if (RegexPatternDataFunction2.IsMatch(item.Value))
+                else if (CompiledRegexPatternDataFunction.IsMatch(item.Value))
                 {
                     ValueList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, AsmLoad).Select(m => new DataValue { DataValueType = DataValueTypeEnum.StringValue, StringValue = m }));
                 }
@@ -276,7 +273,7 @@ namespace AILZ80ASM.OperationItems
                 {
                     //ループの展開
                     var tmpOperation = Regex.Replace(operation, $"\\b{variableName}\\b", $"{currentValue}", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                    if (RegexPatternDataFunction2.IsMatch(tmpOperation))
+                    if (CompiledRegexPatternDataFunction.IsMatch(tmpOperation))
                     {
                         returnValues.AddRange(DBDW_Function(tmpOperation, lineDetailExpansionItemOperation, asmLoad));
                     }
