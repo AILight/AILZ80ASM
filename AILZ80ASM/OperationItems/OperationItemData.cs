@@ -32,7 +32,7 @@ namespace AILZ80ASM.OperationItems
             public string StringValue { get; set; }
         }
 
-        private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-z|A-Z|0-9|_]+)\s*=\s*(?<start>[a-z|A-Z|0-9|_|$|%]+)\s*\.\.\s*(?<end>[a-z|A-Z|0-9|_|$|%]+)\s*:\s*(?<operation>.+)\]$";
+        private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-zA-Z0-9_]+)\s*=\s*(?<start>[a-zA-Z0-9_$%]+)\s*\.\.\s*(?<end>[a-zA-Z0-9_$%]+)\s*:\s*(?<operation>.+)\]$";
         private static readonly Regex CompiledRegexPatternDataFunction = new Regex(
             RegexPatternDataFunction, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
