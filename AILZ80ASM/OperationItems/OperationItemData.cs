@@ -33,7 +33,15 @@ namespace AILZ80ASM.OperationItems
         }
 
         private static readonly string RegexPatternDataFunction = @"^\[(?<variable>[a-zA-Z0-9_]+)\s*=\s*(?<start>[a-zA-Z0-9_$%]+)\s*\.\.\s*(?<end>[a-zA-Z0-9_$%]+)\s*:\s*(?<operation>.+)\]$";
+        private static readonly Regex CompiledRegexPatternDataFunction = new Regex(
+            RegexPatternDataFunction, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
+        private static readonly Regex CompiledRegexPatternDataOP = new Regex(
+            RegexPatternDataOP, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
 
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
@@ -53,7 +61,7 @@ namespace AILZ80ASM.OperationItems
 
         public static OperationItemData Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternDataOP.Match(lineItem.OperationString);
             var dataType = default(DataTypeEnum);
 
             var op1 = matched.Groups["op1"].Value;
@@ -98,7 +106,7 @@ namespace AILZ80ASM.OperationItems
                     }
 
                 }
-                else if (Regex.IsMatch(item.Value, RegexPatternDataFunction))
+                else if (CompiledRegexPatternDataFunction.IsMatch(item.Value))
                 {
                     ValueList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, AsmLoad).Select(m => new DataValue { DataValueType = DataValueTypeEnum.StringValue, StringValue = m }));
                 }
@@ -247,7 +255,7 @@ namespace AILZ80ASM.OperationItems
         {
             var returnValues = new List<string>();
 
-            var matchFunction = Regex.Match(op, RegexPatternDataFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchFunction = CompiledRegexPatternDataFunction.Match(op);
             if (matchFunction.Success)
             {
                 var variableName = matchFunction.Groups["variable"].Value.Trim();
@@ -265,7 +273,7 @@ namespace AILZ80ASM.OperationItems
                 {
                     //ループの展開
                     var tmpOperation = Regex.Replace(operation, $"\\b{variableName}\\b", $"{currentValue}", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                    if (Regex.IsMatch(tmpOperation, RegexPatternDataFunction))
+                    if (CompiledRegexPatternDataFunction.IsMatch(tmpOperation))
                     {
                         returnValues.AddRange(DBDW_Function(tmpOperation, lineDetailExpansionItemOperation, asmLoad));
                     }
