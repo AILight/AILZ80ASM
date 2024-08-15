@@ -1,0 +1,16 @@
+﻿	ORG $8000
+
+ABC:
+    LD A, 0
+.TEST3 EQU $ + 1
+    LD B, 0
+.TEST2
+    LD B, C
+    REPT 10
+    LD HL, 0
+.TEST1 EQU $ + 1
+    LD DE, .TEST1
+    ENDM
+    LD (.TEST2), hl
+    ;LD (.TEST1), hl // ここは参照できない
+    END

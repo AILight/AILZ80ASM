@@ -310,5 +310,11 @@ namespace AILZ80ASM.Test
             Lib.AreSameLst(File.OpenRead("./Test/Issues/327/Issue327.LST"), File.OpenRead("./Test/Issues/327/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
             Lib.AreSameLst(File.OpenRead("./Test/Issues/327/Issue327.ERR"), File.OpenRead("./Test/Issues/327/Test.ERR"), Assembler.AsmEnum.FileTypeEnum.ERR);
         }
+
+        [TestMethod]
+        public void Issue_336()
+        {
+            Lib.Assemble_AreSame(Path.Combine("Issues", "336"));
+        }
     }
 }
