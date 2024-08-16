@@ -284,14 +284,6 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestT88()
-        {
-            var result = Program.Main(@"Success.Z80", "-f", "-t88", "-cd", "./Test/TestSS_Main/");
-            Assert.AreEqual(0, result);
-            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_ORG.t88"), File.OpenRead("./Test/TestSS_Main/Success.t88"), Assembler.AsmEnum.FileTypeEnum.T88);
-        }
-
-        [TestMethod]
         public void TestBIN()
         {
             var result = Program.Main(@"Success.Z80", "-f", "-bin", "-cd", "./Test/TestSS_Main/");
@@ -308,20 +300,36 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TestTAG()
-        {
-            var result = Program.Main(@"Success.Z80", "-f", "-tag", "-cd", "./Test/TestSS_Main/");
-            Assert.AreEqual(0, result);
-            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_ORG.tag"), File.OpenRead("./Test/TestSS_Main/tags"), Assembler.AsmEnum.FileTypeEnum.TAG);
-        }
-
-        [TestMethod]
         public void TestErrList()
         {
             var result = Program.Main(@"ErrorList.Z80", "-f", "-err", "-lst", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(1, result);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/ErrorList_ORG.err"), File.OpenRead("./Test/TestSS_Main/ErrorList.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/ErrorList_ORG.lst"), File.OpenRead("./Test/TestSS_Main/ErrorList.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
+
+        [TestMethod]
+        public void TestErrDefineLabel_Namespace()
+        {
+            {
+                var result = Program.Main(@"Success.Z80", "-f", "-err", "-lst", "-cd", "./Test/TestSS_Main/", "-dl", "AB$C.DEF=1");
+                Assert.AreEqual(2, result);
+            }
+
+            {
+                var result = Program.Main(@"Success.Z80", "-f", "-err", "-lst", "-cd", "./Test/TestSS_Main/", "-dl", "A=1");
+                Assert.AreEqual(2, result);
+            }
+
+            {
+                var result = Program.Main(@"Success.Z80", "-f", "-err", "-lst", "-cd", "./Test/TestSS_Main/", "-dl", "ABC.DE$F=1");
+                Assert.AreEqual(2, result);
+            }
+
+            {
+                var result = Program.Main(@"Success.Z80", "-f", "-err", "-lst", "-cd", "./Test/TestSS_Main/", "-dl", "ABC.DEF=1=2");
+                Assert.AreEqual(2, result);
+            }
         }
 
         [TestMethod]
@@ -357,6 +365,22 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(1, result);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_NSA_ORG.lst"), File.OpenRead("./Test/TestSS_Main/Success_NSA.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_NSA_ORG.err"), File.OpenRead("./Test/TestSS_Main/Success_NSA.err"), Assembler.AsmEnum.FileTypeEnum.ERR);
+        }
+
+        [TestMethod]
+        public void TestT88()
+        {
+            var result = Program.Main(@"Success.Z80", "-f", "-t88", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_ORG.t88"), File.OpenRead("./Test/TestSS_Main/Success.t88"), Assembler.AsmEnum.FileTypeEnum.T88);
+        }
+
+        [TestMethod]
+        public void TestTAG()
+        {
+            var result = Program.Main(@"Success.Z80", "-f", "-tag", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_ORG.tag"), File.OpenRead("./Test/TestSS_Main/tags"), Assembler.AsmEnum.FileTypeEnum.TAG);
         }
     }
 }

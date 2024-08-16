@@ -1,0 +1,16 @@
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.21.0, EQU
+#pragma once
+
+
+[LOADER]
+
+SCRSIZE     equ $1234
+EXPAND      equ $0000
+PICEND      equ $1234
+
+
+[NAME_SPACE_DEFAULT]
+
+ABC     equ 123
+Test    equ $AACC
+

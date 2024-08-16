@@ -296,6 +296,26 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_322_1()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue322_1.BIN", "-lst", "Issue322_1.LST", "-equ", "Issue322_1.EQU", "-dl", "LOADER.SCRSIZE=$1234", "ABC=123", "-cd", "./Test/Issues/322_1");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/322_1/Issue322_1.BIN"), File.OpenRead("./Test/Issues/322_1/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/322_1/Issue322_1.LST"), File.OpenRead("./Test/Issues/322_1/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/322_1/Issue322_1.EQU"), File.OpenRead("./Test/Issues/322_1/Test.EQU"), Assembler.AsmEnum.FileTypeEnum.EQU);
+        }
+
+        [TestMethod]
+        public void Issue_322_2()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue322_2.BIN", "-lst", "Issue322_2.LST", "-equ", "Issue322_2.EQU", "-dl", "LOADER.SCRSIZE=$1234", "-cd", "./Test/Issues/322_2");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/322_2/Issue322_2.BIN"), File.OpenRead("./Test/Issues/322_2/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/322_2/Issue322_2.LST"), File.OpenRead("./Test/Issues/322_2/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/322_2/Issue322_2.EQU"), File.OpenRead("./Test/Issues/322_2/Test.EQU"), Assembler.AsmEnum.FileTypeEnum.EQU);
+        }
+
+        [TestMethod]
         public void Issue_323()
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "323"));
