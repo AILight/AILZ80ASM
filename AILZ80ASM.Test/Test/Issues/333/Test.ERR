@@ -1,0 +1,37 @@
+﻿*** AILZ80ASM *** Z-80 Assembler, version 1.0.21.0
+Copyright (C) 2024 by M.Ishino (AILight)
+
+# Inputs
+
+- Z80 filename [Test.Z80]
+
+# Assemble Status
+
+- Expand       (1/6)
+- PreAssemble  (2/6)
+- AdjAssemble  (3/6)
+- MainAssemble (4/6)
+- Validate     (5/6)
+- Complete     (6/6)
+
+# Outputs
+
+- LST filename [Issue333.LST]: Successful
+- BIN filename [Issue333.BIN]: Failed
+
+# Error
+
+Test.Z80:9  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[数値と数値の間には演算子が必要です]
+Test.Z80:10  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[数値と数値の間には演算子が必要です]
+Test.Z80:11  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[数値と数値の間には演算子が必要です]
+Test.Z80:12  E0001: 無効な命令が指定されました。ラベルに記号(,)が含まれています。
+
+# List
+
+Issue333.LST:10  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[数値と数値の間には演算子が必要です]
+Issue333.LST:11  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[数値と数値の間には演算子が必要です]
+Issue333.LST:12  E0004: 演算、もしくはラベルの解決に失敗しました。定義を確認してください。[数値と数値の間には演算子が必要です]
+Issue333.LST:13  E0001: 無効な命令が指定されました。ラベルに記号(,)が含まれています。
+
+4 error(s), 0 warning(s), 0 information
+

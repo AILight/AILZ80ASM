@@ -312,6 +312,15 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_333()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue333.BIN", "-lst", "Issue333.LST", "-err", "Issue333.ERR", "-cd", "./Test/Issues/333");
+            Assert.AreEqual(1, result);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/333/Issue333.LST"), File.OpenRead("./Test/Issues/333/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/333/Issue333.ERR"), File.OpenRead("./Test/Issues/333/Test.ERR"), Assembler.AsmEnum.FileTypeEnum.ERR);
+        }
+
+        [TestMethod]
         public void Issue_334()
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "334"));

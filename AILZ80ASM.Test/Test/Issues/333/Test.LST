@@ -1,0 +1,15 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.21.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+       8000                     ABC:
+000000 8000 3E00             7      LD A, 0
+       8002                     .TEST1
+000002 8002 0600             7      LD B, 0
+                                
+000004 8004 CD0280          17      CALL ABC.TEST1
+000007 8007 **** E0004 **** 17      CALL ABC. TEST1
+00000A 800A **** E0004 **** 17      CALL ABC .TEST1
+00000D 800D **** E0004 **** 17      CALL ABC . TEST1
+            **** E0001 ****         CALL ABC,TEST1
+000010 8010 C9              10      RET
+[EOF:Test.Z80:UTF_8]
