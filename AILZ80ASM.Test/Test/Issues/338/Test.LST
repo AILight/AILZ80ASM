@@ -1,0 +1,10 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.21.0, LST:Full:4
+000000 8000                         ORG $8000
+       8000                     START:
+000000 8000 210480          10      LD HL, DATA
+000003 8003 C9              10      RET
+       8004                     DATA:
+                                    INCLUDE "Test.INC", B, , $ - START
+000004 8004 30313233            
+[EOF:Test.INC:4]
+[EOF:Test.Z80:UTF_8]
