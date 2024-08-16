@@ -1,0 +1,13 @@
+﻿	ORG $8000
+
+ABC:
+    LD A, 0
+.TEST1
+    LD B, 0
+
+    CALL ABC.TEST1
+    CALL ABC. TEST1
+    CALL ABC .TEST1
+    CALL ABC . TEST1
+    CALL ABC,TEST1
+    RET
