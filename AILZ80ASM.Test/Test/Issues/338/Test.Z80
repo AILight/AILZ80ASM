@@ -1,0 +1,6 @@
+﻿	ORG $8000
+START:
+	LD HL, DATA
+	RET
+DATA:
+	INCLUDE "Test.INC", B, , $ - START
