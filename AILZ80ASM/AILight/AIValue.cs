@@ -234,32 +234,85 @@ namespace AILZ80ASM.AILight
         /// オペレーション判別・正規表現用
         /// </summary>
         private static readonly string RegexPatternOperation = $"^(?<operation>({OperationKeysString}))";
+        private static readonly Regex CompiledRegexPatternOperation = new Regex(
+            RegexPatternOperation, RegexOptions.Compiled | RegexOptions.IgnoreCase
+        );
 
         /// <summary>
         /// オペレーション判別・正規表現用（文字列のみ）
         /// </summary>
         private static readonly string RegexPatternWordOperation = $"^(?<operation>({WordOperationKeysString}))";
+        private static readonly Regex CompiledRegexPatternWordOperation = new Regex(
+            RegexPatternWordOperation, RegexOptions.Compiled | RegexOptions.IgnoreCase
+        );
 
         /// <summary>
         /// オペレーション判別・正規表現用（記号のみ）
         /// </summary>
         private static readonly string RegexPatternSymbolOperation = $"^(?<operation>({SymbolOperationKeysString}))";
+        private static readonly Regex CompiledRegexPatternSymbolOperation = new Regex(
+            RegexPatternSymbolOperation, RegexOptions.Compiled | RegexOptions.IgnoreCase
+        );
 
         private static readonly string RegexPatternHexadecimal_HD = @"^\$(?<value>([0-9A-Fa-f]+))$";
+        private static readonly Regex CompiledRegexPatternHexadecimal_HD = new Regex(
+            RegexPatternHexadecimal_HD, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternHexadecimal_HX = @"^0x(?<value>([0-9A-Fa-f]+))$";
+        private static readonly Regex CompiledRegexPatternHexadecimal_HX = new Regex(
+            RegexPatternHexadecimal_HX, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternHexadecimal_TH = @"^(?<value>([0-9A-Fa-f]+))H$";
+        private static readonly Regex CompiledRegexPatternHexadecimal_TH = new Regex(
+            RegexPatternHexadecimal_TH, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         private static readonly string RegexPatternOctal_HO = @"^0o(?<value>([0-7]+))$";
+        private static readonly Regex CompiledRegexPatternOctal_HO = new Regex(
+            RegexPatternOctal_HO, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternOctal_TO = @"^(?<value>([0-7]+))O$";
+        private static readonly Regex CompiledRegexPatternOctal_TO = new Regex(
+            RegexPatternOctal_TO, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternBinaryNumber_HB = @"^0b(?<value>([01_]+))$";
+        private static readonly Regex CompiledRegexPatternBinaryNumber_HB = new Regex(
+            RegexPatternBinaryNumber_HB, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternBinaryNumber_TB = @"^(?<value>([01_]+))B$";
+        private static readonly Regex CompiledRegexPatternBinaryNumber_TB = new Regex(
+            RegexPatternBinaryNumber_TB, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternBinaryNumber_HP = @"^%(?<value>([01_]+))$";
+        private static readonly Regex CompiledRegexPatternBinaryNumber_HP = new Regex(
+            RegexPatternBinaryNumber_HP, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternDigit_N = @"^(?<value>(\+|\-|)(\d+))$";
+        private static readonly Regex CompiledRegexPatternDigit_N = new Regex(
+            RegexPatternDigit_N, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternDigit_D = @"^(?<value>(\+|\-|)(\d+))D$";
+        private static readonly Regex CompiledRegexPatternDigit_D = new Regex(
+            RegexPatternDigit_D, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternValue = @"^(?<value>[0-9a-zA-Z_\$#@\.]+)";
+        private static readonly Regex CompiledRegexPatternValue = new Regex(
+            RegexPatternValue, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternFunction = @"^(?<function>[0-9a-zA-Z_]+\s*\()";
+        private static readonly Regex CompiledRegexPatternFunction = new Regex(
+            RegexPatternFunction, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternFunctionWithNamespace = @"^(?<function>[0-9a-zA-Z_]+\.[0-9a-zA-Z_]+\s*\()";
+        private static readonly Regex CompiledRegexPatternFunctionWithNamespace = new Regex(
+            RegexPatternFunctionWithNamespace, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternSyntaxSuger_AL = @"^\.@@(?<direction>(B|F))";
+        private static readonly Regex CompiledRegexPatternSyntaxSuger_AL = new Regex(
+            RegexPatternSyntaxSuger_AL, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         private string Value { get; set; } = "";
         private int ValueInt32 { get; set; } = default(int);
@@ -324,7 +377,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool TryParseFormula(ref string target, out string resultFormula)
         {
-            var matchOperation = Regex.Match(target, RegexPatternOperation, RegexOptions.IgnoreCase);
+            var matchOperation = CompiledRegexPatternOperation.Match(target);
             if (!matchOperation.Success)
             {
                 resultFormula = "";
@@ -332,7 +385,7 @@ namespace AILZ80ASM.AILight
             }
 
             // 記号のみチェック
-            var matchSymbol = Regex.Match(target, RegexPatternSymbolOperation, RegexOptions.IgnoreCase);
+            var matchSymbol = CompiledRegexPatternSymbolOperation.Match(target);
             if (matchSymbol.Success)
             {
                 resultFormula = matchSymbol.Groups["operation"].Value;
@@ -341,7 +394,7 @@ namespace AILZ80ASM.AILight
             }
 
             // 文字列演算子のチェック
-            if (!Regex.IsMatch(target, $"{RegexPatternWordOperation}($|\\s+)", RegexOptions.IgnoreCase))
+            if (!CompiledRegexPatternWordOperation.IsMatch(target))
             {
                 resultFormula = "";
                 return false;
@@ -360,7 +413,7 @@ namespace AILZ80ASM.AILight
                 
                 if (!string.IsNullOrEmpty(nextTarget))
                 {
-                    var matchNextSymbol = Regex.Match(nextTarget, RegexPatternSymbolOperation, RegexOptions.IgnoreCase);
+                    var matchNextSymbol = CompiledRegexPatternSymbolOperation.Match(nextTarget);
                     if (matchNextSymbol.Success)
                     {
                         var operationType = OperationTypeTable[matchNextSymbol.Groups["operation"].Value.ToLower()];
@@ -407,12 +460,12 @@ namespace AILZ80ASM.AILight
         {
             var functionName = default(string);
 
-            var matched = Regex.Match(target, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternFunction.Match(target);
             if (matched.Success)
             {
                 functionName = matched.Groups["function"].Value;
             }
-            var matchedWithNamespace = Regex.Match(target, RegexPatternFunctionWithNamespace, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchedWithNamespace = CompiledRegexPatternFunctionWithNamespace.Match(target);
             if (matchedWithNamespace.Success)
             {
                 functionName = matchedWithNamespace.Groups["function"].Value;
@@ -472,7 +525,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool TryParseSyntaxSuger(ref string target, out string[] resultValues)
         {
-            var matched = Regex.Match(target, RegexPatternSyntaxSuger_AL, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternSyntaxSuger_AL.Match(target);
             if (matched.Success)
             {
                 var direction = matched.Groups["direction"].Value;
@@ -503,7 +556,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool TryParseValue(ref string target, out string resultValue)
         { 
-            var matched = Regex.Match(target, RegexPatternValue, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternValue.Match(target);
             if (matched.Success)
             {
                 resultValue = matched.Groups["value"].Value;
@@ -1901,9 +1954,9 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternHexadecimal_HD, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternHexadecimal_HX, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternHexadecimal_TH, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = CompiledRegexPatternHexadecimal_HD.Match(value)).Success ||
+                (matched = CompiledRegexPatternHexadecimal_HX.Match(value)).Success ||
+                (matched = CompiledRegexPatternHexadecimal_TH.Match(value)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;
@@ -1923,9 +1976,9 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternBinaryNumber_HB, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternBinaryNumber_TB, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternBinaryNumber_HP, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = CompiledRegexPatternBinaryNumber_HB.Match(value)).Success ||
+                (matched = CompiledRegexPatternBinaryNumber_TB.Match(value)).Success ||
+                (matched = CompiledRegexPatternBinaryNumber_HP.Match(value)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;
@@ -1946,8 +1999,8 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternOctal_HO, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternOctal_TO, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = CompiledRegexPatternOctal_HO.Match(value)).Success ||
+                (matched = CompiledRegexPatternOctal_TO.Match(value)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;
@@ -1968,8 +2021,8 @@ namespace AILZ80ASM.AILight
         {
             var matched = default(Match);
 
-            if ((matched = Regex.Match(value, RegexPatternDigit_N, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success ||
-                (matched = Regex.Match(value, RegexPatternDigit_D, RegexOptions.Singleline | RegexOptions.IgnoreCase)).Success)
+            if ((matched = CompiledRegexPatternDigit_N.Match(value)).Success ||
+                (matched = CompiledRegexPatternDigit_D.Match(value)).Success)
             {
                 result = matched.Groups["value"].Value.Replace("_", "");
                 return true;

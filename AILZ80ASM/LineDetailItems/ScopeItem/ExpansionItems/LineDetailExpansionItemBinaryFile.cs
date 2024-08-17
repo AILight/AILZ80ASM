@@ -35,7 +35,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
             base.PreAssemble(ref asmAddress, asmLoad);
 
             var fileSize = (int)FileInfo.Length;
-            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : AIMath.Calculation(FileStart, asmLoad).ConvertTo<int>();
+            var fileStart = string.IsNullOrEmpty(FileStart) ? 0 : AIMath.Calculation(FileStart, asmLoad, asmAddress).ConvertTo<int>();
             fileSize -= fileStart;
 
             if (fileStart < 0)
@@ -48,7 +48,7 @@ namespace AILZ80ASM.LineDetailItems.ScopeItem.ExpansionItems
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2006);
             }
 
-            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : AIMath.Calculation(FileLength, asmLoad).ConvertTo<int>();
+            var readLength = string.IsNullOrEmpty(FileLength) ? int.MaxValue : AIMath.Calculation(FileLength, asmLoad, asmAddress).ConvertTo<int>();
             if (readLength < 0)
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E2005);

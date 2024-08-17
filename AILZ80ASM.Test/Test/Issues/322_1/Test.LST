@@ -1,0 +1,14 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.21.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+       AACC                     Test    equ $AACC
+                                
+                                [LOADER]
+       0000                     EXPAND  equ $0000
+                                ;-dl SCRSIZE
+       1234                     PICEND  equ EXPAND + SCRSIZE
+                                
+                                [MAIN]
+000000 8000 213412          10      LD  HL, LOADER.PICEND
+000003 8003 C9              10      RET
+[EOF:Test.Z80:UTF_8]

@@ -274,7 +274,7 @@ namespace AILZ80ASM.LineDetailItems
                     }
                 }
 
-                LineDetailScopeItems = lineItemList.SelectMany(m => m.LineDetailItem.LineDetailScopeItems).ToArray();
+                LineDetailScopeItems = lineItemList.Where(m => m.LineDetailItem.LineDetailScopeItems != default).SelectMany(m => m.LineDetailItem.LineDetailScopeItems).ToArray();
             }
             else
             {

@@ -97,6 +97,15 @@ namespace AILZ80ASM
                     return 2;
                 }
             }
+            catch (InvalidCommanLineOptionException ex)
+            {
+                if (!displayedOutputStart)
+                {
+                    OutputStart();
+                }
+                Trace.WriteLine($"Error:{ex.Message}");
+                return 2;
+            }
             catch (Exception ex)
             {
                 if (!displayedOutputStart)

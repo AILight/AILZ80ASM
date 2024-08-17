@@ -101,6 +101,9 @@ namespace AILZ80ASM.LineDetailItems
                     }
                 }
 
+                // エラーを調査する
+                SyntaxErrorAdvisor.AnalyzeLine(this.LineItem, this.AsmLoad);
+                
                 // マクロが見つからないケースは、エラーとする
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0001, errorMessage);
             }

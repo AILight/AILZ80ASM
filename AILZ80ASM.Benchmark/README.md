@@ -9,11 +9,33 @@
 - Releaseビルド
 - コンソールより「AILZ80ASM.Benchmark.exe」を実行
 
+## 実行環境
+| マシン | CPU
+----|----
+| Microsoft Surface Pro 6 | i7-8650U
+| Intel NUC 13 Extreme Kit | i7-13700K
+
 ## 確認方法
 - Meanの数値を確認
   - [Benchmark1](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark/TestSource/Benchmark1) をアセンブルした処理時間
 
 ## ベンチマーク結果
+#### v1.0.22.0: 2024/08/17
+- 一部の正規表現をCompiledに変更した
+  - [ueno1969さんからのPR](https://github.com/AILight/AILZ80ASM/pull/335)
+```
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.22631.4037/23H2/2023Update/SunValley3)
+Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.304
+  [Host]     : .NET 8.0.8 (8.0.824.36612), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.8 (8.0.824.36612), X64 RyuJIT AVX2
+
+
+| Method     | Mean    | Error    | StdDev   |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 3.807 s | 0.0510 s | 0.0426 s |
+```
+
 #### v1.0.17.0(開発中): 2024/03/10
 - .NET 8
 ```
