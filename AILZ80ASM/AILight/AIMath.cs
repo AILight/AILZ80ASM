@@ -12,7 +12,15 @@ namespace AILZ80ASM.AILight
     public static class AIMath
     {
         private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
+        private static readonly Regex CompiledRegexPatternCharMap = new Regex(
+            RegexPatternCharMap, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+
+        );
+
         private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
+        private static readonly Regex CompiledRegexPatternCharMapLabel = new Regex(
+            RegexPatternCharMapLabel, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public static string[] LabelOperatorStrings => LabelOperatorDic.SelectMany(m => m.Value).ToArray();
         public static Dictionary<string, string[]> LabelOperatorDic => new Dictionary<string, string[]>
@@ -248,7 +256,7 @@ namespace AILZ80ASM.AILight
 
         private static bool TryParseString(ref string tmpValue, out string resultString)
         {
-            var matched = Regex.Match(tmpValue, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternCharMap.Match(tmpValue);
             if (matched.Success)
             {
                 var stringCheck = tmpValue;
@@ -274,7 +282,7 @@ namespace AILZ80ASM.AILight
             else
             {
                 // ラベルを使ってのCharMap指定
-                var matchedLabel = Regex.Match(tmpValue, RegexPatternCharMapLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var matchedLabel = CompiledRegexPatternCharMapLabel.Match(tmpValue);
                 if (matchedLabel.Success)
                 {
                     resultString = matchedLabel.Value;
