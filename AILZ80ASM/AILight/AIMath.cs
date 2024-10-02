@@ -100,9 +100,9 @@ namespace AILZ80ASM.AILight
                     // ラベル演算子を処理する
                     var operations = new List<AIValue>();
                     var labelName = item.OriginalValue;
-                    while (AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
+                    int atmarkIndex;
+                    while ((atmarkIndex = labelName.LastIndexOf(".@")) >= 0 && AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        var atmarkIndex = labelName.LastIndexOf(".@");
                         var operation = labelName.Substring(atmarkIndex);
                         labelName = labelName.Substring(0, atmarkIndex);
                         var notFound = true;
