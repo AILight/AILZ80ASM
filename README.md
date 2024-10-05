@@ -13,6 +13,7 @@ AILZ80ASMは、C#で書かれた.NET 8の環境で動作するZ80アセンブラ
 - [不具合: GitHub Issues](https://github.com/AILight/AILZ80ASM/issues)
 - [質問、提案: GitHub Discussions](https://github.com/AILight/AILZ80ASM/discussions)
 - [上記内容+お気軽に: Twitter @AILight](https://x.com/AILight)
+- [テスト](https://www.ailight.jp)
 
 ## 入手方法 
 - 本ソースコードを、Visual Studio 2022でビルドする。
