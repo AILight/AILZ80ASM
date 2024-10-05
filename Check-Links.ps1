@@ -13,7 +13,7 @@ if (-not (Test-Path $MarkdownFile)) {
 $content = Get-Content -Path $MarkdownFile -Raw
 
 # ハイパーリンクの正規表現パターン
-$pattern = '\[.*?\]\((http[s]?://.*?)\)'
+$pattern = '\[(.*?)\]\((http[s]?://.*?)\)'
 
 # ハイパーリンクの抽出
 $matches = [regex]::Matches($content, $pattern)
@@ -33,7 +33,16 @@ $headers = @{
 }
 
 foreach ($match in $matches) {
-    $url = $match.Groups[1].Value
+    $linkText = $match.Groups[1].Value
+    $url = $match.Groups[2].Value
+
+    # リンクテキストに「(リンク切れ)」が含まれる場合はスキップ
+    if ($linkText -like "*`(リンク切れ`)*") {
+        Write-Host "[$currentLink/$totalLinks] スキップ: $url (リンクテキストに「(リンク切れ)」を含むため)"
+        $currentLink++
+        continue
+    }
+
     Write-Host "[$currentLink/$totalLinks] チェック中: $url"
 
     $success = $false

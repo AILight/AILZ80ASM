@@ -618,7 +618,7 @@ include "Test.inc", B, , 200		; バイナリーファイルとして展開され
 - MACROからENDMまでがマクロとして定義されます
 - 引数に付けた名前がマクロ内で利用できます
 - マクロ名に()を含める事が出来ます。ただし先頭に付ける事は出来ません
-- [サンプル1](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroCompatible/Test.Z80)
+- [サンプル1](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Macro/Test.Z80)
 - [サンプル2](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroEx/Test.Z80)
 - [サンプル3](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_MacroRegister/Test.Z80)
 
@@ -655,7 +655,7 @@ INITLD MACRO REG
 - 式1に設定した値の回数分をREPTの中に記述してある命令を展開します。
 - 式2には、最終の展開時に削除したい命令数を負の値で設定します。ラベルだけの行や空行は削除対象外です。
 - ネストに対応しています
-- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_RepeatCompatible/Test.Z80)
+- [サンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestPP_Repeat/Test.Z80)
 
 ```
 	REPT 3
@@ -837,7 +837,7 @@ off equ #FALSE
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
-- 山本昌志様（Z80命令セット）[Yamamoto's Laboratory](http://www.yamamo10.jp/yamamoto/index.html)
+- 山本昌志様（Z80命令セット）[Yamamoto's Laboratory (リンク切れ)](http://www.yamamo10.jp/yamamoto/index.html)
 - 神楽坂朋様（Z80命令表）[神楽坂製作所](http://tomocyan.net/~kagurazaka/html/index2.html)
 - Thomas Scherrer様（Z80 Undocumented Instructions） [Thomas Scherrer Z80-Family HomePage](http://www.z80.info/index.htm)
 
