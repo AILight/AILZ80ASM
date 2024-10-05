@@ -10,6 +10,11 @@ pool:
   vmImage: 'windows-2022'
 
 steps:
+- task: PowerShell@2
+  inputs:
+    filePath: '$(Build.SourcesDirectory)/check-links.ps1'
+    arguments: '-MarkdownFile $(Build.SourcesDirectory)/README.md'
+    failOnStderr: true
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'

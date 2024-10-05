@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "チェックリンクスクリプトの実行",
+            "script": "${workspaceFolder}/check-links.ps1",
+            "args": [
+                "-MarkdownFile",
+                "${workspaceFolder}/README.md"
+            ],
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}
