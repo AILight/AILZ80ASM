@@ -417,9 +417,9 @@ namespace AILZ80ASM.Assembler
         /// <returns></returns>
         private static string RemoveOperators(string labelName)
         {
-            // while (labelName.LastIndexOf(".@") > 0 && AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
-            int atmarkIndex;
-            while ((atmarkIndex = labelName.LastIndexOf(".@")) >= 0 && AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
+            var atmarkIndex = default(int);
+            while ((atmarkIndex = labelName.LastIndexOf(".@")) >= 0 &&
+                   AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
             {
                 labelName = labelName.Substring(0, atmarkIndex);
             }

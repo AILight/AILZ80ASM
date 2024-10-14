@@ -13,13 +13,14 @@ namespace AILZ80ASM.AILight
     {
         private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
         private static readonly Regex CompiledRegexPatternCharMap = new Regex(
-            RegexPatternCharMap, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
-
+            RegexPatternCharMap,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
 
         private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
         private static readonly Regex CompiledRegexPatternCharMapLabel = new Regex(
-            RegexPatternCharMapLabel, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternCharMapLabel,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
 
         public static string[] LabelOperatorStrings => LabelOperatorDic.SelectMany(m => m.Value).ToArray();
@@ -100,8 +101,9 @@ namespace AILZ80ASM.AILight
                     // ラベル演算子を処理する
                     var operations = new List<AIValue>();
                     var labelName = item.OriginalValue;
-                    int atmarkIndex;
-                    while ((atmarkIndex = labelName.LastIndexOf(".@")) >= 0 && AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
+                    var atmarkIndex = default(int);
+                    while ((atmarkIndex = labelName.LastIndexOf(".@")) >= 0 &&
+                           AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         var operation = labelName.Substring(atmarkIndex);
                         labelName = labelName.Substring(0, atmarkIndex);
