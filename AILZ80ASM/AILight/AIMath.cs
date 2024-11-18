@@ -293,20 +293,13 @@ namespace AILZ80ASM.AILight
             var escapeIndex = tmpValue.IndexOf("\\", checkStartIndex + 1);
             while (endIndex != -1 && escapeIndex != -1 && endIndex - 1 == escapeIndex)
             {
-                endIndex = tmpValue.IndexOf(stringMarkChar, endIndex + 1);
                 escapeIndex = tmpValue.IndexOf("\\", endIndex + 1);
+                endIndex = tmpValue.IndexOf(stringMarkChar, endIndex + 1);
             }
 
             if (endIndex == -1)
             {
-                if (escapeIndex == -1)
-                {
-                    throw new InvalidAIMathException("演算に使えない文字が検出されました。");
-                }
-                else
-                {
-                    throw new InvalidAIStringEscapeSequenceException($"有効なエスケープシーケンスではありません。[{tmpValue}]", tmpValue);
-                }
+                throw new InvalidAIStringEscapeSequenceException($"有効なエスケープシーケンスではありません。[{tmpValue}]", tmpValue);
             }
 
             resultString = tmpValue.Substring(0, endIndex + 1);
