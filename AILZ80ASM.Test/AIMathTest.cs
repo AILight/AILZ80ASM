@@ -5,7 +5,6 @@ using AILZ80ASM.LineDetailItems;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Formats.Asn1;
 
 namespace AILZ80ASM.Test
 {
