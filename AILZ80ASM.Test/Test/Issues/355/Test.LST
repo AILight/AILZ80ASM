@@ -1,0 +1,24 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.22.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+                                ; 余白を消去
+       8000                     EraseGapsBegin:
+       8001                     .len    equ $ + 1
+000000 8000 0600             7          ld    b, 0
+000002 8002 3EFF             7          ld    a, $FF
+000004 8004 48               4          ld    c, b
+000005 8005 D5              11          push de ; [DE+]
+000006 8006 CD1180          17          call .clear ; [DE+]
+000009 8009 D1              10          pop de ; [DE+]
+00000A 800A CBAA             8          res 5, d
+00000C 800C 3C               4          inc a
+00000D 800D 41               4          ld b, c
+00000E 800E 21                          db $21
+00000F 800F 12               7  .@@     ld (de), a
+000010 8010 1C               4          inc e
+000011 8011 **** E0026 **** 13  .clear  djnz .@@F
+000013 8013 C9              10          ret
+       8014                     Test:
+000014 8014 00               4          nop
+000015 8015 C9              10          ret
+[EOF:Test.Z80:UTF_8]

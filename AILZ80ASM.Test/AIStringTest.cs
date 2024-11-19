@@ -74,6 +74,8 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIString.IsString("\"00\"", asmLoad));
             Assert.IsTrue(AIString.IsString("\"石野\"", asmLoad));
             Assert.IsTrue(AIString.IsString("\"\r\n\"", asmLoad));
+            
+            Assert.IsTrue(AIString.IsString("\"ABC \\\"DEF\\\" GHI\"", asmLoad));
         }
 
         [TestMethod]
@@ -98,6 +100,7 @@ namespace AILZ80ASM.Test
         {
             Assert.IsTrue(AIString.IsCorrectOperation("LD A, (123)"));
             Assert.IsTrue(AIString.IsCorrectOperation("DB 123, \"全角\", 123"));
+            Assert.IsTrue(AIString.IsCorrectOperation("DB \"ABC \\\"DEF\\\" GHI\", $00"));
             Assert.IsFalse(AIString.IsCorrectOperation("LD A, （123)"));
             Assert.IsFalse(AIString.IsCorrectOperation("LD A, (123）"));
             Assert.IsFalse(AIString.IsCorrectOperation("LD A,　‘(123）"));
@@ -119,6 +122,7 @@ namespace AILZ80ASM.Test
             Assert.AreEqual("\v", AIString.EscapeSequence("\\v"));
 
             Assert.AreEqual("['\"\\\0\a\b\f\n\r\t\v]", AIString.EscapeSequence("[\\'\\\"\\\\\\0\\a\\b\\f\\n\\r\\t\\v]"));
+            Assert.AreEqual("ABC \"DEF\" GHI", AIString.EscapeSequence("ABC \\\"DEF\\\" GHI"));
         }
 
         [TestMethod]
@@ -144,6 +148,13 @@ namespace AILZ80ASM.Test
                 Assert.IsTrue(AIString.TryParseCharMap("\"ABC\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
                 Assert.AreEqual("", charMap);
                 Assert.AreEqual("ABC", resultString);
+            }
+
+            {
+                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+                Assert.IsTrue(AIString.TryParseCharMap("\"ABC \\\"DEF\\\" GHI\"", asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
+                Assert.AreEqual("", charMap);
+                Assert.AreEqual("ABC \"DEF\" GHI", resultString);
             }
 
             {

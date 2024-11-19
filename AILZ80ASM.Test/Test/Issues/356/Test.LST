@@ -1,0 +1,8 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.22.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+000000 8000 4142432044454620        DB "ABC DEF GHI", $00
+            47484900            
+00000C 800C 4142432022444546        DB "ABC \"DEF\" GHI", $00
+            222047484900        
+[EOF:Test.Z80:UTF_8]

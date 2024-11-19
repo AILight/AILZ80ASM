@@ -43,11 +43,29 @@ namespace AILZ80ASM.Assembler
         }
 
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\]";
+        private static readonly Regex CompiledRegexPatternGlobalLabel = new Regex(
+                RegexPatternGlobalLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):+";
+        private static readonly Regex CompiledRegexPatternLabel = new Regex(
+                RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!-/;-@\[-~]+:*))(\s+|$)";
+        private static readonly Regex CompiledRegexPatternSubLabel = new Regex(
+                RegexPatternSubLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
+        private static readonly Regex CompiledRegexPatternValueLabel1 = new Regex(
+                RegexPatternValueLabel1, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+\.[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
+        private static readonly Regex CompiledRegexPatternValueLabel2 = new Regex(
+                RegexPatternValueLabel2, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternValueLabel3 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):?\s*equ";
+        private static readonly Regex CompiledRegexPatternValueLabel3 = new Regex(
+                RegexPatternValueLabel3, RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public string GlobalLabelName { get; private set; }
         public string LabelName { get; private set; }
@@ -245,12 +263,12 @@ namespace AILZ80ASM.Assembler
 
         public static string GetLabelText(string lineString)
         {
-            var matchedGlobalLabel = Regex.Match(lineString, RegexPatternGlobalLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchedGlobalLabel = CompiledRegexPatternGlobalLabel.Match(lineString);
             if (matchedGlobalLabel.Success)
             {
                 return "[" + matchedGlobalLabel.Groups["label"].Value + "]";
             }
-            var matchedLabel = Regex.Match(lineString, RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchedLabel = CompiledRegexPatternLabel.Match(lineString);
             if (matchedLabel.Success)
             {
                 var label = matchedLabel.Groups["label"].Value;
@@ -262,24 +280,24 @@ namespace AILZ80ASM.Assembler
 
                 return lineString.Substring(0, startIndex);
             }
-            var matchedSubLabel = Regex.Match(lineString, RegexPatternSubLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchedSubLabel = CompiledRegexPatternSubLabel.Match(lineString);
             if (matchedSubLabel.Success)
             {
                 return matchedSubLabel.Groups["label"].Value;
             }
-            var matchedValueLabel1 = Regex.Match(lineString, RegexPatternValueLabel1, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchedValueLabel1 = CompiledRegexPatternValueLabel1.Match(lineString);
             if (matchedValueLabel1.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Compare(m.Name, matchedValueLabel1.Groups["label"].Value, true) == 0))
             {
                 return matchedValueLabel1.Groups["label"].Value;
             }
 
-            var matchedValueLabel2 = Regex.Match(lineString, RegexPatternValueLabel2, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchedValueLabel2 = CompiledRegexPatternValueLabel2.Match(lineString);
             if (matchedValueLabel2.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Compare(m.Name, matchedValueLabel2.Groups["label"].Value, true) == 0))
             {
                 return matchedValueLabel2.Groups["label"].Value;
             }
 
-            var matchedValueLabel3 = Regex.Match(lineString, RegexPatternValueLabel3, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matchedValueLabel3 = CompiledRegexPatternValueLabel3.Match(lineString);
             if (matchedValueLabel3.Success)
             {
                 // equの時には、ラベル指定可能にする
@@ -399,10 +417,10 @@ namespace AILZ80ASM.Assembler
         /// <returns></returns>
         private static string RemoveOperators(string labelName)
         {
-            while (AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
+            var atmarkIndex = default(int);
+            while ((atmarkIndex = labelName.LastIndexOf(".@")) >= 0 &&
+                   AIMath.LabelOperatorStrings.Any(m => labelName.EndsWith(m, StringComparison.CurrentCultureIgnoreCase)))
             {
-                var atmarkIndex = labelName.LastIndexOf(".@");
-
                 labelName = labelName.Substring(0, atmarkIndex);
             }
 
@@ -501,7 +519,7 @@ namespace AILZ80ASM.Assembler
 
         public static bool IsGlobalLabel(string labelString)
         {
-            return Regex.IsMatch(labelString, RegexPatternGlobalLabel);
+            return CompiledRegexPatternGlobalLabel.IsMatch(labelString);
         }
     }
 }

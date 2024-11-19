@@ -1508,10 +1508,6 @@ namespace AILZ80ASM.AILight
                     {
                         throw new InvalidAIValueException($"未定義:{firstValue.OriginalValue}");
                     }
-                    else if (labels.Length == 1)
-                    {
-                        return firstValue;
-                    }
                     break;
                 default:
                     throw new InvalidOperationException();

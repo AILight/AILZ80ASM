@@ -5,6 +5,7 @@ using AILZ80ASM.LineDetailItems;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 
 namespace AILZ80ASM.Test
 {
@@ -79,12 +80,12 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(2 <= 2, AIMath.Calculation("2 <= 2").ConvertTo<bool>());
             Assert.AreEqual(2 <= 3, AIMath.Calculation("2 <= 3").ConvertTo<bool>());
             Assert.AreEqual(1 <= 2, AIMath.Calculation("1 <= 2").ConvertTo<bool>());
-            Assert.AreEqual(2 > 2,  AIMath.Calculation("2 >  2").ConvertTo<bool>());
-            Assert.AreEqual(2 > 3,  AIMath.Calculation("2 >  3").ConvertTo<bool>());
-            Assert.AreEqual(1 > 2,  AIMath.Calculation("1 >  2").ConvertTo<bool>());
-            Assert.AreEqual(2 < 2,  AIMath.Calculation("2 <  2").ConvertTo<bool>());
-            Assert.AreEqual(2 < 3,  AIMath.Calculation("2 <  3").ConvertTo<bool>());
-            Assert.AreEqual(1 < 2,  AIMath.Calculation("1 <  2").ConvertTo<bool>());
+            Assert.AreEqual(2 > 2, AIMath.Calculation("2 >  2").ConvertTo<bool>());
+            Assert.AreEqual(2 > 3, AIMath.Calculation("2 >  3").ConvertTo<bool>());
+            Assert.AreEqual(1 > 2, AIMath.Calculation("1 >  2").ConvertTo<bool>());
+            Assert.AreEqual(2 < 2, AIMath.Calculation("2 <  2").ConvertTo<bool>());
+            Assert.AreEqual(2 < 3, AIMath.Calculation("2 <  3").ConvertTo<bool>());
+            Assert.AreEqual(1 < 2, AIMath.Calculation("1 <  2").ConvertTo<bool>());
         }
 
         [TestMethod]
@@ -152,7 +153,7 @@ namespace AILZ80ASM.Test
         public void Calc_09()
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            
+
             Assert.AreEqual((byte)'0', AIMath.Calculation("'0'", asmLoad).ConvertTo<byte>());
             Assert.AreEqual(256 + ((byte)' ' - (byte)'0'), AIMath.Calculation("' ' - '0'", asmLoad).ConvertTo<byte>());
             Assert.AreEqual((byte)':', AIMath.Calculation("':'", asmLoad).ConvertTo<byte>());
@@ -228,11 +229,11 @@ namespace AILZ80ASM.Test
 
             Assert.IsTrue(AIMath.Calculation("exists LB01", asmLoad).ConvertTo<bool>());
             Assert.IsFalse(AIMath.Calculation("exists LB02", asmLoad).ConvertTo<bool>());
-            
+
             Assert.IsTrue(AIMath.Calculation("EXISTS LB01", asmLoad).ConvertTo<bool>());
             Assert.IsFalse(AIMath.Calculation("EXISTS LB02", asmLoad).ConvertTo<bool>());
         }
-        
+
         [TestMethod]
         public void Calc_13()
         {
@@ -251,16 +252,16 @@ namespace AILZ80ASM.Test
         {
             Assert.AreEqual((UInt32)(1 + 2 * ((2 + 1)) + 6 / 2), AIMath.Calculation("1+2*((2+1))+6/2").ConvertTo<UInt32>());
             Assert.AreEqual((UInt32)((-2 + 1) & 0xFFFFFFFF), AIMath.Calculation("-2 + 1").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(-1 + 1),  AIMath.Calculation("-1 + 1").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(+1 + 1),  AIMath.Calculation("+1 + 1").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(-1 + 1), AIMath.Calculation("-1 + 1").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(+1 + 1), AIMath.Calculation("+1 + 1").ConvertTo<UInt32>());
             Assert.AreEqual((UInt32)(+1 + -1), AIMath.Calculation("+1 + -1").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(6 % 1),   AIMath.Calculation("6%1").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(6 % 5),   AIMath.Calculation("6%5").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(6 % 6),   AIMath.Calculation("6%6").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(5 << 1),  AIMath.Calculation("5<<1").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(5 << 5),  AIMath.Calculation("5<<5").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(5 >> 1),  AIMath.Calculation("5>>1").ConvertTo<UInt32>());
-            Assert.AreEqual((UInt32)(5 >> 5),  AIMath.Calculation("5>>5").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(6 % 1), AIMath.Calculation("6%1").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(6 % 5), AIMath.Calculation("6%5").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(6 % 6), AIMath.Calculation("6%6").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(5 << 1), AIMath.Calculation("5<<1").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(5 << 5), AIMath.Calculation("5<<5").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(5 >> 1), AIMath.Calculation("5>>1").ConvertTo<UInt32>());
+            Assert.AreEqual((UInt32)(5 >> 5), AIMath.Calculation("5>>5").ConvertTo<UInt32>());
         }
 
         [TestMethod]
@@ -429,6 +430,14 @@ namespace AILZ80ASM.Test
                 AIMath.TryParse("1+2", asmLoad, out var result);
                 Assert.AreEqual(3, result.ConvertTo<UInt16>());
             }
+        }
+
+        [TestMethod]
+        public void TryParse_String()
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            Assert.IsTrue(AIMath.TryParse("\"ABC \\\"DEF\\\" GHI\"", asmLoad, out var result));
+            Assert.AreEqual("ABC \"DEF\" GHI", result.ConvertTo<string>());
         }
     }
 }

@@ -1,0 +1,4 @@
+﻿	ORG $8000
+
+	DB "ABC DEF GHI", $00
+	DB "ABC \"DEF\" GHI", $00
