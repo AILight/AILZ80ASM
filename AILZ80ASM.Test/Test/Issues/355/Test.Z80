@@ -1,0 +1,22 @@
+	ORG $8000
+
+; 余白を消去
+EraseGapsBegin:
+.len	equ	$ + 1
+		ld    b, 0
+		ld    a, $FF
+		ld    c, b
+		push de ; [DE+]
+		call .clear ; [DE+]
+		pop de ; [DE+]
+		res 5, d
+		inc a
+		ld b, c
+		db $21
+.@@		ld (de), a
+		inc e
+.clear	djnz .@@F
+		ret
+Test:
+		nop
+		ret
