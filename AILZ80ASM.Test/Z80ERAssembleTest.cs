@@ -52,7 +52,7 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("CharMap1.Z80");
 
-            Assert.AreEqual(9, errors.Length);
+            Assert.AreEqual(11, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2101, 2, "CharMap1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2101, 6, "CharMap1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 7, "CharMap1.Z80", errors);
@@ -61,7 +61,9 @@ namespace AILZ80ASM.Test
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 10, "CharMap1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 11, "CharMap1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 12, "CharMap1.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2104, 13, "CharMap1.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2105, 16, "CharMap1.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E2106, 18, "CharMap1.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0005, 20, "CharMap1.Z80", errors);
         }
 
         [TestMethod]
