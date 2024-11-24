@@ -10,6 +10,7 @@ namespace AILZ80ASM.LineDetailItems
     {
         private static readonly string RegexPatternCharMap = @"^\s*CHARMAP\s+(?<Charmap>@[a-zA-Z0-9_]+)\s*,?\s*(?<Filename>.*)$";
         public string CharMapName { get; set; }
+        public string FilePath { get; set; }
 
         private LineDetailItemCharMap(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -35,51 +36,10 @@ namespace AILZ80ASM.LineDetailItems
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E2107);
                 }
 
-                var charMap = matched.Groups["Charmap"].Value;
-                var filePath = matched.Groups["Filename"].Value;
-                if (string.IsNullOrEmpty(filePath))
-                {
-                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, "");
-                }
-                else
-                {
-                    if (!filePath.StartsWith('\"') || !filePath.EndsWith('\"'))
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2103, filePath);
-                    }
-
-                    try
-                    {
-                        var filename = filePath.Substring(1, filePath.Length - 2);
-                        var fileFullPath = Path.Combine(lineItem.FileInfo.Directory.FullName, filename);
-
-                        var fileInfo = new FileInfo(fileFullPath);
-                        asmLoad.CharMapConverter_ReadCharMapFromFile(charMap, fileInfo);
-                    }
-                    catch (CharMapJsonReadException ex)
-                    {
-                        if (ex.LineNumber.HasValue)
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2104, $"行番号: {ex.LineNumber}");
-                        }
-                        else
-                        {
-                            throw new ErrorAssembleException(Error.ErrorCodeEnum.E2104, ex.Message);
-                        }
-                    }
-                    catch (FileNotFoundException ex)
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, ex.FileName);
-                    }
-                    catch (CharMapAlreadyDefinedException ex)
-                    {
-                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2108, ex.MapName);
-                    }
-                }
-
                 var lineDetailItemCharMap = new LineDetailItemCharMap(lineItem, asmLoad)
                 {
-                    CharMapName = charMap
+                    CharMapName = matched.Groups["Charmap"].Value,
+                    FilePath = matched.Groups["Filename"].Value
                 };
 
                 return lineDetailItemCharMap;
@@ -87,6 +47,51 @@ namespace AILZ80ASM.LineDetailItems
             }
 
             return default;
+        }
+
+        public override void PreAssemble(ref AsmAddress asmAddress)
+        {
+            base.PreAssemble(ref asmAddress);
+
+            if (string.IsNullOrEmpty(FilePath))
+            {
+                throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, "");
+            }
+            else
+            {
+                if (!FilePath.StartsWith('\"') || !FilePath.EndsWith('\"'))
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2103, FilePath);
+                }
+
+                try
+                {
+                    var filename = FilePath.Substring(1, FilePath.Length - 2);
+                    var fileFullPath = Path.Combine(this.LineItem.FileInfo.Directory.FullName, filename);
+
+                    var fileInfo = new FileInfo(fileFullPath);
+                    this.AsmLoad.CharMapConverter_ReadCharMapFromFile(CharMapName, fileInfo);
+                }
+                catch (CharMapJsonReadException ex)
+                {
+                    if (ex.LineNumber.HasValue)
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2104, $"行番号: {ex.LineNumber}");
+                    }
+                    else
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2104, ex.Message);
+                    }
+                }
+                catch (FileNotFoundException ex)
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2101, ex.FileName);
+                }
+                catch (CharMapAlreadyDefinedException ex)
+                {
+                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E2108, ex.MapName);
+                }
+            }
         }
     }
 }
