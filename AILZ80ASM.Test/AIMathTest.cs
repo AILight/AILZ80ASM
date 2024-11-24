@@ -247,6 +247,14 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Calc_14()
+        {
+            //Assert.AreEqual(0xFFFF & -(0x3e80 * 2 - (80 * 8)), AIMath.Calculation("0-($3E80 * 2 - (80 * 8))").ConvertTo<UInt16>());
+            //Assert.AreEqual(0xFFFF & -(0x3e80 * 2 - (80 * 8)), AIMath.Calculation("-($3E80 * 2 - (80 * 8))").ConvertTo<UInt16>());
+            Assert.AreEqual((UInt16)((-2 + 1) & 0xFFFF), AIMath.Calculation("-2 + 1").ConvertTo<UInt16>());
+        }
+
+        [TestMethod]
         public void Calc_UInt32()
         {
             Assert.AreEqual((UInt32)(1 + 2 * ((2 + 1)) + 6 / 2), AIMath.Calculation("1+2*((2+1))+6/2").ConvertTo<UInt32>());
