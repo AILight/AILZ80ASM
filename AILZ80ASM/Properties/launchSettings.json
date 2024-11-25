@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "CharMap1.Z80 -lst -bin -f"
+      "commandLineArgs": "Test.Z80 -lst -bin -f"
     }
   }
 }

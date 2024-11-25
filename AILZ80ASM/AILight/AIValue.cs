@@ -52,8 +52,10 @@ namespace AILZ80ASM.AILight
             None,
             LeftParenthesis,    // (
             RightParenthesis,   // )
-            Plus,               // +
-            Minus,              // -
+            PositiveSign,       // +
+            NegativeSign,       // -
+            Addition,           // +
+            Subtraction,        // -
             Negation,           // !
             BitwiseComplement,  // ~
             Low,                // low
@@ -98,6 +100,8 @@ namespace AILZ80ASM.AILight
             [")"] =        OperationTypeEnum.RightParenthesis,
             ["!"] =        OperationTypeEnum.Negation,
             ["~"] =        OperationTypeEnum.BitwiseComplement,
+            //["+"] =      OperationTypeEnum.PositiveSign,
+            //["-"] =      OperationTypeEnum.NegativeSign,
             ["low"] =      OperationTypeEnum.Low,
             ["high"] =     OperationTypeEnum.High,
             ["exists"] =   OperationTypeEnum.Exists,
@@ -109,8 +113,8 @@ namespace AILZ80ASM.AILight
             ["*"] =        OperationTypeEnum.Multiplication,
             ["/"] =        OperationTypeEnum.Division,
             ["%"] =        OperationTypeEnum.Remainder,
-            ["+"] =        OperationTypeEnum.Plus,
-            ["-"] =        OperationTypeEnum.Minus,
+            ["+"] =        OperationTypeEnum.Addition,
+            ["-"] =        OperationTypeEnum.Subtraction,
             ["<<"] =       OperationTypeEnum.LeftShift,
             [">>"] =       OperationTypeEnum.RightShift,
             ["<"] =        OperationTypeEnum.Less,
@@ -132,7 +136,9 @@ namespace AILZ80ASM.AILight
         {
             [OperationTypeEnum.RightParenthesis] = 1,   // )
             [OperationTypeEnum.Negation] = 3,           // !
-            [OperationTypeEnum.BitwiseComplement] = 3,  // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
+            [OperationTypeEnum.BitwiseComplement] = 3,  // ~ 単項演算子
+            [OperationTypeEnum.PositiveSign] = 3,       // + 単項演算子
+            [OperationTypeEnum.NegativeSign] = 3,       // - 単項演算子
             [OperationTypeEnum.Low] = 2,                // low
             [OperationTypeEnum.High] = 2,               // high
             [OperationTypeEnum.Exists] = 2,             // exists
@@ -144,8 +150,8 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.Multiplication] = 4,     // *
             [OperationTypeEnum.Division] = 4,           // /
             [OperationTypeEnum.Remainder] = 4,          // %
-            [OperationTypeEnum.Plus] = 5,               // +
-            [OperationTypeEnum.Minus] = 5,              // -
+            [OperationTypeEnum.Addition] = 5,               // +
+            [OperationTypeEnum.Subtraction] = 5,              // -
             [OperationTypeEnum.LeftShift] = 6,          // <<
             [OperationTypeEnum.RightShift] = 6,         // >>
             [OperationTypeEnum.Less] = 7,               // <
@@ -168,7 +174,9 @@ namespace AILZ80ASM.AILight
         {
             [OperationTypeEnum.RightParenthesis] = ArgumentTypeEnum.None,               // )
             [OperationTypeEnum.Negation] = ArgumentTypeEnum.SingleArgument,             // !
-            [OperationTypeEnum.BitwiseComplement] = ArgumentTypeEnum.SingleArgument,    // ~ 単項演算子は別で処理する ["+"] = 2,  ["-"] = 2,
+            [OperationTypeEnum.BitwiseComplement] = ArgumentTypeEnum.SingleArgument,    // ~ 単項演算子
+            [OperationTypeEnum.PositiveSign] = ArgumentTypeEnum.SingleArgument,         // + 単項演算子
+            [OperationTypeEnum.NegativeSign] = ArgumentTypeEnum.SingleArgument,         // - 単項演算子
             [OperationTypeEnum.Low] = ArgumentTypeEnum.SingleArgument,                  // low
             [OperationTypeEnum.High] = ArgumentTypeEnum.SingleArgument,                 // high
             [OperationTypeEnum.Exists] = ArgumentTypeEnum.SingleArgument,               // exists
@@ -180,8 +188,8 @@ namespace AILZ80ASM.AILight
             [OperationTypeEnum.Multiplication] = ArgumentTypeEnum.DoubleArgument,       // *
             [OperationTypeEnum.Division] = ArgumentTypeEnum.DoubleArgument,             // /
             [OperationTypeEnum.Remainder] = ArgumentTypeEnum.DoubleArgument,            // %
-            [OperationTypeEnum.Plus] = ArgumentTypeEnum.DoubleArgument,                 // +
-            [OperationTypeEnum.Minus] = ArgumentTypeEnum.DoubleArgument,                // -
+            [OperationTypeEnum.Addition] = ArgumentTypeEnum.DoubleArgument,             // +
+            [OperationTypeEnum.Subtraction] = ArgumentTypeEnum.DoubleArgument,          // -
             [OperationTypeEnum.LeftShift] = ArgumentTypeEnum.DoubleArgument,            // <<
             [OperationTypeEnum.RightShift] = ArgumentTypeEnum.DoubleArgument,           // >>
             [OperationTypeEnum.Less] = ArgumentTypeEnum.DoubleArgument,                 // <
@@ -418,8 +426,8 @@ namespace AILZ80ASM.AILight
                     {
                         var operationType = OperationTypeTable[matchNextSymbol.Groups["operation"].Value.ToLower()];
                         var operationArgument = OperationArgumentType[operationType];
-                        if (operationType == OperationTypeEnum.Plus ||
-                            operationType == OperationTypeEnum.Minus)
+                        if (operationType == OperationTypeEnum.Addition ||
+                            operationType == OperationTypeEnum.Subtraction)
                         {
                             operationArgument = ArgumentTypeEnum.SingleArgument;
                         }
@@ -794,6 +802,25 @@ namespace AILZ80ASM.AILight
         }
 
         /// <summary>
+        /// 符号に変更します。
+        /// </summary>
+        /// <exception cref="InvalidAIValueException"></exception>
+        public void ChangeToSign()
+        {
+            if (!this.IsOperationSign())
+            {
+                throw new InvalidAIValueException("+と-以外は変換できません。");
+            }
+
+            this.ValueOperation = this.ValueOperation switch
+            {
+                OperationTypeEnum.Addition => OperationTypeEnum.PositiveSign,
+                OperationTypeEnum.Subtraction => OperationTypeEnum.NegativeSign,
+                _ => throw new InvalidAIValueException("+と-以外は変換できません。")
+            };
+        }
+
+        /// <summary>
         /// イコールの判断
         /// </summary>
         /// <param name="value"></param>
@@ -830,9 +857,20 @@ namespace AILZ80ASM.AILight
         public bool IsOperationSignOrBNumber()
         {
             return ValueType.HasFlag(ValueTypeEnum.Operation) &&
-                   (ValueOperation == OperationTypeEnum.Plus || 
-                    ValueOperation == OperationTypeEnum.Minus || 
+                   (ValueOperation == OperationTypeEnum.Addition || 
+                    ValueOperation == OperationTypeEnum.Subtraction || 
                     ValueOperation == OperationTypeEnum.Remainder);
+        }
+
+        /// <summary>
+        /// 符号を調査する
+        /// </summary>
+        /// <returns></returns>
+        public bool IsOperationSign()
+        {
+            return ValueType.HasFlag(ValueTypeEnum.Operation) &&
+                   (ValueOperation == OperationTypeEnum.Addition ||
+                    ValueOperation == OperationTypeEnum.Subtraction);
         }
 
         /// <summary>
@@ -1205,6 +1243,10 @@ namespace AILZ80ASM.AILight
                     return AIValue.Negation(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.BitwiseComplement:
                     return AIValue.BitwiseComplement(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.PositiveSign:
+                    return AIValue.PositiveSign(firstValue, asmLoad, asmAddress, entryLabels);
+                case OperationTypeEnum.NegativeSign:
+                    return AIValue.NegativeSign(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Low:
                     return AIValue.Low(firstValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.High:
@@ -1248,9 +1290,9 @@ namespace AILZ80ASM.AILight
 
             switch (operation.ValueOperation)
             {
-                case OperationTypeEnum.Plus:
+                case OperationTypeEnum.Addition:
                     return AIValue.Plus(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
-                case OperationTypeEnum.Minus:
+                case OperationTypeEnum.Subtraction:
                     return AIValue.Minus(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
                 case OperationTypeEnum.Multiplication:
                     return AIValue.Multiplication(firstValue, secondPopValue, asmLoad, asmAddress, entryLabels);
@@ -1374,6 +1416,40 @@ namespace AILZ80ASM.AILight
             if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
             {
                 return new AIValue(~firstValue.ValueInt32, firstValue.ValueInt32Type);
+            }
+
+            throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
+        }
+
+        /// <summary>
+        /// +:プラス符号
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue PositiveSign(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+
+            if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
+            {
+                return new AIValue(firstValue.ValueInt32, firstValue.ValueInt32Type);
+            }
+
+            throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
+        }
+
+        /// <summary>
+        /// -:マイナス符号
+        /// </summary>
+        /// <param name="firstValue"></param>
+        /// <returns></returns>
+        private static AIValue NegativeSign(AIValue firstValue, AsmLoad asmLoad, AsmAddress? asmAddress, List<Label> entryLabels)
+        {
+            firstValue.SetValue(asmLoad, asmAddress, entryLabels.ToList());
+
+            if (firstValue.ValueType.HasFlag(ValueTypeEnum.Int32))
+            {
+                return new AIValue(0 - firstValue.ValueInt32, firstValue.ValueInt32Type);
             }
 
             throw new InvalidAIValueException($"指定できる型は、数値型です。{firstValue.Value}");
@@ -2027,5 +2103,6 @@ namespace AILZ80ASM.AILight
             result = "";
             return false;
         }
+
     }
 }

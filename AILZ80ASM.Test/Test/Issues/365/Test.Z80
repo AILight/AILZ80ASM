@@ -1,0 +1,15 @@
+﻿            ORG     $C000
+
+VRAM_SZ:    EQU     $3E80
+SBUF_SZ:    EQU     (80*8)
+
+            LD      DE,   VRAM_SZ*2 - SBUF_SZ
+            LD      DE, -(VRAM_SZ*2 - SBUF_SZ)    ; ng
+            LD      DE,  -VRAM_SZ*2 + SBUF_SZ     ; ok
+
+            LD      DE, 0 - (VRAM_SZ*2 - SBUF_SZ) ; ok
+            LD      DE, 0   -VRAM_SZ*2 + SBUF_SZ  ; ok
+
+TSTPT:      EQU     VRAM_SZ*2-SBUF_SZ
+            LD      DE,  TSTPT
+            LD      DE, -TSTPT                  ; ok
