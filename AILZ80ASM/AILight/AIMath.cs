@@ -195,34 +195,30 @@ namespace AILZ80ASM.AILight
             }
 
             // 符号処理
-            var result = NormalizeUnaryOperators(terms);
-            /*
             var result = new List<AIValue>();
             for (int index = 0; index < terms.Count; index++)
             {
                 var tmpTerm = terms[index];
                 if (tmpTerm.IsOperationSignOrBNumber())
                 {
-                    if (index == 0 || !terms[index - 1].IsOperation(AIValue.OperationTypeEnum.RightParenthesis) && terms[index - 1].ValueType == AIValue.ValueTypeEnum.Operation)
+                    if (index == 0 || !terms[index - 1].IsOperation(AIValue.OperationTypeEnum.RightParenthesis) &&
+                                      terms[index - 1].ValueType == AIValue.ValueTypeEnum.Operation)
                     {
                         if (index >= terms.Count - 1)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E0023, value);
                         }
-                        index++;
-                        var addTerm = terms[index];
 
                         if (tmpTerm.IsOperation(AIValue.OperationTypeEnum.Remainder))
                         {
+                            index++;
+                            var addTerm = terms[index];
                             result.Add(new AIValue(tmpTerm, addTerm));
                         }
                         else
                         {
-                            result.Add(new AIValue("(", AIValue.ValueTypeEnum.Operation));
-                            result.Add(new AIValue("0", AIValue.ValueTypeEnum.Int32));
+                            tmpTerm.ChangeToSign();
                             result.Add(tmpTerm);
-                            result.Add(addTerm);
-                            result.Add(new AIValue(")", AIValue.ValueTypeEnum.Operation));
                         }
                         continue;
                     }
@@ -230,7 +226,6 @@ namespace AILZ80ASM.AILight
 
                 result.Add(tmpTerm);
             }
-            */
 
             // 演算子、数値が連続しているものがないか確認をする
             if (result.Count >= 2)
@@ -257,81 +252,6 @@ namespace AILZ80ASM.AILight
                 }
             }
             return result.ToArray();
-        }
-
-        //仮実装　不具合あり
-        private static List<AIValue> ExtractSubExpression(List<AIValue> terms, ref int index)
-        {
-            var subExpression = new List<AIValue>();
-            int parenthesesCount = 0;
-
-            while (index < terms.Count)
-            {
-                var term = terms[index];
-
-                if (term.IsOperation(AIValue.OperationTypeEnum.LeftParenthesis))
-                {
-                    parenthesesCount++;
-                }
-                else if (term.IsOperation(AIValue.OperationTypeEnum.RightParenthesis))
-                {
-                    if (parenthesesCount == 0)
-                    {
-                        break;
-                    }
-                    parenthesesCount--;
-                }
-
-                subExpression.Add(term);
-                index++;
-
-                if (parenthesesCount == 0 && (index >= terms.Count || !terms[index].IsOperationSignOrBNumber()))
-                {
-                    break;
-                }
-            }
-
-            return subExpression;
-        }
-
-        // NormalizeUnaryOperatorsメソッド（旧ProcessTerms）
-        public static List<AIValue> NormalizeUnaryOperators(List<AIValue> terms)
-        {
-            var result = new List<AIValue>();
-            int index = 0;
-
-            while (index < terms.Count)
-            {
-                var tmpTerm = terms[index];
-
-                if (tmpTerm.IsOperationSignOrBNumber())
-                {
-                    if (index == 0 || (terms[index - 1].ValueType == AIValue.ValueTypeEnum.Operation && !terms[index - 1].IsOperation(AIValue.OperationTypeEnum.RightParenthesis)))
-                    {
-                        if (index >= terms.Count - 1)
-                        {
-                            throw new Exception("式が不正です。");
-                        }
-
-                        var unaryOperator = tmpTerm;
-                        index++;
-                        var subExpression = ExtractSubExpression(terms, ref index);
-
-                        result.Add(new AIValue("(", AIValue.ValueTypeEnum.Operation));
-                        result.Add(new AIValue("0", AIValue.ValueTypeEnum.Int32));
-                        result.Add(unaryOperator); // 単項演算子
-                        result.AddRange(subExpression);
-                        result.Add(new AIValue(")", AIValue.ValueTypeEnum.Operation));
-
-                        continue;
-                    }
-                }
-
-                result.Add(tmpTerm);
-                index++;
-            }
-
-            return result;
         }
 
         private static bool TryParseString(ref string tmpValue, out string resultString)
