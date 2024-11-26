@@ -1,0 +1,6 @@
+﻿	ORG	$8000
+
+	include "Test.Inc"
+
+	LD HL, LB_A
+

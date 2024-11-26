@@ -1,0 +1,11 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.23.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+                                    include "Test.Inc"
+                                
+       1234                     LB_A    equ 0x1234
+[EOF:Test.Inc:UTF_8]
+                                
+000000 8000 213412          10      LD HL, LB_A
+                                
+[EOF:Test.Z80:UTF_8]

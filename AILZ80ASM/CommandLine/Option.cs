@@ -121,6 +121,16 @@ namespace AILZ80ASM.CommandLine
                 Value = (T)(dynamic)new DirectoryInfo(values.First());
                 HasValue = true;
             }
+            else if (typeof(T) == typeof(DirectoryInfo[]))
+            {
+                if (values.Length == 0)
+                {
+                    throw new Exception($"{Name}に、ディレクトリを指定する必要があります。（複数ディレクトリ指定可能）");
+                }
+
+                Value = (T)(dynamic)values.Select(m => new DirectoryInfo(m)).ToArray();
+                HasValue = true;
+            }
             else if (typeof(T) == typeof(int))
             {
                 if (values.Length != 1)

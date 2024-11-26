@@ -349,6 +349,15 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<DirectoryInfo[]>()
+            {
+                Name = "includePath",
+                ArgumentName = "paths",
+                Aliases = new[] { "-ip", "--include-path" },
+                Description = "インクルードするファイルのパスを指定します。",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<bool>()
             {
                 Name = "version",
