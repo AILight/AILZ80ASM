@@ -201,26 +201,24 @@ namespace AILZ80ASM.AILight
                 var tmpTerm = terms[index];
                 if (tmpTerm.IsOperationSignOrBNumber())
                 {
-                    if (index == 0 || !terms[index - 1].IsOperation(AIValue.OperationTypeEnum.RightParenthesis) && terms[index - 1].ValueType == AIValue.ValueTypeEnum.Operation)
+                    if (index == 0 || !terms[index - 1].IsOperation(AIValue.OperationTypeEnum.RightParenthesis) &&
+                                      terms[index - 1].ValueType == AIValue.ValueTypeEnum.Operation)
                     {
                         if (index >= terms.Count - 1)
                         {
                             throw new ErrorAssembleException(Error.ErrorCodeEnum.E0023, value);
                         }
-                        index++;
-                        var addTerm = terms[index];
 
                         if (tmpTerm.IsOperation(AIValue.OperationTypeEnum.Remainder))
                         {
+                            index++;
+                            var addTerm = terms[index];
                             result.Add(new AIValue(tmpTerm, addTerm));
                         }
                         else
                         {
-                            result.Add(new AIValue("(", AIValue.ValueTypeEnum.Operation));
-                            result.Add(new AIValue("0", AIValue.ValueTypeEnum.Int32));
+                            tmpTerm.ChangeToSign();
                             result.Add(tmpTerm);
-                            result.Add(addTerm);
-                            result.Add(new AIValue(")", AIValue.ValueTypeEnum.Operation));
                         }
                         continue;
                     }
