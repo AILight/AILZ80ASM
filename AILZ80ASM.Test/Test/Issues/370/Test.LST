@@ -1,0 +1,11 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.23.0, LST:Full:4
+000000 8000                         ORG $8000
+                                
+       1234                     TXTCUR  equ $1234
+       8071                     IOPALET equ $8071
+                                
+       8000                     CLR_PALET:
+000000 8000 213612          10          ld      hl, TXTCUR + 2
+000003 8003 0681             7          ld      b, HIGH(IOPALET + 100h)
+000005 8005 0E71             7          ld      c, LOW(IOPALET + 100h)
+[EOF:Test.Z80:UTF_8]
