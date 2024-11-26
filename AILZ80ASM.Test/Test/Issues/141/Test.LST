@@ -1,7 +1,7 @@
 ﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.21, LST:Full:4
 000000 0100                         org 0x100
                                 ;
-       ----                     LA32    equ 0x12345678
+    -- 5678                     LA32    equ 0x12345678
                                 ;
        0012                     LA3 equ LA32/0x1000000
        1234                     LA2 equ LA32/0x10000
