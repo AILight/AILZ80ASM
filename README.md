@@ -568,6 +568,7 @@ PORT_A  equ $CC
 - ファイル形式
 	1. Json形式(UTF-8 with BOM)
 	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
+	1. [ファイル形式のサンプル (文字列指定)](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap/TestMW.json)
 - [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap/Test.Z80)
 	
 #### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>]
@@ -837,7 +838,7 @@ off equ #FALSE
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
-- 山本昌志様（Z80命令セット）[Yamamoto's Laboratory (リンク切れ)](http://www.yamamo10.jp/yamamoto/index.html)
+- 山本昌志様（Z80命令セット）[Yamamoto's Laboratory](http://www.yamamo10.jp/yamamoto/index.html)
 - 神楽坂朋様（Z80命令表）[神楽坂製作所](http://tomocyan.net/~kagurazaka/html/index2.html)
 - Thomas Scherrer様（Z80 Undocumented Instructions） [Thomas Scherrer Z80-Family HomePage](http://www.z80.info/index.htm)
 
