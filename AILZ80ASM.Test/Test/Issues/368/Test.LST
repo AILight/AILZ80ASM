@@ -1,0 +1,15 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.23.0, LST:Full:4
+000000 C000                                 ORG     $C000
+                                
+       8080                     LB_A        equ     $8080
+    01 0100                     LB_B        equ     LB_A * 2
+    01 8180                     LB_C        equ     LB_A * 3
+    80 807F                     LB_D        equ     LB_A * 256 + $7F
+    -- 0000                     LB_E        equ     LB_A * 65536
+                                
+000000 C000 218080          10              LD      HL, LB_A
+000003 C003 210001          10              LD      HL, LB_B
+000006 C006 218081          10              LD      HL, LB_C
+000009 C009 217F80          10              LD      HL, LB_D
+00000C C00C 210000          10              LD      HL, LB_E
+[EOF:Test.Z80:UTF_8]

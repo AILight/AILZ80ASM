@@ -1,0 +1,13 @@
+﻿            ORG     $C000
+
+LB_A        equ     $8080
+LB_B        equ     LB_A * 2
+LB_C        equ     LB_A * 3
+LB_D        equ     LB_A * 256 + $7F
+LB_E        equ     LB_A * 65536
+
+            LD      HL, LB_A
+            LD      HL, LB_B
+            LD      HL, LB_C
+            LD      HL, LB_D
+            LD      HL, LB_E

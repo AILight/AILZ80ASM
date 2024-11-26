@@ -104,7 +104,7 @@
 000055 8055 3E23             7          ld a, low  $0123
 000057 8057 3E01             7          ld a, high $0123
                                 
-FF1234                          LB      EQU 0xFF1234
+    FF 1234                     LB      EQU 0xFF1234
                                 
 000059 8059 213412          10          LD HL, LB
 [EOF:Test.Z80:UTF_8]
