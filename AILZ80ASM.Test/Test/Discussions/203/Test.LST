@@ -1,11 +1,16 @@
 ﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.23.0, LST:Full:4
 000000 8000                         ORG $8000
                                 
-                                    include "Test.Inc"
+                                    include "Test1.Inc"
                                 
-       1234                     LB_A    equ 0x1234
-[EOF:Test.Inc:UTF_8]
+       1234                     LB_A1   equ 0x1234
+[EOF:Test1.Inc:UTF_8]
+                                    include "Test2.Inc"
                                 
-000000 8000 213412          10      LD HL, LB_A
+       5678                     LB_A2   equ 0x5678
+[EOF:Test2.Inc:UTF_8]
+                                
+000000 8000 213412          10      LD HL, LB_A1
+000003 8003 217856          10      LD HL, LB_A2
                                 
 [EOF:Test.Z80:UTF_8]

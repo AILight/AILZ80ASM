@@ -115,7 +115,7 @@ namespace AILZ80ASM.Assembler
             NoSuperAsmAssemble = rootCommand.GetValue<bool>("noSuperAssemble");
             StartAddress = rootCommand.GetValue<ushort?>("startAddress");
 
-            IncludePaths = rootCommand.GetValue<DirectoryInfo[]>("includePath");
+            IncludePaths = rootCommand.GetValue<DirectoryInfo[]>("includePaths");
 
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない

@@ -351,10 +351,10 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<DirectoryInfo[]>()
             {
-                Name = "includePath",
+                Name = "includePaths",
                 ArgumentName = "paths",
-                Aliases = new[] { "-ip", "--include-path" },
-                Description = "インクルードするファイルのパスを指定します。",
+                Aliases = new[] { "-ips", "--include-paths" },
+                Description = "インクルードするファイルの検索パスを指定します。",
                 Required = false
             });
 

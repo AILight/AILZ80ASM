@@ -18,16 +18,26 @@ namespace AILZ80ASM.Test
         public void Discussion_203()
         {
             {
-                var result = Program.Main(@"Test.Z80", "-f", "-lst", "-bin", "-cd", "./Test/Discussions/203");
+                var result = Program.Main(@"Test.Z80", "-f", "-lst", "Discussion203.LST", "-bin", "Discussion203.BIN", "-cd", "./Test/Discussions/203");
                 Assert.AreEqual(1, result);
             }
 
             {
-                var result = Program.Main(@"Test.Z80", "-f", "-lst", "Discussion203.LST", "-bin", "Discussion203.BIN", "-cd", "./Test/Discussions/203", "-ip", "./lib");
+                var result = Program.Main(@"Test.Z80", "-f", "-lst", "Discussion203.LST", "-bin", "Discussion203.BIN", "-cd", "./Test/Discussions/203", "-ips", "./lib1");
+                Assert.AreEqual(1, result);
+            }
+
+            {
+                var result = Program.Main(@"Test.Z80", "-f", "-lst", "Discussion203.LST", "-bin", "Discussion203.BIN", "-cd", "./Test/Discussions/203", "-ips", "./lib2");
+                Assert.AreEqual(1, result);
+            }
+
+            {
+                var result = Program.Main(@"Test.Z80", "-f", "-lst", "Discussion203.LST", "-bin", "Discussion203.BIN", "-cd", "./Test/Discussions/203", "-ips", "./lib1", "./lib2");
                 Assert.AreEqual(0, result);
 
                 Lib.AreSameLst(File.OpenRead("./Test/Discussions/203/Discussion203.LST"), File.OpenRead("./Test/Discussions/203/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
-                Lib.AreSameLst(File.OpenRead("./Test/Discussions/203/Discussion203.BIN"), File.OpenRead("./Test/Discussions/203/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
+                Lib.AreSameBin(File.OpenRead("./Test/Discussions/203/Discussion203.BIN"), File.OpenRead("./Test/Discussions/203/Test.BIN"), Assembler.AsmEnum.FileTypeEnum.BIN);
             }
         }
     }
