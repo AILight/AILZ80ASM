@@ -72,8 +72,22 @@ namespace AILZ80ASM.LineDetailItems
                 var startAddressString = matched.Groups["StartAddress"].Value;
                 var lengthString = matched.Groups["Length"].Value;
                 var fileFullPath = Path.Combine(lineItem.FileInfo.Directory.FullName, filename);
-                
                 var fileInfo = new FileInfo(fileFullPath);
+
+                // ファイルを検索する
+                if (asmLoad.AssembleOption.IncludePaths != default && !fileInfo.Exists)
+                {
+                    foreach (var item in asmLoad.AssembleOption.IncludePaths)
+                    {
+                        var localFileFullPath = Path.Combine(item.FullName, filename);
+                        if (Path.Exists(localFileFullPath))
+                        {
+                            fileInfo = new FileInfo(localFileFullPath);
+                            break;
+                        }
+                    }
+                }
+
                 var fileType = LineDetailItemInclude.FileTypeEnum.Text;
 
                 if (string.IsNullOrEmpty(fileTypeString) || (new[] { "T", "Text" }).Any(m => string.Compare(m, fileTypeString, true) == 0))

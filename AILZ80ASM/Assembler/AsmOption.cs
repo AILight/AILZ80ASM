@@ -58,6 +58,9 @@ namespace AILZ80ASM.Assembler
         // ラベル定義を設定
         public string[] DefineLabels { get; set; } = default;
 
+        // インクルードのパス
+        public DirectoryInfo[] IncludePaths { get; set; } = default;
+
         /// <summary>
         /// 出力用の確定したエンコードを返す
         /// </summary>
@@ -112,6 +115,8 @@ namespace AILZ80ASM.Assembler
             NoSuperAsmAssemble = rootCommand.GetValue<bool>("noSuperAssemble");
             StartAddress = rootCommand.GetValue<ushort?>("startAddress");
 
+            IncludePaths = rootCommand.GetValue<DirectoryInfo[]>("includePaths");
+
             DisableWarningCodes = rootCommand.GetValue<Error.ErrorCodeEnum[]>("disableWarningCode") ?? Array.Empty<Error.ErrorCodeEnum>();
             // 未使用ラベルをチェックする場合にはDisableWaringCodeを積み込まない
             if (!CheckUnuseLabel)
@@ -160,7 +165,18 @@ namespace AILZ80ASM.Assembler
                         throw new ArgumentException($"出力ファイルに入力ファイルは指定できません。ファイル: {outputItem.Value.Name}");
                     }
                 }
+            }
 
+            // インクルードの存在チェック
+            if (IncludePaths != default)
+            {
+                foreach (var item in IncludePaths)
+                {
+                    if (!item.Exists)
+                    {
+                        throw new ArgumentException($"インクルードのパスが見つかりません。ファイル: {item.ToString()}");
+                    }
+                }
             }
 
             if (DisableWarningCodes != default)

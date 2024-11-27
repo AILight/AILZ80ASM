@@ -1,0 +1,8 @@
+﻿	ORG	$8000
+
+	include "Test1.Inc"
+	include "Test2.Inc"
+
+	LD HL, LB_A1
+	LD HL, LB_A2
+

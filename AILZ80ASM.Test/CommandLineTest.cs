@@ -891,6 +891,46 @@ namespace AILZ80ASM.Test
             }
 
         }
+
+        [TestMethod]
+        public void Test_CommandLine_IncludePaths()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-ips", "./lib1" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var directoryInfos = rootCommand.GetValue<DirectoryInfo[]>("includePaths");
+
+                Assert.AreEqual(1, directoryInfos.Length);
+                Assert.AreEqual("./lib1", directoryInfos.First().ToString());
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "--include-paths", "./lib1" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var directoryInfos = rootCommand.GetValue<DirectoryInfo[]>("includePaths");
+
+                Assert.AreEqual(1, directoryInfos.Length);
+                Assert.AreEqual("./lib1", directoryInfos.First().ToString());
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-ips", "./lib1", "./lib2" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var directoryInfos = rootCommand.GetValue<DirectoryInfo[]>("includePaths");
+
+                Assert.AreEqual(2, directoryInfos.Length);
+                Assert.AreEqual("./lib1", directoryInfos.First().ToString());
+                Assert.AreEqual("./lib2", directoryInfos.Last().ToString());
+            }
+
+        }
+
         [TestMethod]
         public void Test_CommandLine_Help()
         {

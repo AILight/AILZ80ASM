@@ -63,6 +63,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -dl, --define-label <labels>   | ラベルをスペース区切りで指定します。値を設定するときは=で代入します。
 | -nsa, --no-super-asm           | スーパーアセンブルモードを無効にします。
 | -sa, --start-address <address> | スタートアドレス(出力)を指定します。ORGで指定したアドレスまで -gap で埋めます
+| -ips, --include-paths <paths>  | インクルードするファイルの検索パスを指定します。
 | -f, --force                    | 出力ファイルを上書きします。
 | -v, --version                  | バージョンを表示します。
 | -?, -h, --help <help>          | ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
@@ -98,6 +99,9 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 
 ■ sample.z80をアセンブル、ラベルを指定する
 > AILZ80ASM sample.z80 -bin -dl TEST1=10 TEST2=20 TEST3
+
+■ sample.z80をアセンブル、ラベルを指定する
+> AILZ80ASM sample.z80 -bin -ips .\lib1
 
 ■ -omオプションのヘルプを表示
 > AILZ80ASM -h -om
