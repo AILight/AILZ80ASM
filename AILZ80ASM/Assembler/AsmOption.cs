@@ -199,7 +199,21 @@ namespace AILZ80ASM.Assembler
         {
             foreach (var fileInfo in InputFiles.SelectMany(m => m.Value))
             {
-                CheckEncodeMode(fileInfo);
+                var internalEncodeMode = InternalCheckEncodeMode(fileInfo);
+                switch (internalEncodeMode)
+                {
+                    case AsmEnum.InternalEncodeModeEnum.ASCII:
+                        InputEncodeCount_ASCII++;
+                        break;
+                    case AsmEnum.InternalEncodeModeEnum.UTF_8:
+                        InputEncodeCount_UTF8++;
+                        break;
+                    case AsmEnum.InternalEncodeModeEnum.SHIFT_JIS:
+                        InputEncodeCount_SJIS++;
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                }
             }
         }
 
@@ -210,6 +224,19 @@ namespace AILZ80ASM.Assembler
         /// <returns></returns>
         public AsmEnum.EncodeModeEnum CheckEncodeMode(FileInfo fileInfo)
         {
+            var internalEncodeMode = InternalCheckEncodeMode(fileInfo);
+            var encodeMode = internalEncodeMode switch
+            {
+                AsmEnum.InternalEncodeModeEnum.ASCII => AsmEnum.EncodeModeEnum.UTF_8,
+                AsmEnum.InternalEncodeModeEnum.SHIFT_JIS => AsmEnum.EncodeModeEnum.SHIFT_JIS,
+                AsmEnum.InternalEncodeModeEnum.UTF_8 => AsmEnum.EncodeModeEnum.UTF_8,
+                _ => throw new InvalidOperationException()
+            };
+            return encodeMode;
+        }
+
+        private AsmEnum.InternalEncodeModeEnum InternalCheckEncodeMode(FileInfo fileInfo)
+        {
             using var readStream = fileInfo.OpenRead();
             using var memoryStream = new MemoryStream();
             readStream.CopyTo(memoryStream);
@@ -217,19 +244,15 @@ namespace AILZ80ASM.Assembler
 
             var isUTF8 = AILight.AIEncode.IsUTF8(bytes);
             var isSHIFT_JIS = AILight.AIEncode.IsSHIFT_JIS(bytes);
-            var encodeMode = AsmEnum.EncodeModeEnum.UTF_8;
+            var encodeMode = AsmEnum.InternalEncodeModeEnum.UTF_8;
+
             if (isUTF8 && isSHIFT_JIS)
             {
-                InputEncodeCount_ASCII++;
+                return AsmEnum.InternalEncodeModeEnum.ASCII;
             }
             else if (!isUTF8 && isSHIFT_JIS)
             {
-                encodeMode = AsmEnum.EncodeModeEnum.SHIFT_JIS;
-                InputEncodeCount_SJIS++;
-            }
-            else
-            {
-                InputEncodeCount_UTF8++;
+                return AsmEnum.InternalEncodeModeEnum.SHIFT_JIS;
             }
 
             return encodeMode;

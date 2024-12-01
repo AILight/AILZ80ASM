@@ -1,0 +1,7 @@
+		ORG $8000
+		;SJISƒtƒ@ƒCƒ‹
+
+		include "Test1.EQU"
+		include "Test2.EQU"
+
+		LD	HL, NS1.G_ADRS

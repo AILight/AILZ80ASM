@@ -383,6 +383,14 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_369()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-bin", "Issue369.BIN", "-lst", "Issue369.LST", "-cd", "./Test/Issues/369");
+            Assert.AreEqual(0, result);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/369/Issue369.LST"), File.OpenRead("./Test/Issues/369/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
+
+        [TestMethod]
         public void Issue_370()
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "370"));

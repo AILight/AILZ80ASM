@@ -785,7 +785,6 @@ namespace AILZ80ASM.Assembler
                 throw new ArgumentException("encodeMode:AUTOは指定できません");
             }
 
-            AssembleOption.OutputEncodeMode = encodeMode;
             var encoding = GetEncoding(encodeMode);
 
             return encoding;
