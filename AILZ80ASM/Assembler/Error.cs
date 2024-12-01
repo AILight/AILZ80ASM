@@ -131,6 +131,7 @@ namespace AILZ80ASM.Assembler
 
             I0001,
             I0002,
+            I0003,
         }
 
         public static ErrorTypeEnum GetErrorType(ErrorCodeEnum errorCode)
@@ -284,8 +285,10 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.W9004] = "EX HL,DE は、EX DE,HLとして処理されました。",
             [ErrorCodeEnum.W9005] = "ローカルラベルの「:」は、無いものとして処理されました。",
 
+            // 情報
             [ErrorCodeEnum.I0001] = "#PRINT: {0}",
-            [ErrorCodeEnum.I0002] = "未使用ラベル: {0}"
+            [ErrorCodeEnum.I0002] = "未使用ラベル: {0}",
+            [ErrorCodeEnum.I0003] = "同名のEQUが再定義されました。同値のため処理は継続されます。: {0}"
         };
     }
 }
