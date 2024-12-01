@@ -1,0 +1,9 @@
+﻿	ORG $8000
+
+TXTCUR	equ $1234
+IOPALET equ $8071
+
+CLR_PALET:
+		ld      hl, TXTCUR + 2
+		ld      b, HIGH(IOPALET + 100h)
+        ld      c, LOW(IOPALET + 100h)

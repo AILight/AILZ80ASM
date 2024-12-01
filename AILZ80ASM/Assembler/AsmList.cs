@@ -173,11 +173,13 @@ namespace AILZ80ASM.Assembler
             {
                 if (string.IsNullOrEmpty(address1) && ProgramAddress <= 0xFFFFFF)
                 {
-                    address1 = $"{ProgramAddress:X6}";
+                    address1 = $"    {ProgramAddress / 0x10000:X2}";
+                    address2 = $"{ProgramAddress & 0xFFFF:X4}";
                 }
                 else
                 {
-                    address2 = "----";
+                    address1 = $"    --";
+                    address2 = $"{ProgramAddress & 0xFFFF:X4}";
                 }
             }
             else

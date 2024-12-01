@@ -1,0 +1,22 @@
+﻿#pragma once
+
+[NS1]
+
+G_ADRS          equ $C000
+WIDTH           equ 80
+HEIGHT          equ 200
+BANK_B          equ $5C
+BANK_R          equ $5D
+BANK_G          equ $5E
+BANK_M          equ $5F
+
+[NS1_5]
+R_ADRS          equ $0000
+TEST1           equ $11
+TEST2           equ $22
+
+[NS2]
+
+T_ADRS          equ $F3C8
+
+

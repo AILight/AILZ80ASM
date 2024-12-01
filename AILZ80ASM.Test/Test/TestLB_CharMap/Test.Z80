@@ -28,3 +28,7 @@
 	DB @SJIS:"テスト"  ; SJISで変換
 
 	DBFIL 14
+
+	charmap @PMW, "TestMW.json"
+
+	DB @PMW:"ABC_CR_LF_ESC_{CRCR}_{CR}{LF}{ESC}"

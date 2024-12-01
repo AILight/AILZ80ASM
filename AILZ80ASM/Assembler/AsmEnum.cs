@@ -56,5 +56,14 @@ namespace AILZ80ASM.Assembler
             SHIFT_JIS,
         }
 
+        /// <summary>
+        /// エンコードのモード
+        /// </summary>
+        internal enum InternalEncodeModeEnum
+        {
+            ASCII,
+            UTF_8,
+            SHIFT_JIS,
+        }
     }
 }

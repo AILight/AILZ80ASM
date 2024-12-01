@@ -63,6 +63,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -dl, --define-label <labels>   | ラベルをスペース区切りで指定します。値を設定するときは=で代入します。
 | -nsa, --no-super-asm           | スーパーアセンブルモードを無効にします。
 | -sa, --start-address <address> | スタートアドレス(出力)を指定します。ORGで指定したアドレスまで -gap で埋めます
+| -ips, --include-paths <paths>  | インクルードするファイルの検索パスを指定します。
 | -f, --force                    | 出力ファイルを上書きします。
 | -v, --version                  | バージョンを表示します。
 | -?, -h, --help <help>          | ヘルプを表示します。各オプションの詳細ヘルプを表示します。例： -h --input-mode
@@ -98,6 +99,9 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 
 ■ sample.z80をアセンブル、ラベルを指定する
 > AILZ80ASM sample.z80 -bin -dl TEST1=10 TEST2=20 TEST3
+
+■ sample.z80をアセンブル、ラベルを指定する
+> AILZ80ASM sample.z80 -bin -ips .\lib1
 
 ■ -omオプションのヘルプを表示
 > AILZ80ASM -h -om
@@ -568,6 +572,7 @@ PORT_A  equ $CC
 - ファイル形式
 	1. Json形式(UTF-8 with BOM)
 	1. [ファイル形式のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/CharMaps/SJIS.json)
+	1. [ファイル形式のサンプル (文字列指定)](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap/TestMW.json)
 - [使い方のサンプル](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM.Test/Test/TestLB_CharMap/Test.Z80)
 	
 #### INCLUDE <ファイル名>, [<ファイルタイプ>], [<開始位置>], [<長さ>]
@@ -837,7 +842,7 @@ off equ #FALSE
 
 ## 謝辞
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
-- 山本昌志様（Z80命令セット）[Yamamoto's Laboratory (リンク切れ)](http://www.yamamo10.jp/yamamoto/index.html)
+- 山本昌志様（Z80命令セット）[Yamamoto's Laboratory](http://www.yamamo10.jp/yamamoto/index.html)
 - 神楽坂朋様（Z80命令表）[神楽坂製作所](http://tomocyan.net/~kagurazaka/html/index2.html)
 - Thomas Scherrer様（Z80 Undocumented Instructions） [Thomas Scherrer Z80-Family HomePage](http://www.z80.info/index.htm)
 

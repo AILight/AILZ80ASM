@@ -1,0 +1,51 @@
+                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.23.0, LST:Full:4
+000000 8000                             ORG $8000
+                                        ;SJISƒtƒ@ƒCƒ‹
+                                
+                                        include "Test1.EQU"
+                                #pragma once
+                                
+                                [NS1]
+                                
+       C000                     G_ADRS          equ $C000
+       0050                     WIDTH           equ 80
+       00C8                     HEIGHT          equ 200
+       005C                     BANK_B          equ $5C
+       005D                     BANK_R          equ $5D
+       005E                     BANK_G          equ $5E
+       005F                     BANK_M          equ $5F
+                                
+                                
+                                [NS2]
+                                
+       F3C8                     T_ADRS          equ $F3C8
+                                
+                                
+[EOF:Test1.EQU:UTF_8]
+                                        include "Test2.EQU"
+                                #pragma once
+                                
+                                [NS3]
+                                
+       C000                     G_ADRS          equ $C000
+       0050                     WIDTH           equ 80
+       00C8                     HEIGHT          equ 200
+       005C                     BANK_B          equ $5C
+       005D                     BANK_R          equ $5D
+       005E                     BANK_G          equ $5E
+       005F                     BANK_M          equ $5F
+                                
+                                [NS3_5]
+       0000                     R_ADRS          equ $0000
+       0011                     TEST1           equ $11
+       0022                     TEST2           equ $22
+                                
+                                [NS4]
+                                
+       F3C8                     T_ADRS          equ $F3C8
+                                
+                                
+[EOF:Test2.EQU:UTF_8]
+                                
+000000 8000 2100C0          10          LD  HL, NS1.G_ADRS
+[EOF:Test.Z80:SHIFT_JIS]

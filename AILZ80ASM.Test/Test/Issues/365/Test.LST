@@ -1,0 +1,17 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.23.0, LST:Full:4
+000000 C000                                 ORG     $C000
+                                
+       3E80                     VRAM_SZ:    EQU     $3E80
+       0280                     SBUF_SZ:    EQU     (80*8)
+                                
+000000 C000 11807A          10              LD      DE,   VRAM_SZ*2 - SBUF_SZ
+000003 C003 118085          10              LD      DE, -(VRAM_SZ*2 - SBUF_SZ)    ; ng
+000006 C006 118085          10              LD      DE,  -VRAM_SZ*2 + SBUF_SZ     ; ok
+                                
+000009 C009 118085          10              LD      DE, 0 - (VRAM_SZ*2 - SBUF_SZ) ; ok
+00000C C00C 118085          10              LD      DE, 0   -VRAM_SZ*2 + SBUF_SZ  ; ok
+                                
+       7A80                     TSTPT:      EQU     VRAM_SZ*2-SBUF_SZ
+00000F C00F 11807A          10              LD      DE,  TSTPT
+000012 C012 118085          10              LD      DE, -TSTPT                  ; ok
+[EOF:Test.Z80:UTF_8]

@@ -382,6 +382,26 @@ namespace AILZ80ASM.Assembler
                     message += "上位ラベルの宣言を確認してください。" ;
                 }
 
+                // equの場合は値が一致しているかを確認する
+                if (label.LabelType == Label.LabelTypeEnum.Equ)
+                {
+                    if (AIMath.TryParse(label.ValueString, out var labelValue))
+                    {
+                        var sameLables = this.Scope.Labels.Where(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0);
+                        foreach (var sameLabel in sameLables)
+                        {
+                            if (AIMath.TryParse(sameLabel.ValueString, out var sameLabelValue))
+                            {
+                                if (labelValue.Equals(sameLabelValue)) 
+                                {
+                                    this.AddError(new ErrorLineItem(label.LineItem, Error.ErrorCodeEnum.I0003, label.LabelFullName));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                }
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014, new[] { message });
             }
             if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
@@ -765,7 +785,6 @@ namespace AILZ80ASM.Assembler
                 throw new ArgumentException("encodeMode:AUTOは指定できません");
             }
 
-            AssembleOption.OutputEncodeMode = encodeMode;
             var encoding = GetEncoding(encodeMode);
 
             return encoding;
