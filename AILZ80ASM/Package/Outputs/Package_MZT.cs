@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace AILZ80ASM
 
             var startAddress = default(UInt16);
             if (AssembleLoad.Share.AsmORGs.Count >= 2) {
-                startAddress = AssembleLoad.Share.AsmORGs.Skip(1).First().ProgramAddress;
+                startAddress = AssembleLoad.Share.AsmORGs.Where(o => o.OutputAddress != null).OrderBy(o => o.OutputAddress).First().ProgramAddress;
             }
 
             var entryAddress = AssembleLoad.Share.EntryPoint ?? startAddress;
