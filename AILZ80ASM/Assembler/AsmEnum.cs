@@ -18,6 +18,7 @@ namespace AILZ80ASM.Assembler
             HEX,
             T88,
             CMT,
+            MZT,
             LST,
             SYM,
             EQU,

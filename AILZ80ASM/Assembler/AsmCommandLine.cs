@@ -76,6 +76,7 @@ namespace AILZ80ASM.Assembler
                                         new Parameter { Name = "hex", ShortCut = "-hex", Description = "出力ファイルをHEX形式で出力します。" },
                                         new Parameter { Name = "t88", ShortCut = "-t88", Description = "出力ファイルをT88形式で出力します。" },
                                         new Parameter { Name = "cmt", ShortCut = "-cmt", Description = "出力ファイルをCMT形式で出力します。" },
+                                        new Parameter { Name = "mzt", ShortCut = "-mzt", Description = "出力ファイルをMZT形式で出力します。" },
                                         new Parameter { Name = "sym", ShortCut = "-sym", Description = "シンボルファイルを出力します。" },
                                         new Parameter { Name = "equ", ShortCut = "-equ", Description = "イコールラベルファイルを出力します。" },
                                         new Parameter { Name = "lst", ShortCut = "-lst", Description = "リストファイルを出力します。" },
@@ -143,6 +144,17 @@ namespace AILZ80ASM.Assembler
                 Required = false,
                 IsShortCut = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".cmt"); }
+            });
+
+
+            rootCommand.AddOption(new Option<FileInfo>() {
+                Name = "outputMZT",
+                ArgumentName = "file",
+                Aliases = new[] { "-mzt" },
+                Description = "MZT形式で出力します。（file名は省略可能）",
+                Required = false,
+                IsShortCut = true,
+                DefaultFunc = (options) => { return GetDefaulFilename(options, ".mzt"); }
             });
 
             rootCommand.AddOption(new Option<FileInfo>()
@@ -443,6 +455,7 @@ namespace AILZ80ASM.Assembler
                     "hex" => AsmEnum.FileTypeEnum.HEX,
                     "t88" => AsmEnum.FileTypeEnum.T88,
                     "cmt" => AsmEnum.FileTypeEnum.CMT,
+                    "mzt" => AsmEnum.FileTypeEnum.MZT,
                     "lst" => AsmEnum.FileTypeEnum.LST,
                     "sym" => AsmEnum.FileTypeEnum.SYM,
                     "equ" => AsmEnum.FileTypeEnum.EQU,

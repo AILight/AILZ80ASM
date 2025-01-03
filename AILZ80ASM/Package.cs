@@ -608,6 +608,9 @@ namespace AILZ80ASM
                 case AsmEnum.FileTypeEnum.CMT:
                     SaveCMT(stream);
                     break;
+                case AsmEnum.FileTypeEnum.MZT:
+                    SaveMZT(stream, outputFile.Value.Name);
+                    break;
                 case AsmEnum.FileTypeEnum.LST:
                     SaveLST(stream);
                     break;
