@@ -1,0 +1,16 @@
+﻿        org $A000
+
+START:
+        ld  hl, $0000
+        ld  b, 3
+.loop
+        nop
+        djnz .loop
+
+        ret
+
+CHR1:
+        DB 0, 1, 2, 3, 4
+
+CHR2:
+        DB 8, 7, 6, 5, 4
