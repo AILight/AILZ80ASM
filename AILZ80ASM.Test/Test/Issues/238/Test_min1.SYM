@@ -1,0 +1,4 @@
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.24.0, SYM:Minimal_Equ
+PROGRAM.START equ $A000
+DATA.CHR1 equ $A009
+DATA.CHR2 equ $A00E

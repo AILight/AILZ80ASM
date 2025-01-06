@@ -252,6 +252,18 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<string>()
+            {
+                Name = "symbolMode",
+                ArgumentName = "mode",
+                Aliases = new[] { "-sm", "--symbol-mode" },
+                Description = "シンボルの出力形式を選択します。",
+                DefaultValue = "normal",
+                Parameters = new[] { new Parameter { Name = "minimal-equ", Description = "最小の項目で出力します。" },
+                                     new Parameter { Name = "normal", Description = "通常モードで出力します。" },},
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<ushort?>()
             {
                 Name = "entryPoint",
@@ -489,7 +501,7 @@ namespace AILZ80ASM.Assembler
         {
             var listMode = rootCommand.GetValue<string>("listMode");
 
-            var encodeMode = listMode switch
+            var mode = listMode switch
             {
                 "simple" => AsmEnum.ListFormatEnum.Simple,
                 "middle" => AsmEnum.ListFormatEnum.Middle,
@@ -497,7 +509,21 @@ namespace AILZ80ASM.Assembler
                 _ => throw new InvalidOperationException()
             };
 
-            return encodeMode;
+            return mode;
+        }
+
+        public static AsmEnum.SymbolFormatEnum GetSymbolMode(this RootCommand rootCommand)
+        {
+            var symbolMode = rootCommand.GetValue<string>("symbolMode");
+
+            var mode = symbolMode switch
+            {
+                "minimal-equ" => AsmEnum.SymbolFormatEnum.Minimal_Equ,
+                "normal" => AsmEnum.SymbolFormatEnum.Normal,
+                _ => throw new InvalidOperationException()
+            };
+
+            return mode;
         }
 
         public static int GetTabSize(this RootCommand rootCommand)

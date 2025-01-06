@@ -207,6 +207,31 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Issue_238()
+        {
+            {
+                var result = Program.Main(@"Test1.Z80", "-f", "-sym", "Issue238_min1.sym", "-cd", "./Test/Issues/238", "-sm", "minimal-equ");
+                Assert.AreEqual(0, result);
+                Lib.AreSameLst(File.OpenRead("./Test/Issues/238/Issue238_min1.sym"), File.OpenRead("./Test/Issues/238/Test_min1.SYM"), Assembler.AsmEnum.FileTypeEnum.SYM);
+            }
+            {
+                var result = Program.Main(@"Test1.Z80", "-f", "-sym", "Issue238_nor1.sym", "-cd", "./Test/Issues/238", "-sm", "normal");
+                Assert.AreEqual(0, result);
+                Lib.AreSameLst(File.OpenRead("./Test/Issues/238/Issue238_nor1.sym"), File.OpenRead("./Test/Issues/238/Test_nor1.SYM"), Assembler.AsmEnum.FileTypeEnum.SYM);
+            }
+            {
+                var result = Program.Main(@"Test2.Z80", "-f", "-sym", "Issue238_min2.sym", "-cd", "./Test/Issues/238", "-sm", "minimal-equ");
+                Assert.AreEqual(0, result);
+                Lib.AreSameLst(File.OpenRead("./Test/Issues/238/Issue238_min2.sym"), File.OpenRead("./Test/Issues/238/Test_min2.SYM"), Assembler.AsmEnum.FileTypeEnum.SYM);
+            }
+            {
+                var result = Program.Main(@"Test2.Z80", "-f", "-sym", "Issue238_nor2.sym", "-cd", "./Test/Issues/238", "-sm", "normal");
+                Assert.AreEqual(0, result);
+                Lib.AreSameLst(File.OpenRead("./Test/Issues/238/Issue238_nor2.sym"), File.OpenRead("./Test/Issues/238/Test_nor2.SYM"), Assembler.AsmEnum.FileTypeEnum.SYM);
+            }
+        }
+
+        [TestMethod]
         public void Issue_257()
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "257"));

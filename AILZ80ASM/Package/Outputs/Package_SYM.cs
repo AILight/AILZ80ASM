@@ -24,10 +24,10 @@ namespace AILZ80ASM
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            var title = $";{ProductInfo.ProductLongName}, SYM";
+            var title = $";{ProductInfo.ProductLongName}, SYM:{AssembleLoad.AssembleOption.SymbolMode}";
             streamWriter.WriteLine(title);
 
-            AssembleLoad.OutputLabels(streamWriter);
+            AssembleLoad.OutputLabels(streamWriter, AssembleLoad.AssembleOption.SymbolMode);
 
             streamWriter.Flush();
             memoryStream.Position = 0;
