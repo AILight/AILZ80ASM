@@ -1,0 +1,7 @@
+﻿
+[VRAM]
+
+ADRS	equ 0000			; グラフィックアドレス
+WIDTH	equ 128				; 幅
+HEIGHT	equ 212				; 高さ
+SIZE	equ WIDTH * HEIGHT	; サイズ
