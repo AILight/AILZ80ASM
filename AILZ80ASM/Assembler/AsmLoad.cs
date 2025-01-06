@@ -385,12 +385,12 @@ namespace AILZ80ASM.Assembler
                 // equの場合は値が一致しているかを確認する
                 if (label.LabelType == Label.LabelTypeEnum.Equ)
                 {
-                    if (AIMath.TryParse(label.ValueString, out var labelValue))
+                    if (AIMath.TryParse(label.ValueString, this, out var labelValue))
                     {
                         var sameLables = this.Scope.Labels.Where(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0);
                         foreach (var sameLabel in sameLables)
                         {
-                            if (AIMath.TryParse(sameLabel.ValueString, out var sameLabelValue))
+                            if (AIMath.TryParse(sameLabel.ValueString, this, out var sameLabelValue))
                             {
                                 if (labelValue.Equals(sameLabelValue)) 
                                 {
