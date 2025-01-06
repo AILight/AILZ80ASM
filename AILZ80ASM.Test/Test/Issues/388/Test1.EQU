@@ -1,0 +1,7 @@
+﻿
+[VRAM]
+
+ADRS	equ 0000
+WIDTH	equ 128
+HEIGHT	equ 212
+SIZE	equ 27136

@@ -526,6 +526,21 @@
     <None Update="Test\Issues\376\Test2.EQU">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Test\Issues\388\Test.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\388\Test.LST">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\388\Test.Z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\388\Test1.EQU">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test\Issues\388\Test2.EQU">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Test\TestCS_ALIGN\Test.BIN">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2189,6 +2204,7 @@
 
   <ItemGroup>
     <Folder Include="Test\AIEncode\" />
+    <Folder Include="Test\Issues\388\" />
     <Folder Include="Test\TestPP_ConditionalEnhanced\" />
   </ItemGroup>
 
