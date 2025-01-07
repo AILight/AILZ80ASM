@@ -5,3 +5,11 @@
 
 		LD	HL, VRAM.ADRS
 
+LB1:
+LB1		equ $8003
+		LD	HL,	LB1
+
+LB2		equ $8006
+LB2:
+		LD	HL,	LB1
+
