@@ -328,7 +328,8 @@ namespace AILZ80ASM.Assembler
                 }
                 else
                 {
-                    if (label.LabelType == Label.LabelTypeEnum.Equ &&
+                    if ((label.LabelType == Label.LabelTypeEnum.Equ || 
+                         originalLabel.LabelType == Label.LabelTypeEnum.Equ) &&
                         label.Value.Equals(originalLabel.Value))
                     {
                         // EQUだけ値が一致している場合には、重複をOKにする
@@ -407,22 +408,8 @@ namespace AILZ80ASM.Assembler
         /// <exception cref="ErrorAssembleException"></exception>
         public void AddLabel(Label label)
         {
-            // 同一名のラベル
-            /*
-            if (label.LabelType != Label.LabelTypeEnum.Equ &&
-                this.Scope.Labels.Any(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0))
-            {
-                var isLocalLabel = label.LabelLevel == Label.LabelLevelEnum.SubLabel;
+            // 同一ラベルチェックはアセンブル後に行う
 
-                var message = "";
-                if (isLocalLabel)
-                {
-                    message += "上位ラベルの宣言を確認してください。" ;
-                }
-
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014, new[] { message });
-            }
-            */
             if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
             {
                 // ラベルと同じ名前は付けられない
