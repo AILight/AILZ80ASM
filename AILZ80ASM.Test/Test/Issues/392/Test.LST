@@ -1,0 +1,20 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.26.0, LST:Full:4
+       C000                             ORG $C000
+                                
+                                        include "Test1.EQU"
+000000 8000                             ORG $8000
+                                
+                                [VRAM]
+                                
+       8000                     ADRS    equ $
+[EOF:Test1.EQU:UTF_8]
+                                        include "Test2.EQU"
+                                
+                                [VRAM]
+                                
+       8000                     ADRS    equ $8000
+[EOF:Test2.EQU:UTF_8]
+                                
+000000 8000 210080          10          LD  HL, VRAM.ADRS
+                                
+[EOF:Test.Z80:UTF_8]

@@ -1,0 +1,7 @@
+﻿		ORG $C000
+
+		include "Test1.EQU"
+		include "Test2.EQU"
+
+		LD	HL, VRAM.ADRS
+
