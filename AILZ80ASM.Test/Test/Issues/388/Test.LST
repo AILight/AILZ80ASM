@@ -14,10 +14,10 @@
                                 
                                 [VRAM]
                                 
-                                ADRS    equ 0000            ; グラフィックアドレス
-                                WIDTH   equ 128             ; 幅
-                                HEIGHT  equ 212             ; 高さ
-                                SIZE    equ WIDTH * HEIGHT  ; サイズ
+       0000                     ADRS    equ 0000            ; グラフィックアドレス
+       0080                     WIDTH   equ 128             ; 幅
+       00D4                     HEIGHT  equ 212             ; 高さ
+       6A00                     SIZE    equ WIDTH * HEIGHT  ; サイズ
 [EOF:Test2.EQU:UTF_8]
                                 
 000000 8000 210000          10          LD  HL, VRAM.ADRS

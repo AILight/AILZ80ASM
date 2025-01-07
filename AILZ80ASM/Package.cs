@@ -5,6 +5,7 @@ using AILZ80ASM.LineDetailItems;
 using AILZ80ASM.SuperAssembles;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -82,7 +83,10 @@ namespace AILZ80ASM
 
             Trace.WriteLine($"- Validate".PadRight(AssembleStatusLength) + "(5/6)");
             // 未使用ラベルの値確定
-            BuildLabel();
+            BuildLabels();
+
+            // ラベルの重複チェック
+            ValidateLabels();
 
             // 出力アドレスの重複チェック
             ValidateOutputAddress();
@@ -489,11 +493,21 @@ namespace AILZ80ASM
         /// <summary>
         /// 未確定ラベルを確定させる
         /// </summary>
-        private void BuildLabel()
+        private void BuildLabels()
         {
-            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.BuildLabel;
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.BuildLabels;
 
-            AssembleLoad.BuildLabel();
+            AssembleLoad.BuildLabels();
+        }
+
+        /// <summary>
+        /// ラベルの重複チェック
+        /// </summary>
+        private void ValidateLabels()
+        {
+            this.AssembleLoad.Share.AsmStep = AsmLoadShare.AsmStepEnum.ValidateLabels;
+
+            AssembleLoad.ValidateLabels();
         }
 
         /// <summary>

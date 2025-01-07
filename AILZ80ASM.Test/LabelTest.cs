@@ -22,7 +22,7 @@ namespace AILZ80ASM.Test
             labelAdr.SetLineDetailExpansionItem(new LineDetailItems.ScopeItem.ExpansionItems.LineDetailExpansionItem(new LineItem("", 1, default(FileInfo))));
             asmLoad.AddLabel(labelAdr);
 
-            asmLoad.BuildLabel();
+            asmLoad.BuildLabels();
 
             Assert.AreEqual(1, asmLoad.AssembleInformation.Length);
             Assert.AreEqual(Error.ErrorCodeEnum.I0002, asmLoad.AssembleInformation[0].ErrorCode);
