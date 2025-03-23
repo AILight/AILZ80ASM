@@ -11,7 +11,7 @@ namespace AILZ80ASM.AILight
 {
     public static class AIMath
     {
-        private static readonly string RegexPatternCharMap = @"^((?<charMap>@.*\:)\s*|)(""|')";
+        private static readonly string RegexPatternCharMap = @"^((?<charMap>@[^:]+:)\s*|)(""|')";
         private static readonly Regex CompiledRegexPatternCharMap = new Regex(
             RegexPatternCharMap,
             RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
