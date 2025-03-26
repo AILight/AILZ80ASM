@@ -9,17 +9,16 @@ namespace AILZ80ASM.IO
 {
     public class MZTBinaryWriter
     {
-        private UInt32 Elapse { get; set; } = 0;
         private string Filename { get; set; }
-        private UInt16 StartAddress { get; set; }
+        private UInt16 LoadAddress { get; set; }
         private UInt16 EntryAddress { get; set; }
         private Stream Stream { get; set; }
         private byte[] Buffer { get; set; }
 
-        public MZTBinaryWriter(string filename, UInt16 startAddress, UInt16 entryAddress, byte[] buffer, Stream stream)
+        public MZTBinaryWriter(string filename, UInt16 loadAddress, UInt16 entryAddress, byte[] buffer, Stream stream)
         {
             Filename = filename;
-            StartAddress = startAddress;
+            LoadAddress = loadAddress;
             EntryAddress = entryAddress;
 
             Buffer = buffer;
@@ -64,11 +63,18 @@ namespace AILZ80ASM.IO
 
             // (0x06)size, offset, start
             WriteStream((ushort)(Buffer.Length));
-            WriteStream((ushort)(StartAddress));
+            WriteStream((ushort)(LoadAddress));
             WriteStream((ushort)(EntryAddress));
 
             // (0x68)rest 
             WriteStream(new byte[0x68]);
         }
+
+        /*
+        private void WriteFilename()
+        {
+
+        }
+        */
     }
 }

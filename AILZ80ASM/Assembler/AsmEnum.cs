@@ -48,6 +48,15 @@ namespace AILZ80ASM.Assembler
         }
 
         /// <summary>
+        /// シンボルファイルの形式
+        /// </summary>
+        public enum SymbolFormatEnum
+        {
+            Minimal_Equ,
+            Normal,
+        }
+
+        /// <summary>
         /// エンコードのモード
         /// </summary>
         public enum EncodeModeEnum

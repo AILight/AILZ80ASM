@@ -264,12 +264,33 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<string>()
+            {
+                Name = "symbolMode",
+                ArgumentName = "mode",
+                Aliases = new[] { "-sm", "--symbol-mode" },
+                Description = "シンボルの出力形式を選択します。",
+                DefaultValue = "normal",
+                Parameters = new[] { new Parameter { Name = "minimal-equ", Description = "最小の項目で出力します。" },
+                                     new Parameter { Name = "normal", Description = "通常モードで出力します。" },},
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<ushort?>()
             {
                 Name = "entryPoint",
                 ArgumentName = "address",
                 Aliases = new[] { "-ep", "--entry-point" },
                 Description = "エントリーポイントを指定します。",
+                Required = false
+            });
+
+            rootCommand.AddOption(new Option<ushort?>()
+            {
+                Name = "loadAddress",
+                ArgumentName = "address",
+                Aliases = new[] { "-la", "--load-address" },
+                Description = "ロードアドレスを指定します。（MZTで利用）",
                 Required = false
             });
 
@@ -428,6 +449,7 @@ namespace AILZ80ASM.Assembler
                 [AsmEnum.FileTypeEnum.HEX] = "outputHex",
                 [AsmEnum.FileTypeEnum.T88] = "outputT88",
                 [AsmEnum.FileTypeEnum.CMT] = "outputCMT",
+                [AsmEnum.FileTypeEnum.MZT] = "outputMZT",
                 [AsmEnum.FileTypeEnum.SYM] = "outputSYM",
                 [AsmEnum.FileTypeEnum.EQU] = "outputEQU",
                 [AsmEnum.FileTypeEnum.ADR] = "outputADR",
@@ -502,7 +524,7 @@ namespace AILZ80ASM.Assembler
         {
             var listMode = rootCommand.GetValue<string>("listMode");
 
-            var encodeMode = listMode switch
+            var mode = listMode switch
             {
                 "simple" => AsmEnum.ListFormatEnum.Simple,
                 "middle" => AsmEnum.ListFormatEnum.Middle,
@@ -510,7 +532,21 @@ namespace AILZ80ASM.Assembler
                 _ => throw new InvalidOperationException()
             };
 
-            return encodeMode;
+            return mode;
+        }
+
+        public static AsmEnum.SymbolFormatEnum GetSymbolMode(this RootCommand rootCommand)
+        {
+            var symbolMode = rootCommand.GetValue<string>("symbolMode");
+
+            var mode = symbolMode switch
+            {
+                "minimal-equ" => AsmEnum.SymbolFormatEnum.Minimal_Equ,
+                "normal" => AsmEnum.SymbolFormatEnum.Normal,
+                _ => throw new InvalidOperationException()
+            };
+
+            return mode;
         }
 
         public static int GetTabSize(this RootCommand rootCommand)

@@ -18,7 +18,8 @@ namespace AILZ80ASM.Assembler
             PreAssemble,
             AdjustAssemble,
             InternalAssemble,
-            BuildLabel,
+            BuildLabels,
+            ValidateLabels,
             ValidateOutputAddress,
             Complete,
         }
@@ -56,6 +57,9 @@ namespace AILZ80ASM.Assembler
 
         // エントリーポイント
         public UInt16? EntryPoint { get; set; } = default;
+
+        // ロードアドレス
+        public UInt16? LoadAddress { get; set; } = default;
 
         // スーパーアセンブル用
         public AsmSuperAssemble AsmSuperAssembleMode { get; set; } = default;

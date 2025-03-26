@@ -110,6 +110,18 @@ namespace AILZ80ASM.OperationItems
                 {
                     ValueList.AddRange(DBDW_Function(item.Value, lineDetailExpansionItemOperation, AsmLoad).Select(m => new DataValue { DataValueType = DataValueTypeEnum.StringValue, StringValue = m }));
                 }
+                else if (AIString.TryParseCharMap(item.Value, AsmLoad, out var charMap, out var resultString, out var validEscapeSequence) &&
+                         !string.IsNullOrEmpty(charMap))
+                {
+                    if (!AsmLoad.CharMapConverter_IsContains(charMap))
+                    {
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E2106, charMap);
+                    }
+                    else
+                    {
+                        AIMath.Calculation(item.Value, AsmLoad);
+                    }
+                }
                 else
                 {
                     if (string.IsNullOrWhiteSpace(item.Value))

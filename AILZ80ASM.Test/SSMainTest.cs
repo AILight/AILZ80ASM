@@ -284,6 +284,46 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestMZT()
+        {
+            var result = Program.Main(@"Success.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_ORG.mzt"), File.OpenRead("./Test/TestSS_Main/Success.mzt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+        }
+
+        [TestMethod]
+        public void TestMZT_ALL()
+        {
+            var result = Program.Main(@"Success_MZT_ALL.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_ALL_ORG.mzt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_ALL.mzt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+        }
+
+        [TestMethod]
+        public void TestMZT_CEP()
+        {
+            var result = Program.Main(@"Success_MZT_CEP.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/", "-ep", "$5678");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_CEP_ORG.mzt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_CEP.mzt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+        }
+
+        [TestMethod]
+        public void TestMZT_END()
+        {
+            var result = Program.Main(@"Success_MZT_END.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_END_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_END.cmt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+        }
+
+        [TestMethod]
+        public void TestMZT_ORG()
+        {
+            var result = Program.Main(@"Success_MZT_ORG.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_ORG_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_ORG.cmt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+        }
+
+        [TestMethod]
         public void TestBIN()
         {
             var result = Program.Main(@"Success.Z80", "-f", "-bin", "-cd", "./Test/TestSS_Main/");

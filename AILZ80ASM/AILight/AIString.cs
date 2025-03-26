@@ -10,6 +10,10 @@ namespace AILZ80ASM.AILight
     public static class AIString
     {
         private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
+        private static readonly Regex CompiledRegexPatternCharMapLabel = new Regex(
+            RegexPatternCharMapLabel,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         private static string[][] EscapeSequenceCharTables = new string[][]
         {
@@ -142,7 +146,7 @@ namespace AILZ80ASM.AILight
             }
             else
             {
-                var matchedLabel = Regex.Match(target, RegexPatternCharMapLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var matchedLabel = CompiledRegexPatternCharMapLabel.Match(target);
                 if (matchedLabel.Success)
                 {
                     var charMapName = matchedLabel.Groups["charMap"].Value;

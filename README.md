@@ -49,7 +49,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -i, --input <files>            | アセンブリ対象のファイルをスペース区切りで指定します。 (オプション名の省略が可能)
 | -ie, --input-encode <mode>     | 入力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
 | -o, --output <file>            | 出力ファイルを指定します。
-| -om, --output-mode <mode>      | 出力ファイルのモードを選択します。 [bin, hex, t88, cmt, sym, equ, lst, err, tag] デフォルト値:bin
+| -om, --output-mode <mode>      | 出力ファイルのモードを選択します。 [bin, hex, t88, cmt, mzt, sym, equ, lst, err, tag] デフォルト値:bin
 | -oe, --output-encode <mode>    | 出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
 | -lm, --list-mode <mode>        | リストの出力形式を選択します。 [simple, middle, full] デフォルト値:full
 | -lob, --list-omit-binary       | リストの出力でバイナリーインクルードを省略出力をします。
@@ -86,6 +86,10 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ■ sample.z80をアセンブル、出力はCMT形式
 > AILZ80ASM sample.z80 -cmt
 > AILZ80ASM sample.z80 -om cmt
+
+■ sample.z80をアセンブル、出力はMZT形式
+> AILZ80ASM sample.z80 -mzt
+> AILZ80ASM sample.z80 -om mzt
 
 ■ sample.z80をアセンブル、出力はBIN形式、CMT形式、リストの出力（形式：シンプル、タブサイズ8）
 > AILZ80ASM sample.z80 -bin -cmt -lst -lm simple -ts 8

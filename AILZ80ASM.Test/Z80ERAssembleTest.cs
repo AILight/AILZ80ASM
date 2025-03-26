@@ -22,9 +22,8 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Address1.Z80");
 
-            Assert.AreEqual(4, errors.Length);
+            Assert.AreEqual(3, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 8, "Address1.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 7, "Address1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 12, "Address1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 13, "Address1.Z80", errors);
         }
@@ -189,13 +188,12 @@ namespace AILZ80ASM.Test
         {
             var errors = Assemble("Label1.Z80");
 
-            Assert.AreEqual(8, errors.Length);
+            Assert.AreEqual(7, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 2, "Label1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 3, "Label1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 4, "Label1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 5, "Label1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0013, 6, "Label1.Z80", errors);
-            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0014, 8, "Label1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0018, 11, "Label1.Z80", errors);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0017, 14, "Label1.Z80", errors);
         }
