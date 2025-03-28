@@ -21,6 +21,11 @@ namespace AILZ80ASM.IO
             Stream.Write(new byte[] { (byte)target });
         }
 
+        public void WriteStream(UInt16 target)
+        {
+            Stream.Write(new byte[] { (byte)target, (byte)(target >> 8) });
+        }
+
         public void WriteStream(byte[] buffer)
         {
             WriteStream(buffer, 0, buffer.Length);
@@ -30,5 +35,6 @@ namespace AILZ80ASM.IO
         {
             Stream.Write(buffer, offset, count);
         }
+
     }
 }

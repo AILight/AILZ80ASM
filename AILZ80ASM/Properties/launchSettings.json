@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "Test.Z80 -f -bin -lst -mzt"
+      "commandLineArgs": "Success_MZT_CEP_CLA.Z80 -f -bin -lst -mzt -cmt -ep $5678 -la $9ABC\r\n"
     }
   }
 }

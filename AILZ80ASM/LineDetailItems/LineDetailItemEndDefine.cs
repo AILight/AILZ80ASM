@@ -9,8 +9,11 @@ namespace AILZ80ASM.LineDetailItems
 {
     public class LineDetailItemEndDefine : LineDetailItem
     {
-        private static readonly string RegexPatternEnd = @"^END\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
-
+        private static readonly string RegexPatternEnd = @"^END(?:\s+(?<arg1>[^,]+)(?:\s*,\s*(?<arg2>[^,]+))?)?$";
+        private static readonly Regex CompiledRegexPatternEnd = new Regex(
+            RegexPatternEnd,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private string EntryPointLabel { get; set; }
         private string LoadAddressLabel { get; set; }
 
@@ -40,13 +43,6 @@ namespace AILZ80ASM.LineDetailItems
             LoadAddressLabel = loadAddressLabel;
         }
 
-
-        private LineDetailItemEndDefine(LineItem lineItem, AsmLoad asmLoad)
-            : this("", "", lineItem, asmLoad)
-        {
-
-        }
-
         public static LineDetailItemEndDefine Create(LineItem lineItem, AsmLoad asmLoad)
         {
             if (!lineItem.IsCollectOperationString)
@@ -54,7 +50,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemEndDefine);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternEnd.Match(lineItem.OperationString);
             if (matched.Success)
             {
                 var arg1 = matched.Groups["arg1"].Value;

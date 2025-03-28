@@ -308,11 +308,19 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void TestMZT_CEP_CLA()
+        {
+            var result = Program.Main(@"Success_MZT_CEP_CLA.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/", "-ep", "$5678", "-la", "$9ABC");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_CEP_CLA_ORG.mzt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_CEP_CLA.mzt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+        }
+
+        [TestMethod]
         public void TestMZT_END()
         {
             var result = Program.Main(@"Success_MZT_END.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(0, result);
-            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_END_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_END.cmt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_END_ORG.mzt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_END.mzt"), Assembler.AsmEnum.FileTypeEnum.MZT);
         }
 
         [TestMethod]
@@ -320,7 +328,7 @@ namespace AILZ80ASM.Test
         {
             var result = Program.Main(@"Success_MZT_ORG.Z80", "-f", "-mzt", "-cd", "./Test/TestSS_Main/");
             Assert.AreEqual(0, result);
-            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_ORG_ORG.cmt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_ORG.cmt"), Assembler.AsmEnum.FileTypeEnum.MZT);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_MZT_ORG_ORG.mzt"), File.OpenRead("./Test/TestSS_Main/Success_MZT_ORG.mzt"), Assembler.AsmEnum.FileTypeEnum.MZT);
         }
 
         [TestMethod]
