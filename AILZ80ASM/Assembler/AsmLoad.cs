@@ -103,8 +103,8 @@ namespace AILZ80ASM.Assembler
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = assembleOption.GapByte;
-            Share.EntryPoint = null;
-            Share.LoadAddress = null;
+            Share.EntryPoint = new AsmDefinedAddress();
+            Share.LoadAddress = new AsmDefinedAddress();
             Share.AsmSuperAssembleMode = new AsmSuperAssemble();
             Share.ValidateAssembles = new List<LineDetailItem>();
             Share.CheckLineDetailItemStack = new Stack<LineDetailItemCheck>();
@@ -135,8 +135,8 @@ namespace AILZ80ASM.Assembler
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = AssembleOption.GapByte;
-            Share.EntryPoint = null;
-            Share.LoadAddress = null;
+            Share.EntryPoint = new AsmDefinedAddress();
+            Share.LoadAddress = new AsmDefinedAddress();
             Share.AsmSuperAssembleMode = asmSuperAssembleMode;
             Share.ValidateAssembles = new List<LineDetailItem>();
             Share.CheckLineDetailItemStack = new Stack<LineDetailItemCheck>();

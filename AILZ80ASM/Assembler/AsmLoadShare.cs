@@ -56,10 +56,10 @@ namespace AILZ80ASM.Assembler
         public byte GapByte { get; set; } = byte.MaxValue;
 
         // エントリーポイント
-        public UInt16? EntryPoint { get; set; } = default;
-
+        public AsmDefinedAddress EntryPoint { get; set; } = default;
+        
         // ロードアドレス
-        public UInt16? LoadAddress { get; set; } = default;
+        public AsmDefinedAddress LoadAddress { get; set; } = default;
 
         // スーパーアセンブル用
         public AsmSuperAssemble AsmSuperAssembleMode { get; set; } = default;

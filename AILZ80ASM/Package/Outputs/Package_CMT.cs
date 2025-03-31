@@ -23,7 +23,7 @@ namespace AILZ80ASM
             using var memoryStream = new MemoryStream();
             SaveBin(memoryStream);
 
-            var address = AssembleLoad.Share.EntryPoint ?? default(UInt16);
+            var address = AssembleLoad.Share.EntryPoint.Value ?? default(UInt16);
             var binaryWriter = new IO.CMTBinaryWriter(address, memoryStream.ToArray(), stream);
             binaryWriter.Write();
         }

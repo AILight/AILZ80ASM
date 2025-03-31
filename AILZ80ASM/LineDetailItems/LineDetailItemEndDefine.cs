@@ -76,13 +76,19 @@ namespace AILZ80ASM.LineDetailItems
             if (!string.IsNullOrEmpty(EntryPointLabel))
             {
                 EntryPoint = AIMath.Calculation(EntryPointLabel, AsmLoad, asmAddress).ConvertTo<UInt16>();
-                AsmLoad.Share.EntryPoint = EntryPoint;
+                if (EntryPoint.HasValue)
+                {
+                    AsmLoad.Share.EntryPoint.SetByDefined(EntryPoint.Value);
+                }
             }
 
             if (!string.IsNullOrEmpty(LoadAddressLabel))
             {
                 LoadAddress = AIMath.Calculation(LoadAddressLabel, AsmLoad, asmAddress).ConvertTo<UInt16>();
-                AsmLoad.Share.LoadAddress = LoadAddress;
+                if (LoadAddress.HasValue)
+                {
+                    AsmLoad.Share.LoadAddress.SetByDefined(LoadAddress.Value);
+                }
             }
         }
 
