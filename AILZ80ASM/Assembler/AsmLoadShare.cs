@@ -18,7 +18,8 @@ namespace AILZ80ASM.Assembler
             PreAssemble,
             AdjustAssemble,
             InternalAssemble,
-            BuildLabel,
+            BuildLabels,
+            ValidateLabels,
             ValidateOutputAddress,
             Complete,
         }

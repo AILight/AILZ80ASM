@@ -1,0 +1,25 @@
+﻿ex_putc equ    $1234
+
+        charmap @MAP1, "Map1.json"
+
+        ld      hl, msg1
+        call    disp_msg
+        jr      next1
+msg1:   db      @MAP1:"ABC", 0
+
+next1:  ld      hl, msg2
+        call    disp_msg
+        jr      next2
+msg2:   db      @MAP2:"ABC", 0
+
+next2:   halt
+
+disp_msg:
+        ld      a, (hl)
+        or      a
+        ret     z
+        call    ex_putc
+        inc     hl
+        jr      disp_msg
+
+        charmap @MAP2, "Map2.json"

@@ -88,6 +88,7 @@ namespace AILZ80ASM.Assembler
         }
         // リストのモード
         public AsmEnum.ListFormatEnum ListMode { get; set; } = AsmEnum.ListFormatEnum.Full;
+        public AsmEnum.SymbolFormatEnum SymbolMode { get; set; } = AsmEnum.SymbolFormatEnum.Normal;
 
         public AsmOption()
         {
@@ -107,6 +108,7 @@ namespace AILZ80ASM.Assembler
             OutputEncodeMode = rootCommand.GetOutputEncodeMode();
 
             ListMode = rootCommand.GetListMode();
+            SymbolMode = rootCommand.GetSymbolMode();
             DiffFile = rootCommand.GetValue<bool>("diffFile");
             EntryPoint = rootCommand.GetValue<ushort?>("entryPoint");
             TabSize = rootCommand.GetValue<int>("tabSize");

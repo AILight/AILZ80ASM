@@ -76,6 +76,8 @@ namespace AILZ80ASM.Test
             Assert.IsTrue(AIString.IsString("\"\r\n\"", asmLoad));
             
             Assert.IsTrue(AIString.IsString("\"ABC \\\"DEF\\\" GHI\"", asmLoad));
+
+            Assert.IsTrue(AIString.IsString("@SJIS:\"012:\"", asmLoad));
         }
 
         [TestMethod]

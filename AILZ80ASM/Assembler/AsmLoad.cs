@@ -303,11 +303,48 @@ namespace AILZ80ASM.Assembler
         /// <summary>
         /// ラベルをビルドする（値を確定させる）
         /// </summary>
-        public void BuildLabel()
+        public void BuildLabels()
         {
             foreach (var item in this.Scope.Labels.Where(m => m.LabelLevel != Label.LabelLevelEnum.GlobalLabel && m.DataType == Label.DataTypeEnum.None))
             {
                 item.BuildLabel();
+            }
+        }
+
+        /// <summary>
+        /// ラベルの重複チェックを行う
+        /// </summary>
+        public void ValidateLabels()
+        {
+            var originalLabels = new List<Label>();
+
+            foreach (var label in this.Scope.Labels.Where(m => m.LabelLevel != Label.LabelLevelEnum.GlobalLabel))
+            {
+                var originalLabel = originalLabels.FirstOrDefault(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0);
+                if (originalLabel == default)
+                {
+                    // 一致しない場合
+                    originalLabels.Add(label);
+                }
+                else
+                {
+                    if ((label.LabelType == Label.LabelTypeEnum.Equ || 
+                         originalLabel.LabelType == Label.LabelTypeEnum.Equ) &&
+                        label.Value.Equals(originalLabel.Value))
+                    {
+                        // EQUだけ値が一致している場合には、重複をOKにする
+                        this.AddError(new ErrorLineItem(label.LineItem, Error.ErrorCodeEnum.I0003, label.LabelFullName));
+                    }
+                    else
+                    {
+                        var message = "";
+                        if (label.LabelLevel == Label.LabelLevelEnum.SubLabel)
+                        {
+                            message += "上位ラベルの宣言を確認してください。";
+                        }
+                        this.AddError(new ErrorLineItem(label.LineItem, Error.ErrorCodeEnum.E0014, new[] { message }));
+                    }
+                }
             }
         }
 
@@ -371,39 +408,8 @@ namespace AILZ80ASM.Assembler
         /// <exception cref="ErrorAssembleException"></exception>
         public void AddLabel(Label label)
         {
-            // 同一名のラベル
-            if (this.Scope.Labels.Any(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0))
-            {
-                var isLocalLabel = label.LabelLevel == Label.LabelLevelEnum.SubLabel;
+            // 同一ラベルチェックはアセンブル後に行う
 
-                var message = "";
-                if (isLocalLabel)
-                {
-                    message += "上位ラベルの宣言を確認してください。" ;
-                }
-
-                // equの場合は値が一致しているかを確認する
-                if (label.LabelType == Label.LabelTypeEnum.Equ)
-                {
-                    if (AIMath.TryParse(label.ValueString, out var labelValue))
-                    {
-                        var sameLables = this.Scope.Labels.Where(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0);
-                        foreach (var sameLabel in sameLables)
-                        {
-                            if (AIMath.TryParse(sameLabel.ValueString, out var sameLabelValue))
-                            {
-                                if (labelValue.Equals(sameLabelValue)) 
-                                {
-                                    this.AddError(new ErrorLineItem(label.LineItem, Error.ErrorCodeEnum.I0003, label.LabelFullName));
-                                    return;
-                                }
-                            }
-                        }
-                    }
-
-                }
-                throw new ErrorAssembleException(Error.ErrorCodeEnum.E0014, new[] { message });
-            }
             if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
             {
                 // ラベルと同じ名前は付けられない
