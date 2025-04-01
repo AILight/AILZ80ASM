@@ -15,7 +15,7 @@ namespace AILZ80ASM.Assembler
             Calculated   // アセンブル処理で算出された
         }
 
-        public ushort? Value { get; private set; }
+        public UInt16? Value { get; private set; }
         public SetByEnum SetBy { get; private set; } = SetByEnum.None;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace AILZ80ASM.Assembler
         /// <summary>
         /// 明示的な定義（例：コマンドライン）によって値を設定します。
         /// </summary>
-        public void SetByDefined(ushort value)
+        public void SetByDefined(UInt16 value)
         {
             Value = value;
             SetBy = SetByEnum.Defined;
@@ -35,7 +35,7 @@ namespace AILZ80ASM.Assembler
         /// <summary>
         /// アセンブル処理の結果として算出された値を設定します。
         /// </summary>
-        public void SetByCalculated(ushort value)
+        public void SetByCalculated(UInt16 value)
         {
             Value = value;
             SetBy = SetByEnum.Calculated;
