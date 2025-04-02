@@ -1,4 +1,4 @@
-﻿using AILZ80ASM.Assembler;
+using AILZ80ASM.Assembler;
 using System;
 using System.Collections.Generic;
 using System.IO;
