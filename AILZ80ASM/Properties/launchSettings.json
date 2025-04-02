@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AILZ80ASM": {
-      "commandName": "Project",
-      "commandLineArgs": "Success_CMT_REQ_2.Z80 -f -bin -lst -mzt -cmt\r\n"
+      "commandName": "Project"
     }
   }
 }
