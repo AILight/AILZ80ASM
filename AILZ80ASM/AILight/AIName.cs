@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.AILight
@@ -223,84 +224,59 @@ namespace AILZ80ASM.AILight
             }
 
             var argumentList = new List<string>();
-
             var startIndex = 0;
-            while (startIndex < target.Length)
+            var index = 0;
+
+            while (index < target.Length)
             {
-                var commaIndex = AIString.IndexOfSkipString(target, ',', startIndex);
-                var kakkoIndex = AIString.IndexOfSkipString(target, '(', startIndex);
+                var commaIndex = AIString.IndexOfSkipString(target, ',', index);
+                var kakkoIndex = AIString.IndexOfSkipString(target, '(', index);
                 if (commaIndex == -1)
                 {
                     argumentList.Add(target.Substring(startIndex).Trim());
-                    startIndex = target.Length;
+                    index = target.Length;
+                    startIndex = index;
                 }
-                else if (kakkoIndex == -1 || commaIndex < kakkoIndex)
+                else if(kakkoIndex == -1 || commaIndex < kakkoIndex)
                 {
                     argumentList.Add(target.Substring(startIndex, commaIndex - startIndex).Trim());
-                    startIndex = commaIndex + 1;
-                    // 最後のカンマで、次のデータが無い場合には空を積む
-                    if (startIndex == target.Length)
+                    index = commaIndex + 1;
+                    startIndex = index;
+                    if (startIndex >= target.Length && commaIndex != -1)
                     {
                         argumentList.Add("");
                     }
                 }
                 else
                 {
-                    var searchIndex = kakkoIndex + 1;
-                    var kakkoCounter = 1;
-                    // カッコ開始から終了まで移動させる
-                    while (kakkoCounter > 0 && searchIndex < target.Length)
+                    index = kakkoIndex + 1;
+                    var kakkoCount = 1;
+                    while (index < target.Length && kakkoCount > 0)
                     {
-                        kakkoIndex = AIString.IndexOfSkipString(target, '(', searchIndex);
-                        var closeIndex = AIString.IndexOfSkipString(target, ')', searchIndex);
-                        if (closeIndex == -1)
+                        var nextKakkoIndex = AIString.IndexOfSkipString(target, '(', index);
+                        var closeKakkoIndex = AIString.IndexOfSkipString(target, ')', index);
+                        if (closeKakkoIndex == -1)
                         {
-                            throw new Exception("カッコの数が不一致です");
+                            index = target.Length;
                         }
-                        else if (kakkoIndex == -1 || closeIndex < kakkoIndex)
+                        else if (nextKakkoIndex == -1 ||
+                                 nextKakkoIndex > closeKakkoIndex)
                         {
-                            kakkoCounter--;
-                            searchIndex = closeIndex + 1;
+                            index = closeKakkoIndex + 1;
+                            kakkoCount--;
                         }
-                        else if (kakkoIndex < closeIndex)
+                        else
                         {
-                            kakkoCounter++;
-                            searchIndex = kakkoIndex + 1;
-                        }
-                        // カッコを飛び越えたら、次のカンマと比較する
-                        if (kakkoCounter == 0)
-                        {
-                            // 次のカンマとカッコの開始を調べる
-                            commaIndex = AIString.IndexOfSkipString(target, ',', searchIndex);
-                            kakkoIndex = AIString.IndexOfSkipString(target, '(', searchIndex);
-                            if ((commaIndex != -1 && kakkoIndex == -1) ||
-                                (commaIndex != -1 && kakkoIndex != -1 && commaIndex < kakkoIndex))
-                            {
-                                // カンマはあるけど、カッコが無い場合は、カンマの前まで と
-                                // カンマもカッコもあるけど、カンマの前まで
-                                searchIndex = commaIndex;
-                            }
-                            else if (kakkoIndex != -1 && 
-                                    (commaIndex == -1 || kakkoIndex < commaIndex))
-                            {
-                                // カッコが存在してて、カンマが無い場合 or カッコがカンマの手前
-                                // カッコのサーチをもう一度行う
-                                searchIndex = kakkoIndex + 1;
-                                kakkoCounter = 1;
-                            }
+                            kakkoCount++;
+                            index = nextKakkoIndex + 1;
                         }
                     }
-                    argumentList.Add(target.Substring(startIndex, searchIndex - startIndex).Trim());
-                    startIndex = searchIndex + 1;
-                    // 最後のカンマで、次のデータが無い場合には空を積む
-                    if (startIndex == target.Length && commaIndex != -1)
-                    {
-                        argumentList.Add("");
-                    }
-
                 }
             }
-
+            if (startIndex < target.Length)
+            {
+                argumentList.Add(target.Substring(startIndex).Trim());
+            }
             return argumentList.ToArray();
         }
 
