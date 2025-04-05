@@ -14,7 +14,7 @@ steps:
   inputs:
     targetType: 'filePath'
     filePath: '$(Build.SourcesDirectory)/check-links.ps1'
-    arguments: '$(Build.SourcesDirectory)/README.md'
+    arguments: '"$(Build.SourcesDirectory)/README.md" "$(Build.SourcesDirectory)/ignore-urls.txt"'
     failOnStderr: true
     pwsh: true
 - task: DotNetCoreCLI@2
