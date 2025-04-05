@@ -1,0 +1,8 @@
+﻿
+        function xyofs(x, y) => (y) * 40 + (x)
+
+        ld  hl, xyofs(1, 1)         	    ; OK 関数呼出しのみ
+        ld  de, xyofs(1, 1) + xyofs(2, 2)   ; OK 関数呼出し同士の演算
+        ld  bc, xyofs(1, 1) - 2             ; NG 関数呼出しと定数の演算
+
+        end

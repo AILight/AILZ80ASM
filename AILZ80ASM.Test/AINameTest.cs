@@ -8,197 +8,34 @@ namespace AILZ80ASM.Test
     [TestClass]
     public class AINameTest
     {
-        [TestMethod]
-        public void ArgumentTest_01()
+        [DataTestMethod]
+        [DataRow("")]
+        [DataRow("ABC,FUNC(),DEF", ["ABC", "FUNC()", "DEF"])]
+        [DataRow("ABC,FUNC(GHI),DEF", ["ABC", "FUNC(GHI)", "DEF"])]
+        [DataRow("ABC,FUNC(GHI,JKL),DEF", ["ABC", "FUNC(GHI,JKL)", "DEF"])]
+        [DataRow("ABC,FUNC(GHI,JKL,FUNC(GHI,JKL)),DEF", ["ABC", "FUNC(GHI,JKL,FUNC(GHI,JKL))", "DEF"])]
+        [DataRow("ABC + TTT, FUNC(GHI,JKL,FUNC(GHI,JKL)) , DEF", ["ABC + TTT", "FUNC(GHI,JKL,FUNC(GHI,JKL))", "DEF"])]
+        [DataRow("\"ABC\", 123, \"ABC,DEF\", \"ABC\\\"DEF\"", ["\"ABC\"", "123", "\"ABC,DEF\"", "\"ABC\\\"DEF\""])]
+        [DataRow("\"0123456789:;<=>? \"", ["\"0123456789:;<=>? \""])]
+        [DataRow("ABC(A)(B),DEF(G,H)", ["ABC(A)(B)", "DEF(G,H)"])]
+        [DataRow("ABC(A)(B),DEF(G,H),", ["ABC(A)(B)", "DEF(G,H)", ""])]
+        [DataRow("A,B,C,", ["A", "B", "C", ""])]
+        [DataRow("(2 - 1) + 1, 4", ["(2 - 1) + 1", "4"])]
+        [DataRow("2 - 1 + 1, 4", ["2 - 1 + 1", "4"])]
+        [DataRow("(1) * 3, (4)", ["(1) * 3", "(4)"])]
+        [DataRow("(1) / 4, 4", ["(1) / 4", "4"])]
+        [DataRow("(1) + 3, (4)", ["(1) + 3", "(4)"])]
+        [DataRow("(2 - 1) + 4, (5 - 1)", ["(2 - 1) + 4", "(5 - 1)"])]
+        [DataRow("(1) - 5, (4)", ["(1) - 5", "(4)"])]
+        [DataRow("(1) * 3, (4)", ["(1) * 3", "(4)"])]
+        [DataRow("(1) / 4, (4)", ["(1) / 4", "(4)"])]
+        [DataRow("hl, abc(1, 1)", ["hl", "abc(1, 1)"])]
+        [DataRow("de, abc(1, 1) + abc(2, 2)", ["de", "abc(1, 1) + abc(2, 2)"])]
+        [DataRow("bc, xyofs(1, 1) - 2", ["bc", "xyofs(1, 1) - 2"])]
+        public void ArgumentTest(string input, params string[] expected)
         {
-            var arguments = AIName.ParseArguments("");
-
-            Assert.AreEqual(0, arguments.Length);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_02()
-        {
-            var arguments = AIName.ParseArguments("ABC,FUNC(),DEF");
-
-            Assert.AreEqual(arguments.Length, 3);
-            Assert.AreEqual("ABC",arguments[0]);
-            Assert.AreEqual("FUNC()", arguments[1]);
-            Assert.AreEqual("DEF", arguments[2]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_03()
-        {
-            var arguments = AIName.ParseArguments("ABC,FUNC(GHI),DEF");
-
-            Assert.AreEqual(arguments.Length, 3);
-            Assert.AreEqual("ABC", arguments[0]);
-            Assert.AreEqual("FUNC(GHI)", arguments[1]);
-            Assert.AreEqual("DEF", arguments[2]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_04()
-        {
-            var arguments = AIName.ParseArguments("ABC,FUNC(GHI,JKL),DEF");
-
-            Assert.AreEqual(arguments.Length, 3);
-            Assert.AreEqual("ABC", arguments[0]);
-            Assert.AreEqual("FUNC(GHI,JKL)", arguments[1]);
-            Assert.AreEqual("DEF", arguments[2]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_05()
-        {
-            var arguments = AIName.ParseArguments("ABC,FUNC(GHI,JKL,FUNC(GHI,JKL)),DEF");
-
-            Assert.AreEqual(arguments.Length, 3);
-            Assert.AreEqual("ABC", arguments[0]);
-            Assert.AreEqual("FUNC(GHI,JKL,FUNC(GHI,JKL))", arguments[1]);
-            Assert.AreEqual("DEF", arguments[2]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_06()
-        {
-            var arguments = AIName.ParseArguments("ABC + TTT, FUNC(GHI,JKL,FUNC(GHI,JKL)) , DEF");
-
-            Assert.AreEqual(arguments.Length, 3);
-            Assert.AreEqual("ABC + TTT", arguments[0]);
-            Assert.AreEqual("FUNC(GHI,JKL,FUNC(GHI,JKL))", arguments[1]);
-            Assert.AreEqual("DEF", arguments[2]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_07()
-        {
-            var arguments = AIName.ParseArguments("\"ABC\", 123, \"ABC,DEF\", \"ABC\\\"DEF\"");
-
-            Assert.AreEqual(arguments.Length, 4);
-            Assert.AreEqual("\"ABC\"", arguments[0]);
-            Assert.AreEqual("123", arguments[1]);
-            Assert.AreEqual("\"ABC,DEF\"", arguments[2]);
-            Assert.AreEqual("\"ABC\\\"DEF\"", arguments[3]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_08()
-        {
-            var arguments = AIName.ParseArguments("\"0123456789:;<=>? \"");
-
-            Assert.AreEqual(arguments.Length, 1);
-            Assert.AreEqual("\"0123456789:;<=>? \"", arguments[0]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_09()
-        {
-            var arguments = AIName.ParseArguments("ABC(A)(B),DEF(G,H)");
-
-            Assert.AreEqual(arguments.Length, 2);
-            Assert.AreEqual("ABC(A)(B)", arguments[0]);
-            Assert.AreEqual("DEF(G,H)", arguments[1]);
-        }
-
-        [TestMethod]
-        public void ArgumentTest_10()
-        {
-            {
-                var arguments = AIName.ParseArguments("ABC(A)(B),DEF(G,H),");
-
-                Assert.AreEqual(arguments.Length, 3);
-                Assert.AreEqual("ABC(A)(B)", arguments[0]);
-                Assert.AreEqual("DEF(G,H)", arguments[1]);
-                Assert.AreEqual("", arguments[2]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("A,B,C,");
-                
-                Assert.AreEqual(arguments.Length, 4);
-                Assert.AreEqual("A", arguments[0]);
-                Assert.AreEqual("B", arguments[1]);
-                Assert.AreEqual("C", arguments[2]);
-                Assert.AreEqual("",  arguments[3]);
-            }
-        }
-
-        [TestMethod]
-        public void ArgumentTest_11()
-        {
-            {
-                var arguments = AIName.ParseArguments("(2 - 1) + 1, 4");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(2 - 1) + 1", arguments[0]);
-                Assert.AreEqual("4", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("2 - 1 + 1, 4");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("2 - 1 + 1", arguments[0]);
-                Assert.AreEqual("4", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("(1) * 3, (4)");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(1) * 3", arguments[0]);
-                Assert.AreEqual("(4)", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("(1) / 4, 4");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(1) / 4", arguments[0]);
-                Assert.AreEqual("4", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("(1) + 3, (4)");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(1) + 3", arguments[0]);
-                Assert.AreEqual("(4)", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("(2 - 1) + 4, (5 - 1)");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(2 - 1) + 4", arguments[0]);
-                Assert.AreEqual("(5 - 1)", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("(1) - 5, (4)");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(1) - 5", arguments[0]);
-                Assert.AreEqual("(4)", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("(1) * 3, (4)");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(1) * 3", arguments[0]);
-                Assert.AreEqual("(4)", arguments[1]);
-            }
-
-            {
-                var arguments = AIName.ParseArguments("(1) / 4, (4)");
-
-                Assert.AreEqual(arguments.Length, 2);
-                Assert.AreEqual("(1) / 4", arguments[0]);
-                Assert.AreEqual("(4)", arguments[1]);
-            }
+            var actual = AIName.ParseArguments(input);
+            CollectionAssert.AreEqual(expected, actual);
         }
 
         [TestMethod]
