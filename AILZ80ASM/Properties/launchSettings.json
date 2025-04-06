@@ -2,7 +2,7 @@
   "profiles": {
     "AILZ80ASM": {
       "commandName": "Project",
-      "commandLineArgs": "Test.Z80 -f -bin -lst"
+      "commandLineArgs": "Success_CRS.Z80 -f -crs -bin -lst"
     }
   }
 }
