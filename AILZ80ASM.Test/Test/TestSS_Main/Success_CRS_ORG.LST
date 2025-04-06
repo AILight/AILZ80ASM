@@ -1,0 +1,7 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.27.0, LST:Full:4
+                                
+000000 0000 210000          10          LD HL, 0
+000003 0003 C9              10          RET
+000004 0004 3132335C5C343536            DB "123\\456\0"
+            5C30                
+[EOF:Success_CRS.Z80:UTF_8]
