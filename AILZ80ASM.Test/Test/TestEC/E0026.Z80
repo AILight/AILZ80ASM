@@ -1,0 +1,7 @@
+﻿
+			org $8000
+			ld b, 10
+.@@
+			xor a
+.clear		djnz .@@F
+			ret
