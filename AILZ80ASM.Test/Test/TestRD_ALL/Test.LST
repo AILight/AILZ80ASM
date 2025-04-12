@@ -1,4 +1,4 @@
-                                *** AILZ80ASM *** Z-80 Assembler, version 0.9.9.3
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.27.0, LST:Full:4
                                     ; 00
        0000                     LB00:
 000000 0000 00               4      NOP
@@ -1187,4 +1187,13 @@
 000B7E 0B7E FDCBC5FD        23      SET 7,(IY+190+7),L 
 000B82 0B82 FDCBC6FE        23      SET 7,(IY+198)
 000B86 0B86 FDCBC7FF        23      SET 7,(IY+199),A
+                                    ; 拡張
+000B8A 0B8A DD64             9      LD IXH,IXH
+000B8C 0B8C DD65             9      LD IXH,IXL
+000B8E 0B8E DD6C             9      LD IXL,IXH
+000B90 0B90 DD6D             9      LD IXL,IXL
+000B92 0B92 FD64             9      LD IYH,IYH
+000B94 0B94 FD65             9      LD IYH,IYL
+000B96 0B96 FD6C             9      LD IYL,IYH
+000B98 0B98 FD6D             9      LD IYL,IYL
 [EOF:Test.Z80:UTF_8]

@@ -42,3 +42,12 @@
 	ld ixl,2
 	ld iyh,1
 	ld iyl,2
+	; 追加
+	ld ixh,ixh
+	ld ixh,ixl
+	ld ixl,ixh
+	ld ixl,ixl
+	ld iyh,iyh
+	ld iyh,iyl
+	ld iyl,iyh
+	ld iyl,iyl

@@ -1,4 +1,4 @@
-﻿;*** AILZ80ASM *** Z-80 Assembler, version 0.9.9.12, EQU
+﻿;*** AILZ80ASM *** Z-80 Assembler, version 1.0.27.0, EQU
 #pragma once
 
 LB00    equ $0000
