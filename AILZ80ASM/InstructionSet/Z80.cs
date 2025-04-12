@@ -44,6 +44,36 @@ namespace AILZ80ASM.InstructionSet
                         new InstructionRegisterItem { RegisterName = "E", BitCode = "011" },
                     }
                 },
+                new InstructionRegister
+                {
+                    MnemonicRegisterName = "rs3",
+                    MnemonicBitName = "SSS",
+                    InstructionRegisterItems = new[]
+                    {
+                        new InstructionRegisterItem { RegisterName = "A", BitCode = "111" },
+                        new InstructionRegisterItem { RegisterName = "B", BitCode = "000" },
+                        new InstructionRegisterItem { RegisterName = "C", BitCode = "001" },
+                        new InstructionRegisterItem { RegisterName = "D", BitCode = "010" },
+                        new InstructionRegisterItem { RegisterName = "E", BitCode = "011" },
+                        new InstructionRegisterItem { RegisterName = "IXH", BitCode = "100" },
+                        new InstructionRegisterItem { RegisterName = "IXL", BitCode = "101" },
+                    }
+                },
+                                new InstructionRegister
+                {
+                    MnemonicRegisterName = "rs4",
+                    MnemonicBitName = "SSS",
+                    InstructionRegisterItems = new[]
+                    {
+                        new InstructionRegisterItem { RegisterName = "A", BitCode = "111" },
+                        new InstructionRegisterItem { RegisterName = "B", BitCode = "000" },
+                        new InstructionRegisterItem { RegisterName = "C", BitCode = "001" },
+                        new InstructionRegisterItem { RegisterName = "D", BitCode = "010" },
+                        new InstructionRegisterItem { RegisterName = "E", BitCode = "011" },
+                        new InstructionRegisterItem { RegisterName = "IYH", BitCode = "100" },
+                        new InstructionRegisterItem { RegisterName = "IYL", BitCode = "101" },
+                    }
+                },
                 new InstructionRegister 
                 {
                     MnemonicRegisterName = "r1", 
@@ -243,10 +273,10 @@ namespace AILZ80ASM.InstructionSet
                 new InstructionItem { Mnemonics = new[] { "LD I,A" }, OPCode = new[] { "11101101", "01000111" }, M = 2, T = 9 },
                 new InstructionItem { Mnemonics = new[] { "LD A,R" }, OPCode = new[] { "11101101", "01011111" }, M = 2, T = 9 },
                 new InstructionItem { Mnemonics = new[] { "LD R,A" }, OPCode = new[] { "11101101", "01001111" }, M = 2, T = 9 },
-                new InstructionItem { Mnemonics = new[] { "LD ixr1,rs2" }, OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "LD ixr1,rs3" }, OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "LD rs1,ixr2" }, OPCode = new[] { "11011101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "LD ixr1,n" }, OPCode = new[] { "11011101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented = true },
-                new InstructionItem { Mnemonics = new[] { "LD iyr1,rs2" }, OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
+                new InstructionItem { Mnemonics = new[] { "LD iyr1,rs4" }, OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "LD rs1,iyr2" }, OPCode = new[] { "11111101", "01DDDSSS" }, M = 2, T = 9, UnDocumented = true },
                 new InstructionItem { Mnemonics = new[] { "LD iyr1,n" }, OPCode = new[] { "11111101", "00DDD110", "NNNNNNNN" }, M = 3, T = 10, UnDocumented = true },
 
