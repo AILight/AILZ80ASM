@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,20 +10,24 @@ namespace AILZ80ASM
 { 
     public partial class Package
     {
+        // MZT フォーマット
+        // ヘッダー (128バイト)
+        //  アトリビュート: 01 (マシン語ファイル)
+        //  ファイル名: 16バイト + 0DH (終端文字以降は20Hで埋める)
+        //  ファイルサイズ: [LO] [HI]
+        //  ローディングアドレス: [LO] [HI]
+        //  エントリーアドレス: [LO] [HI]
+        // データ
+        //  本体データ
         public void SaveMZT(Stream stream, string outputFilename)
         {
             using var memoryStream = new MemoryStream();
             SaveBin(memoryStream);
 
-            var startAddress = default(UInt16);
-            if (AssembleLoad.Share.AsmORGs.Count >= 2) {
-                startAddress = AssembleLoad.Share.AsmORGs.Where(o => o.OutputAddress != null).OrderBy(o => o.OutputAddress).First().ProgramAddress;
-            }
+            var loadAddress = AssembleLoad.Share.LoadAddress.Value ?? default(UInt16);
+            var entryAddress = AssembleLoad.Share.EntryPoint.Value ?? default(UInt16);
 
-            var entryAddress = AssembleLoad.Share.EntryPoint ?? startAddress;
-
-
-            var binaryWriter = new IO.MZTBinaryWriter(outputFilename, startAddress, entryAddress, memoryStream.ToArray(), stream);
+            var binaryWriter = new IO.MZTBinaryWriter(outputFilename, loadAddress, entryAddress, memoryStream.ToArray(), stream);
             binaryWriter.Write();
         }
     }

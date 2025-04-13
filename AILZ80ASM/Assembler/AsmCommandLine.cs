@@ -285,6 +285,15 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<ushort?>()
+            {
+                Name = "loadAddress",
+                ArgumentName = "address",
+                Aliases = new[] { "-la", "--load-address" },
+                Description = "ロードアドレスを指定します。（MZTで利用）",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<int>()
             {
                 Name = "tabSize",
@@ -440,6 +449,7 @@ namespace AILZ80ASM.Assembler
                 [AsmEnum.FileTypeEnum.HEX] = "outputHex",
                 [AsmEnum.FileTypeEnum.T88] = "outputT88",
                 [AsmEnum.FileTypeEnum.CMT] = "outputCMT",
+                [AsmEnum.FileTypeEnum.MZT] = "outputMZT",
                 [AsmEnum.FileTypeEnum.SYM] = "outputSYM",
                 [AsmEnum.FileTypeEnum.EQU] = "outputEQU",
                 [AsmEnum.FileTypeEnum.ADR] = "outputADR",

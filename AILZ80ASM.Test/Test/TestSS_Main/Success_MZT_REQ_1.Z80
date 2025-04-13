@@ -1,0 +1,7 @@
+﻿        org     $1200
+
+data1:  db      "01234567"
+start1: ld      de,data1
+        ret
+
+        end     start1

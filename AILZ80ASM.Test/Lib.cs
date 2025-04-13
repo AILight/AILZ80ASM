@@ -56,6 +56,7 @@ namespace AILZ80ASM.Test
                 case AsmEnum.FileTypeEnum.BIN:
                 case AsmEnum.FileTypeEnum.T88:
                 case AsmEnum.FileTypeEnum.CMT:
+                case AsmEnum.FileTypeEnum.MZT:
                     Assert.Fail("テキストファイルではありません");
                     break;
                 default:

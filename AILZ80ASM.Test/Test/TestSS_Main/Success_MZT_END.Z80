@@ -1,0 +1,4 @@
+﻿
+	LD A, 0
+
+	END $ABCD

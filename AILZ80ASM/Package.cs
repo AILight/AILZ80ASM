@@ -139,12 +139,26 @@ namespace AILZ80ASM
             {
                 if (this.AssembleLoad.Share.AsmORGs.Any(m => m.HasBinResult))
                 {
-                    this.AssembleLoad.Share.EntryPoint = this.AssembleLoad.Share.AsmORGs.First(m => m.HasBinResult).ProgramAddress;
+                    var address = this.AssembleLoad.Share.AsmORGs.First(m => m.HasBinResult).ProgramAddress;
+                    this.AssembleLoad.Share.EntryPoint.SetByCalculated(address);
                 }
             }
             if (this.AssembleOption.EntryPoint.HasValue)
             {
-                this.AssembleLoad.Share.EntryPoint = this.AssembleOption.EntryPoint;
+                this.AssembleLoad.Share.EntryPoint.SetByDefined(this.AssembleOption.EntryPoint.Value);
+            }
+
+            // ロードアドレスを確定させる
+            if (!this.AssembleLoad.Share.LoadAddress.HasValue)
+            {
+                if (this.AssembleLoad.Share.AsmORGs.Any(m => m.HasBinResult))
+                {
+                    this.AssembleLoad.Share.LoadAddress.SetByCalculated(this.AssembleLoad.Share.AsmORGs.First(m => m.HasBinResult).ProgramAddress);
+                }
+            }
+            if (this.AssembleOption.LoadAddress.HasValue)
+            {
+                this.AssembleLoad.Share.LoadAddress.SetByDefined(this.AssembleOption.LoadAddress.Value);
             }
 
             // OutputAddressを一時保存します

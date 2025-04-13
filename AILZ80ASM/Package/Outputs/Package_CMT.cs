@@ -1,4 +1,5 @@
-﻿using System;
+using AILZ80ASM.Assembler;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,11 +24,20 @@ namespace AILZ80ASM
             using var memoryStream = new MemoryStream();
             SaveBin(memoryStream);
 
-            var address = default(UInt16);
-            if (AssembleLoad.Share.AsmORGs.Count >= 2) {
-                address = AssembleLoad.Share.AsmORGs.Where(o => o.OutputAddress != null).OrderBy(o => o.OutputAddress).First().ProgramAddress;
+            var address = default(UInt16?);
+            if (this.AssembleLoad.Share.LoadAddress.HasValue && 
+                this.AssembleLoad.Share.LoadAddress.SetBy == AsmDefinedAddress.SetByEnum.Defined)
+            {
+                address = this.AssembleLoad.Share.LoadAddress.Value;
             }
-            var binaryWriter = new IO.CMTBinaryWriter(address, memoryStream.ToArray(), stream);
+            
+            if (!address.HasValue)
+            {
+                address = this.AssembleLoad.Share.EntryPoint.Value;
+            }
+            address = address ?? default(UInt16);
+
+            var binaryWriter = new IO.CMTBinaryWriter(address.Value, memoryStream.ToArray(), stream);
             binaryWriter.Write();
         }
     }
