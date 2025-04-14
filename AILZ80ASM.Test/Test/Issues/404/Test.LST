@@ -1,0 +1,10 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.27.0, LST:Full:4
+                                
+                                        function xyofs(x, y) => (y) * 40 + (x)
+                                
+000000 0000 212900          10          ld  hl, xyofs(1, 1)                 ; OK 関数呼出しのみ
+000003 0003 117B00          10          ld  de, xyofs(1, 1) + xyofs(2, 2)   ; OK 関数呼出し同士の演算
+000006 0006 012700          10          ld  bc, xyofs(1, 1) - 2             ; NG 関数呼出しと定数の演算
+                                
+                                        end
+[EOF:Test.Z80:UTF_8]

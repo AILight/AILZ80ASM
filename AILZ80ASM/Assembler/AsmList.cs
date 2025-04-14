@@ -89,7 +89,8 @@ namespace AILZ80ASM.Assembler
         {
             var programAddress = default(UInt32?);
 
-            if (equLabel.DataType == Label.DataTypeEnum.Value && equLabel.Value.ValueType.HasFlag(AILight.AIValue.ValueTypeEnum.Int32))
+            if (equLabel != default &&
+                equLabel.DataType == Label.DataTypeEnum.Value && equLabel.Value.ValueType.HasFlag(AILight.AIValue.ValueTypeEnum.Int32))
             {
                 programAddress = equLabel.Value.ConvertTo<UInt32>();
             }

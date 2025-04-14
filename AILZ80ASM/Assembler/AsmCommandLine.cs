@@ -393,6 +393,14 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<bool>()
             {
+                Name = "compatRawString",
+                Aliases = new[] { "-crs", "--compat-raw-string" },
+                Description = "すべての文字列をエスケープ無効の互換モード（@付き文字列）として扱います。",
+                Required = false,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
                 Name = "version",
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",

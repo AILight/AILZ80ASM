@@ -201,6 +201,9 @@ namespace AILZ80ASM
                 //　パッケージステータス
                 package.TraceTitle_Inputs();
 
+                // オプション表示
+                OutputOption(asmOption);
+
                 // エラーが無ければアセンブル
                 if (package.Errors.Length == 0)
                 {
@@ -299,6 +302,23 @@ namespace AILZ80ASM
         {
             Trace.WriteLine(ProductInfo.ProductLongName);
             Trace.WriteLine(ProductInfo.Copyright);
+            Trace.WriteLine("");
+        }
+
+        private static void OutputOption(AsmOption asmOption)
+        {
+            var options = asmOption.CompatRawString;
+            if (!options)
+            {
+                return;
+            }
+            Trace.WriteLine("# Options");
+            Trace.WriteLine("");
+
+            if (asmOption.CompatRawString)
+            {
+                Trace.WriteLine("- Compatibility Mode: Raw String Mode enabled (escape sequences disabled)");
+            }
             Trace.WriteLine("");
         }
 

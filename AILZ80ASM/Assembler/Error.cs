@@ -42,6 +42,7 @@ namespace AILZ80ASM.Assembler
             E0024,
             E0025,
             E0026,
+            E0027,
 
             E1011,
             E1012,
@@ -192,6 +193,7 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E0024] = "DBFILへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0025] = "DWFILへの変換に失敗しました。[{0}]",
             [ErrorCodeEnum.E0026] = "ラベル指定演算子 ({0})により、選択できるラベルが見つかりませんでした。",
+            [ErrorCodeEnum.E0027] = "EQUの宣言にはラベルが必要です。",
 
             //[ErrorCodeEnum.E9999] = $"オフセット値の範囲違反、有効範囲は{SByte.MinValue}～{SByte.MaxValue}までです。[{{0}}]",
 

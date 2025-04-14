@@ -1255,5 +1255,33 @@ namespace AILZ80ASM.Test
 
             }
         }
+
+        [TestMethod]
+        public void Test_CommandLine_CompatRawString()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-v" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsFalse(rootCommand.GetValue<bool>("compatRawString"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-crs" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("compatRawString"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "--compat-raw-string" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("compatRawString"));
+            }
+        }
     }
 }

@@ -462,5 +462,14 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(0, result);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_ORG.tag"), File.OpenRead("./Test/TestSS_Main/tags"), Assembler.AsmEnum.FileTypeEnum.TAG);
         }
+
+        [TestMethod]
+        public void TestCRS()
+        {
+            var result = Program.Main(@"Success_CRS.Z80", "-f", "-crs", "-bin", "-lst", "-cd", "./Test/TestSS_Main/");
+            Assert.AreEqual(0, result);
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_CRS_ORG.bin"), File.OpenRead("./Test/TestSS_Main/Success_CRS.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_CRS_ORG.lst"), File.OpenRead("./Test/TestSS_Main/Success_CRS.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+        }
     }
 }

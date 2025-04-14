@@ -3,6 +3,9 @@ using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Data;
+using System.Formats.Asn1;
+using System.Formats.Tar;
 
 namespace AILZ80ASM.Test
 {
@@ -10,129 +13,173 @@ namespace AILZ80ASM.Test
     public class AIStringTest
     {
         [TestMethod]
-        public void IsCharTrueTest()
+        [DataRow("'0'")]
+        [DataRow("'1'")]
+        [DataRow("'2'")]
+        [DataRow("'3'")]
+        [DataRow("'a'")]
+        [DataRow("'b'")]
+        [DataRow("'X'")]
+        [DataRow("'Y'")]
+        [DataRow("'\0'")]
+        [DataRow("'石'")]
+        [DataRow("@SJIS:'Y'")]
+        [DataRow("@SJIS:@'\\'")]
+        public void IsCharTrueTest(string target)
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-            Assert.IsTrue(AIString.IsChar("'0'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'1'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'2'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'3'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'a'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'b'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'X'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'Y'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'\0'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("'石'", asmLoad));
-            Assert.IsTrue(AIString.IsChar("@SJIS:'Y'", asmLoad));
+            Assert.IsTrue(AIString.IsChar(target, asmLoad));
         }
 
         [TestMethod]
-        public void IsCharFalseTest()
+        [DataRow("'")]
+        [DataRow("0'")]
+        [DataRow("'00'")]
+        [DataRow("'石野'")]
+        [DataRow("'\r\n'")]
+        [DataRow("@JIS'3'")]
+        [DataRow("JIS::'3'")]
+        [DataRow("\0\"")]
+        [DataRow("'''")]
+        [DataRow("'YYY'")]
+        [DataRow(":'Y'")]
+        [DataRow("@:'Y'")]
+        [DataRow("JIS:'Y'")]
+        [DataRow("@SJIS'Y'")]
+        [DataRow("@!!!:'Y'")]
+        [DataRow("@SJIS:'\\'")]
+        public void IsCharFalseTest(string target)
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-            Assert.IsFalse(AIString.IsChar("'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("0'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("'00'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("'石野'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("'\r\n'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("@JIS'3'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("JIS::'3'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("\0\"", asmLoad));
-            Assert.IsFalse(AIString.IsChar("'''", asmLoad));
-
-            Assert.IsFalse(AIString.IsChar("'YYY'", asmLoad));
-            Assert.IsFalse(AIString.IsChar(":'Y'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("@:'Y'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("JIS:'Y'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("@SJIS'Y'", asmLoad));
-            Assert.IsFalse(AIString.IsChar("@!!!:'Y'", asmLoad));
+            Assert.IsFalse(AIString.IsChar(target, asmLoad));
         }
 
         [TestMethod]
-        public void IsStringTrueTest()
+        [DataRow("\"0\"")]
+        [DataRow("\"1\"")]
+        [DataRow("\"2\"")]
+        [DataRow("\"3\"")]
+        [DataRow("\"a\"")]
+        [DataRow("\"b\"")]
+        [DataRow("\"X\"")]
+        [DataRow("\"Y\"")]
+        [DataRow("\"\n\r\"")]
+        [DataRow("\"\0\"")]
+        [DataRow("\"石\"")]
+        [DataRow("@SJIS:\"ABC\"")]
+        [DataRow("@SJIS:@\"ABC\\\"")]
+        [DataRow("'ABC'")]
+        [DataRow("'A\"B\"C'")]
+        [DataRow("\"A'B'C\"")]
+        [DataRow("\"00\"")]
+        [DataRow("\"石野\"")]
+        [DataRow("\"\r\n\"")]
+        [DataRow("\"ABC \\\"DEF\\\" GHI\"")]
+        [DataRow("@SJIS:\"012:\"")]
+        [DataRow("@\"012:\"")]
+        [DataRow("@'012:'")]
+        [DataRow("@'012:\\'")]
+        public void IsStringTrueTest(string target)
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-            Assert.IsTrue(AIString.IsString("\"0\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"1\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"2\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"3\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"a\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"b\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"X\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"Y\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"\n\r\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"\0\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"石\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("@SJIS:\"ABC\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("'ABC'", asmLoad));
-            Assert.IsTrue(AIString.IsString("'A\"B\"C'", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"A'B'C\"", asmLoad));
-
-            Assert.IsTrue(AIString.IsString("\"00\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"石野\"", asmLoad));
-            Assert.IsTrue(AIString.IsString("\"\r\n\"", asmLoad));
-            
-            Assert.IsTrue(AIString.IsString("\"ABC \\\"DEF\\\" GHI\"", asmLoad));
-
-            Assert.IsTrue(AIString.IsString("@SJIS:\"012:\"", asmLoad));
+            Assert.IsTrue(AIString.IsString(target, asmLoad));
         }
 
         [TestMethod]
-        public void IsStringFalseTest()
+        [DataRow("'\\q12'")]
+        [DataRow("@'\\q12'")]
+        [DataRow("\"\\q12\"")]
+        [DataRow("@\"\\q12\"")]
+        public void IsStringTrueTestForCompat(string target)
+        {
+            var asmLoad = new AsmLoad(new AsmOption() { CompatRawString = true }, new InstructionSet.Z80());
+            Assert.IsTrue(AIString.IsString(target, asmLoad));
+        }
+
+        [TestMethod]
+        [DataRow("ABC")]
+        [DataRow("\"")]
+        [DataRow("\"1\"2\"")]
+        [DataRow("ABC\"")]
+        [DataRow("\"'''''")]
+        [DataRow("\"'''''\\\"")]
+        [DataRow(":\"ABC\"")]
+        [DataRow("@:\"ABC\"")]
+        [DataRow("SJIS:\"ABC\"")]
+        [DataRow("@SJIS\"ABC\"")]
+        [DataRow("@!!!:\"ABC\"")]
+        [DataRow("@\"012\":\"")]
+        [DataRow("@\"012\\\":\"")]
+        [DataRow("@'012\\':'")]
+        [DataRow("@'012:\\''")]
+        [DataRow("@\"012:\\\"\"")]
+        public void IsStringFalseTest(string target)
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-            Assert.IsFalse(AIString.IsString("\"", asmLoad));
-            Assert.IsFalse(AIString.IsString("ABC\"", asmLoad));
-            Assert.IsFalse(AIString.IsString("\"'''''", asmLoad));
-            Assert.IsFalse(AIString.IsString("\"'''''\\\"", asmLoad));
-
-            Assert.IsFalse(AIString.IsString(":\"ABC\"", asmLoad));
-            Assert.IsFalse(AIString.IsString("@:\"ABC\"", asmLoad));
-            Assert.IsFalse(AIString.IsString("SJIS:\"ABC\"", asmLoad));
-            Assert.IsFalse(AIString.IsString("@SJIS\"ABC\"", asmLoad));
-            Assert.IsFalse(AIString.IsString("@!!!:\"ABC\"", asmLoad));
+            Assert.IsFalse(AIString.IsString(target, asmLoad));
         }
 
         [TestMethod]
-        public void IsCorrectOperation()
+        [DataRow("LD A, (123)")]
+        [DataRow("DB 123, \"全角\", 123")]
+        [DataRow("DB \"ABC \\\"DEF\\\" GHI\", $00")]
+        public void IsCorrectOperationForIsTrue(string target)
         {
-            Assert.IsTrue(AIString.IsCorrectOperation("LD A, (123)"));
-            Assert.IsTrue(AIString.IsCorrectOperation("DB 123, \"全角\", 123"));
-            Assert.IsTrue(AIString.IsCorrectOperation("DB \"ABC \\\"DEF\\\" GHI\", $00"));
-            Assert.IsFalse(AIString.IsCorrectOperation("LD A, （123)"));
-            Assert.IsFalse(AIString.IsCorrectOperation("LD A, (123）"));
-            Assert.IsFalse(AIString.IsCorrectOperation("LD A,　‘(123）"));
+            Assert.IsTrue(AIString.IsCorrectOperation(target));
         }
 
         [TestMethod]
-        public void EscapeSequenceTest()
+        [DataRow("LD A, （123)")]
+        [DataRow("LD A, (123）")]
+        [DataRow("LD A,　‘(123）")]
+        public void IsCorrectOperationForIsFalse(string target)
         {
-            Assert.AreEqual("'", AIString.EscapeSequence("\\'"));
-            Assert.AreEqual("\"", AIString.EscapeSequence("\\\""));
-            Assert.AreEqual("\\", AIString.EscapeSequence("\\\\"));
-            Assert.AreEqual("\0", AIString.EscapeSequence("\\0"));
-            Assert.AreEqual("\a", AIString.EscapeSequence("\\a"));
-            Assert.AreEqual("\b", AIString.EscapeSequence("\\b"));
-            Assert.AreEqual("\f", AIString.EscapeSequence("\\f"));
-            Assert.AreEqual("\n", AIString.EscapeSequence("\\n"));
-            Assert.AreEqual("\r", AIString.EscapeSequence("\\r"));
-            Assert.AreEqual("\t", AIString.EscapeSequence("\\t"));
-            Assert.AreEqual("\v", AIString.EscapeSequence("\\v"));
-
-            Assert.AreEqual("['\"\\\0\a\b\f\n\r\t\v]", AIString.EscapeSequence("[\\'\\\"\\\\\\0\\a\\b\\f\\n\\r\\t\\v]"));
-            Assert.AreEqual("ABC \"DEF\" GHI", AIString.EscapeSequence("ABC \\\"DEF\\\" GHI"));
+            Assert.IsFalse(AIString.IsCorrectOperation(target));
         }
 
         [TestMethod]
-        public void ValidEscapeSequenceTest()
+        [DataRow("'", "\\'")]
+        [DataRow("\"", "\\\"")]
+        [DataRow("\\", "\\\\")]
+        [DataRow("\0", "\\0")]
+        [DataRow("\a", "\\a")]
+        [DataRow("\b", "\\b")]
+        [DataRow("\f", "\\f")]
+        [DataRow("\n", "\\n")]
+        [DataRow("\r", "\\r")]
+        [DataRow("\t", "\\t")]
+        [DataRow("\v", "\\v")]
+        [DataRow("['\"\\\0\a\b\f\n\r\t\v]", "[\\'\\\"\\\\\\0\\a\\b\\f\\n\\r\\t\\v]")]
+        [DataRow("ABC \"DEF\" GHI", "ABC \\\"DEF\\\" GHI")]
+        public void EscapeSequenceTest(string expected, string actual)
         {
-            Assert.IsFalse(AIString.ValidEscapeSequence("\\"));
-            Assert.IsFalse(AIString.ValidEscapeSequence("\\c"));
-            Assert.IsFalse(AIString.ValidEscapeSequence("\\w"));
+            Assert.AreEqual(expected, AIString.EscapeSequence(actual));
+        }
+
+        [TestMethod]
+        [DataRow("\\")]
+        [DataRow("\\c")]
+        [DataRow("\\w")]
+        [DataRow("AB\\LCD")]
+        public void ValidEscapeSequenceTest(string target)
+        {
+            Assert.IsFalse(AIString.ValidEscapeSequence(target));
+        }
+
+        [TestMethod]
+        [DataRow("ABC", "\"ABC\"")]
+        [DataRow("ABC", "'ABC'")]
+        [DataRow("ABC\n", "\"ABC\n\"")]
+        [DataRow("ABC\n", "'ABC\n'")]
+        [DataRow(@"ABC\n", @"@""ABC\n""")]
+        [DataRow(@"ABC\n", @"@'ABC\n'")]
+        [DataRow(@"ABC""\n", @"@""ABC""\n""")]
+        public void TryParseCharMapResultStringTest(string expected, string target)
+        {
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            Assert.IsTrue(AIString.TryParseCharMap(target, asmLoad, out var charMap, out var resultString, out var validEscapeSequence));
+            Assert.IsTrue(validEscapeSequence);
+            Assert.AreEqual(expected, resultString);
         }
 
         [TestMethod]
@@ -295,7 +342,5 @@ namespace AILZ80ASM.Test
             Assert.AreEqual(1,  AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 1, out var _));
             Assert.AreEqual(15, AIString.IndexOfAnySkipString("ABC \"A\\\"BC\", A,B,C", new[] { 'C', 'B' }, 3, out var _));
         }
-
-
     }
 }

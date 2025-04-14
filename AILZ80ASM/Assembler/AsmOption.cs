@@ -64,6 +64,9 @@ namespace AILZ80ASM.Assembler
         // インクルードのパス
         public DirectoryInfo[] IncludePaths { get; set; } = default;
 
+        // 互換モード（文字列を@付きとして扱います。）
+        public bool CompatRawString { get; set; } = false;
+
         /// <summary>
         /// 出力用の確定したエンコードを返す
         /// </summary>
@@ -136,6 +139,8 @@ namespace AILZ80ASM.Assembler
             GapByte = rootCommand.GetValue<byte>("gapByte");
             ListOmitBinaryFile = rootCommand.GetValue<bool>("listOmitBinaryFile");
             DefineLabels = rootCommand.GetValue<string[]>("defineLabel");
+
+            CompatRawString = rootCommand.GetValue<bool>("compatRawString");
         }
 
         /// <summary>
