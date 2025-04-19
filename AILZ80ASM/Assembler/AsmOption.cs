@@ -21,6 +21,9 @@ namespace AILZ80ASM.Assembler
         // エントリーポイント
         public UInt16? EntryPoint { get; set; } = default;
 
+        // ロードアドレス
+        public UInt16? LoadAddress { get; set; } = default;
+
         // タブサイズ
         public int TabSize { get; set; } = 4;
 
@@ -60,6 +63,9 @@ namespace AILZ80ASM.Assembler
 
         // インクルードのパス
         public DirectoryInfo[] IncludePaths { get; set; } = default;
+
+        // 互換モード（文字列を@付きとして扱います。）
+        public bool CompatRawString { get; set; } = false;
 
         /// <summary>
         /// 出力用の確定したエンコードを返す
@@ -111,6 +117,7 @@ namespace AILZ80ASM.Assembler
             SymbolMode = rootCommand.GetSymbolMode();
             DiffFile = rootCommand.GetValue<bool>("diffFile");
             EntryPoint = rootCommand.GetValue<ushort?>("entryPoint");
+            LoadAddress = rootCommand.GetValue<ushort?>("loadAddress");
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");
@@ -132,6 +139,8 @@ namespace AILZ80ASM.Assembler
             GapByte = rootCommand.GetValue<byte>("gapByte");
             ListOmitBinaryFile = rootCommand.GetValue<bool>("listOmitBinaryFile");
             DefineLabels = rootCommand.GetValue<string[]>("defineLabel");
+
+            CompatRawString = rootCommand.GetValue<bool>("compatRawString");
         }
 
         /// <summary>

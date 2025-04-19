@@ -1,0 +1,6 @@
+﻿
+	ORG $1234
+
+	LD A, 0
+
+	END $ABCD

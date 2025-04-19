@@ -76,6 +76,7 @@ namespace AILZ80ASM.Assembler
                                         new Parameter { Name = "hex", ShortCut = "-hex", Description = "出力ファイルをHEX形式で出力します。" },
                                         new Parameter { Name = "t88", ShortCut = "-t88", Description = "出力ファイルをT88形式で出力します。" },
                                         new Parameter { Name = "cmt", ShortCut = "-cmt", Description = "出力ファイルをCMT形式で出力します。" },
+                                        new Parameter { Name = "mzt", ShortCut = "-mzt", Description = "出力ファイルをMZT形式で出力します。" },
                                         new Parameter { Name = "sym", ShortCut = "-sym", Description = "シンボルファイルを出力します。" },
                                         new Parameter { Name = "equ", ShortCut = "-equ", Description = "イコールラベルファイルを出力します。" },
                                         new Parameter { Name = "lst", ShortCut = "-lst", Description = "リストファイルを出力します。" },
@@ -143,6 +144,17 @@ namespace AILZ80ASM.Assembler
                 Required = false,
                 IsShortCut = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".cmt"); }
+            });
+
+
+            rootCommand.AddOption(new Option<FileInfo>() {
+                Name = "outputMZT",
+                ArgumentName = "file",
+                Aliases = new[] { "-mzt" },
+                Description = "MZT形式で出力します。（file名は省略可能）",
+                Required = false,
+                IsShortCut = true,
+                DefaultFunc = (options) => { return GetDefaulFilename(options, ".mzt"); }
             });
 
             rootCommand.AddOption(new Option<FileInfo>()
@@ -273,6 +285,15 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<ushort?>()
+            {
+                Name = "loadAddress",
+                ArgumentName = "address",
+                Aliases = new[] { "-la", "--load-address" },
+                Description = "ロードアドレスを指定します。（MZTで利用）",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<int>()
             {
                 Name = "tabSize",
@@ -372,6 +393,14 @@ namespace AILZ80ASM.Assembler
 
             rootCommand.AddOption(new Option<bool>()
             {
+                Name = "compatRawString",
+                Aliases = new[] { "-crs", "--compat-raw-string" },
+                Description = "すべての文字列をエスケープ無効の互換モード（@付き文字列）として扱います。",
+                Required = false,
+            });
+
+            rootCommand.AddOption(new Option<bool>()
+            {
                 Name = "version",
                 Aliases = new[] { "-v", "--version" },
                 Description = "バージョンを表示します。",
@@ -428,6 +457,7 @@ namespace AILZ80ASM.Assembler
                 [AsmEnum.FileTypeEnum.HEX] = "outputHex",
                 [AsmEnum.FileTypeEnum.T88] = "outputT88",
                 [AsmEnum.FileTypeEnum.CMT] = "outputCMT",
+                [AsmEnum.FileTypeEnum.MZT] = "outputMZT",
                 [AsmEnum.FileTypeEnum.SYM] = "outputSYM",
                 [AsmEnum.FileTypeEnum.EQU] = "outputEQU",
                 [AsmEnum.FileTypeEnum.ADR] = "outputADR",
@@ -455,6 +485,7 @@ namespace AILZ80ASM.Assembler
                     "hex" => AsmEnum.FileTypeEnum.HEX,
                     "t88" => AsmEnum.FileTypeEnum.T88,
                     "cmt" => AsmEnum.FileTypeEnum.CMT,
+                    "mzt" => AsmEnum.FileTypeEnum.MZT,
                     "lst" => AsmEnum.FileTypeEnum.LST,
                     "sym" => AsmEnum.FileTypeEnum.SYM,
                     "equ" => AsmEnum.FileTypeEnum.EQU,

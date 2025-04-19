@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AILZ80ASM.Assembler;
@@ -10,6 +11,10 @@ namespace AILZ80ASM.AILight
     public static class AIString
     {
         private static readonly string RegexPatternCharMapLabel = @"^((?<charMap>@.*\:)(?<label>[a-zA-Z0-9_]+))";
+        private static readonly Regex CompiledRegexPatternCharMapLabel = new Regex(
+            RegexPatternCharMapLabel,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         private static string[][] EscapeSequenceCharTables = new string[][]
         {
@@ -142,7 +147,7 @@ namespace AILZ80ASM.AILight
             }
             else
             {
-                var matchedLabel = Regex.Match(target, RegexPatternCharMapLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var matchedLabel = CompiledRegexPatternCharMapLabel.Match(target);
                 if (matchedLabel.Success)
                 {
                     var charMapName = matchedLabel.Groups["charMap"].Value;
@@ -294,76 +299,131 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         private static bool InternalTryParseCharMap(string target, char encloseChar, AsmLoad asmLoad, out string charMap, out string resultString, out bool validEscapeSequence)
         {
+            // 初期化
             charMap = "";
             resultString = "";
-            validEscapeSequence = true;
+            validEscapeSequence = false;
 
-            // スペシャル対応
-            if (target.Length == 3 && target[0] == encloseChar && target[1] == '\\' && target[2] == encloseChar)
+            // 逐語的文字列リテラル
+            var isVerbatimLiteral = asmLoad.AssembleOption.CompatRawString;
+
+            //charpMapを確認する
+            if (target.StartsWith("@"))
             {
-                resultString = "\\";
-                validEscapeSequence = false;
-                return true;
-            }
-
-            if (target.EndsWith(encloseChar))
-            {
-                var startIndex = target.IndexOf(encloseChar);
-                if (startIndex == target.Length - 1)
+                var coronIndex = target.IndexOf(':');
+                var encloseIndex = target.IndexOf(encloseChar);
+                if (coronIndex != -1 && coronIndex < encloseIndex)
                 {
-                    return false;
-                }
-                resultString = target.Substring(startIndex + 1, target.Length - (startIndex + 1) - 1);
+                    charMap = target.Substring(0, coronIndex);
+                    target = target.Substring(coronIndex + 1);
 
-                if (target.StartsWith('@'))
-                {
-                    var colonIndex = target.IndexOf(":");
-                    if (colonIndex == -1 || colonIndex > startIndex)
-                    {
-                        return false;
-                    }
-
-                    charMap = target.Substring(0, colonIndex).Trim();
-                    if (string.IsNullOrEmpty(charMap))
-                    {
-                        return false;
-                    }
-                    
                     if (!AIName.ValidateCharMapName(charMap, asmLoad))
                     {
                         return false;
                     }
                 }
-                else if (startIndex != 0)
-                {
-                    // @が無いのに、文字の囲み記号も無い場合は文字列としては不正
-                    return false;
-                }
-
-                // 文字列の終端が正しく設定されているか確認
-                for (var index = 0; index < resultString.Length; index++)
-                {
-                    if (resultString[index] == encloseChar)
-                    {
-                        return false;
-                    }
-                    else if (resultString[index] == '\\')
-                    {
-                        index++;
-                        if (index >= resultString.Length)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                validEscapeSequence = ValidEscapeSequence(resultString);
-                resultString = EscapeSequence(resultString);
-
-                return true;
             }
 
-            return false;
+            // 逐語的文字列リテラル
+            if (target.StartsWith("@"))
+            {
+                target = target.Substring(1);
+                isVerbatimLiteral = true;
+            }
+
+            if (target.Length >= 2 && target.StartsWith(encloseChar) && target.EndsWith(encloseChar))
+            {
+                resultString = target.Substring(1, target.Length - 2);
+
+                if (isVerbatimLiteral)
+                {
+                    // encloseCharがシングルで指定されている場合はエラー
+                    var checkEncloseCharIndex = 0;
+                    while (checkEncloseCharIndex < resultString.Length)
+                    {
+                        var index = resultString.IndexOf(encloseChar, checkEncloseCharIndex);
+                        if (index == -1)
+                        {
+                            break;
+                        }
+                        else if (index == resultString.Length - 1)
+                        {
+                            // 最後にある場合エスケープできないので、エラー文字列
+                            return false;
+                        }
+                        else
+                        {
+                            if (resultString[index + 1] != '\\')
+                            {
+                                // encloseCharをエスケープしないとエラー
+                                return false;
+                            }
+
+                            checkEncloseCharIndex = index + 2;
+                        }
+                    }
+
+                    validEscapeSequence = true;
+                }
+                else
+                {
+                    // encloseCharが使われているか確認
+                    var checkEncloseCharIndex = 0;
+                    while (checkEncloseCharIndex < resultString.Length)
+                    {
+                        var index = resultString.IndexOf(encloseChar, checkEncloseCharIndex);
+                        if (index == -1)
+                        {
+                            break;
+                        }
+                        else if (index == 0)
+                        {
+                            // 先頭にある場合エスケープできないので、エラー文字列
+                            return false;
+                        }
+                        else
+                        {
+                            if (resultString[index - 1] != '\\')
+                            {
+                                // encloseCharをエスケープしないとエラー
+                                return false;
+                            }
+
+                            checkEncloseCharIndex = index + 1;
+                        }
+                    }
+
+                    //最後の文字が\の場合エラー
+                    var checkEscapeCharIndex = 0;
+                    while (checkEscapeCharIndex < resultString.Length)
+                    {
+                        var index = resultString.IndexOf('\\', checkEscapeCharIndex);
+                        if (index == -1)
+                        {
+                            break;
+                        }
+                        else if (index == resultString.Length - 1)
+                        {
+                            // 最後の文字が\の場合
+                            return false;
+                        }
+                        else
+                        {
+                            checkEscapeCharIndex += (index + 2);
+                        }
+                    }
+
+
+                    validEscapeSequence = ValidEscapeSequence(resultString);
+                    resultString = EscapeSequence(resultString);
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>

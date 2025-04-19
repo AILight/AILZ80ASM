@@ -115,6 +115,50 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Test_CommandLine_LoadAddress()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                Assert.IsNull(rootCommand.GetValue<ushort?>("loadAddress"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-la" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsNull(rootCommand.GetValue<ushort?>("loadAddress"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "--load-address" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsNull(rootCommand.GetValue<ushort?>("loadAddress"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-la", "1234" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                Assert.AreEqual((UInt16)1234, rootCommand.GetValue<ushort?>("loadAddress"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "--load-address", "$1234" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                Assert.AreEqual((UInt16)0x1234, rootCommand.GetValue<ushort?>("loadAddress"));
+            }
+        }
+
+        [TestMethod]
         public void Test_CommandLine_Force()
         {
             {
@@ -426,6 +470,64 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Test_CommandLine_MZT()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-o", "test.mzt", "-om", "mzt" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+                Assert.AreEqual("test.mzt", rootCommand.GetValue<FileInfo>("output").Name);
+                Assert.AreEqual("mzt", rootCommand.GetValue<string>("outputMode"));
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(1, outputFiles.Count);
+                Assert.AreEqual("test.mzt", outputFiles[AsmEnum.FileTypeEnum.MZT].Name);
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-mzt" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+                Assert.AreEqual("Main.mzt", rootCommand.GetValue<FileInfo>("output").Name);
+                Assert.AreEqual("mzt", rootCommand.GetValue<string>("outputMode"));
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(1, outputFiles.Count);
+                Assert.AreEqual("Main.mzt", outputFiles[AsmEnum.FileTypeEnum.MZT].Name);
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-mzt", "Main.mzt" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+                Assert.AreEqual("Main.bin", rootCommand.GetValue<FileInfo>("output").Name);
+                Assert.AreEqual("bin", rootCommand.GetValue<string>("outputMode"));             // デフォルト値が設定
+                Assert.AreEqual("Main.mzt", rootCommand.GetValue<FileInfo>("outputMZT").Name);
+                Assert.IsFalse(rootCommand.GetSelected("output"));
+                Assert.IsFalse(rootCommand.GetSelected("outputMode"));
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(1, outputFiles.Count);
+                Assert.AreEqual("Main.mzt", outputFiles[AsmEnum.FileTypeEnum.MZT].Name);
+            }
+        }
+
+        [TestMethod]
         public void Test_CommandLine_Tag()
         {
             {
@@ -620,11 +722,11 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void Test_CommandLine_Bin_CMT_T88()
+        public void Test_CommandLine_Bin_CMT_T88_MZT()
         {
             {
                 var rootCommand = AsmCommandLine.SettingRootCommand();
-                var arguments = new[] { "Main.z80", "-bin", "-cmt", "-t88" };
+                var arguments = new[] { "Main.z80", "-bin", "-cmt", "-t88", "-mzt" };
 
                 Assert.IsTrue(rootCommand.Parse(arguments));
                 var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
@@ -635,14 +737,16 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual("bin", rootCommand.GetValue<string>("outputMode"));
                 Assert.AreEqual("Main.cmt", rootCommand.GetValue<FileInfo>("outputCMT").Name);
                 Assert.AreEqual("Main.t88", rootCommand.GetValue<FileInfo>("outputT88").Name);
+                Assert.AreEqual("Main.mzt", rootCommand.GetValue<FileInfo>("outputMZT").Name);
                 Assert.IsFalse(rootCommand.GetSelected("output"));
                 Assert.IsTrue(rootCommand.GetSelected("outputMode"));
 
                 var outputFiles = rootCommand.GetOutputFiles();
-                Assert.AreEqual(3, outputFiles.Count);
+                Assert.AreEqual(4, outputFiles.Count);
                 Assert.AreEqual("Main.bin", outputFiles[AsmEnum.FileTypeEnum.BIN].Name);
                 Assert.AreEqual("Main.cmt", outputFiles[AsmEnum.FileTypeEnum.CMT].Name);
                 Assert.AreEqual("Main.t88", outputFiles[AsmEnum.FileTypeEnum.T88].Name);
+                Assert.AreEqual("Main.mzt", outputFiles[AsmEnum.FileTypeEnum.MZT].Name);
             }
         }
 
@@ -1149,6 +1253,34 @@ namespace AILZ80ASM.Test
                     Assert.AreEqual("8行目に問題があります。", ex.Message);
                 }
 
+            }
+        }
+
+        [TestMethod]
+        public void Test_CommandLine_CompatRawString()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-v" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsFalse(rootCommand.GetValue<bool>("compatRawString"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-crs" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("compatRawString"));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "--compat-raw-string" };
+
+                Assert.IsFalse(rootCommand.Parse(arguments));
+                Assert.IsTrue(rootCommand.GetValue<bool>("compatRawString"));
             }
         }
     }

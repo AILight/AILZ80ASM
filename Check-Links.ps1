@@ -1,12 +1,25 @@
 Param(
     [Parameter(Mandatory = $true)]
-    [string]$MarkdownFile
+    [string]$MarkdownFile,
+
+    [Parameter(Mandatory = $false)]
+    [string]$IgnoreListFile
 )
 
 # ファイルの存在確認
 if (-not (Test-Path $MarkdownFile)) {
-    Write-Error "エラー: ファイルが見つかりません - '$MarkdownFile'"
+    Write-Error "エラー: Markdownファイルが見つかりません - '$MarkdownFile'"
     exit 1
+}
+
+# 無視するURL一覧の読み込み（もし指定されていれば）
+$ignoreUrls = @()
+if ($IgnoreListFile) {
+    if (-not (Test-Path $IgnoreListFile)) {
+        Write-Error "エラー: 無視リストファイルが見つかりません - '$IgnoreListFile'"
+        exit 1
+    }
+    $ignoreUrls = Get-Content -Path $IgnoreListFile | Where-Object { $_ -match '^https?://' } | ForEach-Object { $_.Trim() }
 }
 
 # ファイル内容の読み込み
@@ -29,12 +42,19 @@ $currentLink = 1
 
 # User-Agent ヘッダーを設定
 $headers = @{
-    'User-Agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    'User-Agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 }
 
 foreach ($match in $matches) {
     $linkText = $match.Groups[1].Value
     $url = $match.Groups[2].Value
+
+    # 無視リストに入っていればスキップ
+    if ($ignoreUrls -contains $url) {
+        Write-Host "[$currentLink/$totalLinks] スキップ: $url (無視リストに登録されているため)"
+        $currentLink++
+        continue
+    }
 
     # リンクテキストに「(リンク切れ)」が含まれる場合はスキップ
     if ($linkText -like "*`(リンク切れ`)*") {
@@ -46,15 +66,11 @@ foreach ($match in $matches) {
     Write-Host "[$currentLink/$totalLinks] チェック中: $url"
 
     $success = $false
-
-    # メソッドのリスト（HEAD を試してから GET）
     $methods = @('HEAD', 'GET')
 
     foreach ($method in $methods) {
         try {
             $response = Invoke-WebRequest -Uri $url -Method $method -Headers $headers -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
-
-            # ステータスコードが 400 未満なら成功とみなす
             if ($response.StatusCode -lt 400) {
                 Write-Host "  結果: OK ($($response.StatusCode)) - メソッド: $method" -ForegroundColor Green
                 $success = $true

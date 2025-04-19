@@ -1,0 +1,27 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.27.0, LST:Full:4
+       1234                     ex_putc equ    $1234
+                                
+                                        charmap @MAP1, "Map1.json"
+                                
+000000 0000 210800          10          ld      hl, msg1
+000003 0003 CD1500          17          call    disp_msg
+000006 0006 1804            12          jr      next1
+000008 0008 41424300            msg1:   db      @MAP1:"ABC", 0
+                                
+00000C 000C 211400          10  next1:  ld      hl, msg2
+00000F 000F CD1500          17          call    disp_msg
+000012 0012 1800            12          jr      next2
+000014 0014 **** E2106 ****     msg2:   db      @MAP2:"ABC", 0
+                                
+000014 0014 76               4  next2:   halt
+                                
+       0015                     disp_msg:
+000015 0015 7E               7          ld      a, (hl)
+000016 0016 B7               4          or      a
+000017 0017 C8              11          ret     z
+000018 0018 CD3412          17          call    ex_putc
+00001B 001B 23               6          inc     hl
+00001C 001C 18F7            12          jr      disp_msg
+                                
+                                        charmap @MAP2, "Map2.json"
+[EOF:Test.Z80:UTF_8]

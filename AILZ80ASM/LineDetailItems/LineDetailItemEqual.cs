@@ -50,5 +50,15 @@ namespace AILZ80ASM.LineDetailItems
 
             return default;
         }
+
+        public override void PreAssemble(ref AsmAddress asmAddress)
+        {
+            base.PreAssemble(ref asmAddress);
+
+            if (this.EquLabel == default)
+            {
+                this.AsmLoad.AddError(new ErrorLineItem(this.LineItem, Error.ErrorCodeEnum.E0027));
+            }
+        }
     }
 }

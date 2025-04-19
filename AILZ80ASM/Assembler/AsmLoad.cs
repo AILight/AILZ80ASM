@@ -103,7 +103,8 @@ namespace AILZ80ASM.Assembler
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = assembleOption.GapByte;
-            Share.EntryPoint = null;
+            Share.EntryPoint = new AsmDefinedAddress();
+            Share.LoadAddress = new AsmDefinedAddress();
             Share.AsmSuperAssembleMode = new AsmSuperAssemble();
             Share.ValidateAssembles = new List<LineDetailItem>();
             Share.CheckLineDetailItemStack = new Stack<LineDetailItemCheck>();
@@ -134,7 +135,8 @@ namespace AILZ80ASM.Assembler
             Share.CharMapConverter = new CharMaps.CharMapConverter();
             Share.AsmLists = new List<AsmList>();
             Share.GapByte = AssembleOption.GapByte;
-            Share.EntryPoint = null;
+            Share.EntryPoint = new AsmDefinedAddress();
+            Share.LoadAddress = new AsmDefinedAddress();
             Share.AsmSuperAssembleMode = asmSuperAssembleMode;
             Share.ValidateAssembles = new List<LineDetailItem>();
             Share.CheckLineDetailItemStack = new Stack<LineDetailItemCheck>();
@@ -828,6 +830,7 @@ namespace AILZ80ASM.Assembler
                 AsmEnum.FileTypeEnum.HEX => AsmEnum.FileDataTypeEnum.Text,
                 AsmEnum.FileTypeEnum.T88 => AsmEnum.FileDataTypeEnum.Binary,
                 AsmEnum.FileTypeEnum.CMT => AsmEnum.FileDataTypeEnum.Binary,
+                AsmEnum.FileTypeEnum.MZT => AsmEnum.FileDataTypeEnum.Binary,
                 AsmEnum.FileTypeEnum.LST => AsmEnum.FileDataTypeEnum.Text,
                 AsmEnum.FileTypeEnum.SYM => AsmEnum.FileDataTypeEnum.Text,
                 AsmEnum.FileTypeEnum.EQU => AsmEnum.FileDataTypeEnum.Text,

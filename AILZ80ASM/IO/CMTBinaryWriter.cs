@@ -9,14 +9,13 @@ namespace AILZ80ASM.IO
 {
     public class CMTBinaryWriter : AIBinaryWriter
     {
-        private UInt32 Elapse { get; set; } = 0;
-        private UInt16 StartAddress { get; set; }
+        private UInt16 EntryAddress { get; set; }
         private byte[] Buffer { get; set; }
 
-        public CMTBinaryWriter(UInt16 startAddress, byte[] buffer, Stream stream)
+        public CMTBinaryWriter(UInt16 entryAddress, byte[] buffer, Stream stream)
             : base(stream)
         {
-            StartAddress = startAddress;
+            EntryAddress = entryAddress;
             Buffer = buffer;
         }
 
@@ -63,7 +62,7 @@ namespace AILZ80ASM.IO
 
         private void WriteHeader()
         {
-            WriteDataBlock(new byte[] { (byte)(StartAddress >> 8), (byte)(StartAddress & 0xFF) });
+            WriteDataBlock(new byte[] { (byte)(EntryAddress >> 8), (byte)(EntryAddress & 0xFF) });
         }
 
         private void WriteEnd()
