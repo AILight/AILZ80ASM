@@ -10,6 +10,10 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemAddressDS : LineDetailItemAddress
     {
         private static readonly string RegexPatternDS = @"^(?<op1>(DS|DEFS))\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)$";
+        private static readonly Regex CompiledRegexPatternDS = new Regex(
+            RegexPatternDS,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public string Operation { get; set; }
         public string LengthLabel { get; set; }
@@ -30,7 +34,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemAddressDS);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternDS, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternDS.Match(lineItem.OperationString);
             if (matched.Success)
             {
                 var op1 = matched.Groups["op1"].Value;

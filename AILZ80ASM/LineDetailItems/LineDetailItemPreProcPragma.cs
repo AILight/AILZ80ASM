@@ -8,6 +8,10 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemPreProcPragma : LineDetailItem
     {
         private static readonly string RegexPatternPragma = @"^\s*#PRAGMA\s+(?<name>[0-9a-zA-Z]+)\s*(?<argument>.*)$";
+        private static readonly Regex CompiledRegexPatternPragma = new Regex(
+            RegexPatternPragma,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public override AsmList[] Lists
         {
@@ -38,7 +42,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemPreProcPragma);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternPragma, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternPragma.Match(lineItem.OperationString);
             if (matched.Success)
             {
                 var name = matched.Groups["name"].Value;

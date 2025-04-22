@@ -8,6 +8,11 @@ namespace AILZ80ASM.LineDetailItems
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternError = @"^#ERROR\s+""(?<message>.+)""$";
+        private static readonly Regex CompiledRegexPatternError = new Regex(
+            RegexPatternError,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+        
         public string Message { get; set; }
 
         private LineDetailItemPreProcError(LineItem lineItem, AsmLoad asmLoad)
@@ -23,7 +28,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemPreProcError);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternError, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternError.Match(lineItem.OperationString);
 
             // 開始条件チェック
             if (matched.Success)

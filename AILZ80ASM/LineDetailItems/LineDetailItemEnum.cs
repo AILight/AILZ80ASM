@@ -12,8 +12,22 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemEnum : LineDetailItem
     {
         private static readonly string RegexPatternEnumStart = @"^(?<enum_name>[a-zA-Z0-9_]+)\s+Enum\s*$";
+        private static readonly Regex CompiledRegexPatternEnumStart = new Regex(
+            RegexPatternEnumStart,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternEnumItem = @"^\s*(?<item>[a-zA-Z0-9_]+)";
+        private static readonly Regex CompiledRegexPatternEnumItem = new Regex(
+            RegexPatternEnumItem,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternEnumEnd = @"^\s*Endm\s*$";
+        private static readonly Regex CompiledRegexPatternEnumEnd = new Regex(
+            RegexPatternEnumEnd,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public class EnumItem
         {
@@ -96,8 +110,8 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemEnum);
             }
 
-            var ifMatched = Regex.Match(lineItem.OperationString, RegexPatternEnumStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternEnumEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var ifMatched = CompiledRegexPatternEnumStart.Match(lineItem.OperationString);
+            var endMatched = CompiledRegexPatternEnumEnd.Match(lineItem.OperationString);
 
             // 条件処理処理中
             if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemEnum asmLoad_LineDetailItemEnum)
@@ -110,7 +124,7 @@ namespace AILZ80ASM.LineDetailItems
                 }
 
                 // アイテムを
-                var enumItemMatched = Regex.Match(lineItem.OperationString, RegexPatternEnumItem, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var enumItemMatched = CompiledRegexPatternEnumItem.Match(lineItem.OperationString);
 
                 if (enumItemMatched.Success)
                 {

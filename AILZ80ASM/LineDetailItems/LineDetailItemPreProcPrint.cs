@@ -10,7 +10,17 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemPreProcPrint : LineDetailItem
     {
         private static readonly string RegexPatternPrint = @"^#PRINT";
+        private static readonly Regex CompiledRegexPatternPrint = new Regex(
+            RegexPatternPrint,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternPrintWithArgument = @"^#PRINT\s+(?<message>.+)$";
+        private static readonly Regex CompiledRegexPatternPrintWithArgument = new Regex(
+            RegexPatternPrintWithArgument,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         public string Message { get; set; }
 
         private LineDetailItemPreProcPrint(LineItem lineItem, AsmLoad asmLoad)
@@ -26,7 +36,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemPreProcPrint);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternPrint, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternPrint.Match(lineItem.OperationString);
 
             // 開始条件チェック
             if (matched.Success)
@@ -36,7 +46,7 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1042);
                 }
-                var matchedWithArgument = Regex.Match(lineItem.OperationString, RegexPatternPrintWithArgument, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var matchedWithArgument = CompiledRegexPatternPrintWithArgument.Match(lineItem.OperationString);
                 if (matchedWithArgument.Success)
                 {
                     var lineDetailItemPreProcPrint = new LineDetailItemPreProcPrint(lineItem, asmLoad)

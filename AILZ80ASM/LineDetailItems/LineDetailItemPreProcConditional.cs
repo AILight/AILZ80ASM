@@ -13,9 +13,28 @@ namespace AILZ80ASM.LineDetailItems
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternRepeatIf = @"^#IF\s+(?<condition>.+)$";
+        private static readonly Regex CompiledRegexPatternRepeatIf = new Regex(
+            RegexPatternRepeatIf,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+        
         private static readonly string RegexPatternRepeatElIf = @"^#ELIF\s+(?<condition>.+)$";
+        private static readonly Regex CompiledRegexPatternRepeatElIf = new Regex(
+            RegexPatternRepeatElIf,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternRepeatElse = @"^#ELSE$";
+        private static readonly Regex CompiledRegexPatternRepeatElse = new Regex(
+            RegexPatternRepeatElse,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternRepeatEnd = @"^#ENDIF$";
+        private static readonly Regex CompiledRegexPatternRepeatEnd = new Regex(
+            RegexPatternRepeatEnd,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public class ConditionalPack
         {
@@ -46,10 +65,10 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemPreProcConditional);
             }
 
-            var ifMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatIf, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var elifMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatElIf, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var elseMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatElse, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var ifMatched = CompiledRegexPatternRepeatIf.Match(lineItem.OperationString);
+            var elifMatched = CompiledRegexPatternRepeatElIf.Match(lineItem.OperationString);
+            var elseMatched = CompiledRegexPatternRepeatElse.Match(lineItem.OperationString);
+            var endMatched = CompiledRegexPatternRepeatEnd.Match(lineItem.OperationString);
 
             // Conditionalでラベルが存在していたらエラー
             if (!string.IsNullOrEmpty(lineItem.LabelString))

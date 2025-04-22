@@ -12,7 +12,15 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemAddressAlign : LineDetailItemAddress
     {
         private static readonly string RegexPatternALIGN_Arg1 = @"^(?<op1>(ALIGN))\s+(?<arg1>[^,\s]+)$";
+        private static readonly Regex CompiledRegexPatternALIGN_Arg1 = new Regex(
+            RegexPatternALIGN_Arg1,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternALIGN_Arg1_2 = @"^(?<op1>(ALIGN))\s+(?<arg1>[^,\s]+)\s*,\s*(?<arg2>[^,\s]*)$";
+        private static readonly Regex CompiledRegexPatternALIGN_Arg1_2 = new Regex(
+            RegexPatternALIGN_Arg1_2,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public string AlignLabel { get; set; }
         public string FillByteLabel { get; set; }
@@ -39,7 +47,7 @@ namespace AILZ80ASM.LineDetailItems
             }
 
             {
-                var matched = Regex.Match(lineItem.OperationString, RegexPatternALIGN_Arg1, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var matched = CompiledRegexPatternALIGN_Arg1.Match(lineItem.OperationString);
                 if (matched.Success)
                 {
                     var arg1 = matched.Groups["arg1"].Value;
@@ -47,7 +55,7 @@ namespace AILZ80ASM.LineDetailItems
                 }
             }
             {
-                var matched = Regex.Match(lineItem.OperationString, RegexPatternALIGN_Arg1_2, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var matched = CompiledRegexPatternALIGN_Arg1_2.Match(lineItem.OperationString);
                 if (matched.Success)
                 {
                     var arg1 = matched.Groups["arg1"].Value;
