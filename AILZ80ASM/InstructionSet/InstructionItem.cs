@@ -18,13 +18,13 @@ namespace AILZ80ASM.InstructionSet
         public bool UnDocumented { get; set; }
         public Error.ErrorCodeEnum? ErrorCode { get; set; }
 
-        private string[] RegexPatterns { get; set; }
+        private Regex[] RegexPatterns { get; set; }
         internal Dictionary<string, InstructionRegister> InstructionRegisterDic { get; set; } = new Dictionary<string, InstructionRegister>();
         internal Dictionary<string, InstructionRegister> InstructionValueDic { get; set; } = new Dictionary<string, InstructionRegister>();
 
         public string[] MakeDataSet(char[] splitChars, InstructionRegister[] instructionRegisters)
         {
-            var patternList = new List<string>();
+            var patternList = new List<Regex>();
             var instructionNameList = new List<string>();
 
             //var instructionRegisterList = new List<InstructionRegister>();
@@ -101,7 +101,11 @@ namespace AILZ80ASM.InstructionSet
                 }
                 result += "$";
 
-                patternList.Add(result);
+                patternList.Add(new Regex(
+                    result,
+                    RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+                ));
+
                 if (!string.IsNullOrEmpty(mnemonicName))
                 {
                     instructionNameList.Add(mnemonicName);
@@ -125,7 +129,7 @@ namespace AILZ80ASM.InstructionSet
 
             foreach (var regexPattern in RegexPatterns)
             {
-                mateched = Regex.Match(target, regexPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                mateched = regexPattern.Match(target);
                 if (mateched.Success)
                 {
                     break;
