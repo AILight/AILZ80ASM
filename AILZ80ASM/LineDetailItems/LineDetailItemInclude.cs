@@ -23,6 +23,11 @@ namespace AILZ80ASM.LineDetailItems
         public override AsmResult[] BinResults => FileType == FileTypeEnum.Text ? FileItem.BinResults : base.BinResults;
 
         private static readonly string RegexPatternInclude = @"^include\s*\""(?<Filename>.+)\""\s*,?\s*(?<Filetype>[^,]*)\s*,?\s*(?<StartAddress>[^,]*)\s*,?\s*(?<Length>[^,]*)";
+        private static readonly Regex CompiledRegexPatternInclude = new Regex(
+            RegexPatternInclude,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private FileTypeEnum FileType { get; set; } = FileTypeEnum.Text;
         private string FileStart { get; set; }
         private string FileLength { get; set; }
@@ -64,7 +69,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemInclude);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternInclude, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternInclude.Match(lineItem.OperationString);
             if (matched.Success)
             {
                 var filename = matched.Groups["Filename"].Value;

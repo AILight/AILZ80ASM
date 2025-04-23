@@ -11,7 +11,16 @@ namespace AILZ80ASM.LineDetailItems
     {
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternList = @"^#LIST";
+        private static readonly Regex CompiledRegexPatternList = new Regex(
+            RegexPatternList,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternListWithArgument = @"^#LIST\s+(?<condition>.+)$";
+        private static readonly Regex CompiledRegexPatternListWithArgument = new Regex(
+            RegexPatternListWithArgument,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public string Condition { get; set; }
         public bool IsOutputList { get; set; }
@@ -29,7 +38,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemPreProcList);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternList, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternList.Match(lineItem.OperationString);
 
             // 開始条件チェック
             if (matched.Success)
@@ -39,7 +48,7 @@ namespace AILZ80ASM.LineDetailItems
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1052);
                 }
-                var matchedWithArgument = Regex.Match(lineItem.OperationString, RegexPatternListWithArgument, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var matchedWithArgument = CompiledRegexPatternListWithArgument.Match(lineItem.OperationString);
                 if (matchedWithArgument.Success)
                 {
                     var lineDetailItemPreProcList = new LineDetailItemPreProcList(lineItem, asmLoad)

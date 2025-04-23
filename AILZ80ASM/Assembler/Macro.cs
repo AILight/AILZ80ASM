@@ -18,6 +18,10 @@ namespace AILZ80ASM.Assembler
         public LineItem[] LineItems { get; private set; }
 
         private static readonly string RegexPatternMacro = @"^(?<macro>[a-zA-Z0-9_\.\(\)]+)\s*(?<args>.*)$";
+        private static readonly Regex CompiledRegexPatternMacro = new Regex(
+            RegexPatternMacro,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public Macro(string macroName, string[] args, LineItem[] lineItems, AsmLoad asmLoad)
         {
@@ -31,7 +35,7 @@ namespace AILZ80ASM.Assembler
 
         public static Macro[] FindsWithoutNamespace(LineItem lineItem, AsmLoad asmLoad)
         {
-            var operationMatched = Regex.Match(lineItem.OperationString, RegexPatternMacro, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var operationMatched = CompiledRegexPatternMacro.Match(lineItem.OperationString);
             if (operationMatched.Success)
             {
                 var macroName = operationMatched.Groups["macro"].Value;
@@ -49,7 +53,7 @@ namespace AILZ80ASM.Assembler
 
         public static (Macro Macro, string[] Arguments) Find(LineItem lineItem, AsmLoad asmLoad)
         {
-            var operationMatched = Regex.Match(lineItem.OperationString, RegexPatternMacro, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var operationMatched = CompiledRegexPatternMacro.Match(lineItem.OperationString);
             if (operationMatched.Success)
             {
                 var macroName = operationMatched.Groups["macro"].Value;

@@ -17,6 +17,10 @@ namespace AILZ80ASM.OperationItems
             dwfill = 2, // DataLength = 2
         }
         private static readonly string RegexPatternDataOP = @"(?<op1>^\S+)?\s*(?<op2>.+)*";
+        private static readonly Regex CompiledRegexPatternDataOP = new Regex(
+            RegexPatternDataOP,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         private string[] ValueStrings { get; set; }
         private DataTypeEnum DataType { get; set; }
@@ -36,7 +40,7 @@ namespace AILZ80ASM.OperationItems
 
         public static OperationItemDataFill Create(LineItem lineItem, AsmLoad asmLoad)
         {
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternDataOP, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternDataOP.Match(lineItem.OperationString);
 
             var op1 = matched.Groups["op1"].Value;
             var op2 = matched.Groups["op2"].Value;

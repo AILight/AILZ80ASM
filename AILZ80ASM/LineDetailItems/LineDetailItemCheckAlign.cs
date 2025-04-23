@@ -13,10 +13,20 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemCheckAlign : LineDetailItemCheck
     {
         private static readonly string RegexPatternStart_Arg1   = @"^(?<op1>(CHECK\s+ALIGN))\s+(?<arg1>[^,\s]+)$";
+        private static readonly Regex CompiledRegexPatternStart_Arg1 = new Regex(
+            RegexPatternStart_Arg1,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternStart_Arg1_2 = @"^(?<op1>(CHECK\s+ALIGN))\s+(?<arg1>[^,\s]+)\s*,\s*(?<arg2>[^,\s]*)$";
-
+        private static readonly Regex CompiledRegexPatternStart_Arg1_2 = new Regex(
+            RegexPatternStart_Arg1_2,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         private static readonly string RegexPatternEnd = @"^\s*ENDC\s*$";
-
+        private static readonly Regex CompiledRegexPatternEnd = new Regex(
+            RegexPatternEnd,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         public string AlignLabel { get; set; }
         public string DataLengthLabel { get; set; }
 
@@ -46,9 +56,9 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemCheckAlign);
             }
 
-            var startMatched_1   = Regex.Match(lineItem.OperationString, RegexPatternStart_Arg1, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var startMatched_1_2 = Regex.Match(lineItem.OperationString, RegexPatternStart_Arg1_2, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched_1   = CompiledRegexPatternStart_Arg1.Match(lineItem.OperationString);
+            var startMatched_1_2 = CompiledRegexPatternStart_Arg1_2.Match(lineItem.OperationString);
+            var endMatched = CompiledRegexPatternEnd.Match(lineItem.OperationString);
 
             if (endMatched.Success)
             {
