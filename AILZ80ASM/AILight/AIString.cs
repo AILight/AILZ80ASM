@@ -80,10 +80,11 @@ namespace AILZ80ASM.AILight
         public static string EscapeSequence(string target)
         {
             // エスケープシーケンスの置き換え
-            foreach (var item in EscapeSequenceCharTables)
+            try
             {
-                target = target.Replace(item[0], item[1]);
+                target = Regex.Unescape(target);
             }
+            catch { }
 
             return target;
         }
