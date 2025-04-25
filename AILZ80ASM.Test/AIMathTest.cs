@@ -453,11 +453,16 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void TryParse_String()
+        [DataRow("ABC \"DEF\" GHI", "\"ABC \\\"DEF\\\" GHI\"")]
+        [DataRow("ABC\\DEF", "\"ABC\\\\DEF\"")]
+        [DataRow("ABC\\\\DEF", "@\"ABC\\\\DEF\"")]
+        [DataRow("ABC\\DEF", "@SJIS:\"ABC\\\\DEF\"")]
+        [DataRow("ABC\\\\DEF", "@SJIS:@\"ABC\\\\DEF\"")]
+        public void TryParse_String(string expected, string target)
         {
             var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-            Assert.IsTrue(AIMath.TryParse("\"ABC \\\"DEF\\\" GHI\"", asmLoad, out var result));
-            Assert.AreEqual("ABC \"DEF\" GHI", result.ConvertTo<string>());
+            Assert.IsTrue(AIMath.TryParse(target, asmLoad, out var result));
+            Assert.AreEqual(expected, result.ConvertTo<string>());
         }
     }
 }

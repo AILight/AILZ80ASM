@@ -11,7 +11,8 @@ namespace AILZ80ASM.AILight
 {
     public static class AIMath
     {
-        private static readonly string RegexPatternCharMap = @"^((?<charMap>@[^:]+:)\s*|)(""|')";
+        //private static readonly string RegexPatternCharMap = @"^((?<charMap>@[^:]+:)\s*|)(""|')";
+        private static readonly string RegexPatternCharMap = @"^((?<charMap>@[^:]+:)\s*|)(?<atSymbol>@)?(""|')";
         private static readonly Regex CompiledRegexPatternCharMap = new Regex(
             RegexPatternCharMap,
             RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
@@ -264,6 +265,12 @@ namespace AILZ80ASM.AILight
                 if (!string.IsNullOrEmpty(matched.Groups["charMap"].Value))
                 {
                     checkStartIndex = matched.Groups["charMap"].Value.Length;
+                    stringCheck = tmpValue.Substring(checkStartIndex);
+                }
+
+                if (!string.IsNullOrEmpty(matched.Groups["atSymbol"].Value))
+                {
+                    checkStartIndex += matched.Groups["atSymbol"].Value.Length;
                     stringCheck = tmpValue.Substring(checkStartIndex);
                 }
 
