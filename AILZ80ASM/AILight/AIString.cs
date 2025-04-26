@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Formats.Tar;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
@@ -31,7 +33,6 @@ namespace AILZ80ASM.AILight
                 new string[] { "\\t", "\t" },
                 new string[] { "\\v", "\v" },
         };
-
 
         /// <summary>
         /// 文字列の宣言かを調べる
@@ -79,7 +80,6 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static string EscapeSequence(string target)
         {
-            // エスケープシーケンスの置き換え
             try
             {
                 target = Regex.Unescape(target);
@@ -88,7 +88,7 @@ namespace AILZ80ASM.AILight
 
             return target;
         }
-
+ 
         /// <summary>
         /// 無効なエスケープシーケンスが含まれているか確認
         /// </summary>
@@ -96,7 +96,6 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool ValidEscapeSequence(string target)
         {
-            // エスケープシーケンスの問題があるか確認
             var index = 0;
             while ((index = target.IndexOf('\\', index)) != -1)
             {
@@ -413,7 +412,6 @@ namespace AILZ80ASM.AILight
                             checkEscapeCharIndex += (index + 2);
                         }
                     }
-
 
                     validEscapeSequence = ValidEscapeSequence(resultString);
                     resultString = EscapeSequence(resultString);
