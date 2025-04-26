@@ -33,7 +33,6 @@ namespace AILZ80ASM.AILight
                 new string[] { "\\t", "\t" },
                 new string[] { "\\v", "\v" },
         };
-        private static readonly Dictionary<string, char> EscapeLookup = EscapeSequenceCharTables.ToDictionary(x => x[0], x => x[1][0]);
 
         /// <summary>
         /// 文字列の宣言かを調べる
@@ -88,30 +87,6 @@ namespace AILZ80ASM.AILight
             catch { }
 
             return target;
-            /*
-            if (string.IsNullOrEmpty(target)) return target;
-
-            var sb = new StringBuilder(target.Length);
-
-            for (var index = 0; index < target.Length; index++)
-            {
-                // バックスラッシュで始まり、かつ次の文字がある場合のみ判定
-                if (target[index] == '\\' && index + 1 < target.Length)
-                {
-                    // テーブル上は 2 文字固定なので Slice(2) で OK
-                    var seq = target.Substring(index, 2);
-
-                    if (EscapeLookup.TryGetValue(seq, out var repl))
-                    {
-                        sb.Append(repl);
-                        index++;                // 2 文字読んだので追加でインクリメント
-                        continue;
-                    }
-                }
-                sb.Append(target[index]);
-            }
-            return sb.ToString();
-            */
         }
  
         /// <summary>
