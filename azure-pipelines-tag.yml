@@ -19,10 +19,6 @@ variables:
   tag: $[replace(variables['Build.SourceBranch'], 'refs/tags/', '')]
 
 steps:
-- task: UseDotNet@2
-  inputs:
-    packageType: sdk
-    useGlobalJson: true
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
