@@ -12,8 +12,8 @@ pool:
 steps:
 - task: UseDotNet@2
   inputs:
-    packageType: 'sdk'
-    version: '8.0.x'
+    packageType: sdk
+    useGlobalJson: true
 - task: PowerShell@2
   inputs:
     targetType: 'filePath'
