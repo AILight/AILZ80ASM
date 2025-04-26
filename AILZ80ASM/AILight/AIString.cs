@@ -81,6 +81,14 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static string EscapeSequence(string target)
         {
+            try
+            {
+                target = Regex.Unescape(target);
+            }
+            catch { }
+
+            return target;
+            /*
             if (string.IsNullOrEmpty(target)) return target;
 
             var sb = new StringBuilder(target.Length);
@@ -103,6 +111,7 @@ namespace AILZ80ASM.AILight
                 sb.Append(target[index]);
             }
             return sb.ToString();
+            */
         }
  
         /// <summary>
@@ -112,7 +121,6 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool ValidEscapeSequence(string target)
         {
-            // エスケープシーケンスの問題があるか確認
             var index = 0;
             while ((index = target.IndexOf('\\', index)) != -1)
             {
