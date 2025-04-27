@@ -8,6 +8,10 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemEqual : LineDetailItem
     {
         private static readonly string RegexPatternEqual = @"^equ\s+(?<value>.+)";
+        private static readonly Regex CompiledRegexPatternEqual = new Regex(
+            RegexPatternEqual,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
         public Label EquLabel { get; set; }
         public string LabelValue { get; set; }
 
@@ -40,7 +44,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemEqual);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternEqual, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternEqual.Match(lineItem.OperationString);
             if (matched.Success)
             {
                 var labelValue = matched.Groups["value"].Value.Trim();

@@ -262,6 +262,14 @@ namespace AILZ80ASM.AILight
             RegexPatternSymbolOperation, RegexOptions.Compiled | RegexOptions.IgnoreCase
         );
 
+        /// <summary>
+        /// オペレーション判別・正規表現用（文字列・記号）
+        /// </summary>
+        private static readonly string RegexPatternWordOperationSymbolOperation = $"{RegexPatternWordOperation}($|\\s+|{SymbolOperationKeysString})";
+        private static readonly Regex CompiledRegexPatternWordOperationSymbolOperation = new Regex(
+            RegexPatternWordOperationSymbolOperation, RegexOptions.Compiled | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternHexadecimal_HD = @"^\$(?<value>([0-9A-Fa-f]+))$";
         private static readonly Regex CompiledRegexPatternHexadecimal_HD = new Regex(
             RegexPatternHexadecimal_HD, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
@@ -412,7 +420,7 @@ namespace AILZ80ASM.AILight
             resultFormula = "";
 
             // この文字の次の演算子を調べる
-            var matchWord = Regex.Match(localTarget, $"{RegexPatternWordOperation}($|\\s+|{SymbolOperationKeysString})", RegexOptions.IgnoreCase);
+            var matchWord = CompiledRegexPatternWordOperationSymbolOperation.Match(localTarget);
             if (matchWord.Success)
             {
                 // 次の演算子を調査する

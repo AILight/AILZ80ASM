@@ -9,6 +9,11 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemCharMap : LineDetailItem
     {
         private static readonly string RegexPatternCharMap = @"^\s*CHARMAP\s+(?<Charmap>@[a-zA-Z0-9_]+)\s*,?\s*(?<Filename>.*)$";
+        private static readonly Regex CompiledRegexPatternCharMap = new Regex(
+            RegexPatternCharMap,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+        
         public string CharMapName { get; set; }
         public string FilePath { get; set; }
 
@@ -25,7 +30,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemCharMap);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternCharMap, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternCharMap.Match(lineItem.OperationString);
 
             // 開始条件チェック
             if (matched.Success)

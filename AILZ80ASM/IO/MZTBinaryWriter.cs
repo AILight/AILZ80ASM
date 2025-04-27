@@ -28,7 +28,6 @@ namespace AILZ80ASM.IO
         {
             WriteHeader();
             WriteDetail();
-            //WriteStream(Buffer);
         }
 
         private void WriteHeader()

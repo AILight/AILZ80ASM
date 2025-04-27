@@ -276,6 +276,23 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<string[]>()
+            {
+                Name = "omitHeader",
+                ArgumentName = "types",
+                Aliases = new[] { "-oh", "--omit-header" },
+                Description = "ヘッダーを省略します。複数指定可。",
+                Parameters = new[]
+                {
+                    new Parameter { Name = "sym", Description = "シンボルファイル (*.sym)" },
+                    new Parameter { Name = "lst", Description = "リストファイル (*.lst)" },
+                    new Parameter { Name = "equ", Description = "イコールラベルファイル (*.equ)" },
+                    new Parameter { Name = "adr", Description = "アドレスラベルファイル (*.adr)" },
+                    new Parameter { Name = "tag", Description = "タグファイル (*.tag)" },
+                },
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<ushort?>()
             {
                 Name = "entryPoint",
@@ -562,6 +579,33 @@ namespace AILZ80ASM.Assembler
             var tabSize = rootCommand.GetValue<int>("tabSize");
 
             return tabSize;
+        }
+
+        public static AsmEnum.FileTypeEnum[] GetOmitHeaders(this RootCommand rootCommand)
+        {
+            var result = new List<AsmEnum.FileTypeEnum>();
+            var omitHeaders = rootCommand.GetValue<string[]>("omitHeader");
+
+            if (omitHeaders != default)
+            {
+                foreach (var omitHeader in omitHeaders)
+                {
+                    var fileType = omitHeader switch
+                    {
+                        "lst" => AsmEnum.FileTypeEnum.LST,
+                        "sym" => AsmEnum.FileTypeEnum.SYM,
+                        "equ" => AsmEnum.FileTypeEnum.EQU,
+                        "adr" => AsmEnum.FileTypeEnum.ADR,
+                        "dbg" => AsmEnum.FileTypeEnum.DBG,
+                        "err" => AsmEnum.FileTypeEnum.ERR,
+                        "tag" => AsmEnum.FileTypeEnum.TAG,
+                        _ => throw new InvalidOperationException()
+                    };
+                    result.Add(fileType);
+                }
+            }
+
+            return result.ToArray();
         }
 
         private static string[] GetDefaulFilenameForOutput(IOption[] options)

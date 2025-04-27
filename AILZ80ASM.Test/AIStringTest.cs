@@ -244,65 +244,29 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
-        public void GetBytesByStringTest()
+        [DataRow(new byte[] { 0x41 }, "\"A\"")]
+        [DataRow(new byte[] { 0x90, 0xCE, 0x96, 0xEC }, "\"石野\"")]
+        [DataRow(new byte[] { 0x90, 0xCE, 0x96, 0xEC }, "@SJIS:\"石野\"")]
+        [DataRow(new byte[] { 0x5C, 0x30, 0x30, 0x30, 0x30 }, "\"\\\\0000\"")]
+        [DataRow(new byte[] { 0x41 }, "'A'")]
+        [DataRow(new byte[] { 0x90, 0xCE, 0x96, 0xEC }, "'石野'")]
+        [DataRow(new byte[] { 0x90, 0xCE, 0x96, 0xEC }, "@SJIS:'石野'")]
+        [DataRow(new byte[] { 0x5C, 0x30, 0x30, 0x30, 0x30 }, "'\\\\0000'")]
+        [DataRow(new byte[] { 0x41 }, "\'A\'")]
+        [DataRow(new byte[] { 0x90, 0xCE, 0x96, 0xEC }, "\'石野\'")]
+        [DataRow(new byte[] { 0x90, 0xCE, 0x96, 0xEC }, "@SJIS:\'石野\'")]
+        [DataRow(new byte[] { 0x5C, 0x30, 0x30, 0x30, 0x30 }, "\'\\\\0000\'")]
+        [DataRow(new byte[] { 0x48, 0x6f, 0x67, 0x65, 0x5c, 0x68, 0x6f, 0x67, 0x65 }, "@\"Hoge\\hoge\"")]
+        [DataRow(new byte[] { 0x48, 0x6f, 0x67, 0x65, 0x5c, 0x68, 0x6f, 0x67, 0x65 }, "@\'Hoge\\hoge\'")]
+        [DataRow(new byte[] { 0x48, 0x6f, 0x67, 0x65, 0x5c, 0x68, 0x6f, 0x67, 0x65 }, "@'Hoge\\hoge'")]
+        public void GetBytesByStringTest(byte[] expected, string target)
         {
-            // ダブルクオーテーション
-            {
-                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
+            var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
 
-                var bytes = AIString.GetBytesByString("\"A\"", asmLoad);
-                Assert.AreEqual(0x41, bytes[0]);
-            }
+            var actual = AIString.GetBytesByString(target, asmLoad);
 
+            CollectionAssert.AreEqual(expected, actual);
 
-            {
-                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-                var bytes = AIString.GetBytesByString("\"石野\"", asmLoad);
-                Assert.AreEqual(0x90, bytes[0]);
-                Assert.AreEqual(0xCE, bytes[1]);
-                Assert.AreEqual(0x96, bytes[2]);
-                Assert.AreEqual(0xEC, bytes[3]);
-            }
-
-            {
-                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-                var bytes = AIString.GetBytesByString("@SJIS:\"石野\"", asmLoad);
-                Assert.AreEqual(0x90, bytes[0]);
-                Assert.AreEqual(0xCE, bytes[1]);
-                Assert.AreEqual(0x96, bytes[2]);
-                Assert.AreEqual(0xEC, bytes[3]);
-            }
-
-
-            // シングルクオーテーション
-            {
-                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-                var bytes = AIString.GetBytesByString("\'A\'", asmLoad);
-                Assert.AreEqual(0x41, bytes[0]);
-            }
-
-            {
-                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-                var bytes = AIString.GetBytesByString("\'石野\'", asmLoad);
-                Assert.AreEqual(0x90, bytes[0]);
-                Assert.AreEqual(0xCE, bytes[1]);
-                Assert.AreEqual(0x96, bytes[2]);
-                Assert.AreEqual(0xEC, bytes[3]);
-            }
-
-            {
-                var asmLoad = new AsmLoad(new AsmOption(), new InstructionSet.Z80());
-
-                var bytes = AIString.GetBytesByString("@SJIS:\'石野\'", asmLoad);
-                Assert.AreEqual(0x90, bytes[0]);
-                Assert.AreEqual(0xCE, bytes[1]);
-                Assert.AreEqual(0x96, bytes[2]);
-                Assert.AreEqual(0xEC, bytes[3]);
-            }
         }
 
         [TestMethod]

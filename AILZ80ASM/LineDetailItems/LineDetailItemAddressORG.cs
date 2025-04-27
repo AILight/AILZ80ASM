@@ -11,6 +11,11 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemAddressORG : LineDetailItemAddress
     {
         private static readonly string RegexPatternORG = @"^ORG\s+(?<arg1>[^,]+)\s*,*\s*(?<arg2>[^,]*)\s*,*\s*(?<arg3>[^,]*)$";
+        private static readonly Regex CompiledRegexPatternORG = new Regex(
+            RegexPatternORG,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         public string ProgramLabel { get; set; }
         public string OutputLabel { get; set; }
         public string FillByteLabel { get; set; }
@@ -30,7 +35,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemAddressORG);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternORG, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternORG.Match(lineItem.OperationString);
             if (matched.Success)
             {
                 var arg1 = matched.Groups["arg1"].Value;

@@ -21,8 +21,22 @@ namespace AILZ80ASM.LineDetailItems
 
         // TODO: ラベルにLASTが使えない仕様になってしまっているので、あとでパーサーを強化して使えるようにする
         private static readonly string RegexPatternRepeatFullStart = @"^\s*REPT\s+(?<count>.+)\s+LAST\s+(?<last_arg>.+)$";
+        private static readonly Regex CompiledRegexPatternRepeatFullStart = new Regex(
+            RegexPatternRepeatFullStart,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternRepeatSimpleStart = @"^\s*REPT\s+(?<count>.+)$";
+        private static readonly Regex CompiledRegexPatternRepeatSimpleStart = new Regex(
+            RegexPatternRepeatSimpleStart,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternRepeatEnd = @"^\s*ENDM\s*$";
+        private static readonly Regex CompiledRegexPatternRepeatEnd = new Regex(
+            RegexPatternRepeatEnd,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         private string RepeatCountLabel { get; set; }
         private string RepeatLastLabel { get; set; }
@@ -82,9 +96,9 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemRepeat);
             }
 
-            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var startSimpleMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched = CompiledRegexPatternRepeatFullStart.Match(lineItem.OperationString);
+            var startSimpleMatched = CompiledRegexPatternRepeatSimpleStart.Match(lineItem.OperationString);
+            var endMatched = CompiledRegexPatternRepeatEnd.Match(lineItem.OperationString);
 
             // リピート処理中
             if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemRepeat asmLoad_LineDetailItemRepeat)
@@ -289,15 +303,15 @@ namespace AILZ80ASM.LineDetailItems
 
         public static bool IsMatchStart(LineItem lineItem)
         {
-            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatFullStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var startSimpleMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatSimpleStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched = CompiledRegexPatternRepeatFullStart.Match(lineItem.OperationString);
+            var startSimpleMatched = CompiledRegexPatternRepeatSimpleStart.Match(lineItem.OperationString);
 
             return startMatched.Success || startSimpleMatched.Success;
         }
 
         public static bool IsMatchEnd(LineItem lineItem)
         {
-            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternRepeatEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var endMatched = CompiledRegexPatternRepeatEnd.Match(lineItem.OperationString);
 
             return endMatched.Success;
 

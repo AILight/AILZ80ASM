@@ -9,6 +9,10 @@ namespace AILZ80ASM.LineDetailItems
     public class LineDetailItemFunctionDefine : LineDetailItem
     {
         private static readonly string RegexPatternFunction = @"^\s*Function\s+(?<function_name>[a-zA-Z0-9_]+)\s*\((?<argument>.+)\)\s*=>\s(?<formula>.+)";
+        private static readonly Regex CompiledRegexPatternFunction = new Regex(
+            RegexPatternFunction,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         private LineDetailItemFunctionDefine(LineItem lineItem, AsmLoad asmLoad)
             : base(lineItem, asmLoad)
@@ -23,7 +27,7 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemFunctionDefine);
             }
 
-            var matched = Regex.Match(lineItem.OperationString, RegexPatternFunction, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var matched = CompiledRegexPatternFunction.Match(lineItem.OperationString);
 
             if (matched.Success)
             {

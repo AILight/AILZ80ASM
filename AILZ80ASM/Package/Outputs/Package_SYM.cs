@@ -10,22 +10,25 @@ namespace AILZ80ASM
 {
     public partial class Package
     {
-        public void SaveSYM(FileInfo symbol)
+        public void SaveSYM(FileInfo symbol, bool omitHeader)
         {
             using var fileStream = symbol.OpenWrite();
 
-            SaveSYM(fileStream);
+            SaveSYM(fileStream, omitHeader);
 
             fileStream.Close();
         }
 
-        public void SaveSYM(Stream stream)
+        public void SaveSYM(Stream stream, bool omitHeader)
         {
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            var title = $";{ProductInfo.ProductLongName}, SYM:{AssembleLoad.AssembleOption.SymbolMode}";
-            streamWriter.WriteLine(title);
+            if (!omitHeader)
+            {
+                var title = $";{ProductInfo.ProductLongName}, SYM:{AssembleLoad.AssembleOption.SymbolMode}";
+                streamWriter.WriteLine(title);
+            }
 
             AssembleLoad.OutputLabels(streamWriter, AssembleLoad.AssembleOption.SymbolMode);
 

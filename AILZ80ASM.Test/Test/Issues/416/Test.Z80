@@ -1,0 +1,10 @@
+﻿		ORG $8000
+
+		DB	"Hogenoge"
+		DB	"Hoge\noge"
+		DB	@"Hogenoge"
+		DB	@"Hoge\noge"
+		DB	@SJIS:"Hogenoge"
+		DB	@SJIS:"Hoge\noge"
+		DB	@SJIS:@"Hogenoge"
+		DB	@SJIS:@"Hoge\noge"		

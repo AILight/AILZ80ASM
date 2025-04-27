@@ -944,6 +944,95 @@ namespace AILZ80ASM.Test
         }
 
         [TestMethod]
+        public void Test_CommandLine_OmitHeader()
+        {
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-equ", "-oh", "equ" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(2, outputFiles.Count);
+                Assert.AreEqual("Main.bin", outputFiles[AsmEnum.FileTypeEnum.BIN].Name);
+                Assert.AreEqual("Main.equ", outputFiles[AsmEnum.FileTypeEnum.EQU].Name);
+
+                var omitHeders = rootCommand.GetOmitHeaders();
+                Assert.AreEqual(1, omitHeders.Length);
+                Assert.AreEqual(AsmEnum.FileTypeEnum.EQU, omitHeders.First());
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-lst", "-oh", "lst" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(2, outputFiles.Count);
+                Assert.AreEqual("Main.bin", outputFiles[AsmEnum.FileTypeEnum.BIN].Name);
+                Assert.AreEqual("Main.lst", outputFiles[AsmEnum.FileTypeEnum.LST].Name);
+
+                var omitHeders = rootCommand.GetOmitHeaders();
+                Assert.AreEqual(1, omitHeders.Length);
+                Assert.AreEqual(AsmEnum.FileTypeEnum.LST, omitHeders.First());
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-lst", "-equ", "-oh", "lst", "equ" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(3, outputFiles.Count);
+                Assert.AreEqual("Main.bin", outputFiles[AsmEnum.FileTypeEnum.BIN].Name);
+                Assert.AreEqual("Main.lst", outputFiles[AsmEnum.FileTypeEnum.LST].Name);
+                Assert.AreEqual("Main.equ", outputFiles[AsmEnum.FileTypeEnum.EQU].Name);
+
+                var omitHeders = rootCommand.GetOmitHeaders();
+                Assert.AreEqual(2, omitHeders.Length);
+                Assert.AreEqual(AsmEnum.FileTypeEnum.LST, omitHeders.First(m => m == AsmEnum.FileTypeEnum.LST));
+                Assert.AreEqual(AsmEnum.FileTypeEnum.EQU, omitHeders.First(m => m == AsmEnum.FileTypeEnum.EQU));
+            }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "Main.z80", "-bin", "-lst", "-equ", "-sym", "--omit-header", "lst", "sym" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(4, outputFiles.Count);
+                Assert.AreEqual("Main.bin", outputFiles[AsmEnum.FileTypeEnum.BIN].Name);
+                Assert.AreEqual("Main.lst", outputFiles[AsmEnum.FileTypeEnum.LST].Name);
+                Assert.AreEqual("Main.equ", outputFiles[AsmEnum.FileTypeEnum.EQU].Name);
+                Assert.AreEqual("Main.sym", outputFiles[AsmEnum.FileTypeEnum.SYM].Name);
+
+                var omitHeders = rootCommand.GetOmitHeaders();
+                Assert.AreEqual(2, omitHeders.Length);
+                Assert.AreEqual(AsmEnum.FileTypeEnum.LST, omitHeders.First(m => m == AsmEnum.FileTypeEnum.LST));
+                Assert.AreEqual(AsmEnum.FileTypeEnum.SYM, omitHeders.First(m => m == AsmEnum.FileTypeEnum.SYM));
+            }
+        }
+
+        [TestMethod]
         public void Test_CommandLine_Error()
         {
             {

@@ -16,7 +16,16 @@ namespace AILZ80ASM.LineDetailItems
         private readonly List<LineItem> MacroLines = new List<LineItem>();
 
         private static readonly string RegexPatternMacroStart = @"^(?<macro_name>[a-zA-Z0-9_\(\)]+)\s+Macro($|\s+(?<args>.+)$)";
+        private static readonly Regex CompiledRegexPatternMacroStart = new Regex(
+            RegexPatternMacroStart,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
+
         private static readonly string RegexPatternMacroEnd = @"^\s*Endm\s*$";
+        private static readonly Regex CompiledRegexPatternMacroEnd = new Regex(
+            RegexPatternMacroEnd,
+            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
+        );
 
         public override AsmList[] Lists
         {
@@ -50,8 +59,8 @@ namespace AILZ80ASM.LineDetailItems
                 return default(LineDetailItemMacroDefine);
             }
 
-            var startMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroStart, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-            var endMatched = Regex.Match(lineItem.OperationString, RegexPatternMacroEnd, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            var startMatched = CompiledRegexPatternMacroStart.Match(lineItem.OperationString);
+            var endMatched = CompiledRegexPatternMacroEnd.Match(lineItem.OperationString);
 
             if (asmLoad.Share.LineDetailItemForExpandItem is LineDetailItemMacroDefine asmLoad_LineDetailItemMacro)
             {
