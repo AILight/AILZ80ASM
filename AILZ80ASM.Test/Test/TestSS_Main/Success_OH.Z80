@@ -1,0 +1,38 @@
+﻿CHAR01	EQU		20
+CHAR02	EQU		40
+CHAR03	EQU		60
+
+		ORG $1234
+[GB1]
+ABC		equ 1
+.DEF	equ 2
+		ld a, 0
+GHI:
+		ld a, 1
+.JKL
+		ld a, 2
+.MNO	equ 3
+
+		REPT 5
+		NOP
+		ENDM
+
+[GB2]
+ABC		equ 1
+.DEF	equ 2
+		ld a, 0
+GHI:
+		ld a, 1
+.JKL
+		ld a, 2
+		MACROTEST
+
+.MNO	equ 3
+
+MACROTEST	MACRO
+		LD A,0
+		LD B,0
+		ENDM
+
+		RET
+include "Include.bin", B

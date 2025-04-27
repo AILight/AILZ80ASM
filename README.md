@@ -53,6 +53,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -oe, --output-encode <mode>    | 出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
 | -lm, --list-mode <mode>        | リストの出力形式を選択します。 [simple, middle, full] デフォルト値:full
 | -lob, --list-omit-binary       | リストの出力でバイナリーインクルードを省略出力をします。
+| -oh, --omit-header <types>     | 先頭行のコメントを省略します。ファイル種別をスペース区切りで指定します。[sym, lst, equ, adr]
 | -ep, --entry-point <address>   | エントリーポイントを指定します。
 | -ts, --tab-size <size>         | TABのサイズを指定します。 デフォルト値:4
 | -dw, --disable-warning <codes> | Warning、Informationをオフにするコードをスペース区切りで指定します。
@@ -98,6 +99,12 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 ■ sample.z80をアセンブル、出力はBIN形式、ファイル名は、output.bin
 > AILZ80ASM sample.z80 -bin output.bin
 > AILZ80ASM -i sample.z80 -o output.bin -om bin
+
+■ SYM のヘッダー行を省略してアセンブル
+> AILZ80ASM sample.z80 -bin -sym -oh sym
+
+■ SYM と LST のヘッダー行を省略してアセンブル
+> AILZ80ASM sample.z80 -bin -sym -lst -oh sym lst
 
 ■ sample.z80をアセンブル、出力はBIN形式、指定（W0001,W9001,W9002）のワーニング表示をOFFにする
 > AILZ80ASM sample.z80 -bin output.bin -dw W0001 W9001 W9002

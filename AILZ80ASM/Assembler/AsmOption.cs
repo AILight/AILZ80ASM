@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,6 +67,9 @@ namespace AILZ80ASM.Assembler
 
         // 互換モード（文字列を@付きとして扱います。）
         public bool CompatRawString { get; set; } = false;
+
+        // ヘッダー出力のコメントを省略する
+        public AsmEnum.FileTypeEnum[] OmitHeders { get; set; }
 
         /// <summary>
         /// 出力用の確定したエンコードを返す
@@ -141,6 +145,8 @@ namespace AILZ80ASM.Assembler
             DefineLabels = rootCommand.GetValue<string[]>("defineLabel");
 
             CompatRawString = rootCommand.GetValue<bool>("compatRawString");
+
+            OmitHeders = rootCommand.GetOmitHeaders();
         }
 
         /// <summary>

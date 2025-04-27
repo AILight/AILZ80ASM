@@ -10,22 +10,25 @@ namespace AILZ80ASM
 {
     public partial class Package
     {
-        public void SaveEQU(FileInfo equal)
+        public void SaveEQU(FileInfo equal, bool omitHeader)
         {
             using var fileStream = equal.OpenWrite();
 
-            SaveEQU(fileStream);
+            SaveEQU(fileStream, omitHeader);
 
             fileStream.Close();
         }
 
-        public void SaveEQU(Stream stream)
+        public void SaveEQU(Stream stream, bool omitHeader)
         {
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            var title = $";{ProductInfo.ProductLongName}, EQU";
-            streamWriter.WriteLine(title);
+            if (!omitHeader)
+            {
+                var title = $";{ProductInfo.ProductLongName}, EQU";
+                streamWriter.WriteLine(title);
+            }
 
             AssembleLoad.OutputEqualLabels(streamWriter);
 

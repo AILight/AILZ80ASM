@@ -10,22 +10,25 @@ namespace AILZ80ASM
 {
     public partial class Package
     {
-        public void SaveADR(FileInfo equal)
+        public void SaveADR(FileInfo equal, bool omitHeader)
         {
             using var fileStream = equal.OpenWrite();
 
-            SaveADR(fileStream);
+            SaveADR(fileStream, omitHeader);
 
             fileStream.Close();
         }
 
-        public void SaveADR(Stream stream)
+        public void SaveADR(Stream stream, bool omitHeader)
         {
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            var title = $";{ProductInfo.ProductLongName}, ADR";
-            streamWriter.WriteLine(title);
+            if (!omitHeader)
+            {
+                var title = $";{ProductInfo.ProductLongName}, ADR";
+                streamWriter.WriteLine(title);
+            }
 
             AssembleLoad.OutputAddrLabels(streamWriter);
 
