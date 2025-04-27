@@ -10,22 +10,25 @@ namespace AILZ80ASM
 {
     public partial class Package
     {
-        public void SaveTAG(FileInfo tags)
+        public void SaveTAG(FileInfo tags, bool omitHeader)
         {
             using var fileStream = tags.OpenWrite();
 
-            SaveTAG(fileStream);
+            SaveTAG(fileStream, omitHeader);
 
             fileStream.Close();
         }
 
-        public void SaveTAG(Stream stream)
+        public void SaveTAG(Stream stream, bool omitHeader)
         {
             using var memoryStream = new MemoryStream();
             using var streamWriter = new StreamWriter(memoryStream, AsmLoad.GetEncoding(AssembleLoad.AssembleOption.DecidedOutputEncodeMode));
 
-            var title = $";{ProductInfo.ProductLongName}, TAG";
-            streamWriter.WriteLine(title);
+            if (!omitHeader)
+            {
+                var title = $";{ProductInfo.ProductLongName}, TAG";
+                streamWriter.WriteLine(title);
+            }
 
             AssembleLoad.OutputTags(streamWriter);
 

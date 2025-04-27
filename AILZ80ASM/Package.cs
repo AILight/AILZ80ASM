@@ -593,7 +593,6 @@ namespace AILZ80ASM
                 var status = "";
                 try
                 {
-
                     item.Value.Delete();
                     using var fileStream = item.Value.OpenWrite();
 
@@ -622,6 +621,7 @@ namespace AILZ80ASM
 
         public void SaveOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
+            var omitHeder = this.AssembleOption?.OmitHeders?.Any(m => m == outputFile.Key) ?? false;
             switch (outputFile.Key)
             {
                 case AsmEnum.FileTypeEnum.BIN:
@@ -640,19 +640,19 @@ namespace AILZ80ASM
                     SaveMZT(stream, outputFile.Value.Name);
                     break;
                 case AsmEnum.FileTypeEnum.LST:
-                    SaveLST(stream);
+                    SaveLST(stream, omitHeder);
                     break;
                 case AsmEnum.FileTypeEnum.SYM:
-                    SaveSYM(stream);
+                    SaveSYM(stream, omitHeder);
                     break;
                 case AsmEnum.FileTypeEnum.EQU:
-                    SaveEQU(stream);
+                    SaveEQU(stream, omitHeder);
                     break;
                 case AsmEnum.FileTypeEnum.ADR:
-                    SaveADR(stream);
+                    SaveADR(stream, omitHeder);
                     break;
                 case AsmEnum.FileTypeEnum.TAG:
-                    SaveTAG(stream);
+                    SaveTAG(stream, omitHeder);
                     break;
                 default:
                     throw new NotImplementedException($"指定の出力形式は選択できません。{outputFile.Key}");

@@ -471,5 +471,19 @@ namespace AILZ80ASM.Test
             Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_CRS_ORG.bin"), File.OpenRead("./Test/TestSS_Main/Success_CRS.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
             Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_CRS_ORG.lst"), File.OpenRead("./Test/TestSS_Main/Success_CRS.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
         }
+
+        [TestMethod]
+        public void TestOH()
+        {
+            var result = Program.Main(@"Success_OH.Z80", "-f", "-bin", "-equ", "-tag", "tags_oh", "-sym", "-adr", "-lst", "-cd", "./Test/TestSS_Main/", "-oh", "equ", "tag", "sym", "adr", "lst");
+            Assert.AreEqual(0, result);
+
+            Lib.AreSameBin(File.OpenRead("./Test/TestSS_Main/Success_OH_ORG.bin"), File.OpenRead("./Test/TestSS_Main/Success_OH.bin"), Assembler.AsmEnum.FileTypeEnum.BIN);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_OH_ORG.tag"), File.OpenRead("./Test/TestSS_Main/tags_oh"), Assembler.AsmEnum.FileTypeEnum.TAG);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_OH_ORG.equ"), File.OpenRead("./Test/TestSS_Main/Success_OH.equ"), Assembler.AsmEnum.FileTypeEnum.EQU);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_OH_ORG.sym"), File.OpenRead("./Test/TestSS_Main/Success_OH.sym"), Assembler.AsmEnum.FileTypeEnum.SYM);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_OH_ORG.lst"), File.OpenRead("./Test/TestSS_Main/Success_OH.lst"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameLst(File.OpenRead("./Test/TestSS_Main/Success_OH_ORG.adr"), File.OpenRead("./Test/TestSS_Main/Success_OH.adr"), Assembler.AsmEnum.FileTypeEnum.ADR);
+        }
     }
 }
