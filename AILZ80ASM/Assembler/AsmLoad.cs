@@ -240,12 +240,12 @@ namespace AILZ80ASM.Assembler
             if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
             {
                 // ラベルと同じ名前は付けられない
-                if (this.Scope.Labels.Any(m => string.Compare(m.LabelName, label.LabelFullName, true) == 0))
+                if (this.Scope.Labels.Any(m => string.Equals(m.LabelName, label.LabelFullName, StringComparison.OrdinalIgnoreCase))))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017, label.LabelFullName);
                 }
 
-                if (!this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
+                if (!this.Scope.GlobalLabelNames.Any(m => string.Equals(m, label.LabelFullName, StringComparison.OrdinalIgnoreCase))))
                 {
                     // ネームスペースが変わるときには保存する
                     this.Scope.GlobalLabelNames.Add(label.LabelFullName);
@@ -257,7 +257,7 @@ namespace AILZ80ASM.Assembler
             else
             {
                 // ネームスペースとと同じ名前は付けられない
-                if (this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
+                if (this.Scope.GlobalLabelNames.Any(m => string.Equals(m, label.LabelName, StringComparison.OrdinalIgnoreCase))))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018, label.LabelName);
                 }
@@ -322,7 +322,7 @@ namespace AILZ80ASM.Assembler
 
             foreach (var label in this.Scope.Labels.Where(m => m.LabelLevel != Label.LabelLevelEnum.GlobalLabel))
             {
-                var originalLabel = originalLabels.FirstOrDefault(m => string.Compare(m.LabelFullName, label.LabelFullName, true) == 0);
+                var originalLabel = originalLabels.FirstOrDefault(m => string.Equals(m.LabelFullName, label.LabelFullName, StringComparison.OrdinalIgnoreCase)));
                 if (originalLabel == default)
                 {
                     // 一致しない場合
@@ -415,12 +415,12 @@ namespace AILZ80ASM.Assembler
             if (label.LabelLevel == Label.LabelLevelEnum.GlobalLabel)
             {
                 // ラベルと同じ名前は付けられない
-                if (this.Scope.Labels.Any(m => string.Compare(m.LabelName, label.LabelFullName, true) == 0))
+                if (this.Scope.Labels.Any(m => string.Equals(m.LabelName, label.LabelFullName, StringComparison.OrdinalIgnoreCase))))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0017, label.LabelFullName);
                 }
 
-                if (!this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelFullName, true) == 0))
+                if (!this.Scope.GlobalLabelNames.Any(m => string.Equals(m, label.LabelFullName, StringComparison.OrdinalIgnoreCase))))
                 {
                     // ネームスペースが変わるときには保存する
                     this.Scope.GlobalLabelNames.Add(label.LabelFullName);
@@ -431,7 +431,7 @@ namespace AILZ80ASM.Assembler
             else
             {
                 // ネームスペースとと同じ名前は付けられない
-                if (this.Scope.GlobalLabelNames.Any(m => string.Compare(m, label.LabelName, true) == 0))
+                if (this.Scope.GlobalLabelNames.Any(m => string.Equals(m, label.LabelName, StringComparison.OrdinalIgnoreCase))))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E0018, label.LabelName);
                 }
@@ -453,7 +453,7 @@ namespace AILZ80ASM.Assembler
         /// <exception cref="ErrorAssembleException"></exception>
         public void AddFunction(Function function)
         {
-            if (this.Scope.Functions.Any(m => string.Compare(m.FullName, function.FullName, true) == 0))
+            if (this.Scope.Functions.Any(m => string.Equals(m.FullName, function.FullName, StringComparison.OrdinalIgnoreCase))))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E4001);
             }
@@ -467,7 +467,7 @@ namespace AILZ80ASM.Assembler
         /// <exception cref="ErrorAssembleException"></exception>
         public void AddMacro(Macro macro)
         {
-            if (this.Scope.Macros.Any(m => string.Compare(m.FullName, macro.FullName, true) == 0))
+            if (this.Scope.Macros.Any(m => string.Equals(m.FullName, macro.FullName, StringComparison.OrdinalIgnoreCase))))
             {
                 throw new ErrorAssembleException(Error.ErrorCodeEnum.E3010);
             }
@@ -535,7 +535,7 @@ namespace AILZ80ASM.Assembler
 
             while (targetAsmLoad != default)
             {
-                var name = targetAsmLoad.Scope.GlobalLabelNames.Where(m => string.Compare(m, target, true) == 0).FirstOrDefault();
+                var name = targetAsmLoad.Scope.GlobalLabelNames.Where(m => string.Equals(m, target, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
                 if (name != default)
                 {
                     return name;
@@ -569,7 +569,7 @@ namespace AILZ80ASM.Assembler
                     while (targetAsmLoad != default)
                     {
                         var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
-                        var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                        var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Equals(m.LabelFullName, labelFullName, StringComparison.OrdinalIgnoreCase));
                         var label = scopelabels.FirstOrDefault();
                         if (label != default)
                         {
@@ -588,7 +588,7 @@ namespace AILZ80ASM.Assembler
                         while (targetAsmLoad != default)
                         {
                             var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
-                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Equals(m.LabelFullName, labelFullName, StringComparison.OrdinalIgnoreCase));
                             var label = scopelabels.FirstOrDefault();
                             if (label != default)
                             {
@@ -605,9 +605,9 @@ namespace AILZ80ASM.Assembler
                         {
                             var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
                             var labelNames = labelFullName.Split(".");
-                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.GlobalLabelName, labelNames[0], true) == 0 &&
-                                                                               string.Compare(m.LabelName, labelNames[1], true) == 0 &&
-                                                                               string.Compare(m.TmpLabelName, labelNames[3], true) == 0);
+                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Equals(m.GlobalLabelName, labelNames[0], StringComparison.OrdinalIgnoreCase) &&
+                                                                               string.Equals(m.LabelName, labelNames[1], StringComparison.OrdinalIgnoreCase) &&
+                                                                               string.Equals(m.TmpLabelName, labelNames[3], StringComparison.OrdinalIgnoreCase));
 
                             if (scopelabels.Count() > 0)
                             {
@@ -684,7 +684,7 @@ namespace AILZ80ASM.Assembler
             while (targetAsmLoad != default)
             {
                 var longFunctionName = Function.GetFunctionFullName(target, targetAsmLoad);
-                var function = targetAsmLoad.Scope.Functions.Where(m => string.Compare(m.FullName, longFunctionName, true) == 0).FirstOrDefault();
+                var function = targetAsmLoad.Scope.Functions.Where(m => string.Equals(m.FullName, longFunctionName, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
                 if (function != default)
                 {
                     return function;
@@ -702,7 +702,7 @@ namespace AILZ80ASM.Assembler
 
             while (targetAsmLoad != default)
             {
-                var macros = targetAsmLoad.Scope.Macros.Where(m => string.Compare(m.Name, shortMacroName, true) == 0).ToArray();
+                var macros = targetAsmLoad.Scope.Macros.Where(m => string.Equals(m.Name, shortMacroName, StringComparison.OrdinalIgnoreCase))).ToArray();
                 if (macros != default)
                 {
                     return macros;
@@ -719,7 +719,7 @@ namespace AILZ80ASM.Assembler
             while (targetAsmLoad != default)
             {
                 var longMacroName = Macro.GetMacroFullName(target, targetAsmLoad);
-                var function = targetAsmLoad.Scope.Macros.Where(m => string.Compare(m.FullName, longMacroName, true) == 0).FirstOrDefault();
+                var function = targetAsmLoad.Scope.Macros.Where(m => string.Equals(m.FullName, longMacroName, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
                 if (function != default)
                 {
                     return function;
