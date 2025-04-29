@@ -53,6 +53,7 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -oe, --output-encode <mode>    | 出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
 | -lm, --list-mode <mode>        | リストの出力形式を選択します。 [simple, middle, full] デフォルト値:full
 | -lob, --list-omit-binary       | リストの出力でバイナリーインクルードを省略出力をします。
+| -sm, --symbol-mode <mode>      | symファイルの出力形式を選択します。 [normal, minimal-equ]
 | -oh, --omit-header <types>     | 先頭行のコメントを省略します。ファイル種別をスペース区切りで指定します。[sym, lst, equ, adr]
 | -ep, --entry-point <address>   | エントリーポイントを指定します。
 | -ts, --tab-size <size>         | TABのサイズを指定します。 デフォルト値:4
@@ -853,6 +854,14 @@ off equ #FALSE
 - Errorに該当する行がある場合には、ソースコードは最後まで評価されますが、アセンブル結果は出力されません。
 - [エラーコード一覧](https://github.com/AILight/AILZ80ASM/blob/main/AILZ80ASM/Assembler/Error.cs#L142)
 
+## 開発環境別設定
+- oepnMSX
+  - シンボルファイルを利用する場合には、AILZ80ASMのコマンドラインオプションで「-sm minimal-equ -oh sym」を付けてください。
+- MZ-700
+  - CHARMAP [AILZ80ASM charmap for MZ-700 and PC-8001](https://github.com/dogatana/mz700-charmap-for-AILZ80ASM)
+- PC-8001
+  - CHARMAP [AILZ80ASM charmap for MZ-700 and PC-8001](https://github.com/dogatana/mz700-charmap-for-AILZ80ASM)
+
 ## 仕様の裏話
 - AILZ80ASMでのENDMは、「END Macro」ではなく「End of Multi-Purpose Block」と言い張っていますので、色々な命令で使われています。
 
@@ -860,6 +869,7 @@ off equ #FALSE
 - 内藤時浩様（サンプルコード）[プログラミング指南 - Code Knowledge](https://codeknowledge.livedoor.blog/)
 - 山本昌志様（Z80命令セット）[Yamamoto's Laboratory](http://www.yamamo10.jp/yamamoto/index.html)
 - 神楽坂朋様（Z80命令表）[神楽坂製作所](http://tomocyan.net/~kagurazaka/html/index2.html)
+- Toshihiko Ichida様 (CHARMAP) [dogatana](https://github.com/dogatana)
 - Thomas Scherrer様（Z80 Undocumented Instructions） [Thomas Scherrer Z80-Family HomePage](http://www.z80.info/index.htm)
 
 ## Z80資料
