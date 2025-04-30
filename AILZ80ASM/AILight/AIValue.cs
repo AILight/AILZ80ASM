@@ -1052,12 +1052,12 @@ namespace AILZ80ASM.AILight
                 ValueInt32Type = ValueInt32TypeEnum.Hex;
                 ValueInt32 = (int)asmAddress.Value.Output;
             }
-            else if (string.Compare(Value, "#TRUE", true) == 0)
+            else if (string.Equals(Value, "#TRUE", StringComparison.OrdinalIgnoreCase))
             {
                 ValueType = ValueTypeEnum.Bool;
                 ValueBool = true;
             }
-            else if (string.Compare(Value, "#FALSE", true) == 0)
+            else if (string.Equals(Value, "#FALSE", StringComparison.OrdinalIgnoreCase))
             {
                 ValueType = ValueTypeEnum.Bool;
                 ValueBool = false;

@@ -34,7 +34,7 @@ namespace AILZ80ASM.InstructionSet
         /// <returns></returns>
         public bool IsMatchRegisterName(string target)
         {
-            return InstructionSet.RegisterAndFlagNames.Where(m => string.Compare(m, target, true) == 0).Any();
+            return InstructionSet.RegisterAndFlagNames.Where(m => string.Equals(m, target, StringComparison.OrdinalIgnoreCase)).Any();
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace AILZ80ASM.InstructionSet
         /// <returns></returns>
         public bool IsMatchInstructionName(string target)
         {
-            return InstructionSet.InstructionNames.Where(m => string.Compare(m, target, true) == 0).Any();
+            return InstructionSet.InstructionNames.Where(m => string.Equals(m, target, StringComparison.OrdinalIgnoreCase)).Any();
         }
 
 
@@ -111,7 +111,7 @@ namespace AILZ80ASM.InstructionSet
                     assembleResult.InstructionItem.InstructionRegisterDic[key].InstructionRegisterMode == InstructionRegister.InstructionRegisterModeEnum.Register)
                 {
                     var instructionRegister = assembleResult.InstructionItem.InstructionRegisterDic[key];
-                    var instructionRegisterItem = instructionRegister.InstructionRegisterItems.First(m => string.Compare(m.RegisterName, value, true) == 0);
+                    var instructionRegisterItem = instructionRegister.InstructionRegisterItems.First(m => string.Equals(m.RegisterName, value, StringComparison.OrdinalIgnoreCase));
                     replaceDic.Add(instructionRegister.MnemonicBitName, instructionRegisterItem.BitCode);
                 }
                 else if (assembleResult.InstructionItem.InstructionValueDic.ContainsKey(value))
