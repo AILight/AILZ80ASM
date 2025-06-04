@@ -250,6 +250,23 @@ namespace AILZ80ASM.Test
                 Assert.AreEqual(1, outputFiles.Count);
                 Assert.AreEqual("Main.bin", outputFiles[AsmEnum.FileTypeEnum.BIN].Name);
             }
+
+            {
+                var rootCommand = AsmCommandLine.SettingRootCommand();
+                var arguments = new[] { "-bin", "Main.bin", "-i", "Main.z80" };
+
+                Assert.IsTrue(rootCommand.Parse(arguments));
+                var fileInfos = rootCommand.GetValue<FileInfo[]>("input");
+
+                Assert.AreEqual(1, fileInfos.Length);
+                Assert.AreEqual("Main.z80", fileInfos.First().Name);
+                Assert.AreEqual("Main.bin", rootCommand.GetValue<FileInfo>("output").Name);
+                Assert.AreEqual("bin", rootCommand.GetValue<string>("outputMode"));
+
+                var outputFiles = rootCommand.GetOutputFiles();
+                Assert.AreEqual(1, outputFiles.Count);
+                Assert.AreEqual("Main.bin", outputFiles[AsmEnum.FileTypeEnum.BIN].Name);
+            }
         }
 
         [TestMethod]
