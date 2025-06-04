@@ -49,14 +49,12 @@ foreach ($match in $matches) {
     $linkText = $match.Groups[1].Value
     $url = $match.Groups[2].Value
 
-    # 無視リストに入っていればスキップ
     if ($ignoreUrls -contains $url) {
         Write-Host "[$currentLink/$totalLinks] スキップ: $url (無視リストに登録されているため)"
         $currentLink++
         continue
     }
 
-    # リンクテキストに「(リンク切れ)」が含まれる場合はスキップ
     if ($linkText -like "*`(リンク切れ`)*") {
         Write-Host "[$currentLink/$totalLinks] スキップ: $url (リンクテキストに「(リンク切れ)」を含むため)"
         $currentLink++
@@ -69,27 +67,38 @@ foreach ($match in $matches) {
     $methods = @('HEAD', 'GET')
 
     foreach ($method in $methods) {
-        try {
-            $response = Invoke-WebRequest -Uri $url -Method $method -Headers $headers -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
-            if ($response.StatusCode -lt 400) {
-                Write-Host "  結果: OK ($($response.StatusCode)) - メソッド: $method" -ForegroundColor Green
-                $success = $true
-                break
-            } else {
-                Write-Host "  結果: エラー ($($response.StatusCode)) - メソッド: $method" -ForegroundColor Yellow
+        $retryCount = 0
+        while ($retryCount -lt 5) {
+            try {
+                $response = Invoke-WebRequest -Uri $url -Method $method -Headers $headers -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+                if ($response.StatusCode -lt 400) {
+                    Write-Host "  結果: OK ($($response.StatusCode)) - メソッド: $method" -ForegroundColor Green
+                    $success = $true
+                    break
+                } else {
+                    Write-Host "  結果: エラー ($($response.StatusCode)) - メソッド: $method" -ForegroundColor Yellow
+                }
+                break  # 400以上ならリトライしない
+            } catch {
+                if ($_.Exception.Response?.StatusCode.Value__ -eq 429) {
+                    Write-Host "  結果: 429 Too Many Requests - リトライ中 ($($retryCount + 1)/3) - メソッド: $method" -ForegroundColor Yellow
+                    Start-Sleep -Seconds 5
+                    $retryCount++
+                } else {
+                    Write-Host "  結果: エラー ($($_.Exception.Message)) - メソッド: $method" -ForegroundColor Red
+                    break
+                }
             }
-        } catch {
-            Write-Host "  結果: エラー ($($_.Exception.Message)) - メソッド: $method" -ForegroundColor Red
         }
+
+        if ($success) { break }
     }
 
     if (-not $success) {
-        $errors += @{
-            URL = $url
-            Message = "アクセスに失敗しました。"
-        }
+        $errors += @{ URL = $url; Message = "アクセスに失敗しました。" }
     }
 
+    Start-Sleep -Milliseconds 1000  # 緩衝用の軽い遅延
     $currentLink++
 }
 
