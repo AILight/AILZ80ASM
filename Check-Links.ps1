@@ -81,7 +81,7 @@ foreach ($match in $matches) {
                 break  # 400以上ならリトライしない
             } catch {
                 if ($_.Exception.Response?.StatusCode.Value__ -eq 429) {
-                    Write-Host "  結果: 429 Too Many Requests - リトライ中 ($($retryCount + 1)/3) - メソッド: $method" -ForegroundColor Yellow
+                    Write-Host "  結果: 429 Too Many Requests - リトライ中 ($($retryCount + 1)/5) - メソッド: $method" -ForegroundColor Yellow
                     Start-Sleep -Seconds 5
                     $retryCount++
                 } else {
