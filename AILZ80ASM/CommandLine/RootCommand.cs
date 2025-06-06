@@ -257,7 +257,6 @@ namespace AILZ80ASM.CommandLine
             // デフォルトパラメーターを取得
             var defineOptionalOption = Options.FirstOrDefault(m => m.IsDefineOptional);
 
-
             foreach (var value in args)
             {
                 if (value.StartsWith('-') && !helpMode)
@@ -300,14 +299,16 @@ namespace AILZ80ASM.CommandLine
                 {
                     helpMode = false;
                     // デフォルトの宣言対応
-                    if (key == default && defineOptionalOption != default)
+                    if (saveParameter == default(Parameter))
                     {
-                        key = defineOptionalOption;
-                        result.Add(key, new List<string>());
+                        if (key == default && defineOptionalOption != default)
+                        {
+                            key = defineOptionalOption;
+                            result.Add(key, new List<string>());
+                        }
                     }
-
                     // パラメータ直後の値の場合は、オプションとのマッチを行う
-                    if (saveParameter != default)
+                    else
                     {
                         var option = Options.FirstOrDefault(m => m.Aliases.Contains(saveParameter.ShortCut));
                         if (option != default)
