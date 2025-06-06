@@ -114,7 +114,7 @@ namespace AILZ80ASM.AILight
                         {
                             foreach (var shortHand in labelOperation.Value)
                             {
-                                if (string.Compare(operation, shortHand, true) == 0)
+                                if (string.Equals(operation, shortHand, StringComparison.OrdinalIgnoreCase))
                                 {
                                     operations.Add(new AIValue(labelOperation.Key, AIValue.ValueTypeEnum.Operation));
                                     notFound = false;
