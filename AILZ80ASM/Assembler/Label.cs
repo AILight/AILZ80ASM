@@ -286,13 +286,13 @@ namespace AILZ80ASM.Assembler
                 return matchedSubLabel.Groups["label"].Value;
             }
             var matchedValueLabel1 = CompiledRegexPatternValueLabel1.Match(lineString);
-            if (matchedValueLabel1.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Compare(m.Name, matchedValueLabel1.Groups["label"].Value, true) == 0))
+            if (matchedValueLabel1.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Equals(m.Name, matchedValueLabel1.Groups["label"].Value, StringComparison.OrdinalIgnoreCase)))
             {
                 return matchedValueLabel1.Groups["label"].Value;
             }
 
             var matchedValueLabel2 = CompiledRegexPatternValueLabel2.Match(lineString);
-            if (matchedValueLabel2.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Compare(m.Name, matchedValueLabel2.Groups["label"].Value, true) == 0))
+            if (matchedValueLabel2.Success && !AsmReservedWord.GetReservedWordsForLabel().Any(m => string.Equals(m.Name, matchedValueLabel2.Groups["label"].Value, StringComparison.OrdinalIgnoreCase)))
             {
                 return matchedValueLabel2.Groups["label"].Value;
             }

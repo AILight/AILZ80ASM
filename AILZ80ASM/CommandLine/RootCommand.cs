@@ -178,7 +178,7 @@ namespace AILZ80ASM.CommandLine
                 // 応答メッセージ有のオプションを処理
                 foreach (var option in Options.Where(m => m.OptionFunc != default))
                 {
-                    if (args.Any(m => option.Aliases.Any(n => string.Compare(n, m, true) == 0)))
+                    if (args.Any(m => option.Aliases.Any(n => string.Equals(n, m, StringComparison.OrdinalIgnoreCase))))
                     {
                         if (option.GetType()?.GenericTypeArguments?.FirstOrDefault() == typeof(bool))
                         {

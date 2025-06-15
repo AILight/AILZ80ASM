@@ -95,7 +95,7 @@ namespace AILZ80ASM.LineDetailItems
 
                 var fileType = LineDetailItemInclude.FileTypeEnum.Text;
 
-                if (string.IsNullOrEmpty(fileTypeString) || (new[] { "T", "Text" }).Any(m => string.Compare(m, fileTypeString, true) == 0))
+                if (string.IsNullOrEmpty(fileTypeString) || (new[] { "T", "Text" }).Any(m => string.Equals(m, fileTypeString, StringComparison.OrdinalIgnoreCase)))
                 {
                     fileType = LineDetailItemInclude.FileTypeEnum.Text;
                     if (!string.IsNullOrEmpty(startAddressString) || !string.IsNullOrEmpty(lengthString))
@@ -103,7 +103,7 @@ namespace AILZ80ASM.LineDetailItems
                         throw new ErrorAssembleException(Error.ErrorCodeEnum.E2009);
                     }
                 }
-                else if ((new[] { "B", "Binary" }).Any(m => string.Compare(m, fileTypeString, true) == 0))
+                else if ((new[] { "B", "Binary" }).Any(m => string.Equals(m, fileTypeString, StringComparison.OrdinalIgnoreCase)))
                 {
                     fileType = LineDetailItemInclude.FileTypeEnum.Binary;
                 }

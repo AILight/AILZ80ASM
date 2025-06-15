@@ -64,7 +64,7 @@ namespace AILZ80ASM.CommandLine
                     var parameterName = values[0];
                     if (Parameters != default)
                     {
-                        var parameter = Parameters.Where(m => string.Compare(m.Name, parameterName, true) == 0).FirstOrDefault();
+                        var parameter = Parameters.Where(m => string.Equals(m.Name, parameterName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                         if (parameter != default)
                         {
                             Value = (T)(dynamic)parameter.Name;

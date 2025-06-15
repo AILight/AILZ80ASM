@@ -105,7 +105,7 @@ namespace AILZ80ASM.AILight
                 }
 
                 var checkString = target.Substring(index, 2);
-                if (!EscapeSequenceCharTables.Any(m => string.Compare(m[0], checkString, true) == 0))
+                if (!EscapeSequenceCharTables.Any(m => string.Equals(m[0], checkString, StringComparison.OrdinalIgnoreCase)))
                 {
                     return false;
                 }

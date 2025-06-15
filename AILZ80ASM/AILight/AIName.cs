@@ -303,7 +303,7 @@ namespace AILZ80ASM.AILight
         /// <returns></returns>
         public static bool ValidateNameEndArgument(string target)
         {
-            return !AsmReservedWord.GetReservedWordsForEndArgument().Any(m => string.Compare(target, m.Name, true) == 0);
+            return !AsmReservedWord.GetReservedWordsForEndArgument().Any(m => string.Equals(target, m.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
