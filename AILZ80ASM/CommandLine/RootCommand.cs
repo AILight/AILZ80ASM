@@ -178,7 +178,7 @@ namespace AILZ80ASM.CommandLine
                 // 応答メッセージ有のオプションを処理
                 foreach (var option in Options.Where(m => m.OptionFunc != default))
                 {
-                    if (args.Any(m => option.Aliases.Any(n => string.Compare(n, m, true) == 0)))
+                    if (args.Any(m => option.Aliases.Any(n => string.Equals(n, m, StringComparison.OrdinalIgnoreCase))))
                     {
                         if (option.GetType()?.GenericTypeArguments?.FirstOrDefault() == typeof(bool))
                         {
@@ -257,7 +257,6 @@ namespace AILZ80ASM.CommandLine
             // デフォルトパラメーターを取得
             var defineOptionalOption = Options.FirstOrDefault(m => m.IsDefineOptional);
 
-
             foreach (var value in args)
             {
                 if (value.StartsWith('-') && !helpMode)
@@ -300,14 +299,16 @@ namespace AILZ80ASM.CommandLine
                 {
                     helpMode = false;
                     // デフォルトの宣言対応
-                    if (key == default && defineOptionalOption != default)
+                    if (saveParameter == default(Parameter))
                     {
-                        key = defineOptionalOption;
-                        result.Add(key, new List<string>());
+                        if (key == default && defineOptionalOption != default)
+                        {
+                            key = defineOptionalOption;
+                            result.Add(key, new List<string>());
+                        }
                     }
-
                     // パラメータ直後の値の場合は、オプションとのマッチを行う
-                    if (saveParameter != default)
+                    else
                     {
                         var option = Options.FirstOrDefault(m => m.Aliases.Contains(saveParameter.ShortCut));
                         if (option != default)
