@@ -20,6 +20,21 @@
   - [Benchmark1](https://github.com/AILight/AILZ80ASM/tree/main/AILZ80ASM.Benchmark/TestSource/Benchmark1) をアセンブルした処理時間
 
 ## ベンチマーク結果
+- [ueno1969さんからのPR](https://github.com/AILight/AILZ80ASM/pull/426)
+- Compiledの設定もれを対応した
+```
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.26100.3775)
+Intel Core i7-8650U CPU 1.90GHz (Kaby Lake R), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 9.0.102
+  [Host]     : .NET 8.0.15 (8.0.1525.16413), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.15 (8.0.1525.16413), X64 RyuJIT AVX2
+
+
+| Method     | Mean    | Error    | StdDev   |
+|----------- |--------:|---------:|---------:|
+| Benchmark1 | 1.430 s | 0.0282 s | 0.0557 s |
+```
+
 #### v1.0.29.0: 2025/04/22
 - 置き換え可能な全ての正規表現をCompiledに変更した
 ```
