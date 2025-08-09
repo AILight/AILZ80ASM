@@ -44,27 +44,27 @@ namespace AILZ80ASM.Assembler
 
         private static readonly string RegexPatternGlobalLabel = @"^\[(?<label>([a-zA-Z0-9!-/:-@\[-~]+))\]";
         private static readonly Regex CompiledRegexPatternGlobalLabel = new Regex(
-                RegexPatternGlobalLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase
+                RegexPatternGlobalLabel, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternLabel = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):+";
         private static readonly Regex CompiledRegexPatternLabel = new Regex(
-                RegexPatternLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase
+                RegexPatternLabel, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternSubLabel = @"(?<label>(^\.[a-zA-Z0-9!-/;-@\[-~]+:*))(\s+|$)";
         private static readonly Regex CompiledRegexPatternSubLabel = new Regex(
-                RegexPatternSubLabel, RegexOptions.Singleline | RegexOptions.IgnoreCase
+                RegexPatternSubLabel, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternValueLabel1 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
         private static readonly Regex CompiledRegexPatternValueLabel1 = new Regex(
-                RegexPatternValueLabel1, RegexOptions.Singleline | RegexOptions.IgnoreCase
+                RegexPatternValueLabel1, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternValueLabel2 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+\.[a-zA-Z0-9!-/:-@\[-~]+:*))\s+(" + String.Join('|', AsmReservedWord.GetReservedWordsForLabel().Select(m => m.Name)) + @")\s+(?<value>(.+))";
         private static readonly Regex CompiledRegexPatternValueLabel2 = new Regex(
-                RegexPatternValueLabel2, RegexOptions.Singleline | RegexOptions.IgnoreCase
+                RegexPatternValueLabel2, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternValueLabel3 = @"(?<label>(^[a-zA-Z0-9!-/:-@\[-~]+)):?\s*equ";
         private static readonly Regex CompiledRegexPatternValueLabel3 = new Regex(
-                RegexPatternValueLabel3, RegexOptions.Singleline | RegexOptions.IgnoreCase
+                RegexPatternValueLabel3, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
 
         public string GlobalLabelName { get; private set; }

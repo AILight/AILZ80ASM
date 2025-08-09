@@ -11,31 +11,31 @@ namespace AILZ80ASM.AILight
     {
         private static readonly string RegexPatternLabelValidate = @"^[a-zA-Z0-9_]+$";
         private static readonly Regex CompiledRegexPatternLabelValidate = new Regex(
-            RegexPatternLabelValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternLabelValidate, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternMacroValidate = @"^[a-zA-Z0-9_()]+$";
         private static readonly Regex CompiledRegexPatternMacroValidate = new Regex(
-            RegexPatternMacroValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternMacroValidate, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternLocalLabelNOValidate = @"^[a-zA-Z0-9_]+$";
         private static readonly Regex CompiledRegexPatternLocalLabelNOValidate = new Regex(
-            RegexPatternLocalLabelNOValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternLocalLabelNOValidate, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternLocalLabelATValidate = @"^@[0-9]+$";
         private static readonly Regex CompiledRegexPatternLocalLabelATValidate = new Regex(
-            RegexPatternLocalLabelATValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternLocalLabelATValidate, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternLocalLabelANValidate = @"^@@(?<labelValue>([0-9]*))$";
         private static readonly Regex CompiledRegexPatternLocalLabelANValidate = new Regex(
-            RegexPatternLocalLabelANValidate, RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternLocalLabelANValidate, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternLabelInvalid = @"^[0-9]";
         private static readonly Regex CompiledRegexPatternLabelInvalid = new Regex(
-            RegexPatternLabelInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternLabelInvalid, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
         private static readonly string RegexPatternCharMapInvalid = @"^@[a-zA-Z0-9_]+$";
         private static readonly Regex CompiledRegexPatternCharMapInvalid = new Regex(
-            RegexPatternCharMapInvalid, RegexOptions.Singleline | RegexOptions.IgnoreCase
+            RegexPatternCharMapInvalid, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase
         );
 
         public static bool DeclareLabelValidate(string target, AsmLoad asmLoad)
