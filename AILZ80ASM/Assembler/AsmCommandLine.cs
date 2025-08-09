@@ -121,6 +121,7 @@ namespace AILZ80ASM.Assembler
                 Description = "HEX形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
+                IsSimple = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".hex"); }
             });
 
@@ -132,6 +133,7 @@ namespace AILZ80ASM.Assembler
                 Description = "T88形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
+                IsSimple = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".t88"); }
             });
 
@@ -143,6 +145,7 @@ namespace AILZ80ASM.Assembler
                 Description = "CMT形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
+                IsSimple = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".cmt"); }
             });
 
@@ -154,6 +157,7 @@ namespace AILZ80ASM.Assembler
                 Description = "MZT形式で出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
+                IsSimple = true,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".mzt"); }
             });
 
@@ -189,7 +193,7 @@ namespace AILZ80ASM.Assembler
                 Description = "アドレスラベルファイルを出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
-                IsSimple = true,
+                IsSimple = false,
                 DefaultFunc = (options) => { return GetDefaulFilename(options, ".adr"); }
             });
 
@@ -226,7 +230,7 @@ namespace AILZ80ASM.Assembler
                 Description = "タグファイルを出力します。（file名は省略可能）",
                 Required = false,
                 IsShortCut = true,
-                IsSimple = true,
+                IsSimple = false,
                 DefaultFunc = (options) => { return new[] { "tags" }; }
             });
 

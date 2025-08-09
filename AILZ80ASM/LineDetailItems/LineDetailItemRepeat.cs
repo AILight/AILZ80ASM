@@ -167,8 +167,8 @@ namespace AILZ80ASM.LineDetailItems
 
                     return lineDetailItemRepeat;
                 }
-                else if (string.Compare(lineItem.OperationString, "REPEAT") == 0 ||
-                         string.Compare(lineItem.OperationString, "REPT") == 0)
+                else if (string.Equals(lineItem.OperationString, "REPEAT", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(lineItem.OperationString, "REPT", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new ErrorAssembleException(Error.ErrorCodeEnum.E1015, "");
                 }
