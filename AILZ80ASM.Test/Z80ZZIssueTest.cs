@@ -462,5 +462,19 @@ namespace AILZ80ASM.Test
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "416"));
         }
+
+        [TestMethod]
+        public void Issue_437()
+        {
+            {
+                var result = Program.Main(@"-v");
+                Assert.AreEqual(0, result);
+            }
+            {
+                var result = Program.Main(@"--version");
+                Assert.AreEqual(0, result);
+            }
+
+        }
     }
 }
