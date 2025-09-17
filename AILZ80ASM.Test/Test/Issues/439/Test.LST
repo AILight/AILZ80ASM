@@ -1,0 +1,14 @@
+﻿                                ;*** AILZ80ASM *** Z-80 Assembler, version 1.0.28.0, LST:Full:4
+000000 8000                             ORG $8000
+                                
+000000 8000 486F67656E6F6765            DB  "Hogenoge"
+000008 8008 486F67650A6F6765            DB  "Hoge\noge"
+000010 8010 486F67656E6F6765            DB  @"Hogenoge"
+000018 8018 486F67655C6E6F67            DB  @"Hoge\noge"
+            65                  
+000021 8021 486F67656E6F6765            DB  @SJIS:"Hogenoge"
+000029 8029 486F67650A6F6765            DB  @SJIS:"Hoge\noge"
+000031 8031 486F67656E6F6765            DB  @SJIS:@"Hogenoge"
+000039 8039 486F67655C6E6F67            DB  @SJIS:@"Hoge\noge"      
+            65                  
+[EOF:Test.Z80:UTF_8]

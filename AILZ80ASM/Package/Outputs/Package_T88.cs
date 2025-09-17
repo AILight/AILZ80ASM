@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.AILight;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace AILZ80ASM
 {
     public partial class Package
     {
-        public void SaveT88(Stream stream, string outputFilename)
+        public void SaveT88(Stream stream, byte[] outputFilenameBytes)
         {
             using var memoryStream = new MemoryStream();
             SaveBin(memoryStream);
@@ -20,7 +21,7 @@ namespace AILZ80ASM
                 address = AssembleLoad.Share.AsmORGs.Skip(1).First().ProgramAddress;
             }
 
-            var binaryWriter = new IO.T88BinaryWriter(outputFilename, address, memoryStream.ToArray(), stream);
+            var binaryWriter = new IO.T88BinaryWriter(outputFilenameBytes, address, memoryStream.ToArray(), stream);
             binaryWriter.Write();
         }
     }

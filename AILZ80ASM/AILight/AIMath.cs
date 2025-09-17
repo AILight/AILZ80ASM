@@ -491,5 +491,16 @@ namespace AILZ80ASM.AILight
             }
         }
 
+        public static AIValue Parse(string value, AsmLoad asmLoad)
+        {
+            if (TryParse(value, asmLoad, out var resultValue))
+            {
+                return resultValue;
+            }
+            else
+            {
+                throw new InvalidAIValueException("値の変換に失敗しました。");
+            }
+        }
     }
 }

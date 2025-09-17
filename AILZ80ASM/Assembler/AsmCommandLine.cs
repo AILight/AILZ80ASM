@@ -315,6 +315,15 @@ namespace AILZ80ASM.Assembler
                 Required = false
             });
 
+            rootCommand.AddOption(new Option<string>()
+            {
+                Name = "loadName",
+                ArgumentName = "name",
+                Aliases = new[] { "-ln", "--load-name" },
+                Description = "ロード名を指定します。（T88とMZTで利用）",
+                Required = false
+            });
+
             rootCommand.AddOption(new Option<int>()
             {
                 Name = "tabSize",

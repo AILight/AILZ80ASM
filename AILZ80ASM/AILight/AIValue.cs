@@ -2111,6 +2111,5 @@ namespace AILZ80ASM.AILight
             result = "";
             return false;
         }
-
     }
 }

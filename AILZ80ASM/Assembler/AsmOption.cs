@@ -24,6 +24,9 @@ namespace AILZ80ASM.Assembler
         // ロードアドレス
         public UInt16? LoadAddress { get; set; } = default;
 
+        // ロード名
+        public string LoadName { get; set; } = default;
+
         // タブサイズ
         public int TabSize { get; set; } = 4;
 
@@ -121,6 +124,7 @@ namespace AILZ80ASM.Assembler
             DiffFile = rootCommand.GetValue<bool>("diffFile");
             EntryPoint = rootCommand.GetValue<ushort?>("entryPoint");
             LoadAddress = rootCommand.GetValue<ushort?>("loadAddress");
+            LoadName = rootCommand.GetValue<string>("loadName");
             TabSize = rootCommand.GetValue<int>("tabSize");
             CheckUnuseLabel = rootCommand.GetValue<bool>("unUsedLabel");
             Force = rootCommand.GetValue<bool>("force");
