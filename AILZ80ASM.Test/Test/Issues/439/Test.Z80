@@ -2,4 +2,4 @@
 
 		LD	A, 0
 
-		#pragma loadname "ABC"
+		#pragma set loadname "ABC"
