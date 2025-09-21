@@ -119,10 +119,16 @@ namespace AILZ80ASM.Assembler
             E6101,
             E6102,
             E6103,
+            // PRAGMA
+            E6201,
+            E6202,
+            E6203,
 
             W0001,
             W0002,
             W0003,
+
+            W8001,
 
             W9001,
             W9002,
@@ -275,10 +281,18 @@ namespace AILZ80ASM.Assembler
             [ErrorCodeEnum.E6102] = "ENUM に使えない構文です。",
             [ErrorCodeEnum.E6103] = "ENUM に使えないラベル名です。同名のラベルが既に定義されているか、ラベルに使えない記号が使われています。",
 
+            // PRAGMA
+            [ErrorCodeEnum.E6201] = "PRAGMA 利用できないコマンドが指定されました。[{0}]",
+            [ErrorCodeEnum.E6202] = "PRAGMA SET で利用できない名前が指定されました。[{0}]",
+            [ErrorCodeEnum.E6203] = "PRAGMA SET で利用できない値が指定されました。[{0}]",
+
             // ワーニング
             [ErrorCodeEnum.W0001] = "1バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",
             [ErrorCodeEnum.W0002] = "2バイトの指定場所に、[ 0x{0:X} : {0} ]が設定されています。2バイトに丸められます。",
             [ErrorCodeEnum.W0003] = "1バイト（符号付き）の指定場所に、[ 0x{0:X} : {0} ]が設定されています。1バイトに丸められます。",
+
+            // 状態変更に関するワーニング
+            [ErrorCodeEnum.W8001] = "PRAGMA により「{0}」は「{1}」から「{2}」に書き換えられました。",
 
             // あいまいさの許容
             [ErrorCodeEnum.W9001] = "(IX)は、(IX+0)として処理されました。",

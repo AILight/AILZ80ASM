@@ -462,5 +462,29 @@ namespace AILZ80ASM.Test
         {
             Lib.Assemble_AreSame(Path.Combine("Issues", "416"));
         }
+
+        [TestMethod]
+        public void Issue_437()
+        {
+            {
+                var result = Program.Main(@"-v");
+                Assert.AreEqual(0, result);
+            }
+            {
+                var result = Program.Main(@"--version");
+                Assert.AreEqual(0, result);
+            }
+
+        }
+
+        [TestMethod]
+        public void Issue_439()
+        {
+            var result = Program.Main(@"Test.Z80", "-f", "-mzt", "Issue439.MZT", "-t88", "Issue439.T88", "-lst", "Issue439.LST", "-cd", "./Test/Issues/439");
+            Assert.AreEqual(0, result);
+            Lib.AreSameLst(File.OpenRead("./Test/Issues/439/Issue439.LST"), File.OpenRead("./Test/Issues/439/Test.LST"), Assembler.AsmEnum.FileTypeEnum.LST);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/439/Issue439.MZT"), File.OpenRead("./Test/Issues/439/Test.MZT"), Assembler.AsmEnum.FileTypeEnum.MZT);
+            Lib.AreSameBin(File.OpenRead("./Test/Issues/439/Issue439.T88"), File.OpenRead("./Test/Issues/439/Test.T88"), Assembler.AsmEnum.FileTypeEnum.T88);
+        }
     }
 }

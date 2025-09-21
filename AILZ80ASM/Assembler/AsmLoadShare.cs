@@ -1,4 +1,5 @@
-﻿using AILZ80ASM.CharMaps;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.CharMaps;
 using AILZ80ASM.LineDetailItems;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,9 @@ namespace AILZ80ASM.Assembler
         
         // ロードアドレス
         public AsmDefinedAddress LoadAddress { get; set; } = default;
+
+        // ロード名
+        public string LoadName { get; set; } = default;
 
         // スーパーアセンブル用
         public AsmSuperAssemble AsmSuperAssembleMode { get; set; } = default;

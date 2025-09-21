@@ -1,6 +1,8 @@
-﻿using AILZ80ASM.Assembler;
+﻿using AILZ80ASM.AILight;
+using AILZ80ASM.Assembler;
 using AILZ80ASM.Exceptions;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace AILZ80ASM.LineDetailItems
@@ -45,33 +47,59 @@ namespace AILZ80ASM.LineDetailItems
             var matched = CompiledRegexPatternPragma.Match(lineItem.OperationString);
             if (matched.Success)
             {
-                var name = matched.Groups["name"].Value;
+                var name = matched.Groups["name"].Value.ToUpper();
                 var argument = matched.Groups["argument"].Value;
 
-                switch (name.ToUpper())
+                switch (name)
                 {
                     case "ONCE":
                         asmLoad.AddPragmaOnceFileInfo(lineItem.FileInfo);
                         break;
-                    /* コマンドライン引数は、こちらでオプション設定をする
-                    case "OPTION":
-                        switch (argument.ToUpper())
+                    case "SET":
+                        var item = ArgumentParse(argument);
+                        var setName = item.Name.ToUpper();
+                        var setValue = item.Value;
+                        switch (setName)
                         {
-                            case "OUTPUT-TRIM":
+                            case "LOADNAME":
+                                if (AIMath.TryParse(setValue, asmLoad, out var resultValue))
+                                {
+                                    if (asmLoad.Share.LoadName != default)
+                                    {
+                                        asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W8001, setName, asmLoad.Share.LoadName, setValue));
+                                    }
+                                    asmLoad.Share.LoadName = setValue;
+                                }
+                                else
+                                {
+                                    throw new ErrorAssembleException(Error.ErrorCodeEnum.E6203, setValue);
+                                }
                                 break;
                             default:
-                                return default;
+                                throw new ErrorAssembleException(Error.ErrorCodeEnum.E6202, setName);
                         }
                         break;
-                    */
                     default:
-                        return default;
+                        throw new ErrorAssembleException(Error.ErrorCodeEnum.E6201, name);
                 }
 
                 return new LineDetailItemPreProcPragma(lineItem, asmLoad);
             }
 
             return default(LineDetailItemPreProcPragma);
+        }
+
+        private static (string Name, string Value) ArgumentParse(string target)
+        {
+            var index = target.IndexOf(" ");
+            if (index == -1)
+            {
+                return ("", "");
+            }
+            var name = target.Substring(0, index).Trim();
+            var value = target.Substring(index).Trim();
+
+            return (name, value);
         }
 
         public override void Assemble()

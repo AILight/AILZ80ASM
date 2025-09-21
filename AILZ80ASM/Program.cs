@@ -86,14 +86,15 @@ namespace AILZ80ASM
                         }
                     }
                 }
+                else if (rootCommand.GetSelected("version"))
+                {
+                    Trace.WriteLine(rootCommand.ParseMessage);
+                    return 0;
+                }
                 else
                 {
-                    if (!rootCommand.GetSelected("version"))
-                    {
-                        OutputStart();
-                    }
+                    OutputStart();
                     Trace.WriteLine(rootCommand.ParseMessage);
-
                     return 2;
                 }
             }
