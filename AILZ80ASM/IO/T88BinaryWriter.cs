@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AILZ80ASM.AILight;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,14 +11,14 @@ namespace AILZ80ASM.IO
     public class T88BinaryWriter
     {
         private UInt32 Elapse { get; set; } = 0;
-        private string Filename { get; set; }
+        private byte[] FilenameBytes { get; set; }
         private UInt16 StartAddress { get; set; }
         private Stream Stream { get; set; }
         private byte[] Buffer { get; set; }
 
-        public T88BinaryWriter(string filename, UInt16 startAddress, byte[] buffer, Stream stream)
+        public T88BinaryWriter(byte[] filenameBytes, UInt16 startAddress, byte[] buffer, Stream stream)
         {
-            Filename = filename;
+            FilenameBytes = filenameBytes;
             StartAddress = startAddress;
             Buffer = buffer;
             Stream = stream;
@@ -169,9 +170,12 @@ namespace AILZ80ASM.IO
 
         private void WriteFilename()
         {
-            var filenameString = $"$$${Filename}".PadRight(9).Substring(0, 9);
+            var dollarBytes = Encoding.ASCII.GetBytes("$$$");
+            var filenameBytes = FilenameBytes.Concat(Encoding.ASCII.GetBytes("".PadRight(6))).Take(6);
+            var bytes = dollarBytes.Concat(filenameBytes).ToArray();
+
             WriteDataTag(9);
-            WriteStream(Encoding.ASCII.GetBytes(filenameString));
+            WriteStream(bytes);
         }
     }
 }

@@ -1,3 +1,4 @@
+using AILZ80ASM.AILight;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,15 +10,15 @@ namespace AILZ80ASM.IO
 {
     public class MZTBinaryWriter : AIBinaryWriter
     {
-        private string Filename { get; set; }
+        private byte[] FilenameBytes { get; set; }
         private UInt16 LoadAddress { get; set; }
         private UInt16 EntryAddress { get; set; }
         private byte[] Buffer { get; set; }
 
-        public MZTBinaryWriter(string filename, UInt16 loadAddress, UInt16 entryAddress, byte[] buffer, Stream stream)
+        public MZTBinaryWriter(byte[] filenameBytes, UInt16 loadAddress, UInt16 entryAddress, byte[] buffer, Stream stream)
             : base(stream)
         {
-            Filename = filename;
+            FilenameBytes = filenameBytes;
             LoadAddress = loadAddress;
             EntryAddress = entryAddress;
 
@@ -54,7 +55,7 @@ namespace AILZ80ASM.IO
         private void WriteFilename()
         {
             // ファイルは16バイト、終端は0x0d、残りは0x20で埋める
-            var filenameBytes = Encoding.ASCII.GetBytes(Filename.ToUpper()).Take(16).ToArray();
+            var filenameBytes = FilenameBytes.Take(16).ToArray();
             var gapBytes = Enumerable.Repeat((byte)0x20, 16 - filenameBytes.Length).ToArray();
             WriteStream(filenameBytes);
             WriteStream(0x0d);

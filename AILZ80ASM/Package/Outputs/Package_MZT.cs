@@ -1,3 +1,4 @@
+using AILZ80ASM.AILight;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +20,7 @@ namespace AILZ80ASM
         //  エントリーアドレス: [LO] [HI]
         // データ
         //  本体データ
-        public void SaveMZT(Stream stream, string outputFilename)
+        public void SaveMZT(Stream stream, byte[] outputFilenameBytes)
         {
             using var memoryStream = new MemoryStream();
             SaveBin(memoryStream);
@@ -27,7 +28,7 @@ namespace AILZ80ASM
             var loadAddress = AssembleLoad.Share.LoadAddress.Value ?? default(UInt16);
             var entryAddress = AssembleLoad.Share.EntryPoint.Value ?? default(UInt16);
 
-            var binaryWriter = new IO.MZTBinaryWriter(outputFilename, loadAddress, entryAddress, memoryStream.ToArray(), stream);
+            var binaryWriter = new IO.MZTBinaryWriter(outputFilenameBytes, loadAddress, entryAddress, memoryStream.ToArray(), stream);
             binaryWriter.Write();
         }
     }

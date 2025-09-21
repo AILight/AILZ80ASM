@@ -487,5 +487,10 @@ namespace AILZ80ASM.AILight
 
             return bytes;
         }
+
+        public static string ConvertToAIString(string target)
+        {
+            return $"\"{target}\"";
+        }
     }
 }

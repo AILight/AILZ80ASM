@@ -622,6 +622,8 @@ namespace AILZ80ASM
         public void SaveOutput(Stream stream, KeyValuePair<AsmEnum.FileTypeEnum, FileInfo> outputFile)
         {
             var omitHeder = this.AssembleOption?.OmitHeders?.Any(m => m == outputFile.Key) ?? false;
+            var outputFilename = AIMath.Parse(!string.IsNullOrEmpty(this.AssembleLoad.Share.LoadName) ? this.AssembleLoad.Share.LoadName : AIString.ConvertToAIString(outputFile.Value.Name), this.AssembleLoad).ConvertTo<byte[]>();
+
             switch (outputFile.Key)
             {
                 case AsmEnum.FileTypeEnum.BIN:
@@ -631,13 +633,13 @@ namespace AILZ80ASM
                     SaveHEX(stream);
                     break;
                 case AsmEnum.FileTypeEnum.T88:
-                    SaveT88(stream, outputFile.Value.Name);
+                    SaveT88(stream, outputFilename);
                     break;
                 case AsmEnum.FileTypeEnum.CMT:
                     SaveCMT(stream);
                     break;
                 case AsmEnum.FileTypeEnum.MZT:
-                    SaveMZT(stream, outputFile.Value.Name);
+                    SaveMZT(stream, outputFilename);
                     break;
                 case AsmEnum.FileTypeEnum.LST:
                     SaveLST(stream, omitHeder);

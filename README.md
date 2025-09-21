@@ -53,6 +53,8 @@ AILZ80ASM [<オプション>] <オプション指定文字列:ファイル名等
 | -oe, --output-encode <mode>    | 出力ファイルのエンコードを選択します。 [auto, utf-8, shift_jis] デフォルト値:auto
 | -lm, --list-mode <mode>        | リストの出力形式を選択します。 [simple, middle, full] デフォルト値:full
 | -lob, --list-omit-binary       | リストの出力でバイナリーインクルードを省略出力をします。
+| -la, --load-address <address>  | ロードアドレスを指定します。（MZTで利用）
+| -ln, --load-name <name>        | ロード名を指定します。（T88とMZTで利用） 
 | -sm, --symbol-mode <mode>      | symファイルの出力形式を選択します。 [normal, minimal-equ]
 | -oh, --omit-header <types>     | 先頭行のコメントを省略します。ファイル種別をスペース区切りで指定します。[sym, lst, equ, adr]
 | -ep, --entry-point <address>   | エントリーポイントを指定します。
@@ -818,6 +820,17 @@ LABEL	equ 00FFH
 #if exists LABEL
 LABEL	equ 00FFH
 #endif
+```
+
+###### PRAGMA SET
+アセンブルオプションを設定します。
+設定可能項目は以下のものになります
+```
+- LoadName
+```
+
+```
+#pragma set LoadName "LoadFileName"
 ```
 
 ###### #LIST <引数1>
