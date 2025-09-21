@@ -1,5 +1,7 @@
 using AILZ80ASM.Assembler;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,11 +12,16 @@ namespace AILZ80ASM.Test
     {
         private ErrorLineItem[] Assemble(string fileName)
         {
+            return Assemble(fileName, default(Dictionary<string, string>));
+        }
+
+        private ErrorLineItem[] Assemble(string fileName, Dictionary<string, string> asmOptions = default)
+        {
             var targetDirectoryName = Path.Combine(".", "Test", "TestER");
             var inputFiles = new[] { new FileInfo(Path.Combine(targetDirectoryName, fileName)) };
             var outputFiles = new System.Collections.Generic.Dictionary<MemoryStream, System.Collections.Generic.KeyValuePair<Assembler.AsmEnum.FileTypeEnum, FileInfo>>();
 
-            return Lib.Assemble(inputFiles, outputFiles, true);
+            return Lib.Assemble(inputFiles, outputFiles, true, asmOptions);
         }
 
         [TestMethod]
@@ -340,6 +347,29 @@ namespace AILZ80ASM.Test
 
             Assert.AreEqual(1, errors.Length);
             Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E0010, 2, "Org4.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_Pragma_Set1()
+        {
+            var asmOptions = new Dictionary<string, string>
+            {
+                ["LoadName"] = "CommandLineArg"
+            };
+            var errors = Assemble("Pragma_Set1.Z80", asmOptions);
+
+            Assert.AreEqual(1, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.W8001, 5, "Pragma_Set1.Z80", errors);
+        }
+
+        [TestMethod]
+        public void TestER_Pragma_Set2()
+        {
+            var errors = Assemble("Pragma_Set2.Z80");
+
+            Assert.AreEqual(2, errors.Length);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6203, 5, "Pragma_Set2.Z80", errors);
+            Lib.AssertErrorItemMessage(Error.ErrorCodeEnum.E6202, 6, "Pragma_Set2.Z80", errors);
         }
 
         [TestMethod]

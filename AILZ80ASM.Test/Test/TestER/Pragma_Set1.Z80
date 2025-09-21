@@ -1,0 +1,5 @@
+﻿		ORG $8000
+
+		LD	A, 0
+
+		#pragma set loadname "ABC"

@@ -66,7 +66,7 @@ namespace AILZ80ASM.LineDetailItems
                                 {
                                     if (asmLoad.Share.LoadName != default)
                                     {
-                                        asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W8001, setName, setValue, setValue));
+                                        asmLoad.AddError(new ErrorLineItem(lineItem, Error.ErrorCodeEnum.W8001, setName, asmLoad.Share.LoadName, setValue));
                                     }
                                     asmLoad.Share.LoadName = setValue;
                                 }
