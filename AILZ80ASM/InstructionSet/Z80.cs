@@ -15,7 +15,7 @@ namespace AILZ80ASM.InstructionSet
         {
             NumberReplaseChar = '$',
             SplitChars = new[] { ' ', ',' , '+', '(', ')' },
-            RegisterAndFlagNames = RegisterAndFlagNames,
+            RegisterAndFlagNamesSet = new HashSet<string>(RegisterAndFlagNames, StringComparer.OrdinalIgnoreCase),
             InstructionRegisters = new[]
             {
                 new InstructionRegister

@@ -34,7 +34,7 @@ namespace AILZ80ASM.InstructionSet
         /// <returns></returns>
         public bool IsMatchRegisterName(string target)
         {
-            return InstructionSet.RegisterAndFlagNames.Where(m => string.Compare(m, target, true) == 0).Any();
+            return InstructionSet.RegisterAndFlagNamesSet?.Contains(target) ?? false;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace AILZ80ASM.InstructionSet
         /// <returns></returns>
         public bool IsMatchInstructionName(string target)
         {
-            return InstructionSet.InstructionNames.Where(m => string.Compare(m, target, true) == 0).Any();
+            return InstructionSet.InstructionNamesSet?.Contains(target) ?? false;
         }
 
 

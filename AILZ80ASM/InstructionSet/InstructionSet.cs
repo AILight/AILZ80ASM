@@ -11,10 +11,10 @@ namespace AILZ80ASM.InstructionSet
     {
         public char NumberReplaseChar { get; set; }
         public char[] SplitChars { get; set; }
-        public string[] RegisterAndFlagNames { get; set; }
+        public HashSet<string> RegisterAndFlagNamesSet { get; set; }
         public InstructionRegister[] InstructionRegisters { get; set; }
         public InstructionItem[] InstructionItems { get; set; }
-        public string[] InstructionNames { get; set; }
+        public HashSet<string> InstructionNamesSet { get; set; }
         public Dictionary<string, InstructionItem[]> InstructionDic { get; set; } = new();
 
         public void MakeDataSet()
@@ -41,7 +41,7 @@ namespace AILZ80ASM.InstructionSet
                 InstructionDic.Add(item.Key, item.Value.ToArray());
             }
 
-            InstructionNames = instructionList.Distinct().ToArray();
+            InstructionNamesSet = new HashSet<string>(instructionList.Distinct(), StringComparer.OrdinalIgnoreCase);
         }
     }
 }
