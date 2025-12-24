@@ -535,7 +535,7 @@ namespace AILZ80ASM.Assembler
 
             while (targetAsmLoad != default)
             {
-                var name = targetAsmLoad.Scope.GlobalLabelNames.Where(m => string.Compare(m, target, true) == 0).FirstOrDefault();
+                var name = targetAsmLoad.Scope.GlobalLabelNames.Where(m => string.Equals(m, target, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                 if (name != default)
                 {
                     return name;
@@ -569,7 +569,7 @@ namespace AILZ80ASM.Assembler
                     while (targetAsmLoad != default)
                     {
                         var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
-                        var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.LabelFullName, labelFullName, true) == 0);
+                        var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Equals(m.LabelFullName, labelFullName, StringComparison.OrdinalIgnoreCase));
                         var label = scopelabels.FirstOrDefault();
                         if (label != default)
                         {
@@ -605,9 +605,9 @@ namespace AILZ80ASM.Assembler
                         {
                             var labelFullName = Label.GetLabelFullName(target, targetAsmLoad);
                             var labelNames = labelFullName.Split(".");
-                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Compare(m.GlobalLabelName, labelNames[0], true) == 0 &&
-                                                                               string.Compare(m.LabelName, labelNames[1], true) == 0 &&
-                                                                               string.Compare(m.TmpLabelName, labelNames[3], true) == 0);
+                            var scopelabels = targetAsmLoad.Scope.Labels.Where(m => string.Equals(m.GlobalLabelName, labelNames[0], StringComparison.OrdinalIgnoreCase) &&
+                                                                               string.Equals(m.LabelName, labelNames[1], StringComparison.OrdinalIgnoreCase) &&
+                                                                               string.Equals(m.TmpLabelName, labelNames[3], StringComparison.OrdinalIgnoreCase));
 
                             if (scopelabels.Count() > 0)
                             {
